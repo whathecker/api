@@ -3,6 +3,7 @@
 .vscode/settings.json
 .config/
 .config/database.json
+config/
 
 # Logs
 logs
