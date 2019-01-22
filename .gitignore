@@ -1,9 +1,9 @@
 # ignored file from project
 .vscode/
 .vscode/settings.json
-.config/
-.config/database.json
-config/
+config
+
+
 
 # Logs
 logs

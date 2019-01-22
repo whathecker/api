@@ -1,9 +1,0 @@
-{
-    "development" : {
-        "username": "chokchokadmin",
-        "password": "Wearehuman1018",
-        "host": "ds161894.mlab.com",
-        "port": "61894",
-        "databaseName": "chokchok-backend-dev"
-    }
-}
