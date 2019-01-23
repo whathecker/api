@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const crypto = require('crypto');
 const User = require('../../models/User');
 
 
@@ -57,7 +58,8 @@ router.post('/user', (req, res, next) => {
         } else {
             const user = new User();
             user.email = req.body.email;
-            user.password = user.setPassword(req.body.password);
+            user.salt = crypto.randomBytes(64).toString('hex');
+            user.hash = user.setPassword(user, req.body.password);
             user.firstname = req.body.firstname;
             user.lastname = req.body.lastname;
 
