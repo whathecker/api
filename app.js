@@ -43,6 +43,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
+
+app.use(require('./middlewares/auth'));
 // mount routes
 app.use(require('./controllers'));
 
