@@ -4,12 +4,14 @@
   "description": "apis of chokchok",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start" : "node app.js"
   },
   "author": "yunjae oh",
   "license": "ISC",
   "dependencies": {
     "connect-mongo": "^2.0.3",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "jsonwebtoken": "^8.4.0",
@@ -18,6 +20,8 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
-    "errorhandler": "^1.5.0"
+    "errorhandler": "^1.5.0",
+    "jest": "^23.6.0",
+    "supertest": "^3.4.2"
   }
 }

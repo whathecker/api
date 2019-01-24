@@ -6,7 +6,8 @@ const session = require('express-session');
 const Mongostore = require('connect-mongo')(session);
 const passport = require('passport');
 const errorhandler = require('errorhandler');
-
+const apiAuthentication = require('./middlewares/auth');
+const cors = require('cors');
 const dbConnection = connector.connectDB(process.env.NODE_ENV);
 const app = express();
 
@@ -26,6 +27,7 @@ if (!isProduction) {
     app.use(errorhandler());
 }
 
+app.use(cors());
 app.use(session({ 
     cookie: {
       maxAge: 12000,
@@ -43,11 +45,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-
-app.use(require('./middlewares/auth'));
+// api authentication
+app.use(apiAuthentication);
 // mount routes
 app.use(require('./controllers'));
-
+// 404 checker
 app.use((req, res, next) => {
     const err = new Error('not found');
     err.status= 404;
