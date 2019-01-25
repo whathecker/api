@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const Apikey = require('../../models/Apikey');
+const Apikey = require('../../../models/Apikey');
 const crypto = require('crypto');
 
 

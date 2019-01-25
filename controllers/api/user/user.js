@@ -2,7 +2,7 @@ const router = require('express').Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const crypto = require('crypto');
-const User = require('../../models/User');
+const User = require('../../../models/User');
 
 
 // configure passport local strategy

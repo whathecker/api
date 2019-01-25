@@ -1,8 +1,12 @@
-const dbConfig = require('./config/database');
+const dbConfig = require('../config/database');
+//const mongoose = require('mongoose');
 
 let connector = {};
 
-connector.connectDB = (envVar) => {
+
+connector.getDBString = () => {
+    const envVar = process.env.NODE_ENV;
+
     if (!envVar) throw new Error('setup envVar before launching app: DB connetion failed');
 
     if (envVar === "development") {

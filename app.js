@@ -1,32 +1,33 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const connector = require('./connector');
+const connector = require('./utils/connector');
 const session = require('express-session');
 const Mongostore = require('connect-mongo')(session);
 const passport = require('passport');
 const errorhandler = require('errorhandler');
 const apiAuthentication = require('./middlewares/auth');
 const cors = require('cors');
-const dbConnection = connector.connectDB(process.env.NODE_ENV);
+const dbString = connector.getDBString();
 const app = express();
+
+module.exports = app; // for testing
 
 let port = process.env.PORT || 3001;
 const isProduction = process.env.NODE_ENV === "production";
-
-
-// connect database
-mongoose.connect(dbConnection, (err) => {
-    if (err) throw err;
-    console.log(`successfully connected to database`);
-});
-
-// configure application
 
 if (!isProduction) {
     app.use(errorhandler());
 }
 
+// connect database
+mongoose.connect(dbString, (err) => {
+    if (err) throw err;
+    console.log(`successfully connected to database`);
+}); 
+
+
+// configure application
 app.use(cors());
 app.use(session({ 
     cookie: {
@@ -36,7 +37,7 @@ app.use(session({
     secret: "secret",
     saveUninitialized: false,
     resave: false,
-    store: new Mongostore({ url: dbConnection })
+    store: new Mongostore({ url: dbString })
 }));
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -80,4 +81,6 @@ app.use((err, req, res, next) => {
 
 
 // listen to server
-app.listen(port, () => console.log('app is listening to: ' + port + ` on ${process.env.NODE_ENV}`));
+app.listen(port, () => {
+    console.log('app is listening to: ' + port + ` on ${process.env.NODE_ENV}`);
+});
