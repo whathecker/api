@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../../../app');
 const mongoose = require('mongoose');
-const connector = require('../../../utils/connector');
+//const connector = require('../../../utils/connector');
 
 
 const testCredentical = {
@@ -21,7 +21,7 @@ const testCredentical = {
 describe('test user apis', () => {
 
     beforeAll(() => {
-        return mongoose.connect(connector.getDBString());
+        console.log('Jest start testing');
     });
     
     afterAll(() => {
@@ -43,6 +43,20 @@ describe('test user apis', () => {
             });
     });
 
+    test('Test sign-up will fail with 202', () => {
+        return request(app).post('/api/user')
+            .set('X-API-Key', testCredentical.apikey)
+            .send({
+                email: testCredentical.success.email,
+                password: testCredentical.success.password,
+                firstname: testCredentical.success.firstname,
+                lastname: testCredentical.success.lastname
+            })
+            .then((response) => {
+                expect(response.status).toBe(202);
+            });
+    });
+
     test('Test sign-in will success', () => {
         return request(app).post('/api/user/login')
             .set('X-API-Key', testCredentical.apikey)
@@ -55,7 +69,52 @@ describe('test user apis', () => {
             });
     });
 
+    test('Test sign-in will fail', () => {
+        return request(app).post('/api/user/login')
+            .set('X-API-Key', testCredentical.apikey)
+            .send({
+                email: testCredentical.success.email,
+                password: testCredentical.fail.password
+            })
+            .then((response) => {
+                expect(response.status).toBe(401);
+            });
+    });
+
     //test sign-out 
 
     //test delete user
+    
+    test('Test user will be deleted', () => {
+        return request(app).delete('/api/user')
+            .set('X-API-Key', testCredentical.apikey)
+            .send({
+                email: testCredentical.success.email
+            })
+            .then((response) => {
+                expect(response.status).toBe(200);
+            });
+    });
+
+    test('Test delete user will fail with 204 ', () => {
+        return request(app).delete('/api/user')
+            .set('X-API-Key', testCredentical.apikey)
+            .send({
+                email: testCredentical.fail.email
+            })
+            .then((response) => {
+                expect(response.status).toBe(204);
+            });
+    });
+
+    test('Test delete user will fail with 400', () => {
+        return request(app).delete('/api/user')
+            .set('X-API-Key', testCredentical.apikey)
+            .send({
+                firstname: testCredentical.success.firstname
+            })
+            .then((response) => {
+                expect(response.status).toBe(400);
+            });
+    });
 });

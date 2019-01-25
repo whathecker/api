@@ -11,9 +11,7 @@ const cors = require('cors');
 const dbString = connector.getDBString();
 const app = express();
 
-module.exports = app; // for testing
 
-let port = process.env.PORT || 3001;
 const isProduction = process.env.NODE_ENV === "production";
 
 if (!isProduction) {
@@ -80,7 +78,11 @@ app.use((err, req, res, next) => {
 });
 
 
+let port = process.env.PORT || 3001;
+
 // listen to server
 app.listen(port, () => {
     console.log('app is listening to: ' + port + ` on ${process.env.NODE_ENV}`);
 });
+
+module.exports = app; // for testing

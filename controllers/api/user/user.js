@@ -30,6 +30,7 @@ passport.deserializeUser((id, done) => {
     });
 });
 
+
 router.post('/user/login', (req, res, next) => {
 
     passport.authenticate('local',  (err, user, info) => {
@@ -45,6 +46,8 @@ router.post('/user/login', (req, res, next) => {
 });
 
 
+
+
 // public endpoint /api/user
 // create new user
 // params : email, password, firstname, lastname 
@@ -53,8 +56,10 @@ router.post('/user', (req, res, next) => {
 
     User.findOne({ email: req.body.email }).then((user) => {
 
+        console.log(user);
+
         if (user) {
-            res.status(202).json({ "message" : "duplicated email address"});
+            return res.status(202).json({ message : "duplicated email address"});
         } else {
             const user = new User();
             user.email = req.body.email;
@@ -64,11 +69,29 @@ router.post('/user', (req, res, next) => {
             user.lastname = req.body.lastname;
 
             user.save().then((user) =>{
-                res.status(201).send(user);
+                return res.status(201).send(user);
             }).catch(next);
         }
 
     }).catch(next);
+
+});
+
+// delete user
+// take email as param
+router.delete('/user', (req, res, next) => {
+
+    if (!req.body.email) {
+        return res.status(400).json({ message: 'bad request' });
+    }
+
+    User.findOneAndRemove({ email: req.body.email })
+        .then((user) => {
+            if (!user) { 
+                return res.status(204).json({ message: 'can not find user'}); 
+            }
+            return res.status(200).json({ message: 'success' });
+        }).catch(next);
 
 });
 
