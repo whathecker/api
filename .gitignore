@@ -3,6 +3,8 @@
 .vscode/settings.json
 config
 
+# SSL keys
+*.pem
 
 
 # Logs
