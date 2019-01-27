@@ -3,17 +3,23 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const crypto = require('crypto');
 const User = require('../../../models/User');
+const logger = require('../../../utils/logger');
 
 
 // configure passport local strategy
 passport.use( new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, (email, password, done) => {
     
     User.findOne({ email: email }, (err, user)=> {
-        if (err) { return done(err); }
+        if (err) { 
+            logger.error('error happened while login');
+            return done(err); 
+        }
 
         if (!user || !user.validatePassword(user, password)) {
+            logger.info('login validation failed, wrong email or password');
             return done(null, false);
         }
+        logger.info('login success');
         return done(null, user);
     }); 
 }
@@ -56,9 +62,10 @@ router.post('/user', (req, res, next) => {
 
     User.findOne({ email: req.body.email }).then((user) => {
 
-        console.log(user);
+        
 
         if (user) {
+            logger.info('sign-up rejected due to duplicated email address');
             return res.status(202).json({ message : "duplicated email address"});
         } else {
             const user = new User();
@@ -69,6 +76,7 @@ router.post('/user', (req, res, next) => {
             user.lastname = req.body.lastname;
 
             user.save().then((user) =>{
+                logger.info('new user account has created');
                 return res.status(201).send(user);
             }).catch(next);
         }
@@ -82,14 +90,17 @@ router.post('/user', (req, res, next) => {
 router.delete('/user', (req, res, next) => {
 
     if (!req.body.email) {
+        logger.warn('user delete request has rejected as email param is missing');
         return res.status(400).json({ message: 'bad request' });
     }
 
     User.findOneAndRemove({ email: req.body.email })
         .then((user) => {
             if (!user) { 
+                logger.warn('user delete request has rejected as email is unknown')
                 return res.status(204).json({ message: 'can not find user'}); 
             }
+            logger.info('user delete request has succeed');
             return res.status(200).json({ message: 'success' });
         }).catch(next);
 

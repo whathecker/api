@@ -5,18 +5,13 @@ const connector = require('./utils/connector');
 const session = require('express-session');
 const Mongostore = require('connect-mongo')(session);
 const passport = require('passport');
+const morgan = require('morgan');
 const errorhandler = require('errorhandler');
 const apiAuthentication = require('./middlewares/auth');
 const cors = require('cors');
 const dbString = connector.getDBString();
 const app = express();
 
-
-const isProduction = process.env.NODE_ENV === "production";
-
-if (!isProduction) {
-    app.use(errorhandler());
-}
 
 // connect database
 mongoose.connect(dbString, (err) => {
@@ -26,6 +21,27 @@ mongoose.connect(dbString, (err) => {
 
 
 // configure application
+
+const isProduction = process.env.NODE_ENV === "production";
+
+if (!isProduction) {
+    app.use(errorhandler());
+}
+
+// print error log to stderr stream
+app.use(morgan('dev', {
+    skip: (req, res) => {
+        return res.statusCode < 400
+    }, stream: process.stderr
+}));
+
+// print log to stdout stream
+app.use(morgan('dev', {
+    skip: (req, res) => {
+        return res.statusCode >= 400
+    }, stream: process.stdin
+}));
+
 app.use(cors());
 app.use(session({ 
     cookie: {
@@ -48,6 +64,7 @@ app.use(passport.session());
 app.use(apiAuthentication);
 // mount routes
 app.use(require('./controllers'));
+
 // 404 checker
 app.use((req, res, next) => {
     const err = new Error('not found');

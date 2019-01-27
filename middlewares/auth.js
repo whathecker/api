@@ -9,15 +9,12 @@ function verifyApikey (req, res, next) {
 
         Apikey.findOne({ key: req.get('X-API-Key') }).then((key) => {
             if (!key) {
-                //console.log('key is not found');
                 res.status(401).json({ message: 'Request is denied' });
+            } else {
+                next();
             }
-            next();
         }).catch(next);
-
-    } else {
-        next();
-    }
+    } 
 }
 
 module.exports = verifyApikey;
