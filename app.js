@@ -105,7 +105,7 @@ app.use((err, req, res, next) => {
 
 module.exports = app; // for testing
 
-let port = process.env.PORT || 3001;
+let port = process.env.PORT;
 
 const server = https.createServer(sslOptions, app);
 server.listen(port, (err) => {
