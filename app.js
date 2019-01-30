@@ -1,6 +1,6 @@
 const express = require('express'),
-    fs = require('fs'),
-    https = require('https'),
+    //fs = require('fs'),
+    //https = require('https'),
     mongoose = require('mongoose'),
     bodyParser = require('body-parser'),
     connector = require('./utils/connector'),
@@ -23,15 +23,17 @@ mongoose.connect(dbString, (err) => {
 
 // configure application
 const isProduction = process.env.NODE_ENV === "production";
-let sslOptions = {};
+//let sslOptions = {};
 
 if (!isProduction) {
     app.use(errorhandler());
     // read local SSL key and certificate    
+    /*
     sslOptions = {
         key: fs.readFileSync('./localhost-key.pem'),
         cert: fs.readFileSync('./localhost-cert.pem')
-    } 
+    } */
+
 }
 
 // print morgan log to stderr stream
@@ -55,7 +57,7 @@ app.use(cors());
 app.use(session({ 
     cookie: {
       maxAge: 12000,
-      secure: true
+      secure: false
     },
     secret: "secret",
     saveUninitialized: false,
@@ -105,13 +107,21 @@ app.use((err, req, res, next) => {
 
 module.exports = app; // for testing
 
-let port = process.env.PORT;
 
+
+/*
 const server = https.createServer(sslOptions, app);
 server.listen(port, (err) => {
     if (err) throw err;
     console.log(`https server is running on port number : ${port}`);
     console.log(`server is running on ${process.env.NODE_ENV}`);
     console.log(`current log level is set to :  ${process.env.LOG_LEVEL}`);
-}); 
+}); */
+
+app.listen(process.env.PORT, (err) => {
+    if (err) throw err;
+    console.log(`server is running on port number: ${process.env.PORT}`);
+    console.log(`current env is : ${process.env.NODE_ENV}`);
+    console.log(`current log level is : ${process.env.LOG_LEVEL}`);
+});
 
