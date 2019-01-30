@@ -8,7 +8,7 @@ const express = require('express'),
     Mongostore = require('connect-mongo')(session),
     passport = require('passport'),
     morgan = require('morgan'),
-    errorhandler = require('errorhandler'),
+    //errorhandler = require('errorhandler'),
     apiAuthentication = require('./middlewares/auth'),
     cors = require('cors'),
     dbString = connector.getDBString(),
@@ -26,7 +26,7 @@ const isProduction = process.env.NODE_ENV === "production";
 //let sslOptions = {};
 
 if (!isProduction) {
-    app.use(errorhandler());
+    //app.use(errorhandler());
     // read local SSL key and certificate    
     /*
     sslOptions = {
