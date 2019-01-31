@@ -11,7 +11,7 @@ describe('test user apis', () => {
     });
     
     afterAll( async () => {
-        await app.close();
+        //await app.close();
     });
     
     // testing will create actual account in database with testing credential

@@ -11,7 +11,7 @@ describe('test apikey apis', () => {
     });
 
     afterAll(async () => {
-        await app.close();
+        //await app.close();
     });
 
     test('Test creating key will success', () => {
