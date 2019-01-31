@@ -7,11 +7,11 @@ const request = require('supertest'),
 describe('test user apis', () => {
 
     beforeAll(() => {
-        console.log('Jest start testing');
+        console.log('Jest start testing user endpoints');
     });
     
-    afterAll(() => {
-        return mongoose.disconnect();
+    afterAll( async () => {
+        await app.close();
     });
     
     // testing will create actual account in database with testing credential

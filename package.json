@@ -4,8 +4,8 @@
   "description": "apis of chokchok",
   "main": "index.js",
   "scripts": {
-    "test": "jest --forceExit",
-    "start": "node ./node_modules/pm2/bin/pm2 start app.js -i 'max' --name chokchok-backend",
+    "test": "jest --runInBand --forceExit",
+    "start": "node ./node_modules/pm2/bin/pm2 start server.js -i 'max' --name chokchok-backend",
     "poststart": "node ./node_modules/pm2/bin/pm2 logs"
   },
   "author": "yunjae oh",
