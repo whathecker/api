@@ -30,7 +30,7 @@ describe('test user apis', () => {
     
     // testing will create actual account in database with testing credential
     test('Test sign-up will success', () => {
-        return request(app).post('/api/user')
+        return request(app).post('/user')
             .set('X-API-Key', testCredentical.apikey)
             .send({ 
                 email: testCredentical.success.email,
@@ -44,7 +44,7 @@ describe('test user apis', () => {
     });
 
     test('Test sign-up will fail with 202', () => {
-        return request(app).post('/api/user')
+        return request(app).post('/user')
             .set('X-API-Key', testCredentical.apikey)
             .send({
                 email: testCredentical.success.email,
@@ -58,7 +58,7 @@ describe('test user apis', () => {
     });
 
     test('Test sign-in will success', () => {
-        return request(app).post('/api/user/login')
+        return request(app).post('/user/login')
             .set('X-API-Key', testCredentical.apikey)
             .send({
                 email: testCredentical.success.email,
@@ -70,7 +70,7 @@ describe('test user apis', () => {
     });
 
     test('Test sign-in will fail', () => {
-        return request(app).post('/api/user/login')
+        return request(app).post('/user/login')
             .set('X-API-Key', testCredentical.apikey)
             .send({
                 email: testCredentical.success.email,
@@ -86,7 +86,7 @@ describe('test user apis', () => {
     //test delete user
     
     test('Test user will be deleted', () => {
-        return request(app).delete('/api/user')
+        return request(app).delete('/user')
             .set('X-API-Key', testCredentical.apikey)
             .send({
                 email: testCredentical.success.email
@@ -97,7 +97,7 @@ describe('test user apis', () => {
     });
 
     test('Test delete user will fail with 204 ', () => {
-        return request(app).delete('/api/user')
+        return request(app).delete('/user')
             .set('X-API-Key', testCredentical.apikey)
             .send({
                 email: testCredentical.fail.email
@@ -108,7 +108,7 @@ describe('test user apis', () => {
     });
 
     test('Test delete user will fail with 400', () => {
-        return request(app).delete('/api/user')
+        return request(app).delete('/user')
             .set('X-API-Key', testCredentical.apikey)
             .send({
                 firstname: testCredentical.success.firstname
