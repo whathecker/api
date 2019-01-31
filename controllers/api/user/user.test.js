@@ -1,22 +1,8 @@
-const request = require('supertest');
-const app = require('../../../app');
-const mongoose = require('mongoose');
-//const connector = require('../../../utils/connector');
+const request = require('supertest'),
+    app = require('../../../app'),
+    mongoose = require('mongoose'),
+    testCredentical = require('../../../config/test/usercredential');
 
-
-const testCredentical = {
-    apikey: '486917e2aaa613d0ed04628a57d25d32',
-    success: {
-        email: "yunjae.oh.nl@gmail.com",
-        password: "password1",
-        firstname: "yunjae",
-        lastname: "oh"
-    },
-    fail : {
-        email: "yunjae.oh.nl1@gmail.com",
-        password: "passwordsdgsdge"
-    }
-}
 
 describe('test user apis', () => {
 
@@ -43,7 +29,7 @@ describe('test user apis', () => {
             });
     });
 
-    test('Test sign-up will fail with 202', () => {
+    test('Test sign-up will fail as email already exist', () => {
         return request(app).post('/user')
             .set('X-API-Key', testCredentical.apikey)
             .send({
@@ -54,6 +40,20 @@ describe('test user apis', () => {
             })
             .then((response) => {
                 expect(response.status).toBe(202);
+            });
+    });
+
+    test('Test sign-up will fail as email addrss format is invalid', () => {
+        return request(app).post('/user')
+            .set('X-API-Key', testCredentical.apikey)
+            .send({
+                email: testCredentical.fail.invalidEmail,
+                password: testCredentical.fail.password,
+                firstname: testCredentical.fail.firstname,
+                lastname: testCredentical.fail.lastname
+            })
+            .then((response) => {
+                expect(response.status).toBe(500);
             });
     });
 

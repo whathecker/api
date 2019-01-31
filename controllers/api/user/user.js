@@ -53,17 +53,9 @@ router.post('/user/login', (req, res, next) => {
 
 
 
-
-// public endpoint /api/user
-// create new user
-// params : email, password, firstname, lastname 
-
 router.post('/user', (req, res, next) => {
 
     User.findOne({ email: req.body.email }).then((user) => {
-
-        
-
         if (user) {
             logger.info('sign-up rejected due to duplicated email address');
             return res.status(202).json({ message : "duplicated email address"});
@@ -85,8 +77,7 @@ router.post('/user', (req, res, next) => {
 
 });
 
-// delete user
-// take email as param
+
 router.delete('/user', (req, res, next) => {
 
     if (!req.body.email) {
