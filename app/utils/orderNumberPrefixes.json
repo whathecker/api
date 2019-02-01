@@ -2,7 +2,7 @@
     "enviornmentPrefix": {
         "development": "DV",
         "staging": "ST",
-        "production": "CC"
+        "production": "EC"
     },
     "countryPrefix": {
         "netherland": "NL",

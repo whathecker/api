@@ -1,25 +1,35 @@
 const mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
     uniqueValidator = require('mongoose-unique-validator'),
     orderNumberPrefixes = require('../../app/utils/orderNumberPrefixes');
 
-let orderSchema = new mongoose.Schema({
+let orderSchema = new Schema({
     orderNumber: { 
         type: String, 
-        required: [ true, "order number can't be blank"], 
+        required: [ true, "order number can't be blank" ], 
         unique: true, 
         index: true 
     },
-    /*
-    user: { type: ObjectId, ref: 'User' },
-    cart: { type: ObjectId, ref: 'Cart' }, */
+    user: { 
+        type: Schema.Types.ObjectId, 
+        required: [ true, "user id can't be blank" ], 
+        ref: 'User' 
+    },
+    /* cart: { type: ObjectId, ref: 'Cart' },
+        or add items schema with array of product models?
+    */
+
+    isSubscription: { type: Boolean, default: false },
+    /* Add subscription id which refer to Subscription model */
+
     orderStatus: { type: String, default: 'received' },
     paymentMethod: { type: String, required: [ true, "payment method can't be blank" ]},
-    paymentStatus: { type: String, default: 'open' /* use sub document? */ },
+    paymentStatus: [{ type: String, default: 'open' /* to add timestamp of each update */ }],
     creationDate: { type: Date, default: Date.now },
     isShipped: { type: Boolean, default: false },
     shippedDate: { type: Date },
     shippingCarrier: { type: String },
-    trackingNumber: { type: String /* make is as array of String */ },
+    trackingNumber: [{ type: String }],
     isDelivered: { type: Boolean, default: false },
     deliveredDate: { type: Date },
     lastModified: { type: Date, default: Date.now }
@@ -29,13 +39,6 @@ orderSchema.plugin(uniqueValidator);
 const Order = mongoose.model('Order', orderSchema);
 
 Order.prototype.createOrderNumber = (env, country) => {
-
-    let timestampToInteger = Date.now();
-    const random13DigitInteger = Math.floor(Math.random() * 9000000000000) + 1000000000000;
-    timestampToInteger += random13DigitInteger;
-    timestampToInteger = timestampToInteger.toString().slice(0,5);
-    console.log('this is timestamp: ' + timestampToInteger);
-
 
     let envPrefix;
     if (env === "development" || env === "staging" || env === "production") {
@@ -53,13 +56,13 @@ Order.prototype.createOrderNumber = (env, country) => {
     }
     console.log(countryPrefix);
 
-
-    let random5DigitInteger = Math.floor(Math.random() * 90000) + 10000;
-    random5DigitInteger.toString();
-    console.log("random 5 digit num: " + random5DigitInteger);
+    function create5DigitInteger () {
+        const num = Math.floor(Math.random() * 90000) + 10000;
+        return num.toString();
+    }
 
     let orderNumber = '';
-    return orderNumber.concat(envPrefix, countryPrefix, timestampToInteger, random5DigitInteger);
+    return orderNumber.concat(envPrefix, countryPrefix, create5DigitInteger(), create5DigitInteger());
 }
 
 module.exports = Order;

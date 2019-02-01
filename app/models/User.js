@@ -1,8 +1,9 @@
 const mongoose = require('mongoose'),
-    uniqueValidator = require('mongoose-unique-validator');
+    uniqueValidator = require('mongoose-unique-validator'),
+    Schema = mongoose.Schema,
     crypto = require('crypto');
 
-let userSchema = new mongoose.Schema({
+let userSchema = new Schema({
     email: { 
         type: String, 
         lowercase: true, 
@@ -19,11 +20,16 @@ let userSchema = new mongoose.Schema({
     salt: { type: String },
     firstname: { type: String, lowercase: true },
     lastname: { type: String, lowercase: true },
-    shippingAddress: { type: String /* To refactor to Object */ },
+    shippingAddress: [ { type: String /* To refactor to Object */ } ],
     billingAddress: { type: String /* To refactor to object */ },
     phoneNumber: { type: String },
+
+    /* Add subscription id which refer to Subscription model */
+    
+    orders: [{ type: Schema.Types.ObjectId, ref: 'Order' }],
     creationDate: { type: Date, default: Date.now },
     lastModified: { type: Date, default: Date.now },
+    lastLogin: { type: Date },
     isEmailVerified: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false }
 });
