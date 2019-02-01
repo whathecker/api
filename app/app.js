@@ -9,19 +9,18 @@ const express = require('express'),
     apiAuthentication = require('./middlewares/auth'),
     cors = require('cors'),
     dbString = connector.getDBString(),
-    app = express();
+    app = express(),
+    Order = require('./models/Order');
 
-// connect database
+console.log(Order.prototype.createOrderNumber('development', 'germany'));
+
+
 mongoose.connect(dbString, (err) => {
     if (err) throw err;
     console.log(`successfully connected to database`);
 }); 
 
-// configure application
 const isProduction = process.env.NODE_ENV === "production";
-
-
-// print morgan log to stderr stream
 
 app.use(morgan('dev'));
 app.use(cors());
