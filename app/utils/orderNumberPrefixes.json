@@ -1,0 +1,12 @@
+{
+    "enviornmentPrefix": {
+        "development": "DV",
+        "staging": "ST",
+        "production": "CC"
+    },
+    "countryPrefix": {
+        "netherland": "NL",
+        "germany": "DE",
+        "america": "US"
+    }
+}

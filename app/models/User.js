@@ -3,11 +3,25 @@ const mongoose = require('mongoose'),
     crypto = require('crypto');
 
 let userSchema = new mongoose.Schema({
-    email: { type: String, lowercase: true, required: [ true, "email can't be blank" ], unique: true, match: [ /\S+@\S+\.\S+/, 'invalid email format' ], index: true },
-    hash: { type: String, lowercase: false, required: [ true, "password can't be blank" ] },
+    email: { 
+        type: String, 
+        lowercase: true, 
+        required: [ true, "email can't be blank" ], 
+        unique: true, 
+        match: [ /\S+@\S+\.\S+/, 'invalid email format' ], 
+        index: true 
+    },
+    hash: { 
+        type: String, 
+        lowercase: false, 
+        required: [ true, "password can't be blank" ] 
+    },
     salt: { type: String },
     firstname: { type: String, lowercase: true },
     lastname: { type: String, lowercase: true },
+    shippingAddress: { type: String /* To refactor to Object */ },
+    billingAddress: { type: String /* To refactor to object */ },
+    phoneNumber: { type: String },
     creationDate: { type: Date, default: Date.now },
     lastModified: { type: Date, default: Date.now },
     isEmailVerified: { type: Boolean, default: false },

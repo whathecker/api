@@ -11,7 +11,6 @@ const express = require('express'),
     dbString = connector.getDBString(),
     app = express();
 
-
 // connect database
 mongoose.connect(dbString, (err) => {
     if (err) throw err;
