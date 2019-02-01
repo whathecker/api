@@ -31,8 +31,8 @@ const Order = mongoose.model('Order', orderSchema);
 Order.prototype.createOrderNumber = (env, country) => {
 
     let timestampToInteger = Date.now();
-    const random13Digit = Math.floor(Math.random() * 9000000000000) + 1000000000000;
-    timestampToInteger += random13Digit;
+    const random13DigitInteger = Math.floor(Math.random() * 9000000000000) + 1000000000000;
+    timestampToInteger += random13DigitInteger;
     timestampToInteger = timestampToInteger.toString().slice(0,5);
     console.log('this is timestamp: ' + timestampToInteger);
 
