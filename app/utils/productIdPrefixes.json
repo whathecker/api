@@ -1,0 +1,10 @@
+{
+    "brandPrefix": {
+        "brandA": "AA",
+        "brandB": "BB"
+    },
+    "categoryPrefix": {
+        "categoryA": "AA",
+        "categoryB": "BB"
+    }
+}

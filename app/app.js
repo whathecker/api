@@ -9,10 +9,10 @@ const express = require('express'),
     apiAuthentication = require('./middlewares/auth'),
     cors = require('cors'),
     dbString = connector.getDBString(),
-    app = express(),
-    Order = require('./models/Order');
+    app = express();
+    //Order = require('./models/Order');
 
-console.log(Order.prototype.createOrderNumber('development', 'germany'));
+//console.log(Order.prototype.createOrderNumber('development', 'germany'));
 
 
 mongoose.connect(dbString, (err) => {
