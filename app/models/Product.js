@@ -36,4 +36,37 @@ Product.prototype.createProductId = (brandCode, categoryCode) => {
     return productId.concat(brandCode, categoryCode, create5DigitInteger());
 }
 
+Product.prototype.findCategory = (categoryInput, productIdPrefixes) => {
+    for (let category in productIdPrefixes.categoryPrefix) {
+        console.log(category);
+        if (categoryInput === category) {
+            return category;
+        }
+    }
+    return null;  
+}
+
+Product.prototype.findCategoryCode = (categoryNameInput, productIdPrefixes) => {
+    if (!categoryNameInput) {
+        throw new Error('Invalid Param: categoryNameInput cannot be blank');
+    }
+    return productIdPrefixes.categoryPrefix[categoryNameInput];
+}
+Product.prototype.findBrand = (brandInput, productIdPrefixes) => {
+    for (let brand in productIdPrefixes.brandPrefix) {
+        if (brandInput === brand) {
+            return brand;
+        }
+    }
+    return null;
+}
+
+Product.prototype.findBrandCode = (brandNameInput, productIdPrefixes) => {
+    if (!brandNameInput) {
+        throw new Error('Invalid Param: brandNameInput cannot be blank');
+    }
+    return productIdPrefixes.brandPrefix[brandNameInput]; 
+}
+
+
 module.exports = Product;

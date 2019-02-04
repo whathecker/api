@@ -3,45 +3,6 @@ const router = require('express').Router(),
     logger = require('../../../utils/logger'),
     productIdPrefixes = require('../../../utils/productIdPrefixes');
 
-
-function findCategory (categoryInput) {
-    for (let category in productIdPrefixes.categoryPrefix) {
-        console.log(category);
-        if (categoryInput === category) {
-            return category;
-        }
-    }
-    // or throw error here?
-    return null;
-}
-
-function findCategoryCode (categoryNameInput) {
-    if (!categoryNameInput) {
-        throw new Error('Invalid Param: categoryNameInput cannot be blank');
-    }
-    return productIdPrefixes.categoryPrefix[categoryNameInput];
-}
-
-function findBrand (brandInput) {
-    for (let brand in productIdPrefixes.brandPrefix) {
-        console.log(brand);
-        if (brandInput === brand) {
-            return brand;
-        }
-    }
-    // or throw error here?
-    return null;
-}
-
-function findBrandCode (brandNameInput) {
-    if (!brandNameInput) {
-        throw new Error('Invalid Param: brandNameInput cannot be blank');
-    }
-    return productIdPrefixes.brandPrefix[brandNameInput];
-}
-
-
-// handle unhappy flows in this route
 // add auth middleware in this route
 router.post('/product', (req, res, next) => {
 
@@ -53,10 +14,10 @@ router.post('/product', (req, res, next) => {
     const product = new Product();
     product.name = req.body.name;
     product.description = req.body.description;
-    product.category = findCategory(req.body.category);
-    product.categoryCode = findCategoryCode(product.category);
-    product.brand = findBrand(req.body.brand);
-    product.brandCode = findBrandCode(product.brand);
+    product.category = product.findCategory(req.body.category, productIdPrefixes);
+    product.categoryCode = product.findCategoryCode(product.category, productIdPrefixes);
+    product.brand = product.findBrand(req.body.brand, productIdPrefixes);
+    product.brandCode = product.findBrandCode(product.brand, productIdPrefixes);
 
     if (req.body.volume) {
         product.volume = req.body.volume;
