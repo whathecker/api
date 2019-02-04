@@ -23,9 +23,7 @@ let userSchema = new Schema({
     shippingAddress: [ { type: String /* To refactor to Object */ } ],
     billingAddress: { type: String /* To refactor to object */ },
     phoneNumber: { type: String },
-
-    /* Add subscription id which refer to Subscription model */
-    
+    subscription: { type: Schema.Types.ObjectId, ref: 'Subscription'},
     orders: [{ type: Schema.Types.ObjectId, ref: 'Order' }],
     creationDate: { type: Date, default: Date.now },
     lastModified: { type: Date, default: Date.now },

@@ -15,13 +15,8 @@ let orderSchema = new Schema({
         required: [ true, "user id can't be blank" ], 
         ref: 'User' 
     },
-    /* cart: { type: ObjectId, ref: 'Cart' },
-        or add items schema with array of product models?
-    */
 
     isSubscription: { type: Boolean, default: false },
-    /* Add subscription id which refer to Subscription model */
-
     orderStatus: { type: String, default: 'received' },
     paymentMethod: { type: String, required: [ true, "payment method can't be blank" ]},
     paymentStatus: [{ type: String, default: 'open' /* to add timestamp of each update */ }],
@@ -32,7 +27,10 @@ let orderSchema = new Schema({
     trackingNumber: [{ type: String }],
     isDelivered: { type: Boolean, default: false },
     deliveredDate: { type: Date },
-    lastModified: { type: Date, default: Date.now }
+    lastModified: { type: Date, default: Date.now },
+    items: [
+        { type: Schema.Types.ObjectId, ref: 'Product' }
+    ]
 });
 
 orderSchema.plugin(uniqueValidator);

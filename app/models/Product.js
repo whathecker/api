@@ -6,16 +6,17 @@ let productSchema = new Schema({
     productId: { type: String, required: true, unique: true, index: true },
     productName: { type: String, required: true },
     productDescription: { type: String, required: true },
-    /* add available regions with active status of item,
-        may be add inventoy here..?
-        may be price too ..?
-     */  
-
-    /* add product category from separate model*/
-    /* add price object contain price per country */
+    productCategory: { type: String, required: true },
+    priceData : [{
+        region: { type: String },
+        currency: { type: String },
+        price: { type: String }
+    }]
 });
 
 productSchema.plugin(uniqueValidator);
 const Product = mongoose.model('Product', productSchema);
+
+// add method to create product ID
 
 module.exports = Product;
