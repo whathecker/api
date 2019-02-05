@@ -4,7 +4,7 @@ const router = require('express').Router(),
     productIdPrefixes = require('../../../utils/productIdPrefixes');
 
 // add auth middleware in this route
-router.post('/product', (req, res, next) => {
+router.post('/', (req, res, next) => {
 
     if (!req.body.name || !req.body.description || !req.body.category || !req.body.brand) {
         logger.warn(`product create request has rejected as param is missing`);
@@ -35,11 +35,12 @@ router.post('/product', (req, res, next) => {
     }).catch(next);
 });
 
-router.put('/product/:id', (req, res, next) => {
+router.put('/:id', (req, res, next) => {
     if (!req.params.id || !req.body.update) {
         logger.warn(`product update request has rejected as param is missing`);
         return res.status(400).json({ message: 'bad request' });
     }
+
     Product.findOneAndUpdate({ id: req.params.id }, req.body.update)
         .then((product) => {
             if(!product) {
@@ -51,7 +52,7 @@ router.put('/product/:id', (req, res, next) => {
         }).catch(next);
 });
 
-router.get('/product/:id', (req, res, next) => {
+router.get('/:id', (req, res, next) => {
 
     /*
     if (!req.params.id) {
@@ -70,7 +71,7 @@ router.get('/product/:id', (req, res, next) => {
         }).catch(next);
 });
 
-router.delete('/product/:id', (req, res, next) => {
+router.delete('/:id', (req, res, next) => {
     /*
     if (!req.params.id) {
         logger.warn('product delete request has rejected as id param is missing');
@@ -81,7 +82,7 @@ router.delete('/product/:id', (req, res, next) => {
         .then((product)=> {
             if (!product) {
                 logger.warn('product delete request has rejected as product is unknown')
-                res.status(204).json({ message: 'can not find product' })
+                return res.status(204).json({ message: 'can not find product' })
             }
             logger.info(`product delete request has succeed: ${product}`);
             return res.status(200).json(product);

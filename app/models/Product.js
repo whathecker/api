@@ -2,6 +2,12 @@ const mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     uniqueValidator = require('mongoose-unique-validator');
 
+let pricesSchema = new Schema({
+    region: { type: String, lowercase: true },
+    currency: { type: String, lowercase: true },
+    price: { type: String, default: "0" }
+}, { _id: false});
+
 let productSchema = new Schema({
     id: { type: String, required: true, unique: true, index: true },
     name: { type: String, required: true },
@@ -12,11 +18,7 @@ let productSchema = new Schema({
     brandCode: { type: String },
     volume: { type: String },
     skinType: { type: String },
-    priceData : [{
-        region: { type: String, lowercase: true },
-        currency: { type: String, lowercase: true },
-        price: { type: Number }
-    }]
+    priceData : [pricesSchema]
 });
 
 productSchema.plugin(uniqueValidator);
@@ -52,6 +54,7 @@ Product.prototype.findCategoryCode = (categoryNameInput, productIdPrefixes) => {
     }
     return productIdPrefixes.categoryPrefix[categoryNameInput];
 }
+
 Product.prototype.findBrand = (brandInput, productIdPrefixes) => {
     for (let brand in productIdPrefixes.brandPrefix) {
         if (brandInput === brand) {
