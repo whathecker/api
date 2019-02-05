@@ -6,7 +6,7 @@ let pricesSchema = new Schema({
     region: { type: String, lowercase: true },
     currency: { type: String, lowercase: true },
     price: { type: String, default: "0" }
-}, { _id: false});
+}, { _id: false });
 
 let productSchema = new Schema({
     id: { type: String, required: true, unique: true, index: true },
