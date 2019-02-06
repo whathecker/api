@@ -1,0 +1,7 @@
+{
+    "boxTypePrefix": {
+        "dry": "DR",
+        "oily": "OL",
+        "normal": "NM"
+    }
+}
