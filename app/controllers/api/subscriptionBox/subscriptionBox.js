@@ -27,20 +27,20 @@ router.post('/', (req, res, next) => {
 
         for (let i = 0; i < req.body.items.length; i++) {
             let query;
-            const productId = req.body.items;
+            const productId = req.body.items[i];
             query = Product.findOne({ id: productId });
             queries.push(query);
         }
         //console.log('check the queries out');
         //console.log(queries);
 
-        Promise.all(queries).then((product_ids) => {
+        Promise.all(queries).then((products) => {
             //console.log('resolved array of products');
-            //console.log(product_ids);
+            console.log(products);
 
-            for (let i = 0; i < product_ids.length; i++) {
+            for (let i = 0; i < products.length; i++) {
                 let item = {};
-                item.product = product_ids[0]._id;
+                item.product = products[i]._id;
                 subscriptionBox.items.push(item);
             }
 
