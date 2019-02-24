@@ -26,7 +26,7 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(session({ 
     cookie: {
-      maxAge: 12000,
+      maxAge: 600000,
       secure: false
     },
     secret: "secret",
