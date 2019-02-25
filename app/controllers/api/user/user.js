@@ -4,6 +4,20 @@ const LocalStrategy = require('passport-local').Strategy;
 const crypto = require('crypto');
 const User = require('../../../models/User');
 const logger = require('../../../utils/logger');
+const userAuth = require('../../../middlewares/auth');
+
+// serialize & deserialize authenticated user
+passport.serializeUser((user, done) =>{
+    console.log('serailized user');
+    done(null, user.id);
+});
+  
+passport.deserializeUser((id, done) => {
+    console.log('deserialized user')
+    User.findById(id, (err, user) => {
+        done(err, user);
+    });
+});
 
 
 // configure passport local strategy
@@ -25,17 +39,6 @@ passport.use( new LocalStrategy({ usernameField: 'email', passwordField: 'passwo
 }
 )); 
 
-// serialize & deserialize authenticated user
-passport.serializeUser((user, done) =>{
-    done(null, user.id);
-});
-  
-passport.deserializeUser((id, done) => {
-    User.findById(id, (err, user) => {
-        done(err, user);
-    });
-});
-
 
 router.post('/user/login', (req, res, next) => {
 
@@ -45,6 +48,7 @@ router.post('/user/login', (req, res, next) => {
 
         req.logIn(user, (err) => {
             if (err) { return next(err); }
+            //console.log(res);
             return res.status(200).send(user);
         });
 
@@ -76,6 +80,7 @@ router.post('/user', (req, res, next) => {
     }).catch(next);
 
 });
+
 
 
 router.delete('/user', (req, res, next) => {

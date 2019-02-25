@@ -6,7 +6,7 @@ const express = require('express'),
     Mongostore = require('connect-mongo')(session),
     passport = require('passport'),
     morgan = require('morgan'),
-    apiAuthentication = require('./middlewares/auth'),
+    apiAuthentication = require('./middlewares/verifyApikey'),
     cors = require('cors'),
     dbString = connector.getDBString(),
     app = express();
@@ -22,22 +22,32 @@ mongoose.connect(dbString, (err) => {
 
 const isProduction = process.env.NODE_ENV === "production";
 
+const corsOptions = {
+    origin: ['http://localhost:3000', 'https://test.hellochokchok.com', 'https://www.hellochokchok.com' ],
+    methods: ['GET', 'PUT', 'POST', 'DELETE'],
+    credentials: true,
+
+}
+
 app.use(morgan('dev'));
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(session({ 
     cookie: {
       maxAge: 600000,
-      secure: false
+      // TODO: update secure to true with dynamic envVar check 
+      secure: false,
+      sameSite: false,
+      httpOnly: false
     },
     secret: "secret",
-    saveUninitialized: false,
-    resave: false,
+    saveUninitialized: true,
+    resave: true,
     store: new Mongostore({ url: dbString })
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.session()); 
 
 
 // api authentication

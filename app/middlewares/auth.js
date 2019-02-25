@@ -1,20 +1,17 @@
-const Apikey = require('../models/Apikey');
 
-function verifyApikey (req, res, next) {
-    //console.log(req.get('apikey'));
+function isAuthenticated (req, res, next) {
 
-    if (!req.get('X-API-Key')) {
-        res.status(401).json({ message: 'Request is denied' });
-    } else if (req.get('X-API-Key')) {
+    console.log(req.session);
+    console.log(req.session.cookie);
+    console.log(req.session.passport);
+    console.log(req.user);
 
-        Apikey.findOne({ key: req.get('X-API-Key') }).then((key) => {
-            if (!key) {
-                res.status(401).json({ message: 'Request is denied' });
-            } else {
-                next();
-            }
-        }).catch(next);
-    } 
+    if (!req.session.passport.user) {
+        console.log('unauthorized user');
+        res.status(401).json({ message: 'unauthoized user'});
+    } else {
+        next();
+    }
 }
 
-module.exports = verifyApikey;
+module.exports = isAuthenticated;
