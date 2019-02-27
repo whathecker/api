@@ -35,7 +35,7 @@ app.use(session({
     cookie: {
       maxAge: 600000,
       // TODO: update secure to true with dynamic envVar check 
-      secure: false,
+      secure: true,
       sameSite: false,
       httpOnly: false
     },
