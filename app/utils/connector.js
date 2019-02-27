@@ -9,7 +9,7 @@ connector.getDBString = () => {
 
     if (!envVar) throw new Error('setup envVar before launching app: DB connetion failed');
 
-    if (envVar === "development") {
+    if (envVar === "development" || envVar === "local") {
         return `mongodb://${dbConfig.development.username}:${dbConfig.development.password}@${dbConfig.development.host}:${dbConfig.development.port}/${dbConfig.development.databaseName}`;
     }
 

@@ -20,6 +20,8 @@ mongoose.connect(dbString, (err) => {
     console.log(`successfully connected to database`);
 }); 
 
+const isLocal = process.env.NODE_ENV === "local";
+const isDevelopment = process.env.NODE_ENV === "development";
 const isProduction = process.env.NODE_ENV === "production";
 
 const corsOptions = {
@@ -31,19 +33,37 @@ const corsOptions = {
 
 app.use(morgan('dev'));
 app.use(cors(corsOptions));
-app.use(session({ 
-    cookie: {
-      maxAge: 600000,
-      // TODO: update secure to true with dynamic envVar check 
-      secure: true,
-      sameSite: false,
-      httpOnly: false
-    },
-    secret: "secret",
-    saveUninitialized: true,
-    resave: true,
-    store: new Mongostore({ url: dbString })
-}));
+
+if (isLocal) {
+    app.use(session({ 
+        cookie: {
+          maxAge: 600000,
+          // TODO: update secure to true with dynamic envVar check 
+          secure: false,
+          sameSite: false,
+          httpOnly: false
+        },
+        secret: "secret",
+        saveUninitialized: true,
+        resave: true,
+        store: new Mongostore({ url: dbString })
+    }));
+} else if (isDevelopment || isProduction) {
+    app.set('trust proxy', 1);
+    app.use(session({ 
+        cookie: {
+          maxAge: 600000,
+          secure: false,
+          sameSite: false,
+          httpOnly: false
+        },
+        secret: "secret",
+        saveUninitialized: true,
+        resave: true,
+        store: new Mongostore({ url: dbString })
+    }));
+}
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(passport.initialize());
