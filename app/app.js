@@ -53,7 +53,7 @@ if (isLocal) {
     app.use(session({ 
         cookie: {
           maxAge: 600000,
-          secure: false,
+          secure: true,
           sameSite: false,
           httpOnly: false
         },
