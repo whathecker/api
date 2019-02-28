@@ -28,7 +28,6 @@ const corsOptions = {
     origin: ['http://localhost:3000', 'https://test.hellochokchok.com', 'https://www.hellochokchok.com' ],
     methods: ['GET', 'PUT', 'POST', 'DELETE'],
     credentials: true,
-
 }
 
 app.use(morgan('dev'));
