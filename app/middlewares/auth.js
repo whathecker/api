@@ -2,6 +2,7 @@
 function isAuthenticated (req, res, next) {
 
     console.log(req.session);
+    next();
 
     /*
     console.log(req.session.cookie);
