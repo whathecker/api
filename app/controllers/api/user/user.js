@@ -40,7 +40,7 @@ passport.use( new LocalStrategy({ usernameField: 'email', passwordField: 'passwo
 )); 
 
 
-router.post('/user/login', (req, res, next) => {
+router.post('/user/login', userAuth,  (req, res, next) => {
 
     passport.authenticate('local',  (err, user, info) => {
         if (err) { return next(err) }
