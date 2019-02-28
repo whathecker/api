@@ -48,7 +48,8 @@ router.post('/user/login', userAuth,  (req, res, next) => {
 
         req.logIn(user, (err) => {
             if (err) { return next(err); }
-            //console.log(res);
+            console.log('response')
+            console.log(res);
             return res.status(200).send(user);
         });
 

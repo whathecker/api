@@ -54,7 +54,8 @@ if (isLocal) {
           maxAge: 600000,
           secure: true,
           sameSite: false,
-          httpOnly: false
+          httpOnly: false,
+          domain: '.hellochokchok.com'
         },
         secret: "secret",
         saveUninitialized: true,
