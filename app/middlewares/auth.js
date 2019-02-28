@@ -1,6 +1,6 @@
 
 function isAuthenticated (req, res, next) {
-
+    console.log(req);
     console.log(req.session);
     next();
 

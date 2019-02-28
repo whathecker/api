@@ -26,7 +26,7 @@ const isProduction = process.env.NODE_ENV === "production";
 
 const corsOptions = {
     origin: ['http://localhost:3000', 'https://test.hellochokchok.com', 'https://www.hellochokchok.com' ],
-    methods: ['GET', 'PUT', 'POST', 'DELETE'],
+    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
     credentials: true,
 }
 
