@@ -9,6 +9,7 @@ const express = require('express'),
     apiAuthentication = require('./middlewares/verifyApikey'),
     cors = require('cors'),
     dbString = connector.getDBString(),
+    helmet = require('helmet'),
     app = express();
     //Order = require('./models/Order');
 
@@ -30,6 +31,7 @@ const corsOptions = {
     credentials: true,
 }
 
+app.use(helmet());
 app.use(morgan('dev'));
 app.use(cors(corsOptions));
 
@@ -37,7 +39,6 @@ if (isLocal) {
     app.use(session({ 
         cookie: {
           maxAge: 600000,
-          // TODO: update secure to true with dynamic envVar check 
           secure: false,
           sameSite: false,
           httpOnly: false
