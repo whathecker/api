@@ -40,7 +40,7 @@ passport.use( new LocalStrategy({ usernameField: 'email', passwordField: 'passwo
 )); 
 
 
-router.post('/user/login', userAuth,  (req, res, next) => {
+router.post('/user/login', (req, res, next) => {
 
     passport.authenticate('local',  (err, user, info) => {
         if (err) { return next(err) }
@@ -48,8 +48,6 @@ router.post('/user/login', userAuth,  (req, res, next) => {
 
         req.logIn(user, (err) => {
             if (err) { return next(err); }
-            console.log('response')
-            console.log(res);
             return res.status(200).send(user);
         });
 
@@ -100,8 +98,9 @@ router.delete('/user', (req, res, next) => {
             logger.info('user delete request has succeed');
             return res.status(200).json({ message: 'success' });
         }).catch(next);
-
 });
+
+
 
 
 module.exports = router;
