@@ -43,6 +43,7 @@ if (isLocal) {
           sameSite: false,
           httpOnly: false
         },
+        name: 'session',
         secret: "secret",
         saveUninitialized: true,
         resave: true,
@@ -58,7 +59,8 @@ if (isLocal) {
           httpOnly: false,
           domain: '.hellochokchok.com'
         },
-        secret: "secret",
+        name: 'session',
+        secret: "B!DP7d#8hU^wMT+S",
         saveUninitialized: true,
         resave: true,
         store: new Mongostore({ url: dbString })
