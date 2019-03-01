@@ -100,6 +100,10 @@ router.delete('/user', (req, res, next) => {
         }).catch(next);
 });
 
+// rewrite this endpoint, it's here for testing purpose
+router.get('/user', userAuth, (req, res, next) => {
+    res.status(200).end();
+});
 
 
 

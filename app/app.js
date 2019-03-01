@@ -47,13 +47,14 @@ if (isLocal) {
         secret: "secret",
         saveUninitialized: true,
         resave: true,
+        rolling: true,
         store: new Mongostore({ url: dbString })
     }));
 } else if (isDevelopment || isProduction) {
     app.set('trust proxy', 1);
     app.use(session({ 
         cookie: {
-          maxAge: 600000,
+          maxAge: 172800000, /* 48hr duration */
           secure: true,
           sameSite: false,
           httpOnly: false,
@@ -63,6 +64,7 @@ if (isLocal) {
         secret: "B!DP7d#8hU^wMT+S",
         saveUninitialized: true,
         resave: true,
+        rolling: true,
         store: new Mongostore({ url: dbString })
     }));
 }

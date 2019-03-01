@@ -1,19 +1,6 @@
-
 function isAuthenticated (req, res, next) {
-    
-    next();
-
-    /*
-    console.log(req.session.cookie);
-    console.log(req.session.passport);
-    console.log(req.user);
-    
-    if (!req.session.passport.user) {
-        console.log('unauthorized user');
-        res.status(401).json({ message: 'unauthoized user'});
-    } else {
-        next();
-    } */
+    console.log(req.session);
+    !req.user? res.status(401).json({ message: 'unauthorized' }) : next();
 }
 
 module.exports = isAuthenticated;
