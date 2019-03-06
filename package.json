@@ -28,6 +28,7 @@
   "devDependencies": {
     "errorhandler": "^1.5.0",
     "jest": "^24.1.0",
-    "supertest": "^3.4.2"
+    "supertest": "^3.4.2",
+    "supertest-session": "^3.3.0"
   }
 }

@@ -1,13 +1,16 @@
 const request = require('supertest'),
+    session = require('supertest-session'),
     app = require('../../../app'),
-    //mongoose = require('mongoose'),
     testCredentical = require('../../../config/test/usercredential');
 
 
 describe('test user apis', () => {
 
+    let testSession = null;
+
     beforeAll(() => {
         console.log('Jest start testing user endpoints');
+        testSession = session(app);
     });
     
     afterAll( async () => {
@@ -16,7 +19,7 @@ describe('test user apis', () => {
     
     // testing will create actual account in database with testing credential
     test('Test sign-up will success', () => {
-        return request(app).post('/user')
+        return testSession.post('/user')
             .set('X-API-Key', testCredentical.apikey)
             .send({ 
                 email: testCredentical.success.email,
@@ -30,7 +33,7 @@ describe('test user apis', () => {
     });
 
     test('Test sign-up will fail as email already exist', () => {
-        return request(app).post('/user')
+        return testSession.post('/user')
             .set('X-API-Key', testCredentical.apikey)
             .send({
                 email: testCredentical.success.email,
@@ -44,7 +47,7 @@ describe('test user apis', () => {
     });
 
     test('Test sign-up will fail as email addrss format is invalid', () => {
-        return request(app).post('/user')
+        return testSession.post('/user')
             .set('X-API-Key', testCredentical.apikey)
             .send({
                 email: testCredentical.fail.invalidEmail,
@@ -58,19 +61,27 @@ describe('test user apis', () => {
     });
 
     test('Test sign-in will success', () => {
-        return request(app).post('/user/login')
+        return testSession.post('/user/login')
             .set('X-API-Key', testCredentical.apikey)
             .send({
                 email: testCredentical.success.email,
                 password: testCredentical.success.password
-            })
+            }, { withCredentials: true })
+            .then((response) => {
+                expect(response.status).toBe(200);
+            });
+    });
+
+    test('Test sign-out will successful', () => {
+        return testSession.get('/user/logout')
+            .set('X-API-Key', testCredentical.apikey)
             .then((response) => {
                 expect(response.status).toBe(200);
             });
     });
 
     test('Test sign-in will fail', () => {
-        return request(app).post('/user/login')
+        return testSession.post('/user/login')
             .set('X-API-Key', testCredentical.apikey)
             .send({
                 email: testCredentical.success.email,
@@ -81,12 +92,18 @@ describe('test user apis', () => {
             });
     });
 
-    //test sign-out 
+    test('Test sign-out will fail with 401', () => {
+        return testSession.get('/user/logout')
+            .set('X-API-Key', testCredentical.apikey)
+            .then((response) => {
+                expect(response.status).toBe(401);
+            });
+    });
 
-    //test delete user
-    
+
+    //test delete user    
     test('Test user will be deleted', () => {
-        return request(app).delete('/user')
+        return testSession.delete('/user')
             .set('X-API-Key', testCredentical.apikey)
             .send({
                 email: testCredentical.success.email
@@ -97,7 +114,7 @@ describe('test user apis', () => {
     });
 
     test('Test delete user will fail with 204 ', () => {
-        return request(app).delete('/user')
+        return testSession.delete('/user')
             .set('X-API-Key', testCredentical.apikey)
             .send({
                 email: testCredentical.fail.email
@@ -108,7 +125,7 @@ describe('test user apis', () => {
     });
 
     test('Test delete user will fail with 400', () => {
-        return request(app).delete('/user')
+        return testSession.delete('/user')
             .set('X-API-Key', testCredentical.apikey)
             .send({
                 firstname: testCredentical.success.firstname
