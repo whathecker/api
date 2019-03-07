@@ -11,7 +11,7 @@ let subscriptionSchema = new Schema({
     },
     creationDate: { type: Date, default: Date.now },
     endDate: { type: Date },
-    package: { type: Schema.Types.ObjectId, ref: 'Package' },
+    package: { type: Schema.Types.ObjectId, ref: 'SubscriptionBox' },
     user: { type: Schema.Types.ObjectId, ref: 'User'},
     orders: [ { type: Schema.Types.ObjectId, ref: 'Order' }]
 });
