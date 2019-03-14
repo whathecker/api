@@ -18,7 +18,7 @@ let productSchema = new Schema({
     brandCode: { type: String },
     volume: { type: String },
     skinType: { type: String },
-    priceData : [pricesSchema]
+    prices : [pricesSchema]
 });
 
 productSchema.plugin(uniqueValidator);
@@ -40,7 +40,7 @@ Product.prototype.createProductId = (brandCode, categoryCode) => {
 
 Product.prototype.findCategory = (categoryInput, productIdPrefixes) => {
     for (let category in productIdPrefixes.categoryPrefix) {
-        console.log(category);
+        //console.log(category);
         if (categoryInput === category) {
             return category;
         }
@@ -69,6 +69,47 @@ Product.prototype.findBrandCode = (brandNameInput, productIdPrefixes) => {
         throw new Error('Invalid Param: brandNameInput cannot be blank');
     }
     return productIdPrefixes.brandPrefix[brandNameInput]; 
+}
+
+Product.prototype.isSkintypeValid = (skinTypeInput) => {
+    const acceptedSkinTypeValues = ['normal', 'dry', 'oily'];
+    for (let i = 0 ; i < acceptedSkinTypeValues.length; i++) {
+        if (skinTypeInput === acceptedSkinTypeValues[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+Product.prototype.isPriceDataValid = (priceInput) => {
+    let isInputValid = true;
+
+    priceInput.forEach((price) => {
+        for (const prop in price) {
+            console.log(prop);
+
+            // technical dept alert!!! make it dynamic later
+            if (prop === 'region') {
+                if (price[prop] !== 'eu') {
+                    console.log(price[prop]);
+                    isInputValid = false;
+                }
+            }
+            // technical dept alert!!! make it dynamic later
+            if (prop === 'currency') {
+                if (price[prop] !== 'euro') {
+                    console.log(price[prop]);
+                    isInputValid = false;
+                }    
+            }
+            // technical dept alert!! add price format validation
+            /*
+            if (prop === 'price') {
+
+            } */
+        }
+    });
+    return isInputValid;
 }
 
 

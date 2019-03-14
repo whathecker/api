@@ -39,7 +39,30 @@ describe('test product apis', () => {
             expect(response.status).toBe(500);
         });
     });
-
+    test('Test product creation will fail due to wrong skinType', () => {
+        return request(app).post('/product')
+        .set('X-API-Key', testData.apikey)
+        .send(testData.failWrongSkinType)
+        .then((response) => {
+            expect(response.status).toBe(422);
+        });
+    });
+    test('Test product creation will fail due to wrong region in price', () => {
+        return request(app).post('/product')
+        .set('X-API-Key', testData.apikey)
+        .send(testData.failRegionInPrice)
+        .then((response) => {
+            expect(response.status).toBe(422);
+        });
+    });
+    test('Test product creation will fail due to wrong currency in price', () => {
+        return request(app).post('/product')
+        .set('X-API-Key', testData.apikey)
+        .send(testData.failCurrencyInPrice)
+        .then((response) => {
+            expect(response.status).toBe(422);
+        });
+    });
     test('Test product get will success', () => {
         return request(app).get(`/product/${createdProduct.id}`)
         .set('X-API-Key', testData.apikey)
@@ -47,7 +70,6 @@ describe('test product apis', () => {
             expect(response.status).toBe(200);
         });
     });
-
     test('Test product get will fail as param is missing', () => {
         return request(app).get(`/product`)
         .set('X-API-Key', testData.apikey)

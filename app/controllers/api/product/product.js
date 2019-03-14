@@ -20,19 +20,39 @@ router.post('/', (req, res, next) => {
     product.brandCode = product.findBrandCode(product.brand, productIdPrefixes);
 
     if (req.body.volume) {
+        // set accepted values
         product.volume = req.body.volume;
     }
     if (req.body.skinType) {
-        product.skinType = req.body.skinType;
-    }
-    // check how to update array 
-    product.priceData = req.body.priceData;
 
+        if (product.isSkintypeValid(req.body.skinType)) {
+            product.skinType = req.body.skinType 
+        } else {
+            return res.status(422).json({ message: 'invalid data' });
+        }
+         
+    }
+    if (req.body.prices) {
+
+        if (!Array.isArray(req.body.prices)) {
+            return res.status(422).json({ message: 'invalid data' });
+        }
+
+        if (product.isPriceDataValid(req.body.prices)) {
+            product.prices = req.body.prices
+        } else {
+            return res.status(422).json({ message: 'invalid data' });
+        }
+        
+    }
+    
     product.id = product.createProductId(product.brandCode, product.categoryCode);
+
     product.save().then((product) => {
         logger.info(`new product has created: ${product}`);
         return res.status(201).send(product);
     }).catch(next);
+
 });
 
 router.put('/:id', (req, res, next) => {

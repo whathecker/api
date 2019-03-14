@@ -6,12 +6,19 @@ let itemSchema = new Schema({
     product: { type: Schema.Types.ObjectId, ref: 'Product' }
 }, { _id: false });
 
+let pricesSchema = new Schema({
+    region: { type: String, lowercase: true },
+    currency: { type: String, lowercase: true },
+    price: { type: String, default: "0" }
+}, { _id: false });
+
 let subscriptionBoxSchema = new Schema({
     id: { type: String, required: true, unique: true, index: true },
     name: { type: String, required: true },
     boxType: { type: String, required: true },
     boxTypeCode: { type: String, required: true },
-    items: [itemSchema]
+    items: [itemSchema],
+    prices: [pricesSchema]
 });
 
 subscriptionBoxSchema.plugin(uniqueValidator);
