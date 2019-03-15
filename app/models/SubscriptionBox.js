@@ -58,7 +58,37 @@ SubscriptionBox.prototype.createPackageId = (skinTypeCode) => {
 
     let packageId = '';
     return packageId.concat('PK', skinTypeCode, create5DigitInteger());
-
 }
 
+
+SubscriptionBox.prototype.isPriceDataValid = (priceInput) => {
+    let isInputValid = true;
+
+    priceInput.forEach((price) => {
+        for (const prop in price) {
+            console.log(prop);
+
+            // technical dept alert!!! make it dynamic later
+            if (prop === 'region') {
+                if (price[prop] !== 'eu') {
+                    console.log(price[prop]);
+                    isInputValid = false;
+                }
+            }
+            // technical dept alert!!! make it dynamic later
+            if (prop === 'currency') {
+                if (price[prop] !== 'euro') {
+                    console.log(price[prop]);
+                    isInputValid = false;
+                }    
+            }
+            // technical dept alert!! add price format validation
+            /*
+            if (prop === 'price') {
+
+            } */
+        }
+    });
+    return isInputValid;
+}
 module.exports = SubscriptionBox;

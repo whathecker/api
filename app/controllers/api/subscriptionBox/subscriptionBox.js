@@ -22,6 +22,7 @@ router.post('/', (req, res, next) => {
     if (req.body.items) {
  
         if (Array.isArray(req.body.items) === false) {
+            logger.warn(`package create request has rejected as items param isn't array`);
             return res.status(400).json({ message: 'bad request' });
         } 
 
@@ -47,11 +48,30 @@ router.post('/', (req, res, next) => {
         }).catch(next);
     } 
 
+    if (req.body.prices) {
+        if (!Array.isArray(req.body.prices)) {
+            logger.warn(`package create request has rejected as prices param isn't array`);
+            return res.status(422).json({ message: 'invalid data' });
+        }  
+
+        if (subscriptionBox.isPriceDataValid(req.body.prices)) {
+            subscriptionBox.prices = req.body.prices
+        } else {
+            logger.warn(`package create request has rejected as prices param isn't valid`);
+            return res.status(422).json({ message: 'invalid data' });
+        }
+    }
+
     subscriptionBox.save().then((subscriptionBox) => {
         logger.info(`new package has created: ${subscriptionBox}`);
         return res.status(201).send(subscriptionBox);
     }).catch(next);
 });
+
+router.get('/', (req, res, next) => {
+
+});
+
 
 router.delete('/:id', (req, res, next) => {
     SubscriptionBox.findOneAndRemove({ id: req.params.id })
