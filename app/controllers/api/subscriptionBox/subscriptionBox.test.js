@@ -15,7 +15,7 @@ describe('test package apis', () => {
     });
 
     test('Test package creation will success', () => {
-        return request(app).post('/subscriptionBox')
+        return request(app).post('/subscriptionBoxes')
         .set('X-API-Key', testData.apikey)
         .send(testData.success)
         .then((response) => {
@@ -24,9 +24,17 @@ describe('test package apis', () => {
             expect(response.status).toBe(201);
         });
     });
+    test('Test package creation will fail invalidItemcode', () => {
+        return request(app).post('/subscriptionBoxes')
+        .set('X-API-Key', testData.apikey)
+        .send(testData.failInvalidItemcode)
+        .then((response) => {
+            expect(response.status).toBe(500);
+        });
+    });
 
     test('Test package creation will fail as wrong box type is used', () => {
-        return request(app).post('/subscriptionBox')
+        return request(app).post('/subscriptionBoxes')
         .set('X-API-Key', testData.apikey)
         .send(testData.failWrongBoxType)
         .then((response) => {
@@ -34,7 +42,7 @@ describe('test package apis', () => {
         });
     });
     test('Test package creation will fail as box type is missed', () => {
-        return request(app).post('/subscriptionBox')
+        return request(app).post('/subscriptionBoxes')
         .set('X-API-Key', testData.apikey)
         .send(testData.failMissBoxType)
         .then((response) => {
@@ -42,7 +50,7 @@ describe('test package apis', () => {
         });
     });
     test('Test package creation will fail as box name is missed', () => {
-        return request(app).post('/subscriptionBox')
+        return request(app).post('/subscriptionBoxes')
         .set('X-API-Key', testData.apikey)
         .send(testData.failMissBoxName)
         .then((response) => {
@@ -50,7 +58,7 @@ describe('test package apis', () => {
         });
     });
     test('Test package creation will fail due to invalid price data', () => {
-        return request(app).post('/subscriptionBox')
+        return request(app).post('/subscriptionBoxes')
         .set('X-API-Key', testData.apikey)
         .send(testData.failInvalidPriceData)
         .then((response) => {
@@ -58,8 +66,15 @@ describe('test package apis', () => {
         });
     });
 
-    test('Test package delete request will failed as param is invalid', () => {
-        return request(app).delete(`/subscriptionBox/someinvalidparam`)
+    test('package get request will success', () => {
+        return request(app).get('/subscriptionBoxes')
+        .set('X-API-Key', testData.apikey)
+        .then((response)=>{
+            expect(response.status).toBe(200);
+        })
+    })
+    test('Test package delete request will fail as param is invalid', () => {
+        return request(app).delete(`/subscriptionBoxes/someinvalidparam`)
             .set('X-API-Key', testData.apikey)
             .then((response) => {
                 expect(response.status).toBe(204);
@@ -67,7 +82,9 @@ describe('test package apis', () => {
     });
 
     test('Test package delete request will success', () => {
-        return request(app).delete(`/subscriptionBox/${createdBox.id}`)
+        console.log(createdBox);
+        console.log(createdBox.id);
+        return request(app).delete(`/subscriptionBoxes/${createdBox.id}`)
             .set('X-API-Key', testData.apikey)
             .then((response) => {
                 expect(response.status).toBe(200);

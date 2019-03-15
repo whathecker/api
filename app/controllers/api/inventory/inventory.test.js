@@ -13,7 +13,7 @@ describe('test inventory apis', () => {
     });
 
     test('Test product creation will success', () => {
-        return request(app).post('/product')
+        return request(app).post('/products')
         .set('X-API-Key', testData.apikey)
         .send(testData.createProductSuccess)
         .then((response) => {
@@ -109,7 +109,7 @@ describe('test inventory apis', () => {
     });
 
     test('Test product delete will success', () => {
-        return request(app).delete(`/product/${createdProduct.id}`)
+        return request(app).delete(`/products/${createdProduct.id}`)
         .set('X-API-Key', testData.apikey)
         .then((response) => {
             expect(response.status).toBe(200);

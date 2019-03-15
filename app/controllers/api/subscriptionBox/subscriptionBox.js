@@ -8,6 +8,7 @@ router.post('/', (req, res, next) => {
 
     if (!req.body.boxType || !req.body.boxName) {
         logger.warn(`package create request has rejected as param is missing`);
+        // to refactor to have more structured error object
         return res.status(400).json({ message: 'bad request' });
     }
 
@@ -16,13 +17,34 @@ router.post('/', (req, res, next) => {
     subscriptionBox.boxTypeCode = subscriptionBox.findPackageTypeCode(subscriptionBox.boxType, subscriptionBoxIdPrefixes);
     subscriptionBox.id = subscriptionBox.createPackageId(subscriptionBox.boxTypeCode);
     subscriptionBox.name = req.body.boxName;
-
+    subscriptionBox.items = [];
+    console.log(subscriptionBox.items);
     let queries = [];
     
+    
+
+    if (req.body.prices) {
+        if (!Array.isArray(req.body.prices)) {
+            logger.warn(`package create request has rejected as prices param isn't array`);
+            // to refactor to have more structured error object
+            return res.status(422).json({ message: 'invalid data' });
+        }  
+
+        if (subscriptionBox.isPriceDataValid(req.body.prices)) {
+            subscriptionBox.prices = req.body.prices
+        } else {
+            logger.warn(`package create request has rejected as prices param isn't valid`);
+            // to refactor to have more structured error object
+            return res.status(422).json({ message: 'invalid data' });
+        }
+    }
+
+
     if (req.body.items) {
  
         if (Array.isArray(req.body.items) === false) {
             logger.warn(`package create request has rejected as items param isn't array`);
+            // to refactor to have more structured error object
             return res.status(400).json({ message: 'bad request' });
         } 
 
@@ -37,38 +59,50 @@ router.post('/', (req, res, next) => {
 
         Promise.all(queries).then((products) => {
             //console.log('resolved array of products');
-            console.log(products);
+            //console.log(products);
 
             for (let i = 0; i < products.length; i++) {
                 let item = {};
-                item.product = products[i]._id;
-                subscriptionBox.items.push(item);
+                item._id = products[i]._id;
+                //console.log(item);
+                
+                subscriptionBox.items.set(i, item);
+                
+                //subscriptionBox.items.push(item);
+                
             }
+
+            //console.log(subscriptionBox.items);
+            subscriptionBox.markModified('items');
+            //console.log(subscriptionBox);
+
+            subscriptionBox.save().then((subscriptionBox) => {
+                logger.info(`new package has created: ${subscriptionBox.id}`);
+                return res.status(201).send(subscriptionBox);
+            }).catch(next);
 
         }).catch(next);
     } 
-
-    if (req.body.prices) {
-        if (!Array.isArray(req.body.prices)) {
-            logger.warn(`package create request has rejected as prices param isn't array`);
-            return res.status(422).json({ message: 'invalid data' });
-        }  
-
-        if (subscriptionBox.isPriceDataValid(req.body.prices)) {
-            subscriptionBox.prices = req.body.prices
-        } else {
-            logger.warn(`package create request has rejected as prices param isn't valid`);
-            return res.status(422).json({ message: 'invalid data' });
-        }
-    }
-
-    subscriptionBox.save().then((subscriptionBox) => {
-        logger.info(`new package has created: ${subscriptionBox}`);
-        return res.status(201).send(subscriptionBox);
-    }).catch(next);
+    
+    
 });
 
 router.get('/', (req, res, next) => {
+    // add query param to populate item detail
+    SubscriptionBox.find()
+        .then((data) => {
+            if (!data) {
+                logger.warn('request was accepted but no data is returned');
+                return res.status(204).json({ message: 'no data' });
+            }
+            //populate items sub document before sending response to client
+            logger.info(`request has succeed`);
+            return res.status(200).json(data);
+        })
+        .catch(next);
+});
+
+router.get('/:id', (req, res, next) => {
 
 });
 
@@ -77,10 +111,10 @@ router.delete('/:id', (req, res, next) => {
     SubscriptionBox.findOneAndRemove({ id: req.params.id })
         .then((subscriptionBox) => {
             if (!subscriptionBox) {
-                logger.warn('package delete request has rejected as product is unknown')
-                return res.status(204).json({ message: 'can not find package' })
+                logger.warn('subscriptionBox delete request has rejected as product is unknown');
+                return res.status(204).json({ message: 'can not find subscriptionBox' });
             }
-            logger.info(`package delete request has succeed: ${subscriptionBox}`);
+            logger.info(`subscriptionBox delete request has succeed: ${subscriptionBox}`);
             return res.status(200).json(subscriptionBox);
         }).catch(next);
 });

@@ -2,9 +2,10 @@ const mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     uniqueValidator = require('mongoose-unique-validator');
 
+/*
 let itemSchema = new Schema({
     product: { type: Schema.Types.ObjectId, ref: 'Product' }
-}, { _id: false });
+}, { _id: false }); */
 
 let pricesSchema = new Schema({
     region: { type: String, lowercase: true },
@@ -17,7 +18,7 @@ let subscriptionBoxSchema = new Schema({
     name: { type: String, required: true },
     boxType: { type: String, required: true },
     boxTypeCode: { type: String, required: true },
-    items: [itemSchema],
+    items: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
     prices: [pricesSchema]
 });
 

@@ -13,7 +13,7 @@ describe('test product apis', () => {
     });
 
     test('Test product creation will success', () => {
-        return request(app).post('/product')
+        return request(app).post('/products')
         .set('X-API-Key', testData.apikey)
         .send(testData.success)
         .then((response) => {
@@ -23,7 +23,7 @@ describe('test product apis', () => {
     });
 
     test('Test product creation will fail due to wrong category name', () => {
-        return request(app).post('/product')
+        return request(app).post('/products')
         .set('X-API-Key', testData.apikey)
         .send(testData.failWrongCategory)
         .then((response) => {
@@ -32,7 +32,7 @@ describe('test product apis', () => {
     });
 
     test('Test product creation will fail due to wrong brand name', () => {
-        return request(app).post('/product')
+        return request(app).post('/products')
         .set('X-API-Key', testData.apikey)
         .send(testData.failWrongBrand)
         .then((response) => {
@@ -40,7 +40,7 @@ describe('test product apis', () => {
         });
     });
     test('Test product creation will fail due to wrong skinType', () => {
-        return request(app).post('/product')
+        return request(app).post('/products')
         .set('X-API-Key', testData.apikey)
         .send(testData.failWrongSkinType)
         .then((response) => {
@@ -48,7 +48,7 @@ describe('test product apis', () => {
         });
     });
     test('Test product creation will fail due to wrong region in price', () => {
-        return request(app).post('/product')
+        return request(app).post('/products')
         .set('X-API-Key', testData.apikey)
         .send(testData.failRegionInPrice)
         .then((response) => {
@@ -56,7 +56,7 @@ describe('test product apis', () => {
         });
     });
     test('Test product creation will fail due to wrong currency in price', () => {
-        return request(app).post('/product')
+        return request(app).post('/products')
         .set('X-API-Key', testData.apikey)
         .send(testData.failCurrencyInPrice)
         .then((response) => {
@@ -64,14 +64,14 @@ describe('test product apis', () => {
         });
     });
     test('Test product get will success', () => {
-        return request(app).get(`/product/${createdProduct.id}`)
+        return request(app).get(`/products/${createdProduct.id}`)
         .set('X-API-Key', testData.apikey)
         .then((response) => {
             expect(response.status).toBe(200);
         });
     });
     test('Test product get will fail as param is missing', () => {
-        return request(app).get(`/product`)
+        return request(app).get(`/products`)
         .set('X-API-Key', testData.apikey)
         .then((response) => {
             expect(response.status).toBe(404);
@@ -80,7 +80,7 @@ describe('test product apis', () => {
 
     
     test('Test product get will fail as param is unknown', () => {
-        return request(app).get(`/product/id`)
+        return request(app).get(`/products/id`)
         .set('X-API-Key', testData.apikey)
         .then((response) => {
             expect(response.status).toBe(204);
@@ -88,7 +88,7 @@ describe('test product apis', () => {
     });
 
     test('Test product update will success', () => {
-        return request(app).put(`/product/${createdProduct.id}`)
+        return request(app).put(`/products/${createdProduct.id}`)
         .set('X-API-Key', testData.apikey)
         .send({
             update: {
@@ -101,7 +101,7 @@ describe('test product apis', () => {
     });
 
     test('Test product get will success with new detail', () => {
-        return request(app).get(`/product/${createdProduct.id}`)
+        return request(app).get(`/products/${createdProduct.id}`)
         .set('X-API-Key', testData.apikey)
         .then((response) => {
             expect(response.body.name).toBe("this is new name");
@@ -109,7 +109,7 @@ describe('test product apis', () => {
     });
 
     test('Test product delete will fail as param is unknown', () => {
-        return request(app).delete(`/product/fakeid`)
+        return request(app).delete(`/products/fakeid`)
         .set('X-API-Key', testData.apikey)
         .then((response) => {
             expect(response.status).toBe(204);
@@ -117,7 +117,7 @@ describe('test product apis', () => {
     });
 
     test('Test product delete will fail as param is missing', () => {
-        return request(app).delete('/product')
+        return request(app).delete('/products')
         .set('X-API-Key', testData.apikey)
         .then((response) => {
             expect(response.status).toBe(404);
@@ -125,7 +125,7 @@ describe('test product apis', () => {
     });
 
     test('Test product delete will success', () => {
-        return request(app).delete(`/product/${createdProduct.id}`)
+        return request(app).delete(`/products/${createdProduct.id}`)
         .set('X-API-Key', testData.apikey)
         .then((response) => {
             expect(response.status).toBe(200);
