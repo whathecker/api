@@ -106,8 +106,9 @@ router.delete('/user', (req, res, next) => {
 });
 
 // endpoint to check if email is associated with account or not
-router.get('/user/email',  (req, res, next) => {
+router.post('/user/email',  (req, res, next) => {
     // find if account exist with email address
+    console.log(req.body.email);
     if (req.body.email) {
         User.findOne({ email: req.body.email })
             .then((user) => {
@@ -121,7 +122,7 @@ router.get('/user/email',  (req, res, next) => {
     } else {
         return res.status(400).json({ message: 'bad request' });
     } 
-});
+});     
 
 
 
