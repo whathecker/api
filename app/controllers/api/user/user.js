@@ -86,7 +86,7 @@ router.post('/user', (req, res, next) => {
 });
 
 
-
+// to add admin protection for this endpoint
 router.delete('/user', (req, res, next) => {
 
     if (!req.body.email) {
@@ -105,9 +105,22 @@ router.delete('/user', (req, res, next) => {
         }).catch(next);
 });
 
-// rewrite this endpoint, it's here for testing purpose
-router.get('/user', userAuth, (req, res, next) => {
-    res.status(200).end();
+// endpoint to check if email is associated with account or not
+router.get('/user/email',  (req, res, next) => {
+    // find if account exist with email address
+    if (req.body.email) {
+        User.findOne({ email: req.body.email })
+            .then((user) => {
+                if (!user) {
+                    logger.warn('request was okay, but no user has found');
+                    return res.status(204).json({ message: 'cannot find user' });
+                }
+                logger.info('request has succeed');
+                return res.status(200).json({ message: 'email being used' });
+            }).catch(next);
+    } else {
+        return res.status(400).json({ message: 'bad request' });
+    } 
 });
 
 

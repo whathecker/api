@@ -100,6 +100,35 @@ describe('test user apis', () => {
             });
     });
 
+    test('/user/email return 200', () => {
+        return request(app).get('/user/email')
+            .set('X-API-Key', testCredentical.apikey)
+            .send({
+                email: testCredentical.success.email
+            })
+            .then((response) => {
+                expect(response.status).toBe(200);
+            })
+    });
+
+    test('/user/email return 204', () => {
+        return request(app).get('/user/email')
+            .set('X-API-Key', testCredentical.apikey)
+            .send({
+                email: 'some non existing email'
+            })
+            .then((response) => {
+                expect(response.status).toBe(204);
+            })
+    });
+
+    test('/user/email return 400 as email param is missing', () => {
+        return request(app).get('/user/email')
+            .set('X-API-Key', testCredentical.apikey)
+            .then((response) => {
+                expect(response.status).toBe(400);
+            })
+    });
 
     //test delete user    
     test('Test user will be deleted', () => {
