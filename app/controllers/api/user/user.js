@@ -5,6 +5,51 @@ const crypto = require('crypto');
 const User = require('../../../models/User');
 const logger = require('../../../utils/logger');
 const userAuth = require('../../../middlewares/auth');
+const connector = require('../../../utils/connector');
+const dbString = connector.getDBString();
+const session = require('express-session');
+const Mongostore = require('connect-mongo')(session);
+
+const isLocal = process.env.NODE_ENV === "local";
+const isDevelopment = process.env.NODE_ENV === "development";
+const isProduction = process.env.NODE_ENV === "production";
+
+if (isLocal) {
+    router.use(session({ 
+        cookie: {
+          maxAge: 600000,
+          secure: false,
+          sameSite: false,
+          httpOnly: false
+        },
+        name: 'session',
+        secret: "secret",
+        saveUninitialized: true,
+        resave: true,
+        rolling: true,
+        store: new Mongostore({ url: dbString })
+    }));
+} else if (isDevelopment || isProduction) {
+    router.set('trust proxy', 1);
+    router.use(session({ 
+        cookie: {
+          maxAge: 172800000, // 48hr duration 
+          secure: true,
+          sameSite: false,
+          httpOnly: false,
+          domain: '.hellochokchok.com'
+        },
+        name: 'session',
+        secret: "B!DP7d#8hU^wMT+S",
+        saveUninitialized: true,
+        resave: true,
+        rolling: true,
+        store: new Mongostore({ url: dbString })
+    }));
+}
+
+router.use(passport.initialize());
+router.use(passport.session());
 
 // serialize & deserialize authenticated user
 passport.serializeUser((user, done) =>{
@@ -106,6 +151,7 @@ router.delete('/user', (req, res, next) => {
 });
 
 // endpoint to check if email is associated with account or not
+/*
 router.post('/user/email',  (req, res, next) => {
     // find if account exist with email address
     console.log(req.body.email);
@@ -122,7 +168,7 @@ router.post('/user/email',  (req, res, next) => {
     } else {
         return res.status(400).json({ message: 'bad request' });
     } 
-});     
+});     */
 
 
 

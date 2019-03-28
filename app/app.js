@@ -21,8 +21,8 @@ mongoose.connect(dbString, (err) => {
     console.log(`successfully connected to database`);
 }); 
 
-const isLocal = process.env.NODE_ENV === "local";
-const isDevelopment = process.env.NODE_ENV === "development";
+//const isLocal = process.env.NODE_ENV === "local";
+//const isDevelopment = process.env.NODE_ENV === "development";
 const isProduction = process.env.NODE_ENV === "production";
 
 const corsOptions = {
@@ -34,7 +34,7 @@ const corsOptions = {
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(cors(corsOptions));
-
+/*
 if (isLocal) {
     app.use(session({ 
         cookie: {
@@ -54,7 +54,7 @@ if (isLocal) {
     app.set('trust proxy', 1);
     app.use(session({ 
         cookie: {
-          maxAge: 172800000, /* 48hr duration */
+          maxAge: 172800000, // 48hr duration 
           secure: true,
           sameSite: false,
           httpOnly: false,
@@ -67,12 +67,13 @@ if (isLocal) {
         rolling: true,
         store: new Mongostore({ url: dbString })
     }));
-}
+} */
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+/*
 app.use(passport.initialize());
-app.use(passport.session()); 
+app.use(passport.session()); */
 
 
 // api authentication
