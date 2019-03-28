@@ -24,7 +24,7 @@ if (isLocal) {
         },
         name: 'session',
         secret: "secret",
-        saveUninitialized: true,
+        saveUninitialized: false,
         resave: true,
         rolling: true,
         store: new Mongostore({ url: dbString })
@@ -41,7 +41,7 @@ if (isLocal) {
         },
         name: 'session',
         secret: "B!DP7d#8hU^wMT+S",
-        saveUninitialized: true,
+        saveUninitialized: false,
         resave: true,
         rolling: true,
         store: new Mongostore({ url: dbString })
