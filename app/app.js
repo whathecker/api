@@ -22,7 +22,7 @@ mongoose.connect(dbString, (err) => {
 }); 
 
 //const isLocal = process.env.NODE_ENV === "local";
-//const isDevelopment = process.env.NODE_ENV === "development";
+const isDevelopment = process.env.NODE_ENV === "development";
 const isProduction = process.env.NODE_ENV === "production";
 
 const corsOptions = {
@@ -34,6 +34,7 @@ const corsOptions = {
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(cors(corsOptions));
+(isDevelopment || isProduction)? app.set('trust proxy', 1): null;
 /*
 if (isLocal) {
     app.use(session({ 

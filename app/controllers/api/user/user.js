@@ -30,7 +30,7 @@ if (isLocal) {
         store: new Mongostore({ url: dbString })
     }));
 } else if (isDevelopment || isProduction) {
-    router.set('trust proxy', 1);
+    //router.set('trust proxy', 1);
     router.use(session({ 
         cookie: {
           maxAge: 172800000, // 48hr duration 
