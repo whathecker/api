@@ -30,7 +30,6 @@ if (isLocal) {
         store: new Mongostore({ url: dbString })
     }));
 } else if (isDevelopment || isProduction) {
-    //router.set('trust proxy', 1);
     router.use(session({ 
         cookie: {
           maxAge: 172800000, // 48hr duration 
@@ -66,7 +65,7 @@ passport.deserializeUser((id, done) => {
 
 
 // configure passport local strategy
-passport.use( new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, (email, password, done) => {
+passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, (email, password, done) => {
     
     User.findOne({ email: email }, (err, user)=> {
         if (err) { 
@@ -81,8 +80,7 @@ passport.use( new LocalStrategy({ usernameField: 'email', passwordField: 'passwo
         logger.info('login success');
         return done(null, user);
     }); 
-}
-)); 
+})); 
 
 
 router.post('/user/login', (req, res, next) => {
