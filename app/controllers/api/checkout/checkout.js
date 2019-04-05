@@ -10,4 +10,4 @@ router.post('/paymentOptions', getPaymentMethods);
 
 router.post('/payment', completeCheckout);
 
-module.exports = router;
+module.exports = router;    

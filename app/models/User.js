@@ -20,6 +20,8 @@ let userSchema = new Schema({
     salt: { type: String },
     firstName: { type: String },
     lastName: { type: String },
+    firstNameInBilling: { type: String },
+    lastNameInBilling: { type: String },
     shippingAddress: [ { type: String /* To refactor to Object */ } ],
     billingAddress: { type: String /* To refactor to object */ },
     phoneNumber: { type: String },
@@ -29,6 +31,7 @@ let userSchema = new Schema({
     lastModified: { type: Date, default: Date.now },
     lastLogin: { type: Date },
     isEmailVerified: { type: Boolean, default: false },
+    newsletterOptin: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false }
 });
 
