@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const crypto = require('crypto');
+//const crypto = require('crypto');
 const User = require('../../../models/User');
 const logger = require('../../../utils/logger');
 const userAuth = require('../../../middlewares/auth');
@@ -9,6 +9,7 @@ const connector = require('../../../utils/connector');
 const dbString = connector.getDBString();
 const session = require('express-session');
 const Mongostore = require('connect-mongo')(session);
+const createUser = require('../../../helpers/user/createUser');
 
 const isLocal = process.env.NODE_ENV === "local";
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -104,29 +105,7 @@ router.get('/user/logout', userAuth, (req, res, next) => {
 });
 
 
-router.post('/user', (req, res, next) => {
-
-    User.findOne({ email: req.body.email }).then((user) => {
-        if (user) {
-            logger.info('sign-up rejected due to duplicated email address');
-            return res.status(202).json({ message : "duplicated email address"});
-        } else {
-            const user = new User();
-            user.email = req.body.email;
-            user.salt = crypto.randomBytes(64).toString('hex');
-            user.hash = user.setPassword(user, req.body.password);
-            user.firstname = req.body.firstname;
-            user.lastname = req.body.lastname;
-
-            user.save().then((user) =>{
-                logger.info('new user account has created');
-                return res.status(201).send(user);
-            }).catch(next);
-        }
-
-    }).catch(next);
-
-});
+router.post('/user', createUser);
 
 
 // to add admin protection for this endpoint
