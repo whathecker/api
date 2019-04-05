@@ -18,8 +18,8 @@ let userSchema = new Schema({
         required: [ true, "password can't be blank" ] 
     },
     salt: { type: String },
-    firstName: { type: String, lowercase: true },
-    lastName: { type: String, lowercase: true },
+    firstName: { type: String },
+    lastName: { type: String },
     shippingAddress: [ { type: String /* To refactor to Object */ } ],
     billingAddress: { type: String /* To refactor to object */ },
     phoneNumber: { type: String },
