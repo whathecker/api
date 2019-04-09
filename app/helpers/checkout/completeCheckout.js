@@ -1,11 +1,129 @@
 const User = require('../../models/User');
+const Address = require('../../models/Address');
+const Billing = require('../../models/Billing');
+const Subscription = require('../../models/Subscription');
+const Order = require('../../models/Order');
 const crypto = require('crypto');
 const logger = require('../../utils/logger');
+const adyenAxios = require('../../../axios-adyen');
+
 
 
 function completeCheckout (req, res, next) {
-    console.log(req.body);
-    return res.status(200).end();
+    
+    const payloadForUser = req.body.user;
+    const payloadPackage = req.body.package;
+    const paidBy = req.body.paidBy;
+
+    // construct new new user
+    let newUser = new User();   
+    newUser.email = payloadForUser.email;
+    newUser.salt = crypto.randomBytes(64).toString('hex');
+    newUser.hash = newUser.setPassword(newUser, payloadForUser.password);
+    newUser.firstName = payloadForUser.firstName;
+    newUser.lastName = payloadForUser.lastName;
+    newUser.mobileNumber = payloadForUser.mobileNumber;
+    
+    // construct new billing addresses
+    let billingAddress = new Address();
+    billingAddress.firstname = payloadForUser.billingAddress.firstName;
+    billingAddress.lastName = payloadForUser.billingAddress.lastName;
+    billingAddress.houseNumber = payloadForUser.billingAddress.houseNumber;
+    billingAddress.houseNumberAdd = payloadForUser.billingAddress.houseNumberAdd;
+    billingAddress.mobileNumber = payloadForUser.billingAddress.mobileNumber;
+    billingAddress.streetName = payloadForUser.billingAddress.streetName;
+    billingAddress.country = payloadForUser.billingAddress.country; /* to rework */
+    billingAddress.user = newUser._id;
+     
+    // construct new shipping addresses
+    let shippingAddress = new Address();
+    shippingAddress.firstname = payloadForUser.shippingAddress.firstName;
+    shippingAddress.lastName = payloadForUser.shippingAddress.lastName;
+    shippingAddress.houseNumber = payloadForUser.shippingAddress.houseNumber;
+    shippingAddress.houseNumberAdd = payloadForUser.shippingAddress.houseNumberAdd;
+    shippingAddress.mobileNumber = payloadForUser.shippingAddress.mobileNumber;
+    shippingAddress.streetName = payloadForUser.shippingAddress.streetName;
+    shippingAddress.country = payloadForUser.shippingAddress.country; /* to rework */
+    shippingAddress.user = newUser._id;
+
+    // construct new billing option
+    let billingOption = new Billing();
+    billingOption.user = newUser._id;
+    billingOption.type = paidBy;
+
+    const currentEnv = process.env.NODE_ENV;
+    // construct new subscription
+    let subscription = new Subscription();
+    subscription.subscriptionId = subscription.createSubscriptionId(currentEnv, payloadForUser.shippingAddress.country);
+    subscription.package = payloadPackage._id;
+    subscription.user = newUser._id;
+    subscription.paymentMethod = billingOption._id;
+
+    // construct first order of customer
+    let order = new Order();
+    order.orderNumber = order.createOrderNumber(currentEnv, payloadForUser.shippingAddress.country);
+    order.isSubscription = true;
+    order.items = payloadPackage.items;
+    order.user = newUser._id;
+    order.paymentMethod = {
+        type: paidBy,
+        recurringDetail: null
+    }  
+    
+    // retrieve order for subscription
+    subscription.orders = [order];
+
+    // update user object
+    newUser.addresses = [shippingAddress, billingAddress];
+    newUser.defaultShippingAddress = shippingAddress;
+    newUser.defaultBillingAddress = billingAddress;
+    newUser.subscriptions = [subscription];
+    newUser.orders = [order];
+    newUser.billingOptions = [billingOption];
+
+    // update reference and shopperReference with created info
+    req.body.payment.reference = order.orderNumber;
+    req.body.payment.shopperReference = newUser._id;
+
+    const payloadForAdyen = req.body.payment;
+    
+    // reach out to adyen for payment
+    adyenAxios.post('/payments', payloadForAdyen)
+        .then((response) => {
+            console.log(response.data);
+            // store recurring detail;
+            const recurringDetail = response.data.additionalData['recurring.recurringDetailReference'];
+            billingOption.recurringDetail = recurringDetail;
+            order.paymentMethod.recurringDetail = recurringDetail;
+
+            if (response.status === 200) {
+
+                User.findOne({ email: payloadForUser.email })
+                .then((user) => {
+                    if (user) {
+                        logger.info('sign-up rejected due to duplicated email address');
+                        return res.status(202).json({ message : "duplicated email address"});
+                    } else {
+
+                        Promise.all([
+                            billingAddress.save(), 
+                            shippingAddress.save(),
+                            billingOption.save(),
+                            subscription.save(),
+                            order.save(),
+                            newUser.save()
+                        ])
+                        .then((values)=> {
+                            return res.status(200).send(values);
+                        }).catch(next);
+                        
+                    }
+                }).catch(next);
+                
+            }
+
+            
+        }).catch(next);
 }
 
 module.exports = completeCheckout;

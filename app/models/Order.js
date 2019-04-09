@@ -3,6 +3,22 @@ const mongoose = require('mongoose'),
     uniqueValidator = require('mongoose-unique-validator'),
     orderNumberPrefixes = require('../../app/utils/orderNumberPrefixes');
 
+let addressSchema = new Schema({
+    firstName: { type: String },
+    lastName: { type: String },
+    mobileNumber: { type: String }, 
+    postalCode: { type: String },
+    houseNumber: { type: String },
+    houseNumberAdd: { type: String },
+    streetName: { type: String },
+    country: { type: String }
+}, { _id: false });
+
+let paymentMethodSchema = new Schema({
+    type: { type: String },
+    recurringDetail: { type: String }
+}, { _id: false });
+
 let orderSchema = new Schema({
     orderNumber: { 
         type: String, 
@@ -15,11 +31,14 @@ let orderSchema = new Schema({
         required: [ true, "user id can't be blank" ], 
         ref: 'User' 
     },
-
+    billingAddress: addressSchema,
+    shippingAddress: addressSchema,
     isSubscription: { type: Boolean, default: false },
     orderStatus: { type: String, default: 'received' },
-    paymentMethod: { type: String, required: [ true, "payment method can't be blank" ]},
-    paymentStatus: [{ type: String, default: 'open' /* to add timestamp of each update */ }],
+    paymentMethod: paymentMethodSchema,
+    paymentStatus: [{ type: String, default: 'open' 
+        /* to add timestamp of each update */ 
+    }],
     creationDate: { type: Date, default: Date.now },
     isShipped: { type: Boolean, default: false },
     shippedDate: { type: Date },
@@ -39,7 +58,8 @@ const Order = mongoose.model('Order', orderSchema);
 Order.prototype.createOrderNumber = (env, country) => {
 
     let envPrefix;
-    if (env === "development" || env === "staging" || env === "production") {
+    // refactor to actual env variable in use
+    if (env=== "local" || env === "development" || env === "staging" || env === "production") {
         envPrefix = orderNumberPrefixes.enviornmentPrefix[env];
     } else {
         throw new Error("Parameter 'env' contain invalid value");
