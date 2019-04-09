@@ -90,13 +90,10 @@ function completeCheckout (req, res, next) {
     // reach out to adyen for payment
     adyenAxios.post('/payments', payloadForAdyen)
         .then((response) => {
-            console.log(response.data);
-            // store recurring detail;
-            const recurringDetail = response.data.additionalData['recurring.recurringDetailReference'];
-            billingOption.recurringDetail = recurringDetail;
-            order.paymentMethod.recurringDetail = recurringDetail;
+            
+            const resultCode = response.data.resultCode;
 
-            if (response.status === 200) {
+            if (resultCode === 'Authorised') {
 
                 User.findOne({ email: payloadForUser.email })
                 .then((user) => {
@@ -104,6 +101,10 @@ function completeCheckout (req, res, next) {
                         logger.info('sign-up rejected due to duplicated email address');
                         return res.status(202).json({ message : "duplicated email address"});
                     } else {
+                        // store recurring detail;
+                        const recurringDetail = response.data.additionalData['recurring.recurringDetailReference'];
+                        billingOption.recurringDetail = recurringDetail;
+                        order.paymentMethod.recurringDetail = recurringDetail;
 
                         Promise.all([
                             billingAddress.save(), 
@@ -114,13 +115,40 @@ function completeCheckout (req, res, next) {
                             newUser.save()
                         ])
                         .then((values)=> {
-                            return res.status(200).send(values);
+                            if (values) {
+
+                                return res.status(201).json({
+                                    status: res.status,
+                                    message: 'checkout success',
+                                    subscriptionId: subscription.subscriptionId,
+                                    orderNumber: order.orderNumber,
+                                    user: newUser.email
+                                });
+
+                            }
                         }).catch(next);
                         
                     }
                 }).catch(next);
                 
+            } 
+
+            if (resultCode === 'Refused') {
+                return res.status(200).json({
+                    status: res.status,
+                    message: 'payment is refused from payment processor'
+                });
             }
+
+
+            if (resultCode === 'Error') {
+                return res.status(500).json({
+                    status: res.status,
+                    message: 'unexpected error in payment processing'
+                });
+            }
+
+           
 
             
         }).catch(next);
