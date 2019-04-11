@@ -86,6 +86,7 @@ function completeCheckout (req, res, next) {
     req.body.payment.shopperReference = newUser._id;
 
     const payloadForAdyen = req.body.payment;
+    console.log(payloadForAdyen);
     
     // reach out to adyen for payment
     adyenAxios.post('/payments', payloadForAdyen)
@@ -145,6 +146,14 @@ function completeCheckout (req, res, next) {
                 return res.status(500).json({
                     status: res.status,
                     message: 'unexpected error in payment processing'
+                });
+            }
+
+            if (resultCode === 'RedirectShopper') {
+                return res.status(202).json({
+                    status: res.status,
+                    message: 'redirect shopper for further processing',
+                    redirect: response.data.redirect
                 });
             }
 
