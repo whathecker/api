@@ -19,7 +19,24 @@ function processRedirectedPayment (req, res, next) {
         .then((response) => {
             const resultCode = response.data.resultCode;
             console.log(response.data);
-            return res.status(200).end();
+
+            if (resultCode === "Authorised") {
+                // handle success
+                return res.status(200).end();
+            }
+
+            if (resultCode === "Refused") {
+
+            }
+
+            if (resultCode === "Error") {
+
+            }
+
+            if (resultCode === "Canceled") {
+
+            }
+
         })
         .catch(next);
 }
