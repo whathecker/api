@@ -8,7 +8,6 @@ const logger = require('../../utils/logger');
 const adyenAxios = require('../../../axios-adyen');
 
 
-
 function completeCheckout (req, res, next) {
     
     const payloadForUser = req.body.user;
@@ -16,7 +15,8 @@ function completeCheckout (req, res, next) {
     const paidBy = req.body.paidBy;
 
     // construct new new user
-    let newUser = new User();   
+    let newUser = new User(); 
+    console.log(newUser);
     newUser.email = payloadForUser.email;
     newUser.salt = crypto.randomBytes(64).toString('hex');
     newUser.hash = newUser.setPassword(newUser, payloadForUser.password);
@@ -83,7 +83,7 @@ function completeCheckout (req, res, next) {
 
     // update reference and shopperReference with created info
     req.body.payment.reference = order.orderNumber;
-    req.body.payment.shopperReference = newUser._id;
+    req.body.payment.shopperReference = newUser.email; 
 
     const payloadForAdyen = req.body.payment;
     console.log(payloadForAdyen);
@@ -95,56 +95,86 @@ function completeCheckout (req, res, next) {
             const resultCode = response.data.resultCode;
 
             if (resultCode === 'Authorised') {
+                // store recurring detail;
+                const recurringDetail = response.data.additionalData['recurring.recurringDetailReference'];
+                billingOption.recurringDetail = recurringDetail;
+                order.paymentMethod.recurringDetail = recurringDetail;
 
-                User.findOne({ email: payloadForUser.email })
-                .then((user) => {
-                    if (user) {
-                        logger.info('sign-up rejected due to duplicated email address');
-                        return res.status(202).json({ message : "duplicated email address"});
-                    } else {
-                        // store recurring detail;
-                        const recurringDetail = response.data.additionalData['recurring.recurringDetailReference'];
-                        billingOption.recurringDetail = recurringDetail;
-                        order.paymentMethod.recurringDetail = recurringDetail;
+                Promise.all([
+                    newUser.save(),
+                    billingOption.save(),
+                    billingAddress.save(), 
+                    shippingAddress.save(),
+                    subscription.save(),
+                    order.save(),
+                ])
+                .then((values)=> {
+                    if (values) {
 
-                        Promise.all([
-                            billingAddress.save(), 
-                            shippingAddress.save(),
-                            billingOption.save(),
-                            subscription.save(),
-                            order.save(),
-                            newUser.save()
-                        ])
-                        .then((values)=> {
-                            if (values) {
+                        return res.status(201).json({
+                            status: res.status,
+                            resultCode: resultCode,
+                            message: 'checkout success',
+                            subscriptionId: subscription.subscriptionId,
+                            orderNumber: order.orderNumber,
+                            user: newUser.email
+                        });
 
-                                return res.status(201).json({
-                                    status: res.status,
-                                    message: 'checkout success',
-                                    subscriptionId: subscription.subscriptionId,
-                                    orderNumber: order.orderNumber,
-                                    user: newUser.email
-                                });
-
-                            }
-                        }).catch(next);
-                        
                     }
                 }).catch(next);
-                
+
             } 
+
+            if (resultCode === "Pending") {
+                const recurringDetail = response.data.additionalData['recurring.recurringDetailReference'];
+                billingOption.recurringDetail = recurringDetail;
+                order.paymentMethod.recurringDetail = recurringDetail;
+
+                Promise.all([
+                    billingAddress.save(), 
+                    shippingAddress.save(),
+                    billingOption.save(),
+                    subscription.save(),
+                    order.save(),
+                    newUser.save()
+                ])
+                .then((values)=> {
+                    if (values) {
+
+                        return res.status(201).json({
+                            status: res.status,
+                            resultCode: resultCode,
+                            message: 'user is created but authorisation of payment is pending',
+                            subscriptionId: subscription.subscriptionId,
+                            orderNumber: order.orderNumber,
+                            user: newUser.email
+                        });
+
+                    }
+                }).catch(next);
+
+            }
 
             if (resultCode === 'Refused') {
                 return res.status(200).json({
                     status: res.status,
+                    resultCode: resultCode,
                     message: 'payment is refused from payment processor'
                 });
             }
 
+            if (resultCode === "Cancelled") {
+                return res.status(200).json({
+                    status: res.status,
+                    resultCode: resultCode,
+                    message: 'payment is canceled by user'
+                });
+            }
 
             if (resultCode === 'Error') {
                 return res.status(500).json({
                     status: res.status,
+                    resultCode: resultCode,
                     message: 'unexpected error in payment processing'
                 });
             }
@@ -152,13 +182,11 @@ function completeCheckout (req, res, next) {
             if (resultCode === 'RedirectShopper') {
                 return res.status(202).json({
                     status: res.status,
+                    resultCode: resultCode,
                     message: 'redirect shopper for further processing',
                     redirect: response.data.redirect
                 });
             }
-
-           
-
             
         }).catch(next);
 }
