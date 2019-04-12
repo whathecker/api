@@ -129,7 +129,7 @@ function processRedirectedPayment (req, res, next) {
                 
             }
 
-            if (resultCode === "Pending") {
+            if (resultCode === "Received") {
                 order.orderNumber = response.data.merchantReference;
                 order.paymentMethod.type = response.data.paymentMethod;
                 billingOption.type = response.data.paymentMethod;
