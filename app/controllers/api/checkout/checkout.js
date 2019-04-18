@@ -3,9 +3,12 @@ const checkDuplicateEmail = require('../../../helpers/checkout/checkDuplicateEma
 const getPaymentMethods = require('../../../helpers/checkout/getPaymentMethods');
 const completeCheckout = require('../../../helpers/checkout/completeCheckout');
 const processRedirectedPayment = require('../../../helpers/checkout/processRedirectedPayment');
+const getAddressDetail = require('../../../helpers/checkout/getAddressDetail');
 
 // endpoint to check if email is associated with account or not
 router.post('/email', checkDuplicateEmail); 
+
+router.post('/address', getAddressDetail);
 
 router.post('/paymentOptions', getPaymentMethods);
 
