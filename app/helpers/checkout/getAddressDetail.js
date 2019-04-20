@@ -7,6 +7,9 @@ function getAddressDetail (req, res, next) {
     const postalCode = req.body.postalCode;
     const houseNumber = req.body.houseNumber;
 
+    //return res.status(400).end();
+
+    
     if (!postalCode || !houseNumber) {
 
         logger.warn('/checkout/address request returned 422 as postalCode or houseNumber param is missing');
@@ -19,19 +22,31 @@ function getAddressDetail (req, res, next) {
 
         addressAxios.get(`/addresses/?postcode=${postalCode}&number=${houseNumber}`)
         .then((response)=> {
-            if (response.status === 200) {
+            const status = response.status;
+            const addressData = response.data._embedded['addresses'];
+
+            if (status === 200 && addressData.length === 0) {
                 console.log(response);
-                logger.info('/checkout/address request was successful');
+                logger.info('/checkout/address no address was found');
+                return res.status(204).json({
+                    status: res.status,
+                    message: 'address was not found',
+                });
+            }
+
+            if (status === 200 && addressData.length !== 0) {
+                logger.info('/checkout/address | address was returned');
                 return res.status(200).json({
                     status: res.status,
                     message: 'address has returned',
-                    data: response.data
+                    data: addressData
                 });
             }
+
         })
         .catch(next);
 
-    }
+    } 
 
 }
 
