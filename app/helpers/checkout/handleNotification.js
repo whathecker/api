@@ -18,7 +18,7 @@ function handleNotification (req, res, next) {
         const orderNumber = req.body.notificationItems[0].NotificationRequestItem.merchantReference;
         const isSuccess = req.body.notificationItems[0].NotificationRequestItem.success;
 
-        if (eventCode === "AUTHORISATION" && isSuccess) {
+        if (eventCode === "AUTHORISATION" && isSuccess === "true") {
             // handle authorizsation
             return res.status(200).end("[accepted]");
         }
