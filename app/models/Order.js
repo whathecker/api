@@ -19,6 +19,26 @@ let paymentMethodSchema = new Schema({
     recurringDetail: { type: String }
 }, { _id: false });
 
+let paymentStatusSchema = new Schema({
+    status: { 
+        type: String,
+        uppercase: true,
+        enum: ['OPEN', 'AUTHORIZED', 'PENDING', 'CANCELED', 'REFUNDED'],
+        default: 'OPEN'
+    },
+    timestamp: { type: Date, default: Date.now }
+}, { _id: false });
+
+let orderStatusSchema = new Schema({
+    status: { 
+        type: String,
+        uppercase: true,
+        enum: ['RECEIVED','PENDING', 'PAID', 'SHIPPED', 'CANCELED', 'OVERDUE'],
+        default: 'RECEIVED'
+    },
+    timestamp: { type: Date, default: Date.now }
+},{ _id: false });
+
 let orderSchema = new Schema({
     orderNumber: { 
         type: String, 
@@ -34,11 +54,11 @@ let orderSchema = new Schema({
     billingAddress: addressSchema,
     shippingAddress: addressSchema,
     isSubscription: { type: Boolean, default: false },
-    orderStatus: { type: String, default: 'received' },
+    orderStatus: orderStatusSchema,
+    orderStatusHistory: [orderStatusSchema],
     paymentMethod: paymentMethodSchema,
-    paymentStatus: [{ type: String, default: 'open' 
-        /* to add timestamp of each update */ 
-    }],
+    paymentStatus: paymentStatusSchema,
+    paymentHistory: [paymentStatusSchema],
     creationDate: { type: Date, default: Date.now },
     isShipped: { type: Boolean, default: false },
     shippedDate: { type: Date },
