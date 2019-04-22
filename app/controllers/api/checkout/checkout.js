@@ -5,17 +5,18 @@ const completeCheckout = require('../../../helpers/checkout/completeCheckout');
 const processRedirectedPayment = require('../../../helpers/checkout/processRedirectedPayment');
 const getAddressDetail = require('../../../helpers/checkout/getAddressDetail');
 const handleNotification = require('../../../helpers/checkout/handleNotification');
+const apiAuth = require('../../../middlewares/verifyApikey');
 
 // endpoint to check if email is associated with account or not
-router.post('/email', checkDuplicateEmail); 
+router.post('/email', apiAuth, checkDuplicateEmail); 
 
-router.post('/address', getAddressDetail);
+router.post('/address', apiAuth, getAddressDetail);
 
-router.post('/paymentOptions', getPaymentMethods);
+router.post('/paymentOptions', apiAuth, getPaymentMethods);
 
-router.post('/payment', completeCheckout);
+router.post('/payment', apiAuth, completeCheckout);
 
-router.post('/payment/details', processRedirectedPayment)
+router.post('/payment/details', apiAuth, processRedirectedPayment)
 
 router.post('/payment/notification', handleNotification);
 

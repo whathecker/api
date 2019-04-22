@@ -1,8 +1,10 @@
 const router = require('express').Router(),
     Apikey = require('../../../models/Apikey'),
     crypto = require('crypto'),
-    logger = require('../../../utils/logger');
+    logger = require('../../../utils/logger'),
+    apiAuth = require('../../../middlewares/verifyApikey');
 
+router.use(apiAuth);
 
 router.post('/key', (req, res, next) => {
 

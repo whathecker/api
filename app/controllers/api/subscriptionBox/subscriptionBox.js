@@ -2,7 +2,10 @@ const router = require('express').Router(),
     logger = require('../../../utils/logger'),
     SubscriptionBox = require('../../../models/SubscriptionBox'),
     Product = require('../../../models/Product'),
-    subscriptionBoxIdPrefixes = require('../../../utils/subscriptionBoxIdPrefixes');
+    subscriptionBoxIdPrefixes = require('../../../utils/subscriptionBoxIdPrefixes'),
+    apiAuth = require('../../../middlewares/verifyApikey');
+
+router.use(apiAuth);
 
 router.post('/', (req, res, next) => {
 

@@ -10,10 +10,13 @@ const dbString = connector.getDBString();
 const session = require('express-session');
 const Mongostore = require('connect-mongo')(session);
 const createUser = require('../../../helpers/user/createUser');
+const apiAuth = require('../../../middlewares/verifyApikey');
 
 const isLocal = process.env.NODE_ENV === "local";
 const isDevelopment = process.env.NODE_ENV === "development";
 const isProduction = process.env.NODE_ENV === "production";
+
+router.use(apiAuth);
 
 if (isLocal) {
     router.use(session({ 

@@ -1,7 +1,10 @@
 const router = require('express').Router(),
     Product = require('../../../models/Product'),
     logger = require('../../../utils/logger'),
-    productIdPrefixes = require('../../../utils/productIdPrefixes');
+    productIdPrefixes = require('../../../utils/productIdPrefixes'),
+    apiAuth =  require('../../../middlewares/verifyApikey');
+
+router.use(apiAuth);
 
 // add auth middleware in this route
 router.post('/', (req, res, next) => {

@@ -1,7 +1,10 @@
 const router = require('express').Router(),
     Inventory = require('../../../models/Inventory'),
     logger = require('../../../utils/logger'),
-    Product = require('../../../models/Product');
+    Product = require('../../../models/Product'),
+    apiAuth = require('../../../middlewares/verifyApikey');
+
+router.use(apiAuth);
 
 // middleware to check if product exists 
 router.param('productId', (req, res, next, productId) => {

@@ -3,7 +3,6 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     connector = require('./utils/connector'),
     morgan = require('morgan'),
-    apiAuthentication = require('./middlewares/verifyApikey'),
     cors = require('cors'),
     dbString = connector.getDBString(),
     helmet = require('helmet'),
@@ -39,9 +38,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
-
-// api authentication
-app.use(apiAuthentication);
 // mount routes
 app.use(require('./controllers'));
 
