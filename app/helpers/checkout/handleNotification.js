@@ -20,7 +20,7 @@ function handleNotification (req, res, next) {
 
         if (eventCode === "AUTHORISATION" && isSuccess === "true") {
 
-            Order.findOneAnd({ orderNumber: orderNumber })
+            Order.findOne({ orderNumber: orderNumber })
             .then((order) => {
                 // AUTHORISATION event can only update payment status
                 // when previous status is OPEN or PENDING
