@@ -17,6 +17,7 @@ function handleNotification (req, res, next) {
         // process notification
         const eventCode = req.body.notificationItems[0].NotificationRequestItem.eventCode;
         const orderNumber = req.body.notificationItems[0].NotificationRequestItem.merchantReference;
+        console.log(orderNumber);
         const isSuccess = req.body.notificationItems[0].NotificationRequestItem.success;
 
         if (eventCode === "AUTHORISATION" && isSuccess === "true") {
@@ -60,7 +61,7 @@ function handleNotification (req, res, next) {
                 } else {
                     // cannnot find matching order
                     logger.warn(`Adyen merchant ref: ${orderNumber} | cannot found orderNumber from Adyen merchant ref`);
-                    return res.status(422).end("[accepted]");
+                    return res.status(422).end();
                 }
             })
             .catch(next);            
