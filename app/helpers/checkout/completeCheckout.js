@@ -32,7 +32,9 @@ function completeCheckout (req, res, next) {
     billingAddress.houseNumberAdd = payloadForUser.billingAddress.houseNumberAdd;
     billingAddress.mobileNumber = payloadForUser.billingAddress.mobileNumber;
     billingAddress.streetName = payloadForUser.billingAddress.streetName;
-    billingAddress.country = payloadForUser.billingAddress.country; /* to rework */
+    billingAddress.city = payloadForUser.billingAddress.city;
+    billingAddress.province = payloadForUser.billingAddress.province;
+    billingAddress.country = payloadForUser.billingAddress.country;
     billingAddress.user = newUser._id;
      
     // construct new shipping addresses
@@ -43,7 +45,9 @@ function completeCheckout (req, res, next) {
     shippingAddress.houseNumberAdd = payloadForUser.shippingAddress.houseNumberAdd;
     shippingAddress.mobileNumber = payloadForUser.shippingAddress.mobileNumber;
     shippingAddress.streetName = payloadForUser.shippingAddress.streetName;
-    shippingAddress.country = payloadForUser.shippingAddress.country; /* to rework */
+    shippingAddress.city = payloadForUser.shippingAddress.city;
+    shippingAddress.province = payloadForUser.shippingAddress.province;
+    shippingAddress.country = payloadForUser.shippingAddress.country;
     shippingAddress.user = newUser._id;
 
     // construct new billing option
@@ -54,21 +58,27 @@ function completeCheckout (req, res, next) {
     const currentEnv = process.env.NODE_ENV;
     // construct new subscription
     let subscription = new Subscription();
-    subscription.subscriptionId = subscription.createSubscriptionId(currentEnv, payloadForUser.shippingAddress.country);
+    const countryInLowerCase = payloadForUser.shippingAddress.country.toLowerCase();
+    console.log(countryInLowerCase)
+    subscription.subscriptionId = subscription.createSubscriptionId(currentEnv, countryInLowerCase);
     subscription.package = payloadPackage._id;
     subscription.user = newUser._id;
     subscription.paymentMethod = billingOption._id;
 
     // construct first order of customer
     let order = new Order();
-    order.orderNumber = order.createOrderNumber(currentEnv, payloadForUser.shippingAddress.country);
+    order.orderNumber = order.createOrderNumber(currentEnv, countryInLowerCase);
     order.isSubscription = true;
     order.items = payloadPackage.items;
     order.user = newUser._id;
     order.paymentMethod = {
         type: paidBy,
         recurringDetail: null
-    }  
+    };
+    order.paymentStatus = { status: 'OPEN' };
+    order.orderStatus = { status: 'RECEIVED' };
+    order.paymentHistory.push(order.paymentStatus);
+    order.orderStatusHistory.push(order.orderStatus)  
     
     // retrieve order for subscription
     subscription.orders = [order];

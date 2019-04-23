@@ -87,7 +87,7 @@ Order.prototype.createOrderNumber = (env, country) => {
     console.log(envPrefix);
 
     let countryPrefix;
-    if (country === "netherland" || country === "germany" || country === "america") {
+    if (country === "netherlands" || country === "germany" || country === "america") {
         countryPrefix = orderNumberPrefixes.countryPrefix[country];
     } else {
         throw new Error("Parameter 'country' contain invalid value");

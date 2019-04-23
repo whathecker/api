@@ -11,6 +11,8 @@ let addressSchema = new Schema({
     houseNumber: { type: String },
     houseNumberAdd: { type: String },
     streetName: { type: String },
+    city: { type: String },
+    province: { type: String },
     country: { type: String }
 });
 addressSchema.plugin(uniqueValidator);
