@@ -13,7 +13,7 @@ function getPaymentMethods (req, res, next) {
     }
 
     let payload = req.body;
-
+    console.log(payload)
     adyenAxios.post('/paymentMethods', payload)
         .then((response) => {
             console.log(response.status);

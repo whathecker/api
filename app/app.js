@@ -7,10 +7,6 @@ const express = require('express'),
     dbString = connector.getDBString(),
     helmet = require('helmet'),
     app = express();
-    //Order = require('./models/Order');
-
-//console.log(Order.prototype.createOrderNumber('development', 'germany'));
-
 
 mongoose.connect(dbString, (err) => {
     if (err) throw err;

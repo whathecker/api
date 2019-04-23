@@ -12,6 +12,7 @@ function handleNotification (req, res, next) {
             logger.warn('payment notification is requested with invalid basic auth header');
             res.set({ 'WWW-Authenticate': 'Basic realm="notification"' });
             return res.status(401).json({ message: 'unauthorized request' });
+            
     } else {
         // process notification
         const eventCode = req.body.notificationItems[0].NotificationRequestItem.eventCode;
@@ -24,32 +25,36 @@ function handleNotification (req, res, next) {
             .then((order) => {
                 // AUTHORISATION event can only update payment status
                 // when previous status is OPEN or PENDING
-                if (order && 
-                    (order.paymentStatus.status === "OPEN" ||
-                    order.paymentStatus.status === "PENDING")
-                    ) {
-
+                
+                if (order) {
                     const paymentStatusUpdate = { status: 'AUTHORIZED' };
                     const orderStatusUpdate = { status: 'PAID' };
 
-                    // update payment status and order status
-                    order.paymentStatus = paymentStatusUpdate;
-                    order.paymentHistory.push(order.paymentStatus);
-                    order.orderStatus = orderStatusUpdate;
-                    order.orderStatusHistory.push(order.orderStatus);
+                    if ((order.paymentStatus.status === "OPEN" ||
+                        order.paymentStatus.status === "PENDING")) {
+                        // payment status is only updated to AUTHORIZED
+                        // when prev status is OPEN or PENDING
+                        order.paymentStatus = paymentStatusUpdate;
+                        order.markModified('paymentStatus');
+                        // order status and history in only updated to PAID
+                        // when prev payment status is OPEN or PENDING
+                        order.orderStatus = orderStatusUpdate;
+                        order.orderStatusHistory.push(order.orderStatus);
+                        order.markModified('orderStatus');
+                        order.markModified('orderStatusHistory');
+                    }
 
-                    // markModieifed to update existing document in DB
-                    order.markModified(paymentStatus);
-                    order.markModified(paymentHistory);
-                    order.markModified(orderStatus);
-                    order.markModified(orderStatusHistory);
-
+                    // update payment status history
+                    // when payment status update didn't changed payment status
+                    // history is still saved for debugging purposes
+                    order.paymentHistory.push(paymentStatusUpdate);
+                    order.markModified('paymentHistory');
+                    
                     // save updated document
                     order.save().then((order) => {
                         logger.info(`${order.orderNumber} | order status updated to AUTHORIZED and payment status updated to PAID`);
                         return res.status(200).end("[accepted]");
-                    })
-                    .catch(next);
+                    }).catch(next);
 
                     
                 } else {
@@ -62,8 +67,58 @@ function handleNotification (req, res, next) {
         }
 
         if (eventCode === "AUTHORISATION" && isSuccess === "false") {
+
+            const failedReason = req.body.notificationItems[0].NotificationRequestItem.reason;
+
+            if (failedReason === "REFUSED") {
+                Order.findOne({ orderNumber: orderNumber })
+                .then((order) => {
+
+                    if (order) {
+                        const paymentStatusUpdate = { status: 'REFUSED' };
+                        const orderStatusUpdate = { status: 'OVERDUE' };
+
+                        if ((order.paymentStatus.status === "OPEN" ||
+                            order.paymentStatus.status === "PENDING"
+                        )) {
+                            // payment status is only updated to REFUSED
+                            // when prev status is OPEN or PENDING
+                            order.paymentStatus = paymentStatusUpdate;
+                            order.markModified('paymentStatus');   
+                            // order status and history is only updated to OVERDUE
+                            // when prev payment status is OPEN or PENDING
+                            order.orderStatus = orderStatusUpdate;
+                            order.orderStatusHistory.push(order.orderStatus);
+                            order.markModified('orderStatus');
+                            order.markModified('orderStatusHistory');s
+                        }
+                        // update payment status history
+                        // when payment status update didn't changed payment status
+                        // history is still saved for debugging purposes
+                        order.paymentHistory.push(paymentStatusUpdate);
+                        order.markModified('paymentHistory');
+
+                        // save updated document
+                        order.save().then((order) => {
+                            logger.info(`${order.orderNumber} | order status updated to OVERDUE and payment status updated to REFUSED`);
+                            return res.status(200).end("[accepted]");
+                        }).catch(next);
+
+                    } else {
+
+                        // cannnot find matching order
+                        logger.warn(`Adyen merchant ref: ${orderNumber} | cannot found orderNumber from Adyen merchant ref`);
+                        return res.status(422).end("[accepted]");
+
+                    }
+                })
+                .catch(next);
+            } else {
+                // unhandled auth fail reason
+                logger.warn(`Adyen mercahnt ref: ${orderNumber} | unhandled failedReason: ${failedReason}`);
+                return res.status(501).end("[accepted]");
+            }
             
-            return res.status(200).end("[accepted]");
         }
         
     }

@@ -23,7 +23,7 @@ let paymentStatusSchema = new Schema({
     status: { 
         type: String,
         uppercase: true,
-        enum: ['OPEN', 'AUTHORIZED', 'PENDING', 'CANCELED', 'REFUNDED'],
+        enum: ['OPEN', 'AUTHORIZED', 'PENDING', 'REFUSED', 'CANCELED', 'REFUNDED'],
         default: 'OPEN'
     },
     timestamp: { type: Date, default: Date.now }
