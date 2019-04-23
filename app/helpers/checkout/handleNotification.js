@@ -64,7 +64,7 @@ function handleNotification (req, res, next) {
                 } else {
                     // cannnot find matching order
                     logger.warn(`Adyen merchant ref: ${orderNumber} | cannot found orderNumber from Adyen merchant ref`);
-                    return res.status(422).end("[accepted]");
+                    return res.status(422).end();
                 }
             })
             .catch(next);            
@@ -112,7 +112,7 @@ function handleNotification (req, res, next) {
 
                         // cannnot find matching order
                         logger.warn(`Adyen merchant ref: ${orderNumber} | cannot found orderNumber from Adyen merchant ref`);
-                        return res.status(422).end("[accepted]");
+                        return res.status(422).end();
 
                     }
                 })
