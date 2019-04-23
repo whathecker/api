@@ -44,7 +44,9 @@ function processRedirectedPayment (req, res, next) {
     billingAddress.houseNumberAdd = payloadForUser.billingAddress.houseNumberAdd;
     billingAddress.mobileNumber = payloadForUser.billingAddress.mobileNumber;
     billingAddress.streetName = payloadForUser.billingAddress.streetName;
-    billingAddress.country = payloadForUser.billingAddress.country; /* to rework */
+    billingAddress.city = payloadForUser.billingAddress.city;
+    billingAddress.province = payloadForUser.billingAddress.province;
+    billingAddress.country = payloadForUser.billingAddress.country;
     billingAddress.user = newUser._id;
 
     // construct new shipping addresses
@@ -55,19 +57,22 @@ function processRedirectedPayment (req, res, next) {
     shippingAddress.houseNumberAdd = payloadForUser.shippingAddress.houseNumberAdd;
     shippingAddress.mobileNumber = payloadForUser.shippingAddress.mobileNumber;
     shippingAddress.streetName = payloadForUser.shippingAddress.streetName;
-    shippingAddress.country = payloadForUser.shippingAddress.country; /* to rework */
+    shippingAddress.city = payloadForUser.shippingAddress.city;
+    shippingAddress.province = payloadForUser.shippingAddress.province;
+    shippingAddress.country = payloadForUser.shippingAddress.country;
     shippingAddress.user = newUser._id;
 
     // construct new billing option
     let billingOption = new Billing();
     billingOption.user = newUser._id;
-    billingOption.type = null; /*updated later from response of Adyen */
+    billingOption.type = null; /* updated later from response of Adyen */
 
     
     // construct new subscription
     const currentEnv = process.env.NODE_ENV;
     let subscription = new Subscription();
-    subscription.subscriptionId = subscription.createSubscriptionId(currentEnv, payloadForUser.shippingAddress.country);
+    const countryInLowerCase = payloadForUser.shippingAddress.country.toLowerCase();
+    subscription.subscriptionId = subscription.createSubscriptionId(currentEnv, countryInLowerCase);
     subscription.package = payloadPackage._id;
     subscription.user = newUser._id;
     subscription.paymentMethod = billingOption._id;
@@ -82,6 +87,10 @@ function processRedirectedPayment (req, res, next) {
         type: null, /* updated later from response of Adyen */
         recurringDetail: null /* updated later from async notification */
     }
+    order.paymentStatus = { status: 'OPEN'};
+    order.orderStatus = { status: 'RECEIVED' };
+    order.paymentHistory.push(order.paymentStatus);
+    order.orderStatusHistory.push(order.orderStatus);
 
     // retrieve order for subscription
     subscription.orders = [order];

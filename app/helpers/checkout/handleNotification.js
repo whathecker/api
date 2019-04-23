@@ -16,9 +16,11 @@ function handleNotification (req, res, next) {
     } else {
         // process notification
         const eventCode = req.body.notificationItems[0].NotificationRequestItem.eventCode;
+        console.log(eventCode);
         const orderNumber = req.body.notificationItems[0].NotificationRequestItem.merchantReference;
         console.log(orderNumber);
         const isSuccess = req.body.notificationItems[0].NotificationRequestItem.success;
+        console.log(isSuccess);
 
         if (eventCode === "AUTHORISATION" && isSuccess === "true") {
 
