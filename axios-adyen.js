@@ -19,7 +19,7 @@ if (!hostURL) {
 instance = axios.create({ baseURL: hostURL });
 
 instance.defaults.headers.common['Content-Type'] = 'application/json';
-instance.defaults.headers.common['X-API-Key'] = 'AQEjhmfuXNWTK0Qc+iSTmmszhOyUQxykUnrll3IX+Lj+mqAVq/4QwV1bDb7kfNy1WIxIIkxgBw==-b3/vlTUGr9ukhlK1FRHctnGP6HD4lfA6TcSzfwI9c+o=-qIJzCw7WaSDT4jan';
+instance.defaults.headers.common['X-API-Key'] = 'AQEjhmfuXNWTK0Qc+iSTmmszhOyUQxykUnrll3IX+Lj+mqAVq/4QwV1bDb7kfNy1WIxIIkxgBw==-9o8lkJ/+u6M4IbCEmKEZmrydrWBgdQ13qcYRZUk+qV0=-q6nr5cxPxg4FmQwj';
 instance.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
 module.exports = instance;
