@@ -15,6 +15,7 @@ function handleNotification (req, res, next) {
             
     } else {
         // process notification
+        console.log(req.body.notificationItems);
         const eventCode = req.body.notificationItems[0].NotificationRequestItem.eventCode;
         console.log(eventCode);
         const orderNumber = req.body.notificationItems[0].NotificationRequestItem.merchantReference;
