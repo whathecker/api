@@ -33,7 +33,8 @@ app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-
+// message receiver for adyen notification
+require('./utils/queue-receiver');
 // mount routes
 app.use(require('./controllers'));
 

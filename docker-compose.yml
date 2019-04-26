@@ -1,0 +1,30 @@
+version: "3.7"
+services: 
+    rabbitmq:
+      image: rabbitmq
+      hostname: rabbitmq
+      command: rabbitmq-server
+      ports: 
+        - "15672:15672"
+        - "5672:5672"
+      volumes:
+        - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      healthcheck:
+          test: ["CMD", "nc", "-z", "localhost", "5672"]
+          interval: 5s
+          timeout: 15s
+          retries: 1
+    nodeapp:
+      build: .
+      ports:
+        - "8081:8081"
+      restart: on-failure
+      links: 
+        - rabbitmq
+      depends_on:
+        - rabbitmq
+    start_dependencies:
+      image: dadarek/wait-for-dependencies
+      depends_on:
+        - rabbitmq
+      command: rabbitmq:5672
