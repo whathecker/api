@@ -9,7 +9,7 @@
         "name": "nodeapp",
         "image": "hellochokchok/backend:latest",
         "essential": true,
-        "memoryReservation": 1024
+        "memoryReservation": 400
       },
       {
           "name": "rabbitmq",
@@ -24,7 +24,7 @@
           "name": "start_dependencies",
           "image": "dadarek/wait-for-dependencies",
           "essential": true,
-          "memory": 128
+          "memory": 50
       }
     ]
   }
