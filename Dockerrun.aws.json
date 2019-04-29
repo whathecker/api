@@ -8,7 +8,8 @@
       {
         "name": "nodeapp",
         "image": "hellochokchok/backend:latest",
-        "essential": true
+        "essential": true,
+        "memoryReservation": 1024
       },
       {
           "name": "rabbitmq",
@@ -16,7 +17,8 @@
           "essential": true,
           "links": [
               "nodeapp"
-          ]
+          ],
+          "memoryReservation": 128
       },
       {
           "name": "start_dependencies",
