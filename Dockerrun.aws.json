@@ -1,9 +1,5 @@
 {
     "AWSEBDockerrunVersion": 2,
-    "Authentication": {
-        "Bucket": "elasticbeanstalk-eu-west-3-243549454379",
-        "Key": "docker-auth/.dockercfg"
-    },
     "containerDefinitions": [
       {
         "name": "nodeapp",
