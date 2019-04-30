@@ -12,7 +12,7 @@
       {
         "name": "nodeapp",
         "image": "hellochokchok/backend:latest",
-        "essential": true,
+        "essential": false,
         "memoryReservation": 400,
         "portMappings": [
           {
