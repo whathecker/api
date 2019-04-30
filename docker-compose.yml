@@ -16,6 +16,14 @@ services:
       restart: on-failure
       links: 
         - rabbitmq
+        - nginx
       depends_on:
         - rabbitmq
+        - nginx
+    nginx:
+      image: nginx
+      hostname: nginx
+      ports:
+        - "80:80"
+
     
