@@ -22,7 +22,13 @@
         ],
         "links": [
           "rabbitmq"
-      ]
+        ],
+        "dependsOn": [
+          {
+            "containerName": "rabbitmq",
+            "condition" : "SUCCESS"
+          }
+        ]
       },
       {
           "name": "rabbitmq",
