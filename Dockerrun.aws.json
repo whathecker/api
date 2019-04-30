@@ -1,29 +1,52 @@
 {
     "AWSEBDockerrunVersion": 2,
+    "volumes": [
+      {
+        "name": "rabbitmq-conf",
+        "host": {
+          "sourcePath": "/var/app/current/rabbitmq.conf"
+        }
+      }
+    ],
     "containerDefinitions": [
       {
         "name": "nodeapp",
         "image": "hellochokchok/backend:latest",
         "essential": true,
         "memoryReservation": 400,
+        "portMappings": [
+          {
+            "containerPort": 8081,
+            "hostPort": 8081
+          }
+        ],
         "links": [
           "rabbitmq"
       ]
       },
       {
           "name": "rabbitmq",
+          "hostname": "rabbitmq",
           "image": "rabbitmq",
           "essential": true,
-          "memoryReservation": 128
-      },
-      {
-          "name": "start_dependencies",
-          "image": "dadarek/wait-for-dependencies",
-          "essential": true,
-          "memory": 50,
-          "links": [
-            "rabbitmq"
-        ]
+          "memoryReservation": 128,
+          "portMappings": [
+            {
+              "containerPort": 15672,
+              "hostPort": 15672
+            },
+            {
+              "containerPort": 5672,
+              "hostPort": 5672
+            }
+          ],
+          "command": ["rabbitmq-server"],
+          "mountPoints": [
+            {
+              "sourceVolume": "rabbitmq-conf",
+              "containerPath": "/etc/rabbitmq/rabbitmq.conf"
+            }
+          ]
       }
     ]
   }

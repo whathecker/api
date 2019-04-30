@@ -9,13 +9,8 @@ services:
         - "5672:5672"
       volumes:
         - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-      healthcheck:
-          test: ["CMD", "nc", "-z", "localhost", "5672"]
-          interval: 5s
-          timeout: 15s
-          retries: 1
     nodeapp:
-      build: .
+      image: "hellochokchok/backend:latest"
       ports:
         - "8081:8081"
       restart: on-failure
