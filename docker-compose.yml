@@ -23,8 +23,4 @@ services:
         - rabbitmq
       depends_on:
         - rabbitmq
-    start_dependencies:
-      image: dadarek/wait-for-dependencies
-      depends_on:
-        - rabbitmq
-      command: rabbitmq:5672
+    

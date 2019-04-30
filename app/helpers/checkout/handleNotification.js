@@ -1,7 +1,7 @@
 const logger = require('../../utils/logger');
 const auth = require('basic-auth');
 //const Order = require('../../models/Order');
-const open = require('amqplib').connect('amqp://rabbitmq:rabbitmq@rabbitmq:5672/');
+const open = require('amqplib');
 const queue = 'notification';
 const retryQueue = 'notification-retry';
 const ex = 'notification';
@@ -17,6 +17,10 @@ function checkAdyenBasicAuth(credentials) {
     return isAuth;
 }
 
+function startMQConnection () {
+    return open.connect('amqp://rabbitmq:rabbitmq@rabbitmq:5672/');
+}
+
 function handleNotification (req, res, next) {
     const credentials =  auth(req);
     //console.log(credentials);
@@ -29,15 +33,16 @@ function handleNotification (req, res, next) {
     } else {
         const notification = req.body;
         console.log(notification);
-
-        open.then((conn)=>{
-            return conn.createChannel();
+        
+        startMQConnection().then((connection) => {
+            console.log(connection);
+            return connection.createChannel();
         }).then((ch) => {
             const exchange = ch.assertExchange(ex, 'direct', { durable: true});
             const retryExchange = ch.assertExchange(retryEx, 'direct', { durable: true});
             const bindQueue = ch.bindQueue(queue, ex);
             const bindRetryQueue = ch.bindQueue(retryQueue, retryEx);
-            
+
             Promise.all([
                 exchange,
                 retryExchange,
@@ -46,8 +51,16 @@ function handleNotification (req, res, next) {
             ]).then((ok)=> {
                 ch.publish(ex, '', Buffer.from(JSON.stringify(notification)), {persistent: true});
                 return res.status(200).end("[accepted]");
-            })
-        }).catch(next);
+            }).catch(next);  
+
+        }).catch((error) => {
+            if (error) {
+                console.log('retry to connect rabbitmq because rabbitmq might not started yet');
+                setTimeout(startMQConnection, 5000);
+            }
+        });
+
+        
         
         // save notification in db
         

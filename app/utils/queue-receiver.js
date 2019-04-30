@@ -82,59 +82,60 @@ function processNotification (notification, order) {
 }
 
 // message consumer listening to adyen
+function startMQConnection () {
+    open.connect('amqp://rabbitmq:rabbitmq@rabbitmq:5672/').then((connection) => {
+    return connection.createChannel();
+    }).then((ch) => {
+        const workQueue = ch.assertQueue(queue, {
+            deadLetterExchange: retryQueue
+        });
+        const retryWorkQueue = ch.assertQueue(retryQueue, {
+            deadLetterExchange: queue,
+            messageTtl : 300000
+        });
 
-/*
-open.connect('amqp://rabbitmq:rabbitmq@rabbitmq:5672/').then((connection) => {
-    console.log(connection);
-}).catch((error) => {
-    console.log(error);
-}) */
+        Promise.all([
+            workQueue,
+            retryWorkQueue
+        ]).then((ok) => {
+            return ch.consume(queue, (msg) => {
+                if (msg !== null) {
+                    const message = JSON.parse(msg.content);
+                    console.log(message);
+                    const orderNumber = message.notificationItems[0].NotificationRequestItem.merchantReference;
 
-/*
-open.then((conn) => {
-    return conn.createChannel();
-}).then((ch) => {
-    
-    const workQueue = ch.assertQueue(queue, {
-        deadLetterExchange: retryQueue
-    });
-    const retryWorkQueue = ch.assertQueue(retryQueue, {
-        deadLetterExchange: queue,
-        messageTtl : 300000
-    });
-
-    Promise.all([
-        workQueue,
-        retryWorkQueue
-    ]).then((ok) => {
-        return ch.consume(queue, (msg) => {
-            if (msg !== null) {
-                const message = JSON.parse(msg.content);
-                console.log(message);
-                const orderNumber = message.notificationItems[0].NotificationRequestItem.merchantReference;
-                
-                Order.findOne({ orderNumber: orderNumber })
-                .then((order) => {
-                    if (order) {
-                        processNotification(message, order);
-                        ch.ack(msg);
-                    } else if (!order && msg.properties.headers['x-death']){
-                        console.log(msg);
-                        console.log(msg.properties.headers);
-                        const retryCount = msg.properties.headers['x-death'][0].count;
-                        if (retryCount <= 5) {
-                            ch.nack(msg, false, false);
-                        } else {
-                            logger.warn(`${orderNumber} | tried to deliver notification 5 times, but failed`);
+                    Order.findOne({ orderNumber: orderNumber })
+                    .then((order) => {
+                        if (order) {
+                            processNotification(message, order);
                             ch.ack(msg);
+                        } else if (!order && msg.properties.headers['x-death']){
+                            console.log(msg);
+                            console.log(msg.properties.headers);
+                            const retryCount = msg.properties.headers['x-death'][0].count;
+                            if (retryCount <= 5) {
+                                ch.nack(msg, false, false);
+                            } else {
+                                logger.warn(`${orderNumber} | tried to deliver notification 5 times, but failed`);
+                                ch.ack(msg);
+                            }
+                        } else {
+                            // reject for first time processing attempt
+                            ch.nack(msg, false, false);
                         }
-                    } else {
-                        // reject for first time processing attempt
-                        ch.nack(msg, false, false);
-                    }
-                }).catch(console.warn);
-            }
+                    }).catch(console.warn);
+                }
+            })
         })
-    }) 
-}).catch(console.log('connection issue'));
-*/
+    }).catch((error) => {
+        console.log('retry to connect rabbitmq because rabbitmq might not started yet');
+        if (error) {
+            return setTimeout(startMQConnection, 15000);
+        }
+    });
+}
+
+startMQConnection();
+ 
+
+
