@@ -1,0 +1,124 @@
+{
+    "apikey": "486917e2aaa613d0ed04628a57d25d32",
+    "success": {
+        "boxType": "dry",
+        "boxName": "test pakcage type",
+        "items": [
+            "AAAA11968", 
+            "AAAA34818", 
+            "AAAA39543", 
+            "AAAA29426", 
+            "AAAA96580", 
+            "AAAA96238", 
+            "AAAA90152"
+        ],
+        "prices": [
+            {
+                "region": "eu",
+                "currency": "euro",
+                "price": "19.95"
+            }
+        ]
+    },
+    "failInvalidItemcode": {
+        "boxType": "dry",
+        "boxName": "test pakcage type",
+        "items": [
+            "Invaliditemcode", 
+            "AAAA34818", 
+            "AAAA39543", 
+            "AAAA29426", 
+            "AAAA96580", 
+            "AAAA96238", 
+            "AAAA90152"
+        ],
+        "prices": [
+            {
+                "region": "eu",
+                "currency": "euro",
+                "price": "19.95"
+            }
+        ]
+    },
+    "failWrongBoxType": {
+        "boxType": "dryy",
+        "boxName": "test pakcage type",
+        "items": [
+            "AAAA11968", 
+            "AAAA34818", 
+            "AAAA39543", 
+            "AAAA29426", 
+            "AAAA96580", 
+            "AAAA96238", 
+            "AAAA90152"
+        ],
+        "prices": [
+            {
+                "region": "eu",
+                "currency": "euro",
+                "price": "19.95"
+            }
+        ]
+    },
+    "failMissBoxType": {
+        "boxName": "test pakcage type",
+        "items": [
+            "AAAA11968", 
+            "AAAA34818", 
+            "AAAA39543", 
+            "AAAA29426", 
+            "AAAA96580", 
+            "AAAA96238", 
+            "AAAA90152"
+        ],
+        "prices": [
+            {
+                "region": "eu",
+                "currency": "euro",
+                "price": "19.95"
+            }
+        ]
+    },
+    "failMissBoxName": {
+        "boxType": "dry",
+        "items": [
+            "AAAA11968", 
+            "AAAA34818", 
+            "AAAA39543", 
+            "AAAA29426", 
+            "AAAA96580", 
+            "AAAA96238", 
+            "AAAA90152"
+        ],
+        "prices": [
+            {
+                "region": "eu",
+                "currency": "euro",
+                "price": "19.95"
+            }
+        ]
+    },
+    "failInvalidPriceData": {
+        "boxType": "dry",
+        "boxName": "test pakcage type",
+        "items": [
+            "AAAA11968", 
+            "AAAA34818", 
+            "AAAA39543", 
+            "AAAA29426", 
+            "AAAA96580", 
+            "AAAA96238", 
+            "AAAA90152"
+        ],
+        "prices": [
+            {
+                "region": "eus",
+                "currency": "euro",
+                "price": "19.95"
+            }
+        ]
+    }
+
+    
+
+}
