@@ -9,12 +9,11 @@ services:
         - "5672:5672"
       volumes:
         - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-      restarts: always
     nodeapp:
       image: "hellochokchok/backend:latest"
       ports:
         - "8081:8081"
-      restart: always
+      restart: on-failure
       links: 
         - rabbitmq
       depends_on:
