@@ -1,6 +1,6 @@
 const queue = 'notification';
 const retryQueue = 'notification-retry';
-const open = require('amqplib').connect('amqp://rabbitmq:rabbitmq@rabbitmq:5672/');
+const open = require('amqplib')
 const Order = require('../models/Order');
 const logger = require('../utils/logger');
 
@@ -82,6 +82,15 @@ function processNotification (notification, order) {
 }
 
 // message consumer listening to adyen
+
+/*
+open.connect('amqp://rabbitmq:rabbitmq@rabbitmq:5672/').then((connection) => {
+    console.log(connection);
+}).catch((error) => {
+    console.log(error);
+}) */
+
+/*
 open.then((conn) => {
     return conn.createChannel();
 }).then((ch) => {
@@ -127,5 +136,5 @@ open.then((conn) => {
             }
         })
     }) 
-}).catch(console.warn);
-
+}).catch(console.log('connection issue'));
+*/
