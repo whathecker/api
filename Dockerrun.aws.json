@@ -21,6 +21,7 @@
     "containerDefinitions": [
       {
         "name": "nodeapp",
+        "hostname": "nodeapp",
         "image": "hellochokchok/backend:latest",
         "essential": false,
         "memoryReservation": 400,
