@@ -78,7 +78,7 @@
         ],
         "mountPoints": [
           {
-            "sourceVolume": "nginx.conf",
+            "sourceVolume": "nginx-conf",
             "containerPath": "/etc/nginx/nginx.conf"
           }
         ],
