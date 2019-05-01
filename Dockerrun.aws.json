@@ -25,11 +25,6 @@
         "image": "hellochokchok/backend:latest",
         "essential": false,
         "memoryReservation": 400,
-        "portMappings": [
-          {
-            "containerPort": 8081
-          }
-        ],
         "links": [
           "rabbitmq"
         ],
