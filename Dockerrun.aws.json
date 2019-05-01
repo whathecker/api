@@ -14,7 +14,7 @@
       {
         "name": "nginx-conf",
         "host": {
-          "sourcePath": "/var/app/current/nginx/default.conf"
+          "sourcePath": "/var/app/current/nginx/conf.d"
         }
       }
     ],
@@ -74,7 +74,7 @@
         "mountPoints": [
           {
             "sourceVolume": "nginx-conf",
-            "containerPath": "/etc/nginx/conf.d/default.conf"
+            "containerPath": "/etc/nginx/conf.d"
           }
         ],
         "links": [
