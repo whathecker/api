@@ -13,7 +13,7 @@ services:
       hostname: nodeapp
       image: "hellochokchok/backend:latest"
       ports:
-        - "8081:8081"
+        - "8081"
       restart: on-failure
       links: 
         - rabbitmq
@@ -27,6 +27,8 @@ services:
       ports:
         - "80:80"
       restart: always
+      links:
+        - nodeapp
       depends_on:
         - nodeapp
 
