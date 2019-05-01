@@ -8,7 +8,13 @@
       {
         "name": "rabbitmq-conf",
         "host": {
-          "sourcePath": "/var/app/current/rabbitmq.conf"
+          "sourcePath": "/var/app/current/rabbitmq/rabbitmq.conf"
+        }
+      },
+      {
+        "name": "nginx-conf",
+        "host": {
+          "sourcePath": "/var/app/current/nginx/nginx.conf"
         }
       }
     ],
@@ -55,6 +61,10 @@
             {
               "sourceVolume": "rabbitmq-conf",
               "containerPath": "/etc/rabbitmq/rabbitmq.conf"
+            },
+            {
+              "sourceVolume": "nginx.conf",
+              "containerPath": "/etc/nginx/nginx.conf"
             }
           ]
       }

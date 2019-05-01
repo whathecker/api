@@ -8,22 +8,26 @@ services:
         - "15672:15672"
         - "5672:5672"
       volumes:
-        - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+        - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
     nodeapp:
+      hostname: nodeapp
       image: "hellochokchok/backend:latest"
       ports:
         - "8081:8081"
       restart: on-failure
       links: 
         - rabbitmq
-        - nginx
       depends_on:
         - rabbitmq
-        - nginx
     nginx:
       image: nginx
       hostname: nginx
+      volumes: 
+        - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       ports:
         - "80:80"
+      depends_on:
+        - nodeapp
+
 
     
