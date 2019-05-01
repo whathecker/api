@@ -85,7 +85,7 @@
         "dependsOn": [
           {
             "containerName": "nodeapp",
-            "condition" : "SUCCESS"
+            "condition" : "START"
           }
         ]
       }
