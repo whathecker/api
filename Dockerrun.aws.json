@@ -82,6 +82,9 @@
             "containerPath": "/etc/nginx/nginx.conf"
           }
         ],
+        "links": [
+          "nodeapp"
+        ],
         "dependsOn": [
           {
             "containerName": "nodeapp",
