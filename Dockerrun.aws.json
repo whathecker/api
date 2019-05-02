@@ -1,9 +1,5 @@
 {
     "AWSEBDockerrunVersion": 2,
-    "authentication": {
-      "bucket": "elasticbeanstalk-eu-west-3-243549454379",
-      "key": "docker-auth/.dockercfg"
-    },
     "volumes": [
       {
         "name": "rabbitmq-conf",
@@ -22,7 +18,7 @@
       {
         "name": "nodeapp",
         "hostname": "nodeapp",
-        "image": "hellochokchok/backend:latest",
+        "image": "243549454379.dkr.ecr.eu-west-3.amazonaws.com/chokchok_api",
         "essential": false,
         "memoryReservation": 400,
         "portMappings": [
