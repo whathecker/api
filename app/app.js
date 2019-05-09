@@ -8,7 +8,16 @@ const express = require('express'),
     helmet = require('helmet'),
     app = express();
 
-mongoose.connect(dbString, (err) => {
+
+
+const dbOptions = {
+    connectTimeoutMS: 30000, // Give up initial connection after 30 seconds
+    keepAlive: 300000,
+    reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
+    reconnectInterval: 500, // Reconnect every 500ms
+}
+
+mongoose.connect(dbString, dbOptions, (err) => {
     if (err) throw err;
     console.log(`successfully connected to database`);
 }); 
