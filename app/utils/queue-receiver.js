@@ -6,6 +6,8 @@ const logger = require('../utils/logger');
 
 function processNotification (notification, order) {
     console.log('process it');
+    console.log(notification);
+    console.log(notification.notificationItems[0]);
     const eventCode = notification.notificationItems[0].NotificationRequestItem.eventCode;
     const isSuccess = notification.notificationItems[0].NotificationRequestItem.success;
 
