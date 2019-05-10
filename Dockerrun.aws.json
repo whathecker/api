@@ -32,7 +32,7 @@
         "dependsOn": [
           {
             "containerName": "rabbitmq",
-            "condition" : "SUCCESS"
+            "condition" : "START"
           }
         ]
       },
