@@ -32,10 +32,10 @@ function handleNotification (req, res, next) {
         return res.status(401).json({ message: 'unauthorized request' });
     } else {
         const notification = req.body;
-        console.log(notification);
+        //console.log(notification);
         
         startMQConnection().then((connection) => {
-            console.log(connection);
+            //console.log(connection);
             return connection.createChannel();
         }).then((ch) => {
             const exchange = ch.assertExchange(ex, 'direct', { durable: true});
