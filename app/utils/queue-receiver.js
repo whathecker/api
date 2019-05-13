@@ -2,6 +2,8 @@ const queue = 'notification';
 const retryQueue = 'notification-retry';
 const open = require('amqplib')
 const Order = require('../models/Order');
+const User = require('../models/User');
+const Billing =  require('../models/Billing');
 const logger = require('../utils/logger');
 
 function processNotification (notification, order) {
@@ -80,6 +82,52 @@ function processNotification (notification, order) {
                 logger.info(`${order.orderNumber} | updated order is saved in db`);
             }).catch(console.warn);
         }
+    }
+
+    if (eventCode === "RECURRING_CONTRACT" && isSuccess === "true") {
+        const recurringDetail = notification.notificationItems[0].NotificationRequestItem.pspReference;
+        const paymentMethodType = notification.notificationItems[0].NotificationRequestItem.paymentMethod;
+        const userReference = notification.notificationItems[0].NotificationRequestItem.additionalData.shopperReference;
+        const userId = order.user;
+        //console.log(userId);
+        order.paymentMethod.type = paymentMethodType;
+        order.paymentMethod.recurringDetail = recurringDetail;
+        order.markModified('paymentMethod');
+        logger.info(`${order.orderNumber} | new paymentMethod updated ${order.paymentMethod}`);
+
+        User.findById(userId).then((user) => {
+            if (user) {
+                //console.log(user);
+
+                const billingId = user.billingOptions;
+                //console.log(billingId);
+
+                Billing.findById(billingId).then((billingOption) => {
+                    if (billingOption) {
+                        // update billingOption type and recurring detail
+                        billingOption.type = paymentMethodType;
+                        billingOption.recurringDetail = recurringDetail;
+                        billingOption.markModified('type');
+                        billingOption.markModified('recurringDetail');
+                        logger.info(`${userReference} | new billingOption updated`);
+
+                        // save order and billing to db 
+                        Promise.all([
+                            order.save(),
+                            billingOption.save()
+                        ])
+                        .then((values)=> {
+                            if (values) {
+                                logger.info(`billing detail updated for ${order.orderNumber} | ${billingId}`);
+                                return;
+                            }
+                        }).catch(console.warn);
+                    }
+                }).catch(console.warn);
+                
+            }
+        }).catch(console.warn);
+        
     }
 }
 

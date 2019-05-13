@@ -72,7 +72,7 @@ function completeCheckout (req, res, next) {
     order.items = payloadPackage.items;
     order.user = newUser._id;
     order.paymentMethod = {
-        type: paidBy,
+        type: paidBy, 
         recurringDetail: null
     };
     order.paymentStatus = { status: 'OPEN' };
@@ -106,9 +106,10 @@ function completeCheckout (req, res, next) {
 
             if (resultCode === 'Authorised') {
                 // store recurring detail;
+                /*
                 const recurringDetail = response.data.additionalData['recurring.recurringDetailReference'];
                 billingOption.recurringDetail = recurringDetail;
-                order.paymentMethod.recurringDetail = recurringDetail;
+                order.paymentMethod.recurringDetail = recurringDetail; */
 
                 Promise.all([
                     newUser.save(),
@@ -136,9 +137,10 @@ function completeCheckout (req, res, next) {
             } 
 
             if (resultCode === "Pending") {
+                /*
                 const recurringDetail = response.data.additionalData['recurring.recurringDetailReference'];
                 billingOption.recurringDetail = recurringDetail;
-                order.paymentMethod.recurringDetail = recurringDetail;
+                order.paymentMethod.recurringDetail = recurringDetail; */
 
                 Promise.all([
                     billingAddress.save(), 
