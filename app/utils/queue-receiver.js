@@ -12,8 +12,8 @@ function processNotification (notification, order) {
     console.log(notification.notificationItems[0]);
     const eventCode = notification.notificationItems[0].NotificationRequestItem.eventCode;
     const isSuccess = notification.notificationItems[0].NotificationRequestItem.success;
-    console.log(eventCode)
-    console.log(isSuccess)
+    console.log(eventCode);
+    console.log(isSuccess);
 
     if (eventCode === "AUTHORISATION" && isSuccess === "true") {
         const paymentStatusUpdate = { status: 'AUTHORIZED'};
@@ -46,9 +46,8 @@ function processNotification (notification, order) {
         return order.save().then((order) => {
             logger.info(`${order.orderNumber} | updated order is saved in db`);
         }).catch(console.warn);
-    }
 
-    if (eventCode === "AUTHORISATION" && isSuccess === "false") {
+    } else if (eventCode === "AUTHORISATION" && isSuccess === "false") {
         const failedReason = notification.notificationItems[0].NotificationRequestItem.reason;
 
         if (failedReason === "REFUSED") {
@@ -83,10 +82,9 @@ function processNotification (notification, order) {
             return order.save().then((order) => {
                 logger.info(`${order.orderNumber} | updated order is saved in db`);
             }).catch(console.warn);
+            
         }
-    }
-
-    if (eventCode === "RECURRING_CONTRACT" && isSuccess === "true") {
+    } else if (eventCode === "RECURRING_CONTRACT" && isSuccess === "true") {
         console.log('this is called');
         const recurringDetail = notification.notificationItems[0].NotificationRequestItem.pspReference;
         const paymentMethodType = notification.notificationItems[0].NotificationRequestItem.paymentMethod;
