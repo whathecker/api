@@ -89,7 +89,7 @@ function processNotification (notification, order) {
         const paymentMethodType = notification.notificationItems[0].NotificationRequestItem.paymentMethod;
         const userReference = notification.notificationItems[0].NotificationRequestItem.additionalData.shopperReference;
         const userId = order.user;
-        //console.log(userId);
+        console.log(userId);
         order.paymentMethod.type = paymentMethodType;
         order.paymentMethod.recurringDetail = recurringDetail;
         order.markModified('paymentMethod');
@@ -97,10 +97,10 @@ function processNotification (notification, order) {
 
         User.findById(userId).then((user) => {
             if (user) {
-                //console.log(user);
+                console.log(user);
 
                 const billingId = user.billingOptions;
-                //console.log(billingId);
+                console.log(billingId);
 
                 Billing.findById(billingId).then((billingOption) => {
                     if (billingOption) {
@@ -124,7 +124,7 @@ function processNotification (notification, order) {
                         }).catch(console.warn);
                     }
                 }).catch(console.warn);
-                
+
             }
         }).catch(console.warn);
         
