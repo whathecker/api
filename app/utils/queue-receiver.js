@@ -160,6 +160,7 @@ function startMQConnection () {
                     Order.findOne({ orderNumber: orderNumber })
                     .then((order) => {
                         if (order) {
+                            console.log(order);
                             processNotification(message, order);
                             ch.ack(msg);
                         } else if (!order && msg.properties.headers['x-death']){
