@@ -4,20 +4,26 @@
       {
         "name": "rabbitmq-conf",
         "host": {
-          "sourcePath": "/var/app/current/rabbitmq.conf"
+          "sourcePath": "/var/app/current/rabbitmq/rabbitmq.conf"
+        }
+      },
+      {
+        "name": "nginx-conf",
+        "host": {
+          "sourcePath": "/var/app/current/nginx/conf.d"
         }
       }
     ],
     "containerDefinitions": [
       {
         "name": "nodeapp",
-        "image": "hellochokchok/backend:latest",
+        "hostname": "nodeapp",
+        "image": "243549454379.dkr.ecr.eu-west-3.amazonaws.com/chokchok_api",
         "essential": false,
         "memoryReservation": 400,
         "portMappings": [
           {
-            "containerPort": 8081,
-            "hostPort": 8081
+            "containerPort": 8081
           }
         ],
         "links": [
@@ -26,7 +32,7 @@
         "dependsOn": [
           {
             "containerName": "rabbitmq",
-            "condition" : "SUCCESS"
+            "condition" : "START"
           }
         ]
       },
@@ -53,6 +59,34 @@
               "containerPath": "/etc/rabbitmq/rabbitmq.conf"
             }
           ]
+      },
+      {
+        "name": "nginx",
+        "hostname": "nginx",
+        "image": "nginx",
+        "essential": true,
+        "memoryReservation": 128,
+        "portMappings": [
+          {
+            "containerPort": 80,
+            "hostPort": 80
+          }
+        ],
+        "mountPoints": [
+          {
+            "sourceVolume": "nginx-conf",
+            "containerPath": "/etc/nginx/conf.d"
+          }
+        ],
+        "links": [
+          "nodeapp"
+        ],
+        "dependsOn": [
+          {
+            "containerName": "nodeapp",
+            "condition" : "START"
+          }
+        ]
       }
     ]
   }

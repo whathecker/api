@@ -1,7 +1,9 @@
 # ignored file from project
 .vscode/
 .vscode/settings.json
-.config/
+config
+.config
+.config/database.json
 
 # SSL keys
 *.pem
@@ -84,3 +86,6 @@ typings/
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+# deployment artifact
+server.zip

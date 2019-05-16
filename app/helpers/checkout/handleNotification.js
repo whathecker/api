@@ -2,6 +2,7 @@ const logger = require('../../utils/logger');
 const auth = require('basic-auth');
 //const Order = require('../../models/Order');
 const open = require('amqplib');
+const rabbitMQConnection = require('../../utils/rabbitMQConnector');
 const queue = 'notification';
 const retryQueue = 'notification-retry';
 const ex = 'notification';
@@ -18,7 +19,7 @@ function checkAdyenBasicAuth(credentials) {
 }
 
 function startMQConnection () {
-    return open.connect('amqp://rabbitmq:rabbitmq@rabbitmq:5672/');
+    return open.connect(rabbitMQConnection());
 }
 
 function handleNotification (req, res, next) {
@@ -32,10 +33,10 @@ function handleNotification (req, res, next) {
         return res.status(401).json({ message: 'unauthorized request' });
     } else {
         const notification = req.body;
-        console.log(notification);
+        //console.log(notification);
         
         startMQConnection().then((connection) => {
-            console.log(connection);
+            //console.log(connection);
             return connection.createChannel();
         }).then((ch) => {
             const exchange = ch.assertExchange(ex, 'direct', { durable: true});
