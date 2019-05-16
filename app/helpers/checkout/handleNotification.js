@@ -2,6 +2,7 @@ const logger = require('../../utils/logger');
 const auth = require('basic-auth');
 //const Order = require('../../models/Order');
 const open = require('amqplib');
+const rabbitMQConnection = require('../../utils/rabbitMQConnector');
 const queue = 'notification';
 const retryQueue = 'notification-retry';
 const ex = 'notification';
@@ -18,7 +19,7 @@ function checkAdyenBasicAuth(credentials) {
 }
 
 function startMQConnection () {
-    return open.connect('amqp://rabbitmq:rabbitmq@rabbitmq:5672/');
+    return open.connect(rabbitMQConnection());
 }
 
 function handleNotification (req, res, next) {

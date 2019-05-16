@@ -4,6 +4,7 @@ const open = require('amqplib')
 const Order = require('../models/Order');
 const User = require('../models/User');
 const Billing =  require('../models/Billing');
+const rabbitMQConnection = require('../utils/rabbitMQConnector');
 const logger = require('../utils/logger');
 
 function processNotification (notification, order) {
@@ -134,7 +135,7 @@ function processNotification (notification, order) {
 
 // message consumer listening to adyen
 function startMQConnection () {
-    open.connect('amqp://rabbitmq:rabbitmq@rabbitmq:5672/').then((connection) => {
+    open.connect(rabbitMQConnection()).then((connection) => {
     return connection.createChannel();
     }).then((ch) => {
         const workQueue = ch.assertQueue(queue, {
