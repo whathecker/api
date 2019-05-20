@@ -8,6 +8,18 @@ const logger = require('../../utils/logger');
 const adyenAxios = require('../../../axios-adyen');
 
 
+function isAddressesSame (billingAddress, shippingAddress) {
+
+    let compareResult = true;
+
+    for (let prop in shippingAddress) {
+        if (shippingAddress[prop] !== billingAddress[prop]) {
+            compareResult = false;
+        }
+    }
+    return compareResult;
+}
+
 function processRedirectedPayment (req, res, next) {
 
     if (!req.body.details) {
@@ -36,6 +48,8 @@ function processRedirectedPayment (req, res, next) {
     newUser.lastName = payloadForUser.lastName;
     newUser.mobileNumber = payloadForUser.mobileNumber;
 
+    const addressComparison = isAddressesSame(payloadForUser.billingAddress, payloadForUser.shippingAddress);
+    
     // construct new billing addresses
     let billingAddress = new Address();
     billingAddress.firstname = payloadForUser.billingAddress.firstName;
@@ -96,9 +110,16 @@ function processRedirectedPayment (req, res, next) {
     subscription.orders = [order];
 
     // update user object
-    newUser.addresses = [shippingAddress, billingAddress];
-    newUser.defaultShippingAddress = shippingAddress;
-    newUser.defaultBillingAddress = billingAddress;
+    if (addressComparison === true) {
+        newUser.addresses = [shippingAddress];
+        newUser.defaultShippingAddress = shippingAddress;
+        newUser.defaultBillingAddress = shippingAddress;
+    } else {
+        newUser.addresses = [shippingAddress, billingAddress];
+        newUser.defaultShippingAddress = shippingAddress;
+        newUser.defaultBillingAddress = billingAddress;
+    }
+
     newUser.subscriptions = [subscription];
     newUser.orders = [order];
     newUser.billingOptions = [billingOption];
@@ -109,19 +130,46 @@ function processRedirectedPayment (req, res, next) {
             const resultCode = response.data.resultCode;
             console.log(response.data);
 
-            if (resultCode === "Authorised") {
+            if (resultCode === "Authorised" && addressComparison === true) {
                 
                 order.orderNumber = response.data.merchantReference;
                 order.paymentMethod.type = response.data.paymentMethod;
                 billingOption.type = response.data.paymentMethod;
-
+                
                 Promise.all([
-                    billingAddress.save(),
-                    shippingAddress.save(),
+                    newUser.save(),
                     billingOption.save(),
+                    shippingAddress.save(),
                     subscription.save(),
-                    order.save(),
-                    newUser.save()
+                    order.save()
+                ])
+                .then((values) => {
+                    if (values) {
+                        return res.status(201).json({
+                            status: res.status,
+                            resultCode: resultCode,
+                            message: 'checkout success',
+                            subscriptionId: subscription.subscriptionId,
+                            orderNumber: order.orderNumber,
+                            user: newUser.email
+                        });
+                    }
+                }).catch(next);
+                
+            }
+            else if (resultCode === "Authorised" && addressComparison === false) {
+                
+                order.orderNumber = response.data.merchantReference;
+                order.paymentMethod.type = response.data.paymentMethod;
+                billingOption.type = response.data.paymentMethod;
+                
+                Promise.all([
+                    newUser.save(),
+                    billingOption.save(),
+                    shippingAddress.save(),
+                    billingAddress.save(),
+                    subscription.save(),
+                    order.save()
                 ])
                 .then((values) => {
                     if (values) {
@@ -138,7 +186,7 @@ function processRedirectedPayment (req, res, next) {
                 
             }
 
-            if (resultCode === "Received") {
+             else if (resultCode === "Received" && addressComparison === true) {
                 order.orderNumber = response.data.merchantReference;
                 order.paymentMethod.type = response.data.paymentMethod;
                 billingOption.type = response.data.paymentMethod;
@@ -146,7 +194,34 @@ function processRedirectedPayment (req, res, next) {
                 Promise.all([
                     newUser.save(),
                     billingOption.save(),
+                    shippingAddress.save(),
                     billingAddress.save(),
+                    subscription.save(),
+                    order.save()
+                ])
+                .then((values) => {
+                    if (values) {
+                        return res.status(201).json({
+                            status: res.status,
+                            resultCode: resultCode,
+                            message: 'user is created but authorisation of payment is pending',
+                            subscriptionId: subscription.subscriptionId,
+                            orderNumber: order.orderNumber,
+                            user: newUser.email
+                        });
+                    }
+                }).catch(next);
+
+            }
+
+            else if (resultCode === "Received" && addressComparison === false) {
+                order.orderNumber = response.data.merchantReference;
+                order.paymentMethod.type = response.data.paymentMethod;
+                billingOption.type = response.data.paymentMethod;
+
+                Promise.all([
+                    newUser.save(),
+                    billingOption.save(),
                     shippingAddress.save(),
                     subscription.save(),
                     order.save()
@@ -166,7 +241,7 @@ function processRedirectedPayment (req, res, next) {
 
             }
 
-            if (resultCode === "Refused") {
+            else if (resultCode === "Refused") {
                 return res.status(200).json({
                     status: res.status,
                     resultCode: resultCode,
@@ -174,7 +249,7 @@ function processRedirectedPayment (req, res, next) {
                 });
             }
 
-            if (resultCode === "Cancelled") {
+            else if (resultCode === "Cancelled") {
                 return res.status(200).json({
                     status: res.status,
                     resultCode: resultCode,
@@ -182,7 +257,7 @@ function processRedirectedPayment (req, res, next) {
                 });
             }
 
-            if (resultCode === "Error") {
+            else if (resultCode === "Error") {
                 return res.status(500).json({
                     status: res.status,
                     resultCode: resultCode,

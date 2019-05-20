@@ -7,6 +7,18 @@ const crypto = require('crypto');
 const logger = require('../../utils/logger');
 const adyenAxios = require('../../../axios-adyen');
 
+function isAddressesSame (billingAddress, shippingAddress) {
+
+    let compareResult = true;
+
+    for (let prop in shippingAddress) {
+        if (shippingAddress[prop] !== billingAddress[prop]) {
+            compareResult = false;
+        }
+    }
+    return compareResult;
+}
+
 
 function completeCheckout (req, res, next) {
     
@@ -23,7 +35,10 @@ function completeCheckout (req, res, next) {
     newUser.firstName = payloadForUser.firstName;
     newUser.lastName = payloadForUser.lastName;
     newUser.mobileNumber = payloadForUser.mobileNumber;
-    
+
+
+    const addressComparison = isAddressesSame(payloadForUser.billingAddress, payloadForUser.shippingAddress);
+
     // construct new billing addresses
     let billingAddress = new Address();
     billingAddress.firstname = payloadForUser.billingAddress.firstName;
@@ -84,9 +99,16 @@ function completeCheckout (req, res, next) {
     subscription.orders = [order];
 
     // update user object
-    newUser.addresses = [shippingAddress, billingAddress];
-    newUser.defaultShippingAddress = shippingAddress;
-    newUser.defaultBillingAddress = billingAddress;
+    if (addressComparison === true) {
+        newUser.addresses = [shippingAddress];
+        newUser.defaultShippingAddress = shippingAddress;
+        newUser.defaultBillingAddress = shippingAddress;
+    } else {
+        newUser.addresses = [shippingAddress, billingAddress];
+        newUser.defaultShippingAddress = shippingAddress;
+        newUser.defaultBillingAddress = billingAddress;
+    }
+    
     newUser.subscriptions = [subscription];
     newUser.orders = [order];
     newUser.billingOptions = [billingOption];
@@ -101,23 +123,42 @@ function completeCheckout (req, res, next) {
     // reach out to adyen for payment
     adyenAxios.post('/payments', payloadForAdyen)
         .then((response) => {
-            
             const resultCode = response.data.resultCode;
-
-            if (resultCode === 'Authorised') {
-                // store recurring detail;
-                /*
-                const recurringDetail = response.data.additionalData['recurring.recurringDetailReference'];
-                billingOption.recurringDetail = recurringDetail;
-                order.paymentMethod.recurringDetail = recurringDetail; */
-
+            
+            if (resultCode === 'Authorised' && addressComparison === true) {
+            
                 Promise.all([
                     newUser.save(),
                     billingOption.save(),
-                    billingAddress.save(), 
                     shippingAddress.save(),
                     subscription.save(),
-                    order.save(),
+                    order.save()
+                ])
+                .then((values)=> {
+                    if (values) {
+
+                        return res.status(201).json({
+                            status: res.status,
+                            resultCode: resultCode,
+                            message: 'checkout success',
+                            subscriptionId: subscription.subscriptionId,
+                            orderNumber: order.orderNumber,
+                            user: newUser.email
+                        });
+
+                    }
+                }).catch(next);
+            } 
+
+            else if (resultCode === 'Authorised' && addressComparison === false) {
+                
+                Promise.all([
+                    newUser.save(),
+                    billingOption.save(),
+                    shippingAddress.save(),
+                    billingAddress.save(),
+                    subscription.save(),
+                    order.save()
                 ])
                 .then((values)=> {
                     if (values) {
@@ -136,19 +177,13 @@ function completeCheckout (req, res, next) {
 
             } 
 
-            if (resultCode === "Pending") {
-                /*
-                const recurringDetail = response.data.additionalData['recurring.recurringDetailReference'];
-                billingOption.recurringDetail = recurringDetail;
-                order.paymentMethod.recurringDetail = recurringDetail; */
-
+            else if (resultCode === "Pending" && addressComparison === true) {
                 Promise.all([
-                    billingAddress.save(), 
-                    shippingAddress.save(),
+                    newUser.save(),
                     billingOption.save(),
+                    shippingAddress.save(),
                     subscription.save(),
-                    order.save(),
-                    newUser.save()
+                    order.save()
                 ])
                 .then((values)=> {
                     if (values) {
@@ -167,7 +202,33 @@ function completeCheckout (req, res, next) {
 
             }
 
-            if (resultCode === 'Refused') {
+            else if (resultCode === "Pending" && addressComparison === false) {
+                Promise.all([
+                    newUser.save(),
+                    billingOption.save(),
+                    shippingAddress.save(),
+                    billingAddress.save(),
+                    subscription.save(),
+                    order.save()
+                ])
+                .then((values)=> {
+                    if (values) {
+
+                        return res.status(201).json({
+                            status: res.status,
+                            resultCode: resultCode,
+                            message: 'user is created but authorisation of payment is pending',
+                            subscriptionId: subscription.subscriptionId,
+                            orderNumber: order.orderNumber,
+                            user: newUser.email
+                        });
+
+                    }
+                }).catch(next);
+
+            }
+
+            else if (resultCode === 'Refused') {
                 return res.status(200).json({
                     status: res.status,
                     resultCode: resultCode,
@@ -175,7 +236,7 @@ function completeCheckout (req, res, next) {
                 });
             }
 
-            if (resultCode === "Cancelled") {
+            else if (resultCode === "Cancelled") {
                 return res.status(200).json({
                     status: res.status,
                     resultCode: resultCode,
@@ -183,7 +244,7 @@ function completeCheckout (req, res, next) {
                 });
             }
 
-            if (resultCode === 'Error') {
+            else if (resultCode === 'Error') {
                 return res.status(500).json({
                     status: res.status,
                     resultCode: resultCode,
@@ -191,7 +252,7 @@ function completeCheckout (req, res, next) {
                 });
             }
 
-            if (resultCode === 'RedirectShopper') {
+            else if (resultCode === 'RedirectShopper') {
                 return res.status(202).json({
                     status: res.status,
                     resultCode: resultCode,
