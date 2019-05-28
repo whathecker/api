@@ -6,6 +6,7 @@ function getUserDetail (req, res, next) {
     
     if (req.user) {
         User.findById(req.user._id)
+        .populate('defaultShippingAddress')
         .populate({
             path: 'subscriptions',
             populate: { path: 'package'}
@@ -20,6 +21,14 @@ function getUserDetail (req, res, next) {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     mobileNumber: user.mobileNumber,
+                    address: {
+                        streetName: user.defaultShippingAddress.streetName,
+                        houseNumber: user.defaultShippingAddress.houseNumber,
+                        houseNumberAdd: user.defaultShippingAddress.houseNumberAdd,
+                        city: user.defaultShippingAddress.city,
+                        province: user.defaultShippingAddress.province,
+                        country: user.defaultShippingAddress.country
+                    },
                     subscription: {
                         id: user.subscriptions[0].subscriptionId,
                         creationDate: user.subscriptions[0].creationDate
