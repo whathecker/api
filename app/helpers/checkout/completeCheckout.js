@@ -23,6 +23,7 @@ function isAddressesSame (billingAddress, shippingAddress) {
 function completeCheckout (req, res, next) {
     
     const payloadForUser = req.body.user;
+    console.log(payloadForUser)
     const payloadPackage = req.body.package;
     const paidBy = req.body.paidBy;
 

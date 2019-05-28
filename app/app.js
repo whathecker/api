@@ -8,8 +8,6 @@ const express = require('express'),
     helmet = require('helmet'),
     app = express();
 
-
-
 const dbOptions = {
     connectTimeoutMS: 30000, // Give up initial connection after 30 seconds
     keepAlive: 300000,
@@ -41,6 +39,7 @@ app.use(cors(corsOptions));
 (isDevelopment || isProduction)? app.set('trust proxy', 1): null;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
 
 // message receiver for adyen notification
 require('./utils/queue-receiver');

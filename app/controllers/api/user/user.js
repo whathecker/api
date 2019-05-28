@@ -9,6 +9,8 @@ const connector = require('../../../utils/connector');
 const dbString = connector.getDBString();
 const session = require('express-session');
 const Mongostore = require('connect-mongo')(session);
+
+const getUserDetail = require('../../../helpers/user/getUserDetail');
 const createUser = require('../../../helpers/user/createUser');
 const apiAuth = require('../../../middlewares/verifyApikey');
 
@@ -17,6 +19,8 @@ const isDevelopment = process.env.NODE_ENV === "development";
 const isProduction = process.env.NODE_ENV === "production";
 
 router.use(apiAuth);
+
+
 
 if (isLocal) {
     router.use(session({ 
@@ -49,7 +53,7 @@ if (isLocal) {
         rolling: true,
         store: new Mongostore({ url: dbString })
     }));
-}
+} 
 
 router.use(passport.initialize());
 router.use(passport.session());
@@ -107,8 +111,11 @@ router.get('/user/logout', userAuth, (req, res, next) => {
     res.status(200).json({ message: "user session has terminated" });
 });
 
+router.get('/user', userAuth, getUserDetail);
 
 router.post('/user', createUser);
+
+
 
 
 // to add admin protection for this endpoint
