@@ -7,15 +7,26 @@ function getUserDetail (req, res, next) {
     if (req.user) {
         User.findById(req.user._id)
         .populate('defaultShippingAddress')
+        .populate('billingOptions')
         .populate({
             path: 'subscriptions',
             populate: { path: 'package'}
         })
         .then((user) => {
             if (user) {
-                //console.log(user);
+                console.log(user);
                 //console.log(user.subscriptions[0])
                 //console.log(user.subscriptions[0].package)
+
+                let billingOptions = [];
+                for (let i = 0; i < user.billingOptions.length; i++) {
+                    const billingOption = {
+                        id: user.billingOptions[i].recurringDetail,
+                        type: user.billingOptions[i].type
+                    }
+                    billingOptions.push(billingOption);
+                }
+            
                 const userData = {
                     email: user.email,
                     firstName: user.firstName,
@@ -36,7 +47,8 @@ function getUserDetail (req, res, next) {
                     package: {
                         id: user.subscriptions[0].package.id,
                         boxType: user.subscriptions[0].package.boxType
-                    }
+                    },
+                    billingOptions: billingOptions
                 }
                 logger.info(`get user request has returned user ${user.email}`);
                 return res.status(200).json(userData);
