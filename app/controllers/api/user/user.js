@@ -13,6 +13,7 @@ const Mongostore = require('connect-mongo')(session);
 const getUserDetail = require('../../../helpers/user/getUserDetail');
 const createUser = require('../../../helpers/user/createUser');
 const updateContactDetail = require('../../../helpers/user/updateContactDetail');
+const updateEmailAddress = require('../../../helpers/user/updateEmailAddress');
 const apiAuth = require('../../../middlewares/verifyApikey');
 
 const isLocal = process.env.NODE_ENV === "local";
@@ -114,8 +115,8 @@ router.get('/user/logout', userAuth, (req, res, next) => {
 
 router.get('/user', userAuth, getUserDetail);
 
-router.put('/user/contact', userAuth, updateContactDetail)
-
+router.put('/user/contact', userAuth, updateContactDetail);
+router.put('/user/email', userAuth, updateEmailAddress);
 router.post('/user', createUser);
 
 
