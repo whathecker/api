@@ -14,6 +14,7 @@ const getUserDetail = require('../../../helpers/user/getUserDetail');
 const createUser = require('../../../helpers/user/createUser');
 const updateContactDetail = require('../../../helpers/user/updateContactDetail');
 const updateEmailAddress = require('../../../helpers/user/updateEmailAddress');
+const updatePassword = require('../../../helpers/user/updatePassword');
 const apiAuth = require('../../../middlewares/verifyApikey');
 
 const isLocal = process.env.NODE_ENV === "local";
@@ -117,6 +118,7 @@ router.get('/user', userAuth, getUserDetail);
 
 router.put('/user/contact', userAuth, updateContactDetail);
 router.put('/user/email', userAuth, updateEmailAddress);
+router.put('/user/password', userAuth, updatePassword);
 router.post('/user', createUser);
 
 
