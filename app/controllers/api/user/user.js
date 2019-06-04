@@ -11,6 +11,7 @@ const session = require('express-session');
 const Mongostore = require('connect-mongo')(session);
 
 const getUserDetail = require('../../../helpers/user/getUserDetail');
+const getUserAddresses = require('../../../helpers/user/getUserAddresses');
 const createUser = require('../../../helpers/user/createUser');
 const updateContactDetail = require('../../../helpers/user/updateContactDetail');
 const updateEmailAddress = require('../../../helpers/user/updateEmailAddress');
@@ -115,7 +116,7 @@ router.get('/user/logout', userAuth, (req, res, next) => {
 });
 
 router.get('/user', userAuth, getUserDetail);
-
+router.get('/user/addresses', userAuth, getUserAddresses);
 router.put('/user/contact', userAuth, updateContactDetail);
 router.put('/user/email', userAuth, updateEmailAddress);
 router.put('/user/password', userAuth, updatePassword);

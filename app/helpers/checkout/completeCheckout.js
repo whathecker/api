@@ -42,8 +42,9 @@ function completeCheckout (req, res, next) {
 
     // construct new billing addresses
     let billingAddress = new Address();
-    billingAddress.firstname = payloadForUser.billingAddress.firstName;
+    billingAddress.firstName = payloadForUser.billingAddress.firstName;
     billingAddress.lastName = payloadForUser.billingAddress.lastName;
+    billingAddress.postalCode = payloadForUser.billingAddress.postalCode;
     billingAddress.houseNumber = payloadForUser.billingAddress.houseNumber;
     billingAddress.houseNumberAdd = payloadForUser.billingAddress.houseNumberAdd;
     billingAddress.mobileNumber = payloadForUser.billingAddress.mobileNumber;
@@ -55,8 +56,9 @@ function completeCheckout (req, res, next) {
      
     // construct new shipping addresses
     let shippingAddress = new Address();
-    shippingAddress.firstname = payloadForUser.shippingAddress.firstName;
+    shippingAddress.firstName = payloadForUser.shippingAddress.firstName;
     shippingAddress.lastName = payloadForUser.shippingAddress.lastName;
+    shippingAddress.postalCode = payloadForUser.shippingAddress.postalCode;
     shippingAddress.houseNumber = payloadForUser.shippingAddress.houseNumber;
     shippingAddress.houseNumberAdd = payloadForUser.shippingAddress.houseNumberAdd;
     shippingAddress.mobileNumber = payloadForUser.shippingAddress.mobileNumber;
