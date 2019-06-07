@@ -23,8 +23,7 @@ function updateContactDetail (req, res, next) {
                     message: 'no user'
                 });
             }
-        })
-        .catch(next);
+        }).catch(next);
     } 
 }
 

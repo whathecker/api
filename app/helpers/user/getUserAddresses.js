@@ -10,22 +10,19 @@ function getUserAddresses (req, res, next) {
         .populate('addresses')
         .then((user) => {
             if (user) {
-                console.log(user);
-                
                 
                 let addresses = [];
                 for (let i = 0; i < user.addresses.length; i++) {
                     let isShippingAddress = false;
                     let isBillingAddress = false;
                     if (user.addresses[i]._id.equals(user.defaultShippingAddress._id)) {
-                        console.log('is this called?');
                         isShippingAddress = true;
                     }
                     if (user.addresses[i]._id.equals(user.defaultBillingAddress._id)) {
-                        console.log('is this called?');
                         isBillingAddress = true;
                     }
                     const address = {
+                        id: user.addresses[i]._id,
                         city: user.addresses[i].city,
                         province: user.addresses[i].province,
                         country: user.addresses[i].country,
@@ -45,6 +42,7 @@ function getUserAddresses (req, res, next) {
                 const addressData = {
                     addresses: addresses,
                     shippingAddress: {
+                        id: user.defaultShippingAddress._id,
                         city: user.defaultShippingAddress.city,
                         province: user.defaultShippingAddress.province,
                         country: user.defaultShippingAddress.country,
@@ -57,6 +55,7 @@ function getUserAddresses (req, res, next) {
                         mobileNumber: user.defaultShippingAddress.mobileNumber
                     },
                     billingAddress: {
+                        id: user.defaultBillingAddress._id,
                         city: user.defaultBillingAddress.city,
                         province: user.defaultBillingAddress.province,
                         country: user.defaultBillingAddress.country,

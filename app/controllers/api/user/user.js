@@ -13,6 +13,7 @@ const Mongostore = require('connect-mongo')(session);
 const getUserDetail = require('../../../helpers/user/getUserDetail');
 const getUserAddresses = require('../../../helpers/user/getUserAddresses');
 const createUser = require('../../../helpers/user/createUser');
+const upsertAddress = require('../../../helpers/user/upsertAddress');
 const updateContactDetail = require('../../../helpers/user/updateContactDetail');
 const updateEmailAddress = require('../../../helpers/user/updateEmailAddress');
 const updatePassword = require('../../../helpers/user/updatePassword');
@@ -117,6 +118,7 @@ router.get('/user/logout', userAuth, (req, res, next) => {
 
 router.get('/user', userAuth, getUserDetail);
 router.get('/user/addresses', userAuth, getUserAddresses);
+router.put('/user/addresses/address', userAuth, upsertAddress);
 router.put('/user/contact', userAuth, updateContactDetail);
 router.put('/user/email', userAuth, updateEmailAddress);
 router.put('/user/password', userAuth, updatePassword);
