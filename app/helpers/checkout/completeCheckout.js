@@ -20,6 +20,7 @@ function isAddressesSame (billingAddress, shippingAddress) {
 }
 
 
+
 function completeCheckout (req, res, next) {
     
     const payloadForUser = req.body.user;
@@ -139,7 +140,7 @@ function completeCheckout (req, res, next) {
                 ])
                 .then((values)=> {
                     if (values) {
-
+                        
                         return res.status(201).json({
                             status: res.status,
                             resultCode: resultCode,
@@ -165,7 +166,7 @@ function completeCheckout (req, res, next) {
                 ])
                 .then((values)=> {
                     if (values) {
-
+                        
                         return res.status(201).json({
                             status: res.status,
                             resultCode: resultCode,

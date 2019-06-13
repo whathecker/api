@@ -42,7 +42,8 @@ app.use(bodyParser.json());
 
 
 // message receiver for adyen notification
-require('./utils/queue-receiver');
+require('./utils/messageQueue/queue-receivers');
+
 // mount routes
 app.use(require('./controllers'));
 

@@ -1,11 +1,15 @@
 const queue = 'notification';
 const retryQueue = 'notification-retry';
+const mailQueue = 'mail';
+const mailRetryQueue = 'mail-retry';
 const open = require('amqplib')
-const Order = require('../models/Order');
-const User = require('../models/User');
-const Billing =  require('../models/Billing');
-const rabbitMQConnection = require('../utils/rabbitMQConnector');
-const logger = require('../utils/logger');
+const Order = require('../../models/Order');
+const User = require('../../models/User');
+const Billing =  require('../../models/Billing');
+const rabbitMQConnection = require('./rabbitMQConnector');
+const logger = require('../logger');
+const axiosSendGrid = require('../../../axios-sendgrid');
+const Subscription = require('../../models/Subscription');
 
 function processNotification (notification, order) {
     console.log('process it');
@@ -146,6 +150,16 @@ function startMQConnection () {
             messageTtl : 300000
         });
 
+        const mailWorkQueue = ch.assertQueue(mailQueue, {
+            deadLetterExchange: mailRetryQueue,
+        });
+        
+        const mailRetryWorkQueue = ch.assertQueue(mailRetryQueue, {
+            deadLetterExchange: mailQueue,
+            messageTtl: 300000
+        });
+
+        // notificiation consumer
         Promise.all([
             workQueue,
             retryWorkQueue
@@ -178,8 +192,111 @@ function startMQConnection () {
                         }
                     }).catch(console.warn);
                 }
-            })
+            });;
         })
+
+        // consumer for transactional mail delivery 
+        Promise.all([
+            mailWorkQueue,
+            mailRetryWorkQueue
+        ]).then((ok) => {
+            return ch.consume(mailQueue, (msg) => {
+                if (msg !== null) {
+                    const message = JSON.parse(msg.content);
+                    const emailType = message.emailType;
+                    
+                    console.log(message);
+                    let payloadToSendGrid = {
+                        from: {
+                            email: 'no-reply@hellochokchok.com'
+                        }, 
+                        personalizations: [{
+                                to: [{
+                                    email: message.email
+                                }],
+                                dynamic_template_data: {}
+                        }],
+                        template_id: null
+                    };
+
+                    switch (emailType) {
+                        case 'welcome':
+                            Subscription.findOne({ subscriptionId: message.subscriptionId })
+                            .then((subscription) => {
+                                if (subscription) {
+
+                                    // update status of email sent to true
+                                    if (subscription.isWelcomeEmailSent === false) {
+                                        subscription.isWelcomeEmailSent = true;
+                                        subscription.markModified('isWelcomeEmailSent');
+
+                                        // update payload 
+                                        payloadToSendGrid.template_id = "d-7b71a08e6e164c4e92624d174fb1c826";
+                                        payloadToSendGrid.personalizations[0].dynamic_template_data = {
+                                            subscriptionId: message.subscriptionId,
+                                            packageName: message.packageName,
+                                            price: message.price,
+                                            firstName: message.firstName,
+                                            lastName: message.lastName,
+                                            shippingAddress: message.shippingAddress,
+                                            billingAddress: message.billingAddress,
+                                            paymentMethodType: message.paymentMethodType,
+                                            paymentMethodRef: message.paymentMethodRef
+                                        }
+                                        
+
+                                        axiosSendGrid.post('/mail/send', payloadToSendGrid)
+                                        .then((response) => {
+                                            console.log(response);
+                                            if (response.status === 202) {
+                                                subscription.save();
+                                                ch.ack(msg);
+                                                logger.info(`welcome email has delivered | subscriptionId: ${message.subscriptionId} email: ${message.email}`);
+                                            }
+                                        }).catch((error) => {
+                                            logger.warn(`welcome email delivery has failed | subscriptionId: ${message.subscriptionId} email: ${message.email}`);
+                                            error? ch.nack(msg, false, false): null;
+                                        });
+                                    }
+
+                                    if (subscription.isWelcomeEmailSent === true) {
+                                        logger.info(`welcome email has already delivered | subscriptionId: ${message.subscriptionId} email: ${message.email}`);
+                                        ch.ack(msg);
+                                    }
+
+                                    // save update to DB and call sendGrid
+                                }
+                                if (!subscription) {
+                                    
+                                    if (msg.properties.headers['x-death']) {
+                                        const retryCount = msg.properties.headers['x-death'][0].count;
+
+                                        if (retryCount <= 5) {
+                                            logger.warn(`welcome email delivery has rejected as subscription has not found | retry count ${retryCount}`);
+                                            ch.nack(msg, false, false)
+                                        } else {
+                                            logger.warn(`welcome email delivery has failed as subscrption has not found | message has acknowledged as retry count exceed 5`);
+                                            ch.ack(msg);
+                                        }
+                                        
+                                    } else {
+                                        // reject when subscription isn't found
+                                        logger.warn(`welcome email delivery has rejected as subscription has not found | retry count: 0`);
+                                        ch.nack(msg, false, false);
+                                    }
+                                    
+                                } 
+                            }).catch(console.warn);
+                        break;
+
+                    }
+
+
+                }
+            });
+        });
+
+
     }).catch((error) => {
         console.log('retry to connect rabbitmq because rabbitmq might not started yet');
         if (error) {

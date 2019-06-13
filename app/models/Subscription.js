@@ -12,6 +12,7 @@ let subscriptionSchema = new Schema({
     },
     creationDate: { type: Date, default: Date.now },
     endDate: { type: Date },
+    isWelcomeEmailSent: { type: Boolean, default: false },
     package: { type: Schema.Types.ObjectId, ref: 'SubscriptionBox' },
     user: { type: Schema.Types.ObjectId, ref: 'User'},
     paymentMethod: { type: Schema.Types.ObjectId, ref: 'Billing' },
