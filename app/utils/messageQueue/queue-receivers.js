@@ -175,20 +175,20 @@ function startMQConnection () {
                         if (order) {
                             console.log(order);
                             processNotification(message, order);
-                            ch.ack(msg);
+                            return ch.ack(msg);
                         } else if (!order && msg.properties.headers['x-death']){
                             console.log(msg);
                             console.log(msg.properties.headers);
                             const retryCount = msg.properties.headers['x-death'][0].count;
                             if (retryCount <= 5) {
-                                ch.nack(msg, false, false);
+                                return ch.nack(msg, false, false);
                             } else {
                                 logger.warn(`${orderNumber} | tried to deliver notification 5 times, but failed`);
-                                ch.ack(msg);
+                                return ch.ack(msg);
                             }
                         } else {
                             // reject for first time processing attempt
-                            ch.nack(msg, false, false);
+                            return ch.nack(msg, false, false);
                         }
                     }).catch(console.warn);
                 }
@@ -202,13 +202,15 @@ function startMQConnection () {
         ]).then((ok) => {
             return ch.consume(mailQueue, (msg) => {
                 if (msg !== null) {
+                    console.log('mail message');
+                    console.log(msg);
                     const message = JSON.parse(msg.content);
                     const emailType = message.emailType;
                     
                     console.log(message);
                     let payloadToSendGrid = {
                         from: {
-                            email: 'no-reply@hellochokchok.com'
+                            email: 'chokchok@hellochokchok.com'
                         }, 
                         personalizations: [{
                                 to: [{
@@ -241,7 +243,18 @@ function startMQConnection () {
                                             shippingAddress: message.shippingAddress,
                                             billingAddress: message.billingAddress,
                                             paymentMethodType: message.paymentMethodType,
-                                            paymentMethodRef: message.paymentMethodRef
+                                            paymentMethodRef: message.paymentMethodRef,
+                                            senderName: 'Chokchok V.O.F',
+                                            senderAddress: 'Commelinestraat 42',
+                                            senderCity: 'Amsterdam',
+                                            senderCountry: 'Netherlands',
+                                            loginLink: ''
+                                        }
+
+                                        if (process.env.NODE_ENV === "production") {
+                                            payloadToSendGrid.personalizations[0].dynamic_template_data.loginLink = 'https://www.hellochokchok.com/login';
+                                        } else {
+                                            payloadToSendGrid.personalizations[0].dynamic_template_data.loginLink = 'https://test.hellochokchok.com/login';
                                         }
                                         
 
@@ -252,16 +265,19 @@ function startMQConnection () {
                                                 subscription.save();
                                                 ch.ack(msg);
                                                 logger.info(`welcome email has delivered | subscriptionId: ${message.subscriptionId} email: ${message.email}`);
+                                                return;
                                             }
                                         }).catch((error) => {
                                             logger.warn(`welcome email delivery has failed | subscriptionId: ${message.subscriptionId} email: ${message.email}`);
                                             error? ch.nack(msg, false, false): null;
+                                            return;
                                         });
                                     }
 
-                                    if (subscription.isWelcomeEmailSent === true) {
+                                    else if (subscription.isWelcomeEmailSent === true) {
                                         logger.info(`welcome email has already delivered | subscriptionId: ${message.subscriptionId} email: ${message.email}`);
                                         ch.ack(msg);
+                                        return;
                                     }
 
                                     // save update to DB and call sendGrid
@@ -273,16 +289,16 @@ function startMQConnection () {
 
                                         if (retryCount <= 5) {
                                             logger.warn(`welcome email delivery has rejected as subscription has not found | retry count ${retryCount}`);
-                                            ch.nack(msg, false, false)
+                                            return ch.nack(msg, false, false)
                                         } else {
                                             logger.warn(`welcome email delivery has failed as subscrption has not found | message has acknowledged as retry count exceed 5`);
-                                            ch.ack(msg);
+                                            return ch.ack(msg);
                                         }
                                         
                                     } else {
                                         // reject when subscription isn't found
                                         logger.warn(`welcome email delivery has rejected as subscription has not found | retry count: 0`);
-                                        ch.nack(msg, false, false);
+                                        return ch.nack(msg, false, false);
                                     }
                                     
                                 } 
