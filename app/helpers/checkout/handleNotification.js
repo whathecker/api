@@ -34,37 +34,33 @@ function handleNotification (req, res, next) {
     } else {
         const notification = req.body;
         //console.log(notification);
-        
+
         startMQConnection().then((connection) => {
-            //console.log(connection);
-            return connection.createChannel();
-        }).then((ch) => {
-            const exchange = ch.assertExchange(ex, 'direct', { durable: true });
-            const retryExchange = ch.assertExchange(retryEx, 'direct', { durable: true });
-            const bindQueue = ch.bindQueue(queue, ex);
-            const bindRetryQueue = ch.bindQueue(retryQueue, retryEx);
+            connection.createChannel()
+            .then((ch) => {
+                const exchange = ch.assertExchange(ex, 'direct', { durable: true });
+                const retryExchange = ch.assertExchange(retryEx, 'direct', { durable: true });
+                const bindQueue = ch.bindQueue(queue, ex);
+                const bindRetryQueue = ch.bindQueue(retryQueue, retryEx);
 
-            Promise.all([
-                exchange,
-                retryExchange,
-                bindQueue,
-                bindRetryQueue
-            ]).then((ok)=> {
-                ch.publish(ex, '', Buffer.from(JSON.stringify(notification)), {persistent: true});
-                return res.status(200).end("[accepted]");
-            }).catch(next);  
+                Promise.all([
+                    exchange,
+                    retryExchange,
+                    bindQueue,
+                    bindRetryQueue
+                ]).then((ok) => {
+                    ch.publish(ex, '', Buffer.from(JSON.stringify(req.body), { persistent: true }));
+                    ch.close().then(() => {
+                        connection.close();
+                    });
+                    return res.status(200).end("[accepted]");
+                }).catch(next);
 
-        }).catch((error) => {
-            if (error) {
-                console.log('retry to connect rabbitmq because rabbitmq might not started yet');
-                setTimeout(startMQConnection, 5000);
-            }
-        });
+            }).catch(next);
 
-        
+        }).catch(next);
         
         // save notification in db
-        
     }
 }
 
