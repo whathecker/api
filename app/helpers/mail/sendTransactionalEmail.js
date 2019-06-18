@@ -4,6 +4,7 @@ const queue = 'mail';
 const retryQueue = 'mail-retry';
 const ex = 'mail';
 const retryEx = 'mail-retry';
+const logger = require('../../utils/logger');
 
 function startMQConnection () {
     return open.connect(rabbitMQConnection());

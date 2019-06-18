@@ -303,11 +303,36 @@ function startMQConnection () {
                                     
                                 } 
                             }).catch(console.warn);
+                            
                         break;
 
+                        case 'forgotpwd':
+                            payloadToSendGrid.template_id = "d-701faee00c044eceb0cba00657666695";
+                            payloadToSendGrid.personalizations[0].dynamic_template_data = {
+                                firstName: message.firstName,
+                                resetLink: '',
+                                senderName: 'Chokchok V.O.F',
+                                senderAddress: 'Commelinestraat 42',
+                                senderCity: 'Amsterdam',
+                                senderCountry: 'Netherlands'
+                            }
+
+                            // construct reset password link
+                            // call sendGrid API
+                        break;
+
+                        case 'forgotpwdnouser':
+                            payloadToSendGrid.template_id = "d-1bd7cb0f47404e42aa9b9a9d714ace38";
+                            payloadToSendGrid.personalizations[0].dynamic_template_data = {
+                                email: message.email,
+                                forgotPwdLink: '',
+                                senderName: 'Chokchok V.O.F',
+                                senderAddress: 'Commelinestraat 42',
+                                senderCity: 'Amsterdam',
+                                senderCountry: 'Netherlands'
+                            }
+                        break;
                     }
-
-
                 }
             });
         });

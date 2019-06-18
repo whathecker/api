@@ -6,6 +6,7 @@ const ex = 'mail';
 const retryEx = 'mail-retry';
 const logger = require('../../utils/logger');
 const User = require('../../models/User');
+const jwt = require('jsonwebtoken');
 
 
 function startMQConnection () {
@@ -22,52 +23,54 @@ function sendForgotPasswordEmail (req, res, next) {
         });
     }
 
-    if (req.body.emailType !== 'forgotpassword') {
-        logger.warn(`sendForgotPasswordEmail request has rejected | invalid emailType param | ${req.body.email}`);
-        return res.status(422).json({
-            status: res.status,
-            message: 'bad request: invalid emailType'
-        });
-    }
-
     User.findOne({ email: req.body.email }).then((user) => {
         
         if (!user) {
-            logger.info(`sendForgotPasswordEmail request has not found associated acount with given email | ${req.body.email}`);
-            return res.status(204).json({
-                status: res.status,
-                message: 'no user found with the email'
-            });
+            req.body.emailType = 'forgotpwdnouser';
         } 
 
         if (user) {
-            startMQConnection().then((connection) => {
-                connection.createChannel()
-                .then((ch) => {
-                    const exchange = ch.assertExchange(ex, 'direct', { durable: true });
-                    const retryExchange = ch.assertExchange(retryEx, 'direct', { durable: true });
-                    const bindQueue = ch.bindQueue(queue, ex);
-                    const bindRetryQueue = ch.bindQueue(retryQueue, retryEx);
-    
-                    Promise.all([
-                        exchange,
-                        retryExchange,
-                        bindQueue,
-                        bindRetryQueue
-                    ]).then((ok) => {
-                        ch.publish(ex, '', Buffer.from(JSON.stringify(req.body)), { persistent: true });
-                        ch.close().then(()=> {
-                            connection.close();
-                        });
-                        logger.info(`forgotPasswordEmail request has published email to MQ | ${req.body.email}`);
-                        return res.status(200).end();
+            req.body.firstName = user.firstName;
+            req.body.emailType = 'forgotpwd';  
+            const tokenSecret = "5rYIkazQmdGwfDN1Y2BhAUZLgad25DUI";
+            const pwdResetToken = jwt.sign({
+                user_id: user._id
+            }, tokenSecret, { expiresIn: 60 * 5 });
+            
+            req.body.pwdResetToken = pwdResetToken;
+            user.pwdResetToken = pwdResetToken;
+            user.markModified('pwdResetToken');
+            user.save();
+        }
 
-                    }).catch(next);
+        console.log(req.body);    
+        startMQConnection().then((connection) => {
+            connection.createChannel()
+            .then((ch) => {
+                const exchange = ch.assertExchange(ex, 'direct', { durable: true });
+                const retryExchange = ch.assertExchange(retryEx, 'direct', { durable: true });
+                const bindQueue = ch.bindQueue(queue, ex);
+                const bindRetryQueue = ch.bindQueue(retryQueue, retryEx);
+
+                Promise.all([
+                    exchange,
+                    retryExchange,
+                    bindQueue,
+                    bindRetryQueue
+                ]).then((ok) => {
+                    ch.publish(ex, '', Buffer.from(JSON.stringify(req.body)), { persistent: true });
+                    ch.close().then(()=> {
+                        connection.close();
+                    });
+                    logger.info(`forgotPasswordEmail request has published email to MQ | ${req.body.email} | ${req.body.emailType}`);
+                    return res.status(200).end();
 
                 }).catch(next);
 
-            }).catch(next);    
-        }
+            }).catch(next);
+
+        }).catch(next);  
+
     }).catch(next);
 
 }

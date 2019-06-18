@@ -18,6 +18,7 @@ let userSchema = new Schema({
         required: [ true, "password can't be blank" ] 
     },
     salt: { type: String },
+    pwdResetToken: { type: String },
     firstName: { type: String },
     lastName: { type: String },
     mobileNumber: { type: String },

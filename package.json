@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "localtest": "NODE_ENV='local' PORT=8081 jest --runInBand --forceExit",
-    "test" : "jest --runInBand --forceExit",
+    "test": "jest --runInBand --forceExit",
     "localstart": "NODE_ENV='local' PORT=8081 nodemon server.js",
     "start": "node ./node_modules/pm2/bin/pm2 start server.js -i 'max' --name chokchok-backend",
     "poststart": "node ./node_modules/pm2/bin/pm2 logs"
@@ -14,13 +14,13 @@
   "license": "ISC",
   "dependencies": {
     "amqplib": "^0.5.3",
-    "axios": "^0.18.0",
+    "axios": "^0.19.0",
     "connect-mongo": "^2.0.3",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "helmet": "^3.15.1",
-    "jsonwebtoken": "^8.4.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.4.5",
     "mongoose-unique-validator": "^2.0.2",
     "morgan": "^1.9.1",
