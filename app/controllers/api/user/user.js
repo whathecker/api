@@ -18,6 +18,7 @@ const upsertAddress = require('../../../helpers/user/upsertAddress');
 const updateContactDetail = require('../../../helpers/user/updateContactDetail');
 const updateEmailAddress = require('../../../helpers/user/updateEmailAddress');
 const updatePassword = require('../../../helpers/user/updatePassword');
+const getResetPasswordToken = require('../../../helpers/user/getResetPasswordToken');
 const apiAuth = require('../../../middlewares/verifyApikey');
 
 const isLocal = process.env.NODE_ENV === "local";
@@ -124,8 +125,8 @@ router.delete('/user/addresses/address/:id', userAuth, deleteAddress);
 router.put('/user/contact', userAuth, updateContactDetail);
 router.put('/user/email', userAuth, updateEmailAddress);
 router.put('/user/password', userAuth, updatePassword);
+router.get('/user/password/reset/:token', getResetPasswordToken);
 router.post('/user', createUser);
-
 
 
 
