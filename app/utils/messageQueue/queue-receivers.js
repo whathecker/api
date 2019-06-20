@@ -303,7 +303,7 @@ function startMQConnection () {
                                     
                                 } 
                             }).catch(console.warn);
-                            
+
                         break;
 
                         case 'forgotpwd':
@@ -317,8 +317,25 @@ function startMQConnection () {
                                 senderCountry: 'Netherlands'
                             }
 
-                            // construct reset password link
-                            // call sendGrid API
+                            if (process.env.NODE_ENV === "production") {
+                                payloadToSendGrid.personalizations[0].dynamic_template_data.resetLink = `https://www.hellochokchok.com/login/resetpassword/${message.pwdResetToken}`
+                            } else {
+                                payloadToSendGrid.personalizations[0].dynamic_template_data.resetLink = `https://test.hellochokchok.com/login/resetpassword/${message.pwdResetToken}`
+                            }
+
+                            axiosSendGrid.post('/mail/send', payloadToSendGrid)
+                            .then((response) =>{
+                                console.log(response);
+                                if (response.status === 202) {
+                                    ch.ack(msg);
+                                    logger.info(`password reset email has delivered | ${message.email}`);
+                                    return;
+                                }
+                            }).catch((error) => {
+                                logger.warn(`password reset email delivery has failed | ${message.email}`);
+                                error? ch.nack(msg, false, false): null;
+                                return;
+                            });
                         break;
 
                         case 'forgotpwdnouser':
@@ -331,6 +348,26 @@ function startMQConnection () {
                                 senderCity: 'Amsterdam',
                                 senderCountry: 'Netherlands'
                             }
+
+                            if (process.env.NODE_ENV === "production") {
+                                payloadToSendGrid.personalizations[0].dynamic_template_data.forgotPwdLink = `https://www.hellochokchok.com/login/forgotpassword`
+                            } else {
+                                payloadToSendGrid.personalizations[0].dynamic_template_data.forgotPwdLink = `https://test.hellochokchok.com/login/forgotpassword`
+                            }
+                            
+                            axiosSendGrid.post('/mail/send', payloadToSendGrid)
+                            .then((response) => {
+                                console.log(response);
+                                if (response.status === 202) {
+                                    ch.ack(msg);
+                                    logger.info(`password reset-nouser email has devliered | ${message.email}`);
+                                    return;
+                                }
+                            }).catch((error) => {
+                                logger.warn(`password reset-nouser email delivery has failed | ${message.email}`);
+                                error? ch.nack(msg, false, false): null;
+                                return;
+                            });
                         break;
                     }
                 }
