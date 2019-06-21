@@ -42,6 +42,13 @@ router.post('/', (req, res, next) => {
         }
 
         if (product.isPriceDataValid(req.body.prices)) {
+            for (let i = 0; i < req.body.prices.length; i++) {
+                const price = req.body.prices[i].price;
+                const vatRate = 0.21;
+                req.body.prices[i].vat = product.setVat(price, vatRate);
+                req.body.prices[i].netPrice = product.setNetPrice(price, vatRate);
+            }
+            
             product.prices = req.body.prices
         } else {
             return res.status(422).json({ message: 'invalid data' });

@@ -34,6 +34,14 @@ router.post('/', (req, res, next) => {
         }  
 
         if (subscriptionBox.isPriceDataValid(req.body.prices)) {
+
+            for (let i = 0; i < req.body.prices.length; i++) {
+                const price = req.body.prices[i].price;
+                const vatRate = 0.21;
+                req.body.prices[i].vat = subscriptionBox.setVat(price, vatRate);
+                req.body.prices[i].netPrice = subscriptionBox.setNetPrice(price, vatRate);
+            }
+
             subscriptionBox.prices = req.body.prices
         } else {
             logger.warn(`package create request has rejected as prices param isn't valid`);

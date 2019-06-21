@@ -10,7 +10,9 @@ let itemSchema = new Schema({
 let pricesSchema = new Schema({
     region: { type: String, lowercase: true },
     currency: { type: String, lowercase: true },
-    price: { type: String, default: "0" }
+    vat: { type: String, default: "0" },
+    price: { type: String, default: "0" },
+    netPrice: { type: String, default: "0" }
 }, { _id: false });
 
 let subscriptionBoxSchema = new Schema({
@@ -92,4 +94,22 @@ SubscriptionBox.prototype.isPriceDataValid = (priceInput) => {
     });
     return isInputValid;
 }
+
+SubscriptionBox.prototype.setVat = (price, vatRate) => {
+    const priceInNum = Number(price).toFixed(2);
+    
+    let netPrice = priceInNum / (1 + vatRate);
+    netPrice = netPrice.toFixed(2);
+    
+    let vat = priceInNum - netPrice;
+    
+    return vat.toFixed(2);
+}
+
+SubscriptionBox.prototype.setNetPrice =  (price, vatRate) => {
+    const priceInNum = Number(price).toFixed(2);
+    let netPrice = priceInNum / (1 + vatRate);
+    return netPrice.toFixed(2);
+}
+
 module.exports = SubscriptionBox;
