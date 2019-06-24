@@ -25,13 +25,12 @@ function isAddressesSame (billingAddress, shippingAddress) {
 function completeCheckout (req, res, next) {
     
     const payloadForUser = req.body.user;
-    console.log(payloadForUser)
+    //console.log(payloadForUser)
     const payloadPackage = req.body.package;
     const paidBy = req.body.paidBy;
 
     // construct new new user
     let newUser = new User(); 
-    console.log(newUser);
     newUser.email = payloadForUser.email;
     newUser.salt = crypto.randomBytes(64).toString('hex');
     newUser.hash = newUser.setPassword(newUser, payloadForUser.password);
@@ -80,7 +79,6 @@ function completeCheckout (req, res, next) {
     // construct new subscription
     let subscription = new Subscription();
     const countryInLowerCase = payloadForUser.shippingAddress.country.toLowerCase();
-    console.log(countryInLowerCase)
     subscription.subscriptionId = subscription.createSubscriptionId(currentEnv, countryInLowerCase);
     subscription.package = payloadPackage._id;
     subscription.user = newUser._id;
@@ -124,7 +122,7 @@ function completeCheckout (req, res, next) {
     req.body.payment.shopperReference = newUser.email; 
 
     const payloadForAdyen = req.body.payment;
-    console.log(payloadForAdyen);
+    //console.log(payloadForAdyen);
     
     // reach out to adyen for payment
     adyenAxios.post('/payments', payloadForAdyen)
@@ -160,6 +158,8 @@ function completeCheckout (req, res, next) {
                 ])
                 .then((values)=> {
                     if (values) {
+
+                        logger.info(`checkout is successfully processed (no redirect) | ${resultCode} | ${newUser.email}`);
                         
                         return res.status(201).json({
                             status: res.status,
@@ -186,7 +186,7 @@ function completeCheckout (req, res, next) {
                 ])
                 .then((values)=> {
                     if (values) {
-                        
+                        logger.info(`checkout is successfully processed (no redirect) | ${resultCode} | ${newUser.email}`);
                         return res.status(201).json({
                             status: res.status,
                             resultCode: resultCode,
@@ -212,7 +212,7 @@ function completeCheckout (req, res, next) {
                 ])
                 .then((values)=> {
                     if (values) {
-
+                        logger.info(`checkout is successfully processed (no redirect) | ${resultCode} | ${newUser.email}`);
                         return res.status(201).json({
                             status: res.status,
                             resultCode: resultCode,
@@ -238,7 +238,7 @@ function completeCheckout (req, res, next) {
                 ])
                 .then((values)=> {
                     if (values) {
-
+                        logger.info(`checkout is successfully processed (no redirect) | ${resultCode} | ${newUser.email}`);
                         return res.status(201).json({
                             status: res.status,
                             resultCode: resultCode,
@@ -254,6 +254,7 @@ function completeCheckout (req, res, next) {
             }
 
             else if (resultCode === 'Refused') {
+                logger.info(`checkout is refused (no redirect) | ${resultCode}| ${newUser.email}`);
                 return res.status(200).json({
                     status: res.status,
                     resultCode: resultCode,
@@ -262,6 +263,7 @@ function completeCheckout (req, res, next) {
             }
 
             else if (resultCode === "Cancelled") {
+                logger.info(`checkout is cancelled (no redirect) | ${resultCode}| ${newUser.email}`);
                 return res.status(200).json({
                     status: res.status,
                     resultCode: resultCode,
@@ -270,6 +272,7 @@ function completeCheckout (req, res, next) {
             }
 
             else if (resultCode === 'Error') {
+                logger.warn(`checkout is failed (no redirect) | ${resultCode} | ${newUser.email}`);
                 return res.status(500).json({
                     status: res.status,
                     resultCode: resultCode,
@@ -278,6 +281,7 @@ function completeCheckout (req, res, next) {
             }
 
             else if (resultCode === 'RedirectShopper') {
+                logger.info(`checkout has been redirected | ${resultCode} | ${newUser.email}`);
                 return res.status(202).json({
                     status: res.status,
                     resultCode: resultCode,

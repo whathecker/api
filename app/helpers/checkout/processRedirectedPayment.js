@@ -41,7 +41,7 @@ function processRedirectedPayment (req, res, next) {
 
     // construct new new user
     let newUser = new User();
-    console.log(newUser);
+    //console.log(newUser);
     newUser.email = payloadForUser.email;
     newUser.salt = crypto.randomBytes(64).toString('hex');
     newUser.hash = newUser.setPassword(newUser, payloadForUser.password);
@@ -128,12 +128,12 @@ function processRedirectedPayment (req, res, next) {
     newUser.orders = [order];
     newUser.billingOptions = [billingOption];
 
-    console.log(payloadToAdyen);
+    //console.log(payloadToAdyen);
     adyenAxios.post('/payments/details', payloadToAdyen)
         .then((response) => {
             const resultCode = response.data.resultCode;
             const optinStatus = newUser.newsletterOptin;
-            console.log(response.data);
+            //console.log(response.data);
 
             if ((resultCode === "Authorised" && optinStatus) ||
                 (resultCode === "Received" && optinStatus)) {
@@ -166,6 +166,7 @@ function processRedirectedPayment (req, res, next) {
                 ])
                 .then((values) => {
                     if (values) {
+                        logger.info(`checkout is successfully processed (redirect) | ${resultCode} | ${newUser.email}`);
                         return res.status(201).json({
                             status: res.status,
                             resultCode: resultCode,
@@ -194,6 +195,7 @@ function processRedirectedPayment (req, res, next) {
                 ])
                 .then((values) => {
                     if (values) {
+                        logger.info(`checkout is successfully processed (redirect) | ${resultCode} | ${newUser.email}`);
                         return res.status(201).json({
                             status: res.status,
                             resultCode: resultCode,
@@ -222,6 +224,9 @@ function processRedirectedPayment (req, res, next) {
                 ])
                 .then((values) => {
                     if (values) {
+
+                        logger.info(`checkout is successfully processed (redirect) | ${resultCode} | ${newUser.email}`);
+
                         return res.status(201).json({
                             status: res.status,
                             resultCode: resultCode,
@@ -249,6 +254,9 @@ function processRedirectedPayment (req, res, next) {
                 ])
                 .then((values) => {
                     if (values) {
+
+                        logger.info(`checkout is successfully processed (redirect) | ${resultCode} | ${newUser.email}`);
+
                         return res.status(201).json({
                             status: res.status,
                             resultCode: resultCode,
@@ -263,6 +271,7 @@ function processRedirectedPayment (req, res, next) {
             }
 
             else if (resultCode === "Refused") {
+                logger.info(`checkout is refused (no redirect) | ${resultCode}| ${newUser.email}`);
                 return res.status(200).json({
                     status: res.status,
                     resultCode: resultCode,
@@ -271,6 +280,7 @@ function processRedirectedPayment (req, res, next) {
             }
 
             else if (resultCode === "Cancelled") {
+                logger.info(`checkout is cancelled (no redirect) | ${resultCode}| ${newUser.email}`);
                 return res.status(200).json({
                     status: res.status,
                     resultCode: resultCode,
@@ -279,6 +289,7 @@ function processRedirectedPayment (req, res, next) {
             }
 
             else if (resultCode === "Error") {
+                logger.warn(`checkout is failed (no redirect) | ${resultCode} | ${newUser.email}`);
                 return res.status(500).json({
                     status: res.status,
                     resultCode: resultCode,
