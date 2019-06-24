@@ -6,6 +6,7 @@ const Order = require('../../models/Order');
 const crypto = require('crypto');
 const logger = require('../../utils/logger');
 const adyenAxios = require('../../../axios-adyen');
+const axiosSendGrid = require('../../../axios-sendgrid');
 
 
 function isAddressesSame (billingAddress, shippingAddress) {
@@ -47,6 +48,7 @@ function processRedirectedPayment (req, res, next) {
     newUser.firstName = payloadForUser.firstName;
     newUser.lastName = payloadForUser.lastName;
     newUser.mobileNumber = payloadForUser.mobileNumber;
+    newUser.newsletterOptin = payloadForUser.newsletterOptin;
 
     const addressComparison = isAddressesSame(payloadForUser.billingAddress, payloadForUser.shippingAddress);
     
@@ -130,7 +132,24 @@ function processRedirectedPayment (req, res, next) {
     adyenAxios.post('/payments/details', payloadToAdyen)
         .then((response) => {
             const resultCode = response.data.resultCode;
+            const optinStatus = newUser.newsletterOptin;
             console.log(response.data);
+
+            if ((resultCode === "Authorised" && optinStatus) ||
+                (resultCode === "Received" && optinStatus)) {
+                
+                const payload = [{ email: newUser.email }];
+                axiosSendGrid.post('/contactdb/recipients', payload)
+                .then((response) => {
+                    const newCount = response.data.new_count;
+                    if (response.status === 201 && newCount === 0) {
+                        logger.info(`user has already optted-in (checkout) | ${newUser.email}`);
+                    }
+                    if (response.status === 201 && newCount === 1) {
+                        logger.info(`user has been optted-in to newsletter (checkout) ${newUser.email}`);
+                    }
+                }).catch(next);
+            }
 
             if (resultCode === "Authorised" && addressComparison === true) {
                 

@@ -6,6 +6,7 @@ const Order = require('../../models/Order');
 const crypto = require('crypto');
 const logger = require('../../utils/logger');
 const adyenAxios = require('../../../axios-adyen');
+const axiosSendGrid = require('../../../axios-sendgrid');
 
 function isAddressesSame (billingAddress, shippingAddress) {
 
@@ -37,6 +38,7 @@ function completeCheckout (req, res, next) {
     newUser.firstName = payloadForUser.firstName;
     newUser.lastName = payloadForUser.lastName;
     newUser.mobileNumber = payloadForUser.mobileNumber;
+    newUser.newsletterOptin = payloadForUser.newsletterOptin;
 
 
     const addressComparison = isAddressesSame(payloadForUser.billingAddress, payloadForUser.shippingAddress);
@@ -128,6 +130,24 @@ function completeCheckout (req, res, next) {
     adyenAxios.post('/payments', payloadForAdyen)
         .then((response) => {
             const resultCode = response.data.resultCode;
+            const optinStatus = newUser.newsletterOptin;
+
+            if ((resultCode === 'Authorised' && optinStatus) || 
+                (resultCode === 'Pending' && optinStatus)) {
+
+                const payload = [{ email: newUser.email }];
+                axiosSendGrid.post('/contactdb/recipients', payload)
+                .then((response) => {
+                    const newCount = response.data.new_count;
+                    if (response.status === 201 && newCount === 0) {
+                        logger.info(`user has already optted-in (checkout) | ${newUser.email}`);
+                    }
+                    if (response.status === 201 & newCount === 1) {
+                        logger.info(`user has been optted-in to newsletter (checkout) ${newUser.email}`);
+                    }
+                }).catch(next);
+
+            }
             
             if (resultCode === 'Authorised' && addressComparison === true) {
             
@@ -182,6 +202,7 @@ function completeCheckout (req, res, next) {
             } 
 
             else if (resultCode === "Pending" && addressComparison === true) {
+                
                 Promise.all([
                     newUser.save(),
                     billingOption.save(),

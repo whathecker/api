@@ -83,12 +83,12 @@ function optinToNewsletter (req, res, next) {
             }
 
             if (user && user.newsletterOptin === false) {
-                console.log(user);
+                //console.log(user);
                 const payload = [{ email: email }];
 
                 axiosSendGrid.post('/contactdb/recipients', payload)
                 .then((response) => {
-                    console.log(response);
+                    //console.log(response);
                     
                     if (response.status === 201) {
 
