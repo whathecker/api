@@ -7,6 +7,7 @@ router.use('/inventory', require('./inventory/inventory'));
 router.use('/subscriptionBoxes', require('./subscriptionBox/subscriptionBox'));
 router.use('/subscriptions', require('./subscription/subscription'));
 router.use('/mail', require('./mail/mail'));
+router.use('/crm', require('./crm/crm'));
 router.use('/', require('./user/user'));
 
 module.exports = router;
