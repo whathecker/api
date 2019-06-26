@@ -88,14 +88,11 @@ Subscription.prototype.setFirstDeliverySchedule = (deliveryDay) => {
     }
 
     if (dayOfCurrentDate > deliveryDay) {
-        gatBetweenDates = 7 - (dayOfCurrentDate - deliveryDay);   
+        gapBetweenDates = 7 - (dayOfCurrentDate - deliveryDay);   
     }
 
-    if (dayOfCurrentDate == deliveryDay) {
-        const hourAtMoment = dateAtMoment.getHours();
-        // order placed before 11AM deliverys at same day
-        // otherwise it's delivered at Monday
-        (hourAtMoment <= 11)? gapBetweenDates = 0 : gapBetweenDates = 4;
+    if (dayOfCurrentDate === deliveryDay) {
+        gapBetweenDates = 1;
     }
 
     const deliveryDateinMSeconds = dateAtMoment + (gapBetweenDates * 24 * 60 * 60 * 1000);
@@ -111,14 +108,35 @@ Subscription.prototype.setFirstDeliverySchedule = (deliveryDay) => {
     return deliverySchedule;
 }
 
-Subscription.prototype.setDeliverySchedule = (prevDeliverySchdule, deliveryFrequncy) => {
+Subscription.prototype.setDeliverySchedule = (prevDeliverySchdule, deliveryFrequncy, deliveryDay) => {
     // get previous deliverySchedule in milliseconds
     const prevDateInTime = prevDeliverySchdule.getTime();
-    // get nextDeliveryDate in milleseconds
-    const nextDeliveryDate = prevDateInTime + (deliveryFrequncy * 24 * 60 * 60 * 1000);
+    const prevDateInObj = new Date(prevDateInTime);
+    const dayOfPrevDate = prevDateInObj.getDay();
+    //console.log(dayOfPrevDate);
+    //console.log(deliveryDay);
+    let gapBetweenDates = 0;
+    let nextDeliveryDate;
+    // adjust next delivery to deliveryDay setup
+    if (dayOfPrevDate < deliveryDay) {
+        gapBetweenDates = deliveryDay - dayOfPrevDate;
+        nextDeliveryDate = prevDateInTime + ((deliveryFrequncy + gapBetweenDates)* 24 * 60 * 60 * 1000);
+    }
+
+    if (dayOfPrevDate > deliveryDay) {
+        gapBetweenDates = dayOfPrevDate - deliveryDay;
+        nextDeliveryDate = prevDateInTime + ((deliveryFrequncy - gapBetweenDates)* 24 * 60 * 60 * 1000);
+    }
+
+    if (dayOfPrevDate === deliveryDay) {
+        nextDeliveryDate = prevDateInTime + ((deliveryFrequncy)* 24 * 60 * 60 * 1000);
+    }
+
+    //console.log(gapBetweenDates);
+    //console.log(nextDeliveryDate);
     // create date obj to get year, month, date
     const nextDeliveryDateinObj = new Date(nextDeliveryDate);
-
+    //console.log(nextDeliveryDateinObj);
     let deliverySchedule = {
         nextDeliveryDate: nextDeliveryDate,
         year: nextDeliveryDateinObj.getFullYear(),
@@ -126,7 +144,7 @@ Subscription.prototype.setDeliverySchedule = (prevDeliverySchdule, deliveryFrequ
         date: nextDeliveryDateinObj.getDate(),
         day: nextDeliveryDateinObj.getDay()
     };
-
+    //console.log(deliverySchedule);
     return deliverySchedule;
 }
 
