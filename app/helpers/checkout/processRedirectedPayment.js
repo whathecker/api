@@ -110,9 +110,22 @@ function processRedirectedPayment (req, res, next) {
     order.paymentHistory.push(order.paymentStatus);
     order.orderStatusHistory.push(order.orderStatus);
 
+    // set first deliverySchedule in subscription
+    subscription.deliveryFrequncy = 28; /** default value */
+    subscription.deliveryDay = 4; /** default value */
+    subscription.firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay);
+    const firstDeliveryDate = subscription.firstDeliverySchedule.nextDeliveryDate;
+    subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequncy);
+    subscription.deliverySchedules = [
+        subscription.firstDeliverySchedule,
+        subscription.nextDeliverySchedule
+    ];
+    // add first delivery schedule in first order
+    order.deliverySchedule = firstDeliveryDate;
+
     // retrieve order for subscription
     subscription.orders = [order];
-
+    
     // update user object
     if (addressComparison === true) {
         newUser.addresses = [shippingAddress];
