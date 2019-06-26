@@ -31,6 +31,7 @@ let subscriptionSchema = new Schema({
         enum: [ 0, 1, 2, 3, 4, 5, 6],
         default: 4
     },
+    firstDeliverySchedule: deliveryScheduleSchema,
     nextDeliverySchedule: deliveryScheduleSchema,
     deliverySchedules: [deliveryScheduleSchema],
     endDate: { type: Date },
@@ -73,6 +74,41 @@ Subscription.prototype.createSubscriptionId = (env, country) => {
 
     let subscriptionId = '';
     return subscriptionId.concat(envPrefix, middlePrefix, countryPrefix, create5DigitInteger(), create5DigitInteger());
+}
+
+Subscription.prototype.setFirstDeliverySchedule = (deliveryDay) => {
+    const dateAtMoment = Date.now();
+    const dateAtMomentInObj = new Date(dateAtMoment);
+    const dayOfCurrentDate = dateAtMomentInObj.getDay();
+    let gapBetweenDates;
+
+   
+    if (dayOfCurrentDate < deliveryDay) {
+        gapBetweenDates = deliveryDay - dayOfCurrentDate;
+    }
+
+    if (dayOfCurrentDate > deliveryDay) {
+        gatBetweenDates = 7 - (dayOfCurrentDate - deliveryDay);   
+    }
+
+    if (dayOfCurrentDate == deliveryDay) {
+        const hourAtMoment = dateAtMoment.getHours();
+        // order placed before 11AM deliverys at same day
+        // otherwise it's delivered at Monday
+        (hourAtMoment <= 11)? gapBetweenDates = 0 : gapBetweenDates = 4;
+    }
+
+    const deliveryDateinMSeconds = dateAtMoment + (gapBetweenDates * 24 * 60 * 60 * 1000);
+    const deliveryDateInObj = new Date(deliveryDateinMSeconds);
+    const deliverySchedule = {
+        nextDeliveryDate: deliveryDateinMSeconds,
+        year: deliveryDateInObj.getFullYear(),
+        month: deliveryDateInObj.getMonth(),
+        date: deliveryDateInObj.getDate(),
+        day: deliveryDateInObj.getDay()
+    };
+
+    return deliverySchedule;
 }
 
 Subscription.prototype.setDeliverySchedule = (prevDeliverySchdule, deliveryFrequncy) => {

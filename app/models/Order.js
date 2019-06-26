@@ -60,6 +60,7 @@ let orderSchema = new Schema({
     paymentStatus: paymentStatusSchema,
     paymentHistory: [paymentStatusSchema],
     creationDate: { type: Date, default: Date.now },
+    deliverySchedule: { type: Date },
     isShipped: { type: Boolean, default: false },
     shippedDate: { type: Date },
     shippingCarrier: { type: String },

@@ -98,7 +98,19 @@ function completeCheckout (req, res, next) {
     order.orderStatus = { status: 'RECEIVED' };
     order.paymentHistory.push(order.paymentStatus);
     order.orderStatusHistory.push(order.orderStatus)  
-    
+
+    // set first deliverySchedule in subscription
+    subscription.deliveryFrequncy = 28;
+    subscription.deliveryDay = 4;
+    subscription.firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay);
+    const firstDeliveryDate = subscription.firstDeliverySchedule.nextDeliveryDate;
+    subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequncy);
+    subscription.deliverySchedules = [
+        subscription.firstDeliverySchedule,
+        subscription.nextDeliverySchedule
+    ];
+    // add first delivery schedule in first order
+    order.deliverySchedule = firstDeliveryDate;
     // retrieve order for subscription
     subscription.orders = [order];
 
