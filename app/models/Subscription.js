@@ -3,6 +3,16 @@ const mongoose = require('mongoose'),
     uniqueValidator = require('mongoose-unique-validator'),
     subscriptionPrefixes = require('../utils/subscriptionPrefixes');
 
+let deliveryScheduleSchema = new Schema({
+    nextDeliveryDate : { type: Date },
+    year: { type: Number },
+    month: { type: Number },
+    date: { type: Number },
+    day: { type: Number },
+    isProcessed: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true }
+}, { _id: false });
+
 let subscriptionSchema = new Schema({
     subscriptionId: {
         type: String,
@@ -11,6 +21,18 @@ let subscriptionSchema = new Schema({
         index: true
     },
     creationDate: { type: Date, default: Date.now },
+    deliveryFrequncy: { 
+        type: Number,
+        enum: [ 7, 14, 28 ],
+        default: 28
+     },
+    deliveryDay: {
+        type: Number,
+        enum: [ 0, 1, 2, 3, 4, 5, 6],
+        default: 4
+    },
+    nextDeliverySchedule: deliveryScheduleSchema,
+    deliverySchedules: [deliveryScheduleSchema],
     endDate: { type: Date },
     isWelcomeEmailSent: { type: Boolean, default: false },
     package: { type: Schema.Types.ObjectId, ref: 'SubscriptionBox' },
@@ -51,6 +73,25 @@ Subscription.prototype.createSubscriptionId = (env, country) => {
 
     let subscriptionId = '';
     return subscriptionId.concat(envPrefix, middlePrefix, countryPrefix, create5DigitInteger(), create5DigitInteger());
+}
+
+Subscription.prototype.setDeliverySchedule = (prevDeliverySchdule, deliveryFrequncy) => {
+    // get previous deliverySchedule in milliseconds
+    const prevDateInTime = prevDeliverySchdule.getTime();
+    // get nextDeliveryDate in milleseconds
+    const nextDeliveryDate = prevDateInTime + (deliveryFrequncy * 24 * 60 * 60 * 1000);
+    // create date obj to get year, month, date
+    const nextDeliveryDateinObj = new Date(nextDeliveryDate);
+
+    let deliverySchedule = {
+        nextDeliveryDate: nextDeliveryDate,
+        year: nextDeliveryDateinObj.getFullYear(),
+        month: nextDeliveryDateinObj.getMonth(),
+        date: nextDeliveryDateinObj.getDate(),
+        day: nextDeliveryDateinObj.getDay()
+    };
+
+    return deliverySchedule;
 }
 
 module.exports = Subscription;
