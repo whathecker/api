@@ -61,7 +61,7 @@ function getSubscription (req, res, next) {
                         province: subscription.user.defaultBillingAddress.province,
                         country: subscription.user.defaultBillingAddress.country
                     },
-                    deliveryFrequncy: subscription.deliveryFrequncy,
+                    deliveryFrequency: subscription.deliveryFrequency,
                     deliveryDay: subscription.deliveryDay,
                     firstDeliverySchedule: subscription.firstDeliverySchedule,
                     nextDeliverySchedule: subscription.nextDeliverySchedule,

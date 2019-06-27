@@ -111,11 +111,11 @@ function processRedirectedPayment (req, res, next) {
     order.orderStatusHistory.push(order.orderStatus);
 
     // set first deliverySchedule in subscription
-    subscription.deliveryFrequncy = 28; /** default value */
+    subscription.deliveryFrequency = 28; /** default value */
     subscription.deliveryDay = 4; /** default value */
     subscription.firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay);
     const firstDeliveryDate = subscription.firstDeliverySchedule.nextDeliveryDate;
-    subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequncy, subscription.deliveryDay);
+    subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
     subscription.deliverySchedules = [
         subscription.firstDeliverySchedule,
         subscription.nextDeliverySchedule

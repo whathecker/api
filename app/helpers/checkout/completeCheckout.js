@@ -100,11 +100,11 @@ function completeCheckout (req, res, next) {
     order.orderStatusHistory.push(order.orderStatus)  
 
     // set first deliverySchedule in subscription
-    subscription.deliveryFrequncy = 28;
+    subscription.deliveryFrequency = 28;
     subscription.deliveryDay = 4;
     subscription.firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay);
     const firstDeliveryDate = subscription.firstDeliverySchedule.nextDeliveryDate;
-    subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequncy, subscription.deliveryDay);
+    subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
     subscription.deliverySchedules = [
         subscription.firstDeliverySchedule,
         subscription.nextDeliverySchedule

@@ -138,18 +138,18 @@ function processNotification (notification, order) {
 }
 
 /**
- * private function: convertDeliveryFrequncy
- * @param {Number} deliveryFrequncy
- * Return string representation of deliveryFrequncy 
+ * private function: convertDeliveryFrequency
+ * @param {Number} deliveryFrequency
+ * Return string representation of deliveryFrequency 
  * In order to display readable value at Welcome transactional email
  */
 
-function convertDeliveryFrequncy (deliveryFrequncy) {
+function convertDeliveryFrequency (deliveryFrequency) {
     let convertedValue = null;
 
-    (deliveryFrequncy === 7)? convertedValue = 'Weekly': null;
-    (deliveryFrequncy === 14)? convertedValue = 'Bi-weekly': null;
-    (deliveryFrequncy === 28)? convertedValue = 'Monthly' : null;
+    (deliveryFrequency === 7)? convertedValue = 'Weekly': null;
+    (deliveryFrequency === 14)? convertedValue = 'Bi-weekly': null;
+    (deliveryFrequency === 28)? convertedValue = 'Monthly' : null;
 
     return convertedValue;
 }
@@ -309,7 +309,7 @@ function startMQConnection () {
                                             billingAddress: message.billingAddress,
                                             paymentMethodType: message.paymentMethodType,
                                             paymentMethodRef: message.paymentMethodRef,
-                                            deliveryFrequncy: convertDeliveryFrequncy(message.deliveryFrequncy),
+                                            deliveryFrequency: convertDeliveryFrequency(message.deliveryFrequency),
                                             deliveryDay: convertDeliveryDay(message.firstDeliverySchedule.day),
                                             deliveryDate: message.firstDeliverySchedule.date,
                                             deliveryMonth: convertDeliveryMonth(message.firstDeliverySchedule.month),

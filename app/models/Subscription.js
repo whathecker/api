@@ -21,7 +21,7 @@ let subscriptionSchema = new Schema({
         index: true
     },
     creationDate: { type: Date, default: Date.now },
-    deliveryFrequncy: { 
+    deliveryFrequency: { 
         type: Number,
         enum: [ 7, 14, 28 ],
         default: 28
