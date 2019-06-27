@@ -60,7 +60,12 @@ function getSubscription (req, res, next) {
                         city: subscription.user.defaultBillingAddress.city,
                         province: subscription.user.defaultBillingAddress.province,
                         country: subscription.user.defaultBillingAddress.country
-                    }
+                    },
+                    deliveryFrequncy: subscription.deliveryFrequncy,
+                    deliveryDay: subscription.deliveryDay,
+                    firstDeliverySchedule: subscription.firstDeliverySchedule,
+                    nextDeliverySchedule: subscription.nextDeliverySchedule,
+                    deliverySchedules: subscription.deliverySchedules
                 });
             } else {
                 logger.info('/subscriptions/subscription request returned 204, no data found')

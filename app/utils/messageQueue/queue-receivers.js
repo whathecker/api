@@ -137,6 +137,71 @@ function processNotification (notification, order) {
     }
 }
 
+/**
+ * private function: convertDeliveryFrequncy
+ * @param {Number} deliveryFrequncy
+ * Return string representation of deliveryFrequncy 
+ * In order to display readable value at Welcome transactional email
+ */
+
+function convertDeliveryFrequncy (deliveryFrequncy) {
+    let convertedValue = null;
+
+    (deliveryFrequncy === 7)? convertedValue = 'Weekly': null;
+    (deliveryFrequncy === 14)? convertedValue = 'Bi-weekly': null;
+    (deliveryFrequncy === 28)? convertedValue = 'Monthly' : null;
+
+    return convertedValue;
+}
+
+/**
+ * private function: convertDeliveryMonth
+ * @param {Number} deliveryMonth
+ * Return string representation of deliveryMonth
+ * In order to display readable value at Welcome transactional email
+ */
+
+function convertDeliveryMonth (deliveryMonth) {
+    let converedValue = null;
+
+    (deliveryMonth === 0)? converedValue = 'Jan': null;
+    (deliveryMonth === 1)? converedValue = 'Feb': null;
+    (deliveryMonth === 2)? converedValue = 'Mar': null;
+    (deliveryMonth === 3)? converedValue = 'Apr': null;
+    (deliveryMonth === 4)? converedValue = 'May': null;
+    (deliveryMonth === 5)? converedValue = 'Jun': null;
+    (deliveryMonth === 6)? converedValue = 'Jul': null;
+    (deliveryMonth === 7)? converedValue = 'Aug': null;
+    (deliveryMonth === 8)? converedValue = 'Sep': null;
+    (deliveryMonth === 9)? converedValue = 'Oct': null;
+    (deliveryMonth === 10)? converedValue = 'Nov': null;
+    (deliveryMonth === 10)? converedValue = 'Dec': null;
+
+    return converedValue;
+}
+
+/**
+ * private function: convertDeliveryDay
+ * @param {Number} deliveryDay
+ * Return string representation of deliveryDay
+ * In order to display readable value at Welcome transactional email
+ */
+
+ function convertDeliveryDay (deliveryDay) {
+     let convertedValue = null;
+
+     (deliveryDay === 0)? convertedValue = 'Sunday' : null;
+     (deliveryDay === 1)? convertedValue = 'Monday' : null;
+     (deliveryDay === 2)? convertedValue = 'Tuesday' : null;
+     (deliveryDay === 3)? convertedValue = 'Wednesday' : null;
+     (deliveryDay === 4)? convertedValue = 'Thursday' : null;
+     (deliveryDay === 5)? convertedValue = 'Friday' : null;
+     (deliveryDay === 6)? convertedValue = 'Saturday' : null;
+
+     return convertedValue;
+ } 
+
+
 // message consumer listening to adyen
 function startMQConnection () {
     open.connect(rabbitMQConnection()).then((connection) => {
@@ -244,6 +309,11 @@ function startMQConnection () {
                                             billingAddress: message.billingAddress,
                                             paymentMethodType: message.paymentMethodType,
                                             paymentMethodRef: message.paymentMethodRef,
+                                            deliveryFrequncy: convertDeliveryFrequncy(message.deliveryFrequncy),
+                                            deliveryDay: convertDeliveryDay(message.firstDeliverySchedule.day),
+                                            deliveryDate: message.firstDeliverySchedule.date,
+                                            deliveryMonth: convertDeliveryMonth(message.firstDeliverySchedule.month),
+                                            deliveryYear: message.firstDeliverySchedule.year,
                                             senderName: 'Chokchok V.O.F',
                                             senderAddress: 'Commelinestraat 42',
                                             senderCity: 'Amsterdam',
