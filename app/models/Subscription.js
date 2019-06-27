@@ -113,8 +113,6 @@ Subscription.prototype.setDeliverySchedule = (prevDeliverySchdule, deliveryFrequ
     const prevDateInTime = prevDeliverySchdule.getTime();
     const prevDateInObj = new Date(prevDateInTime);
     const dayOfPrevDate = prevDateInObj.getDay();
-    //console.log(dayOfPrevDate);
-    //console.log(deliveryDay);
     let gapBetweenDates = 0;
     let nextDeliveryDate;
     // adjust next delivery to deliveryDay setup
@@ -132,11 +130,10 @@ Subscription.prototype.setDeliverySchedule = (prevDeliverySchdule, deliveryFrequ
         nextDeliveryDate = prevDateInTime + ((deliveryFrequncy)* 24 * 60 * 60 * 1000);
     }
 
-    //console.log(gapBetweenDates);
-    //console.log(nextDeliveryDate);
+    
     // create date obj to get year, month, date
     const nextDeliveryDateinObj = new Date(nextDeliveryDate);
-    //console.log(nextDeliveryDateinObj);
+    
     let deliverySchedule = {
         nextDeliveryDate: nextDeliveryDate,
         year: nextDeliveryDateinObj.getFullYear(),
