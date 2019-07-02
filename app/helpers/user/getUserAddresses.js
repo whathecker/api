@@ -68,7 +68,7 @@ function getUserAddresses (req, res, next) {
                         mobileNumber: user.defaultBillingAddress.mobileNumber
                     }
                 }
-                logger.info(`get user addresses request has returned data ${user.email}`)
+                logger.info(`get user addresses request has returned data ${user.email}`);
                 return res.status(200).json(addressData);
             } else {
                 logger.info(`get user addresses request has not returned data`);
@@ -77,8 +77,7 @@ function getUserAddresses (req, res, next) {
                     message: 'no user'
                 });
             }
-        })
-        .catch(next);
+        }).catch(next);
     }
 
 }

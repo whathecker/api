@@ -68,6 +68,7 @@ let orderSchema = new Schema({
     isDelivered: { type: Boolean, default: false },
     deliveredDate: { type: Date },
     lastModified: { type: Date, default: Date.now },
+    package: { type: Schema.Types.ObjectId, ref: 'SubscriptionBox'},
     items: [
         { type: Schema.Types.ObjectId, ref: 'Product' }
     ]

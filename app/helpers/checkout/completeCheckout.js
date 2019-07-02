@@ -88,6 +88,7 @@ function completeCheckout (req, res, next) {
     let order = new Order();
     order.orderNumber = order.createOrderNumber(currentEnv, countryInLowerCase);
     order.isSubscription = true;
+    order.package = payloadPackage._id;
     order.items = payloadPackage.items;
     order.user = newUser._id;
     order.paymentMethod = {
