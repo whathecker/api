@@ -39,10 +39,28 @@ let orderStatusSchema = new Schema({
     timestamp: { type: Date, default: Date.now }
 },{ _id: false });
 
-let orderAmountSchema = new Schema({
-    region: { type: String, lowercase: true },
+let itemAmountSchema = new Schema ({
+    itemId: { type: String },
+    name: { type: String },
+    quantity: { type: Number, default: 1 },
     currency: { type: String, lowercase: true },
-    vat: { type: String, default: "0" },
+
+    originalPrice: { type: String, default: "0" },
+    discount: { type: String, default: "0" },
+    vat: { type: String, default: "0"},
+    grossPrice: { type: String, default: "0" },
+    netPrice: { type: String, default: "0" },
+
+    sumOfDiscount: { type: String, default: "0"},
+    sumOfVat : { type: String, default: "0"},
+    sumOfGrossPrice: { type: String, default: "0" },
+    sumOfNetPrice: { type: String, default: "0" },
+    
+})
+let orderAmountSchema = new Schema({
+    currency: { type: String, lowercase: true },
+    totalDiscount: { type: String, default: "0" },
+    totalVat: { type: String, default: "0" },
     totalAmount: { type: String, default: "0" },
     totalNetPrice: { type: String, default: "0" }
 }, { _id: false });
@@ -83,7 +101,9 @@ let orderSchema = new Schema({
     shippedItems: [
         { type: Schema.Types.ObjectId, ref: 'Product'}
     ],
+    orderAmountPerItem: [itemAmountSchema],
     orderAmount: orderAmountSchema,
+    shippedAmountPerItem: [itemAmountSchema],
     shippedAmount: orderAmountSchema,
     invoiceNumber: { 
         type: String, 
@@ -152,6 +172,51 @@ Order.prototype.createInvoiceNumber = () => {
     }
 
     return invoiceNumber.concat(hour, date, month, year, random5digitsInt);
+}
+
+Order.prototype.setSumOfItemPrice = (price, quantity) => {
+    const priceInNum = Number(price).toFixed(2);
+    let sumOfPrice = priceInNum * quantity;
+    return sumOfPrice.toFixed(2);
+}
+
+Order.prototype.setTotalAmount = (items, currency) => {
+    let totalDiscount = 0;
+    let totalVat = 0;
+    let totalNetPrice = 0;
+    let totalAmount = 0;
+    // sum up each type of price of all items in order
+    for (let i = 0; i < items.length; i++) {
+        
+        const discountOfItem = Number(items[i].sumOfDiscount);
+        const vatOfItem = Number(items[i].sumOfVat);
+        const netPriceOfItem = Number(items[i].sumOfNetPrice);
+        const grossPriceOfItem = Number(items[i].sumOfGrossPrice);
+        console.log(discountOfItem);
+        console.log(vatOfItem);
+        console.log(netPriceOfItem);
+        console.log(grossPriceOfItem);
+
+        totalDiscount += discountOfItem;
+        totalVat += vatOfItem;
+        totalNetPrice += netPriceOfItem;
+        totalAmount += grossPriceOfItem;
+    
+    }
+    console.log(totalDiscount);
+    console.log(totalVat);
+    console.log(totalNetPrice);
+    console.log(totalAmount);
+
+    let orderAmount = {
+        currency: currency,
+        totalDiscount: totalDiscount.toFixed(2),
+        totalVat: totalVat.toFixed(2),
+        totalAmount: totalAmount.toFixed(2),
+        totalNetPrice: totalNetPrice.toFixed(2)
+    }
+
+    return orderAmount;
 }
 
 module.exports = Order;

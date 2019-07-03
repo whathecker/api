@@ -102,6 +102,23 @@ function processRedirectedPayment (req, res, next) {
     order.isSubscription = true; 
     order.package = payloadPackage._id;
     order.items = payloadPackage.items;
+
+    const itemAmount = {
+        itemId: payloadPackage.id,
+        name: payloadPackage.name,
+        quantity: 1,
+        currency: "euro",
+        originalPrice: payloadPackage.prices[0].price,
+        vat: payloadPackage.prices[0].vat,
+        grossPrice: payloadPackage.prices[0].price,
+        netPrice: payloadPackage.prices[0].netPrice,
+        sumOfVat: order.setSumOfItemPrice(payloadPackage.prices[0].vat, 1),
+        sumOfGrossPrice: order.setSumOfItemPrice(payloadPackage.prices[0].price, 1),
+        sumOfNetPrice: order.setSumOfItemPrice(payloadPackage.prices[0].netPrice, 1)
+    }
+    order.orderAmountPerItem= [itemAmount];
+    order.orderAmount = order.setTotalAmount(order.orderAmountPerItem, 'euro');
+
     order.user = newUser._id;
     order.paymentMethod = {
         type: null, /* updated later from response of Adyen */

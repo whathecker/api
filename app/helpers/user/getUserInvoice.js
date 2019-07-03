@@ -131,25 +131,26 @@ function generateTableHeader (doc) {
     doc.moveTo(70, 470).lineTo(563, 470).stroke();
 }
 
-function generateTableBody (doc, productName, vatRate, qty, priceDetail, discount) {
+function generateTableBody (doc, vatRate, lineItemDetails) {
+
     
-    const currencySymbol = getCurrencySymbol(priceDetail.currency);
+    const currencySymbol = getCurrencySymbol(lineItemDetails[0].currency);
 
     doc.fontSize(9)
     .font('Helvetica')
-    .text(`${productName}`, 70, 490)
+    .text(`${lineItemDetails[0].name}`, 70, 490)
     .text(`${vatRate}%`, 240, 490)
-    .text(`${qty}`, 285, 490)
-    .text(`${currencySymbol} ${priceDetail.price}`, 330, 490)
-    .text('', 405, 490)
-    .text(`${currencySymbol} ${priceDetail.price}`, 400, 490, { align: "right" });
+    .text(`${lineItemDetails[0].quantity}`, 285, 490)
+    .text(`${currencySymbol} ${lineItemDetails[0].originalPrice}`, 330, 490)
+    .text(`${currencySymbol} ${lineItemDetails[0].discount}`, 405, 490)
+    .text(`${currencySymbol} ${lineItemDetails[0].grossPrice}`, 400, 490, { align: "right" });
     doc.moveTo(70, 520).lineTo(563, 520).stroke();
 
 }
 
-function generateTotalAmount (doc, priceDetail) {
+function generateTotalAmount (doc, orderAmount) {
     //console.log(priceDetail);
-    const currencySymbol = getCurrencySymbol(priceDetail.currency);
+    const currencySymbol = getCurrencySymbol(orderAmount.currency);
     doc.fontSize(10)
     .font('Helvetica')
     .text('Subtotal amount (excl. VAT)', 310, 550)
@@ -159,9 +160,9 @@ function generateTotalAmount (doc, priceDetail) {
     .text(`${currencySymbol}`, 455, 550)
     .text(`${currencySymbol}`, 455, 570)
     .text(`${currencySymbol}`, 455, 590)
-    .text(`${priceDetail.netPrice}`, 500, 550)
-    .text(`${priceDetail.vat}`, 500, 570)
-    .text(`${priceDetail.price}`, 500, 590);
+    .text(`${orderAmount.totalNetPrice}`, 500, 550)
+    .text(`${orderAmount.totalVat}`, 500, 570)
+    .text(`${orderAmount.totalAmount}`, 500, 590);
 }
 
 function generateFooterText (doc) {
@@ -213,10 +214,10 @@ function getUserInvoice (req, res , next) {
                 generateTableHeader(doc);
 
                 // generate table body for subscription order
-                generateTableBody(doc, order.package.name, 21, 1, order.package.prices[0]);
+                generateTableBody(doc, 21, order.orderAmountPerItem);
 
                 // generate subtotal block 
-                generateTotalAmount(doc, order.package.prices[0]);
+                generateTotalAmount(doc, order.orderAmount);
 
                 // generate footer text
                 generateFooterText(doc);
