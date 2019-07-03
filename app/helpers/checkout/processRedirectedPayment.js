@@ -98,6 +98,7 @@ function processRedirectedPayment (req, res, next) {
     // construct first order of customer
     let order = new Order();
     order.orderNumber = null; /* updated later from response of Adyen */
+    order.invoiceNumber = order.createInvoiceNumber();
     order.isSubscription = true; 
     order.package = payloadPackage._id;
     order.items = payloadPackage.items;

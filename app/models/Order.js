@@ -39,6 +39,14 @@ let orderStatusSchema = new Schema({
     timestamp: { type: Date, default: Date.now }
 },{ _id: false });
 
+let orderAmountSchema = new Schema({
+    region: { type: String, lowercase: true },
+    currency: { type: String, lowercase: true },
+    vat: { type: String, default: "0" },
+    totalAmount: { type: String, default: "0" },
+    totalNetPrice: { type: String, default: "0" }
+}, { _id: false });
+
 let orderSchema = new Schema({
     orderNumber: { 
         type: String, 
@@ -71,11 +79,25 @@ let orderSchema = new Schema({
     package: { type: Schema.Types.ObjectId, ref: 'SubscriptionBox'},
     items: [
         { type: Schema.Types.ObjectId, ref: 'Product' }
-    ]
+    ],
+    shippedItems: [
+        { type: Schema.Types.ObjectId, ref: 'Product'}
+    ],
+    orderAmount: orderAmountSchema,
+    shippedAmount: orderAmountSchema,
+    invoiceNumber: { 
+        type: String, 
+        unique: true
+    }
 });
 
 orderSchema.plugin(uniqueValidator);
 const Order = mongoose.model('Order', orderSchema);
+
+function create5DigitInteger () {
+    const num = Math.floor(Math.random() * 90000) + 10000;
+    return num.toString();
+}
 
 Order.prototype.createOrderNumber = (env, country) => {
 
@@ -96,13 +118,40 @@ Order.prototype.createOrderNumber = (env, country) => {
     }
     console.log(countryPrefix);
 
-    function create5DigitInteger () {
-        const num = Math.floor(Math.random() * 90000) + 10000;
-        return num.toString();
-    }
 
     let orderNumber = '';
     return orderNumber.concat(envPrefix, countryPrefix, create5DigitInteger(), create5DigitInteger());
+}
+
+Order.prototype.createInvoiceNumber = () => {
+    let invoiceNumber = '';
+    // create random 5digits integer
+    const random5digitsInt = create5DigitInteger();
+    const currentDate = new Date(Date.now());
+    const year = currentDate.getFullYear().toString().slice(2);
+    let month;
+    let date;
+    let hour;
+
+    if (currentDate.getMonth() < 10) {
+        month = "0" + currentDate.getMonth().toString();
+    } else {
+        month = currentDate.getMonth().toString();
+    }
+
+    if (currentDate.getDate() < 10) {
+        date = "0" + currentDate.getDate().toString();
+    } else {
+        date = currentDate.getDate().toString();
+    }
+
+    if (currentDate.getHours() < 10) {
+        hour = "0" + currentDate.getHours().toString();
+    } else {
+        hour = currentDate.getHours().toString();
+    }
+
+    return invoiceNumber.concat(hour, date, month, year, random5digitsInt);
 }
 
 module.exports = Order;
