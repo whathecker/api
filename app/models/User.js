@@ -30,6 +30,7 @@ let userSchema = new Schema({
     addresses: [{ type: Schema.Types.ObjectId, ref: 'Address' }],
     defaultShippingAddress: { type: Schema.Types.ObjectId, ref: 'Address' },
     defaultBillingAddress: { type: Schema.Types.ObjectId, ref: 'Address' },
+    defaultBillingOption: { type: Schema.Types.ObjectId, ref: 'Billing'},
     billingOptions: [{ type: Schema.Types.ObjectId, ref: 'Billing' }],
     subscriptions: [{ type: Schema.Types.ObjectId, ref: 'Subscription'}],
     orders: [{ type: Schema.Types.ObjectId, ref: 'Order' }],
