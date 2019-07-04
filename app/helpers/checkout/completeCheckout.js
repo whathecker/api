@@ -148,11 +148,11 @@ function completeCheckout (req, res, next) {
     newUser.subscriptions = [subscription];
     newUser.orders = [order];
     newUser.billingOptions = [billingOption];
+    newUser.defaultBillingOption = billingOption;
 
     // update reference and shopperReference with created info
     req.body.payment.reference = order.orderNumber;
     req.body.payment.shopperReference = newUser.userId;
-    console.log(req.body.payment.shopperReference);
 
     const payloadForAdyen = req.body.payment;
     //console.log(payloadForAdyen);

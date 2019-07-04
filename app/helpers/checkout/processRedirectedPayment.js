@@ -161,6 +161,7 @@ function processRedirectedPayment (req, res, next) {
     newUser.subscriptions = [subscription];
     newUser.orders = [order];
     newUser.billingOptions = [billingOption];
+    newUser.defaultBillingOption = billingOption;
 
     //console.log(payloadToAdyen);
     adyenAxios.post('/payments/details', payloadToAdyen)
