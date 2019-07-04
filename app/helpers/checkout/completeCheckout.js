@@ -32,6 +32,7 @@ function completeCheckout (req, res, next) {
     // construct new new user
     let newUser = new User(); 
     newUser.email = payloadForUser.email;
+    newUser.userId = newUser.setUserId();
     newUser.salt = crypto.randomBytes(64).toString('hex');
     newUser.hash = newUser.setPassword(newUser, payloadForUser.password);
     newUser.firstName = payloadForUser.firstName;
@@ -150,7 +151,8 @@ function completeCheckout (req, res, next) {
 
     // update reference and shopperReference with created info
     req.body.payment.reference = order.orderNumber;
-    req.body.payment.shopperReference = newUser.email; 
+    req.body.payment.shopperReference = newUser.userId;
+    console.log(req.body.payment.shopperReference);
 
     const payloadForAdyen = req.body.payment;
     //console.log(payloadForAdyen);
@@ -317,7 +319,8 @@ function completeCheckout (req, res, next) {
                     status: res.status,
                     resultCode: resultCode,
                     message: 'redirect shopper for further processing',
-                    redirect: response.data.redirect
+                    redirect: response.data.redirect,
+                    userId: newUser.userId
                 });
             }
             

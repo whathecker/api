@@ -29,7 +29,8 @@ function processRedirectedPayment (req, res, next) {
             message: 'bad request',
         });
     }
-    console.log(req.body);
+    //console.log(req.body);
+    console.log(req.body.userId);
     const payloadForUser = req.body.user;
     const payloadPackage = req.body.package;
     let paidBy = null;
@@ -43,6 +44,7 @@ function processRedirectedPayment (req, res, next) {
     let newUser = new User();
     //console.log(newUser);
     newUser.email = payloadForUser.email;
+    newUser.userId = req.body.userId; /** user userId created from first call at /payments */
     newUser.salt = crypto.randomBytes(64).toString('hex');
     newUser.hash = newUser.setPassword(newUser, payloadForUser.password);
     newUser.firstName = payloadForUser.firstName;
@@ -165,7 +167,7 @@ function processRedirectedPayment (req, res, next) {
         .then((response) => {
             const resultCode = response.data.resultCode;
             const optinStatus = newUser.newsletterOptin;
-            //console.log(response.data);
+            console.log(response.data);
 
             if ((resultCode === "Authorised" && optinStatus) ||
                 (resultCode === "Received" && optinStatus)) {

@@ -12,6 +12,11 @@ let userSchema = new Schema({
         match: [ /\S+@\S+\.\S+/, 'invalid email format' ], 
         index: true 
     },
+    userId: {
+        type: String,
+        unique: true,
+        index: true
+    },
     hash: { 
         type: String, 
         lowercase: false, 
@@ -39,6 +44,10 @@ let userSchema = new Schema({
 userSchema.plugin(uniqueValidator);
 const User = mongoose.model('User', userSchema);
 
+function create5DigitInteger () {
+    const num = Math.floor(Math.random() * 90000) + 10000;
+    return num.toString();
+}
 
 User.prototype.setPassword = (user, password) => {
     return crypto.pbkdf2Sync(password, user.salt, 10000, 512, 'sha512').toString('hex');
@@ -49,4 +58,26 @@ User.prototype.validatePassword = (user, password) => {
     return hashed === user.hash;
 }
 
+User.prototype.setUserId = () => {
+    let prefix = "EU";
+    const random5digitsInt = create5DigitInteger();
+    const currentDate = new Date(Date.now());
+    const year = currentDate.getFullYear().toString().slice(2);
+    let month;
+    let seconds;
+
+    if (currentDate.getMonth() < 10) {
+        month = "0" + currentDate.getMonth().toString();
+    } else {
+        month = currentDate.getMonth().toString();
+    }
+
+    if (currentDate.getSeconds() < 10) {
+        seconds = "0" + currentDate.getSeconds().toString();
+    } else {
+        seconds = currentDate.getSeconds().toString();
+    }
+
+    return prefix.concat(month, year, seconds,random5digitsInt);
+}
 module.exports = User;
