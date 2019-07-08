@@ -44,6 +44,11 @@ function getUserBillings (req, res, next) {
                 axiosAdyenRecurring.post('/listRecurringDetails', payload)
                 .then((response) => {
                     const adyenDetail = response.data.details;
+                    console.log(adyenDetail);
+                    if (!adyenDetail) {
+                        logger.info(`getUserBillings request has processed but no billingOptions to return | ${user.email}`);
+                        return res.status(200).json(billingOptions);
+                    }
 
                     for (let i = 0; i < user.billingOptions.length; i++) {
                         console.log(user.billingOptions[i]);
@@ -89,6 +94,7 @@ function getUserBillings (req, res, next) {
                             }
                         }
                     }
+                    
                     logger.info(`getUserBillings request has processed and returned data | ${user.email}`);
                     return res.status(200).json(billingOptions);
                     

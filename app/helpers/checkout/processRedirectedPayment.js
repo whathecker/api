@@ -86,7 +86,7 @@ function processRedirectedPayment (req, res, next) {
     let billingOption = new Billing();
     billingOption.user = newUser._id;
     billingOption.type = null; /* updated later from response of Adyen */
-
+    billingOption.billingId = billingOption.setBillingId();
     
     // construct new subscription
     const currentEnv = process.env.NODE_ENV;

@@ -11,7 +11,7 @@ const logger = require('../logger');
 const axiosSendGrid = require('../../../axios-sendgrid');
 const Subscription = require('../../models/Subscription');
 
-function processNotification (notification, order) {
+function processNotificationCheckout (notification, order) {
     console.log('process it');
     console.log(notification);
     console.log(notification.notificationItems[0]);
@@ -52,7 +52,9 @@ function processNotification (notification, order) {
             logger.info(`${order.orderNumber} | updated order is saved in db`);
         }).catch(console.warn);
 
-    } else if (eventCode === "AUTHORISATION" && isSuccess === "false") {
+    } 
+
+    else if (eventCode === "AUTHORISATION" && isSuccess === "false") {
         const failedReason = notification.notificationItems[0].NotificationRequestItem.reason;
 
         if (failedReason === "REFUSED") {
@@ -89,7 +91,10 @@ function processNotification (notification, order) {
             }).catch(console.warn);
             
         }
-    } else if (eventCode === "RECURRING_CONTRACT" && isSuccess === "true") {
+    } 
+    
+    // refactor this part
+    else if (eventCode === "RECURRING_CONTRACT" && isSuccess === "true") {
         console.log('this is called');
         const recurringDetail = notification.notificationItems[0].NotificationRequestItem.pspReference;
         const paymentMethodType = notification.notificationItems[0].NotificationRequestItem.paymentMethod;
@@ -108,7 +113,8 @@ function processNotification (notification, order) {
                 const billingId = user.billingOptions;
                 console.log(billingId);
 
-                Billing.findById(billingId).then((billingOption) => {
+                Billing.findById(billingId)
+                .then((billingOption) => {
                     if (billingOption) {
                         // update billingOption type and recurring detail
                         billingOption.type = paymentMethodType;
@@ -135,6 +141,64 @@ function processNotification (notification, order) {
         }).catch(console.warn);
         
     }
+
+    else {
+        console.log('unknonw eventCode, log this somewhere!!!');
+    }
+}
+
+function processNotificationNonCheckout (notification, billingOption) {
+    const eventCode = notification.notificationItems[0].NotificationRequestItem.eventCode;
+    const isSuccess = notification.notificationItems[0].NotificationRequestItem.success;
+    console.log(eventCode);
+    console.log(isSuccess);
+
+    if (eventCode === "AUTHORISATION" && isSuccess === "true") {
+        const recurringDetail = notification.notificationItems[0].NotificationRequestItem.pspReference;
+        const paymentMethodType = notification.notificationItems[0].NotificationRequestItem.paymentMethod;
+        billingOption.recurringDetail = recurringDetail;
+        billingOption.type = paymentMethodType;
+        billingOption.markModified('type');
+        billingOption.markModified('recurringDetail');
+        billingOption.save();
+        return;
+    }
+
+    else if (eventCode === "RECURRING_CONTRACT" && isSuccess === "true") {
+        const recurringDetail = notification.notificationItems[0].NotificationRequestItem.pspReference;
+        const paymentMethodType = notification.notificationItems[0].NotificationRequestItem.paymentMethod;
+        billingOption.recurringDetail = recurringDetail;
+        billingOption.type = paymentMethodType;
+        billingOption.markModified('type');
+        billingOption.markModified('recurringDetail');
+        billingOption.save();
+        return;
+    }
+
+    else if (eventCode === "RECURRING_CONTRACT" && isSuccess === "true") {
+        const failedReason = notification.notificationItems[0].NotificationRequestItem.reason;
+
+        if (failedReason === "REFUSED") {
+            billingOption.remove();
+            return;
+        }
+    }
+
+    else if (eventCode === "AUTHORISATION" && isSuccess === "false") {
+        const failedReason = notification.notificationItems[0].NotificationRequestItem.reason;
+
+        if (failedReason === "REFUSED") {
+            billingOption.remove();
+            return;
+        }
+
+    }
+
+    else {
+        console.log('unknown notification type');
+    }
+
+
 }
 
 /**
@@ -230,32 +294,65 @@ function startMQConnection () {
             retryWorkQueue
         ]).then((ok) => {
             return ch.consume(queue, (msg) => {
+
                 if (msg !== null) {
                     const message = JSON.parse(msg.content);
                     console.log(message);
-                    const orderNumber = message.notificationItems[0].NotificationRequestItem.merchantReference;
+                    console.log(message.notificationItems[0]);
+                    // refactor this part
+                    const merchanRef = message.notificationItems[0].NotificationRequestItem.merchantReference;
+                    console.log(merchanRef);
+                    console.log(merchanRef.length);
 
-                    Order.findOne({ orderNumber: orderNumber })
-                    .then((order) => {
-                        if (order) {
-                            console.log(order);
-                            processNotification(message, order);
-                            return ch.ack(msg);
-                        } else if (!order && msg.properties.headers['x-death']){
-                            console.log(msg);
-                            console.log(msg.properties.headers);
-                            const retryCount = msg.properties.headers['x-death'][0].count;
-                            if (retryCount <= 5) {
-                                return ch.nack(msg, false, false);
-                            } else {
-                                logger.warn(`${orderNumber} | tried to deliver notification 5 times, but failed`);
+                    // merchantRef is orderNumber when it's 14 digits
+                    // active order notification use orderNumber as merchantRef
+                    if (merchanRef.length === 14) {
+                        Order.findOne({ orderNumber: merchanRef })
+                        .then((order) => {
+                            if (order) {
+                                console.log(order);
+                                processNotificationCheckout(message, order);
                                 return ch.ack(msg);
+                            } else if (!order && msg.properties.headers['x-death']){
+                                console.log(msg);
+                                console.log(msg.properties.headers);
+                                const retryCount = msg.properties.headers['x-death'][0].count;
+                                if (retryCount <= 5) {
+                                    return ch.nack(msg, false, false);
+                                } else {
+                                    logger.warn(`${orderNumber} | tried to deliver notification 5 times, but failed`);
+                                    return ch.ack(msg);
+                                }
+                            } else {
+                                // reject for first time processing attempt
+                                return ch.nack(msg, false, false);
                             }
-                        } else {
-                            // reject for first time processing attempt
-                            return ch.nack(msg, false, false);
-                        }
-                    }).catch(console.warn);
+                        }).catch(console.warn);
+                    }
+
+                    // merchantRef is userId when it's 13 digits
+                    // add/update/delete of billingOption use userId as merchantRef
+                    if (merchanRef.length === 13) {
+                        Billing.findOne({ billingId: merchanRef })
+                        .then((billingOption) => {
+                            console.log(billingOption);
+
+                            if (billingOption) {
+                                processNotificationNonCheckout(message, billingOption);
+                                return ch.ack(msg);
+                            } else if (!billingOption && msg.properties.headers['x-death']) {
+                                const retryCount = msg.properties.headers['x-death'][0].count;
+                                if (retryCount <= 5) {
+                                    return ch.nack(msg, false, false);
+                                } else {
+                                    return ch.ack(msg);
+                                }
+                            } else {
+                                return ch.nack(msg, false, false);
+                            }
+                        }).catch(console.warn);
+                    }
+                        
                 }
             });;
         })

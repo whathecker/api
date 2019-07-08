@@ -23,6 +23,7 @@ const getResetPasswordToken = require('../../../helpers/user/getResetPasswordTok
 const getUserOrders = require('../../../helpers/user/getUserOrders');
 const getUserInvoice = require('../../../helpers/user/getUserInvoice');
 const getUserBillings = require('../../../helpers/user/getUserBillings');
+const addUserBilling = require('../../../helpers/user/addUserBilling');
 const apiAuth = require('../../../middlewares/verifyApikey');
 
 const isLocal = process.env.NODE_ENV === "local";
@@ -134,6 +135,7 @@ router.get('/user/password/reset/:token', getResetPasswordToken);
 router.get('/user/orders', userAuth, getUserOrders);
 router.get('/user/orders/order/:orderNumber/invoice', userAuth, getUserInvoice);
 router.get('/user/billings', userAuth, getUserBillings);
+router.post('/user/billings/payment', userAuth, addUserBilling);
 router.post('/user', createUser);
 
 

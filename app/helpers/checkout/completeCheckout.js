@@ -75,6 +75,7 @@ function completeCheckout (req, res, next) {
     let billingOption = new Billing();
     billingOption.user = newUser._id;
     billingOption.type = paidBy;
+    billingOption.billingId = billingOption.setBillingId();
 
     const currentEnv = process.env.NODE_ENV;
     // construct new subscription
@@ -300,7 +301,7 @@ function completeCheckout (req, res, next) {
                 return res.status(200).json({
                     status: res.status,
                     resultCode: resultCode,
-                    message: 'payment is canceled by user'
+                    message: 'payment is cancelled by user'
                 });
             }
 
