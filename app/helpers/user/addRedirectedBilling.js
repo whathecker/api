@@ -3,23 +3,25 @@ const Billing = require('../../models/Billing');
 const User = require('../../models/User');
 const logger = require('../../utils/logger');
 
-function addUserBilling (req, res, next) {
+function addRedirectedBilling (req, res, next) {
+
+    if (!req.body.details) {
+        return res.status(400).json({
+            status: res.status,
+            message: 'bad request',
+        });
+    }
 
     if (req.user) {
         console.log(req.body);
-
-        if (!req.body.billingDetail) {
-            logger.warn(`addUserBilling request is rejected | bad request`);
-            return res.status(400).json({
-                message: 'bad request'
-            });
+        const payload = {
+            details: req.body.details
         }
-        
+
         User.findById(req.user._id)
         .populate('defaultBillingOption')
         .populate('billingOptions')
         .then((user) => {
-
             if (!user) {
                 logger.info(`addUserBilling request has processed but no user was found`);
                 return res.status(204).json({
@@ -29,25 +31,18 @@ function addUserBilling (req, res, next) {
             }
 
             if (user) {
-
                 let newBilling = new Billing();
                 newBilling.user = req.user._id;
-                newBilling.type = req.body.type;
-                newBilling.billingId = newBilling.setBillingId();
-                
-                let adyenPayload = req.body.billingDetail;
-                // use billingId for non-checkout payment request
-                adyenPayload.reference = newBilling.billingId;
-                adyenPayload.shopperReference = user.userId;
+                newBilling.type = null; /** updated later from adyen response */
+                newBilling.billingId = null; /** updated later from adyen response */
 
-                adyenAxios.post('/payments', adyenPayload)
+                adyenAxios.post('/payments/details', payload)
                 .then((response) => {
                     console.log(response.data);
-                    
                     const resultCode = response.data.resultCode;
 
                     if (resultCode === "Refused") {
-                        logger.info(`addUserBilling is refused (no redirect) | ${resultCode} | ${user.email}`);
+                        logger.info(`addUserBilling is refused (redirect) | ${resultCode} | ${user.email}`);
                         
                         return res.status(200).json({
                             status: 'failed',
@@ -57,7 +52,7 @@ function addUserBilling (req, res, next) {
                     }
 
                     if (resultCode === "Cancelled") {
-                        logger.info(`addUserBilling is cancelled (no redirect) | ${resultCode} | ${user.email}`);
+                        logger.info(`addUserBilling is cancelled (redirect) | ${resultCode} | ${user.email}`);
 
                         return res.status(200).json({
                             status: 'failed',
@@ -65,9 +60,9 @@ function addUserBilling (req, res, next) {
                             message: 'add payment request is cancelled by user'
                         });
                     }
-
+                    
                     if (resultCode === "Error") {
-                        logger.warn(`addUserBilling is failed (no redirect) | ${resultCode} | ${user.email}`);
+                        logger.warn(`addUserBilling is failed (redirect) | ${resultCode} | ${user.email}`);
                         return res.status(500).json({
                             status: 'failed',
                             resultCode: resultCode,
@@ -75,21 +70,11 @@ function addUserBilling (req, res, next) {
                         });
                     }
 
-                    if (resultCode === "RedirectShopper") {
-                        logger.info(`addUserBilling has been redirected | ${resultCode} | ${user.email}`);
-                        return res.status(202).json({
-                            status: 'pending',
-                            resultCode: resultCode,
-                            message: 'redirect shopper for further processing',
-                            redirect: response.data.redirect
-                        });
-                    }
-
-
-    
-                    if (resultCode === 'Authorised') {
-                        
-
+                    if (resultCode === "Authorised" || resultCode === "Received") {
+                        const billingId = response.data.merchantReference;
+                        const paymentType = response.data.paymentMethod;
+                        newBilling.type = paymentType;
+                        newBilling.billingId = billingId;
                         user.billingOptions.push(newBilling);
                         user.markModified('billingOptions');
                         Promise.all([
@@ -107,21 +92,13 @@ function addUserBilling (req, res, next) {
                                 });
                             }
                         }).catch(next);
-    
                     }
-
-
-
                 }).catch(next);
-
             }
 
-            
-
         }).catch(next);
-            
-    }
 
+    }
 }
 
-module.exports = addUserBilling;
+module.exports = addRedirectedBilling;
