@@ -6,7 +6,7 @@ const logger = require('../../utils/logger');
 function updateDefaultBilling (req, res, next) {
 
     if (req.user) {
-        console.log(req.body);
+        //console.log(req.body);
         const billingId = req.body.billingId;
 
         if (!billingId) {
@@ -23,7 +23,7 @@ function updateDefaultBilling (req, res, next) {
         .then((user) => {
 
             if (!user) {
-                logger.info(`updateDefaultBilling request has processed but no user was found`);
+                logger.info(`updateDefaultBilling request has processed but no user was found | ${user.email}`);
                 return res.status(204).json({
                     status: 'failed',
                     message: 'no user'
@@ -36,7 +36,7 @@ function updateDefaultBilling (req, res, next) {
                 .then((billing) => {
 
                     if (!billing) {
-                        logger.info(`updateDefaultBilling request has processed but no billing was found`);
+                        logger.info(`updateDefaultBilling request has processed but no billing was found | ${user.email}`);
                         return res.status(204).json({
                             status: 'failed',
                             messasge: 'no billing option'
