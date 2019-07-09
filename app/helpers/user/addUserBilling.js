@@ -6,7 +6,7 @@ const logger = require('../../utils/logger');
 function addUserBilling (req, res, next) {
 
     if (req.user) {
-        console.log(req.body);
+        //console.log(req.body);
 
         if (!req.body.billingDetail) {
             logger.warn(`addUserBilling request is rejected | bad request`);

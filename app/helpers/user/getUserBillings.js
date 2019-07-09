@@ -55,6 +55,7 @@ function getUserBillings (req, res, next) {
 
                         const recurringDetail = user.billingOptions[i].recurringDetail;
                         const paymentMethodType = user.billingOptions[i].type;
+                        const billingId = user.billingOptions[i].billingId;
 
                         // loop through paymentOptions returned from Adyen
                         // cross-checking to ensure data stored in 2 parties are returned
@@ -74,6 +75,7 @@ function getUserBillings (req, res, next) {
                                             recurringDetail: recurringDetail,
                                             creationDate: creationDate,
                                             bank: adyenDetail[p].RecurringDetail.bank,
+                                            billingId: billingId,
                                             default: isDefaultBilling(defaultBillingOption.recurringDetail, recurringDetail)
                                         }
                                         billingOptions.ideal.push(billingOption);
@@ -85,6 +87,7 @@ function getUserBillings (req, res, next) {
                                             recurringDetail: recurringDetail,
                                             creationDate: creationDate,
                                             card: adyenDetail[p].RecurringDetail.card,
+                                            billingId: billingId,
                                             default: isDefaultBilling(defaultBillingOption.recurringDetail, recurringDetail)
                                         }
                                         billingOptions.card.push(billingOption);
