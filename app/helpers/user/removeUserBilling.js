@@ -66,8 +66,8 @@ function removeUserBilling (req, res, next) {
 
                             axiosAdyenRecurring.post('/disable', payload)
                             .then((response) => {
-
-                                if (response.stataus !== 200) {
+                                console.log(response);
+                                if (response.status !== 200) {
                                     logger.warn(`removeUserBilling request has not processed due to unexpected response from payment processor | ${user.email}`)
                                     return res.status(422).json({
                                         status: 'failed',
