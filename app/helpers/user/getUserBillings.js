@@ -94,7 +94,7 @@ function getUserBillings (req, res, next) {
                             }
                         }
                     }
-                    
+                    console.log(billingOptions);
                     logger.info(`getUserBillings request has processed and returned data | ${user.email}`);
                     return res.status(200).json(billingOptions);
                     

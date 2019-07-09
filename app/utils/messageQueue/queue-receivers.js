@@ -153,6 +153,8 @@ function processNotificationNonCheckout (notification, billingOption) {
     console.log(eventCode);
     console.log(isSuccess);
 
+    /*
+
     if (eventCode === "AUTHORISATION" && isSuccess === "true") {
         const recurringDetail = notification.notificationItems[0].NotificationRequestItem.pspReference;
         const paymentMethodType = notification.notificationItems[0].NotificationRequestItem.paymentMethod;
@@ -162,9 +164,9 @@ function processNotificationNonCheckout (notification, billingOption) {
         billingOption.markModified('recurringDetail');
         billingOption.save();
         return;
-    }
+    } */
 
-    else if (eventCode === "RECURRING_CONTRACT" && isSuccess === "true") {
+    if (eventCode === "RECURRING_CONTRACT" && isSuccess === "true") {
         const recurringDetail = notification.notificationItems[0].NotificationRequestItem.pspReference;
         const paymentMethodType = notification.notificationItems[0].NotificationRequestItem.paymentMethod;
         billingOption.recurringDetail = recurringDetail;
@@ -175,7 +177,7 @@ function processNotificationNonCheckout (notification, billingOption) {
         return;
     }
 
-    else if (eventCode === "RECURRING_CONTRACT" && isSuccess === "true") {
+    else if (eventCode === "RECURRING_CONTRACT" && isSuccess === "false") {
         const failedReason = notification.notificationItems[0].NotificationRequestItem.reason;
 
         if (failedReason === "REFUSED") {
