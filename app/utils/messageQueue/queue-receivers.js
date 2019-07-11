@@ -1,19 +1,15 @@
 const queue = 'notification';
 const retryQueue = 'notification-retry';
-const mailQueue = 'mail';
-const mailRetryQueue = 'mail-retry';
 const open = require('amqplib');
 const Order = require('../../models/Order');
 const User = require('../../models/User');
 const Billing =  require('../../models/Billing');
 const rabbitMQConnection = require('./rabbitMQConnector');
 const logger = require('../logger');
-const axiosSendGrid = require('../../../axios-sendgrid');
-const Subscription = require('../../models/Subscription');
+const axiosSlackNotification = require('../../../axios-slack-notification');
+
 
 function processNotificationCheckout (notification, order) {
-    console.log('process it');
-    console.log(notification);
     console.log(notification.notificationItems[0]);
     const eventCode = notification.notificationItems[0].NotificationRequestItem.eventCode;
     const isSuccess = notification.notificationItems[0].NotificationRequestItem.success;
@@ -92,12 +88,12 @@ function processNotificationCheckout (notification, order) {
     
     // refactor this part
     else if (eventCode === "RECURRING_CONTRACT" && isSuccess === "true") {
-        console.log('this is called');
+        //console.log('this is called');
         const recurringDetail = notification.notificationItems[0].NotificationRequestItem.pspReference;
         const paymentMethodType = notification.notificationItems[0].NotificationRequestItem.paymentMethod;
         const userReference = notification.notificationItems[0].NotificationRequestItem.additionalData.shopperReference;
         const userId = order.user;
-        console.log(userId);
+        //console.log(userId);
         order.paymentMethod.type = paymentMethodType;
         order.paymentMethod.recurringDetail = recurringDetail;
         order.markModified('paymentMethod');
@@ -105,10 +101,10 @@ function processNotificationCheckout (notification, order) {
 
         User.findById(userId).then((user) => {
             if (user) {
-                console.log(user);
+                //console.log(user);
 
                 const billingId = user.billingOptions;
-                console.log(billingId);
+                //console.log(billingId);
 
                 Billing.findById(billingId)
                 .then((billingOption) => {
@@ -189,7 +185,25 @@ function processNotificationCheckout (notification, order) {
     }
 
     else {
-        console.log('unknonw eventCode, log this somewhere!!!');
+        const message = notification.notificationItems[0];
+        const payload = {
+            text: "Adyen notification with unknown eventCode is received!",
+            attachments: [
+                {
+                    fallback: "Investigate unknown Adyen notification",
+                    author_name: "Chokchok",
+                    title: "Please investigate below Adyen notification",
+                    text: JSON.stringify(message)
+                }
+            ]
+        }
+        axiosSlackNotification.post('', payload)
+        .then((response) => {
+            logger.warn(`Adyen notification with unknown eventCode has received | ${order.orderNumber}`);
+            if (response.status === 200) {
+                return;
+            }
+        }).catch(console.warn);
     }
 }
 
@@ -275,7 +289,25 @@ function processNotificationNonCheckout (notification, billingOption) {
     }
 
     else {
-        console.log('unknown notification type');
+        const message = notification.notificationItems[0];
+        const payload = {
+            text: "Adyen notification with unknown eventCode is received!",
+            attachments: [
+                {
+                    fallback: "Investigate unknown Adyen notification",
+                    author_name: "Chokchok",
+                    title: "Please investigate below Adyen notification",
+                    text: JSON.stringify(message)
+                }
+            ]
+        }
+        axiosSlackNotification.post('', payload)
+        .then((response) => {
+            logger.warn(`Adyen notification with unknown eventCode has received | ${billingOption.billingId}`);
+            if (response.status === 200) {
+                return;
+            }
+        }).catch(console.warn);
     }
 
 
@@ -363,10 +395,7 @@ function startMQConnection () {
                         
                 }
             });;
-        })
-
-        
-
+        }).catch(console.warn);
 
     }).catch((error) => {
         console.log('retry to connect rabbitmq because rabbitmq might not started yet');
