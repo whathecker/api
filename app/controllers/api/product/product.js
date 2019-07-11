@@ -71,6 +71,8 @@ router.put('/:id', (req, res, next) => {
         return res.status(400).json({ message: 'bad request' });
     }
 
+    let update = req.body.update;
+    update.lastModified = Date.now();
     Product.findOneAndUpdate({ id: req.params.id }, req.body.update)
         .then((product) => {
             if(!product) {

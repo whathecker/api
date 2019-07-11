@@ -69,7 +69,7 @@ function updateInventoryQuantity (req, res, next, quantity) {
 
     let update = {};
     update.quantity = quantity;
-    console.log(update);
+    update.lastModified = Date.now();
 
     Inventory.findOneAndUpdate({ product: req.product._id }, update)
         .then((inventory) => {
