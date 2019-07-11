@@ -153,18 +153,20 @@ function processNotificationNonCheckout (notification, billingOption) {
     console.log(eventCode);
     console.log(isSuccess);
 
-    /*
+    
 
     if (eventCode === "AUTHORISATION" && isSuccess === "true") {
+        logger.info(`AUTHORISATION event has received | ${billingOption.billingId} | ${billingOption.recurringDetail}`);
+        /* 
         const recurringDetail = notification.notificationItems[0].NotificationRequestItem.pspReference;
         const paymentMethodType = notification.notificationItems[0].NotificationRequestItem.paymentMethod;
         billingOption.recurringDetail = recurringDetail;
         billingOption.type = paymentMethodType;
         billingOption.markModified('type');
         billingOption.markModified('recurringDetail');
-        billingOption.save();
+        billingOption.save(); */
         return;
-    } */
+    } 
 
     if (eventCode === "RECURRING_CONTRACT" && isSuccess === "true") {
         const recurringDetail = notification.notificationItems[0].NotificationRequestItem.pspReference;
@@ -174,6 +176,7 @@ function processNotificationNonCheckout (notification, billingOption) {
         billingOption.markModified('type');
         billingOption.markModified('recurringDetail');
         billingOption.save();
+        logger.info(`RECURRING_CONTRACT event has received and recurringDetail and paymentMethodType has updated | ${billingOption.billingId} | ${billingOption.recurringDetail}`);
         return;
     }
 
@@ -181,19 +184,48 @@ function processNotificationNonCheckout (notification, billingOption) {
         const failedReason = notification.notificationItems[0].NotificationRequestItem.reason;
 
         if (failedReason === "REFUSED") {
+            logger.info(`RECURRING_CONTRACT failed event has received | removing ${billingOption.billingId}`);
             billingOption.remove();
             return;
         }
+
+        return
     }
 
     else if (eventCode === "AUTHORISATION" && isSuccess === "false") {
         const failedReason = notification.notificationItems[0].NotificationRequestItem.reason;
 
         if (failedReason === "REFUSED") {
+            logger.info(`AUTHORISATION failed event has received | removing ${billingOption.billingId}`);
             billingOption.remove();
             return;
         }
+        return;
+    }
 
+    else if ((eventCode === "REFUND" || eventCode === "CANCELLATION" || eventCode === "CANCEL_OR_REFUND") && isSuccess === "true") {
+        const tokenRefundStatus = billingOption.tokenRefundStatus;
+        
+        if (tokenRefundStatus === "NOT_REQUIRED") {
+            logger.warn(`receive refund notification for billing option has "NOT_REQUIRED" as tokenRefundStatus. request will be processed | ${billingOption.billingId}`)
+        }
+        if (tokenRefundStatus !== "REFUNDED") {
+            billingOption.tokenRefundStatus = "REFUNDED";
+            billingOption.markModified('tokenRefundStatus');
+            billingOption.save();
+            return;
+        }
+
+        if (tokenRefundStatus === "REFUNDED") {
+            logger.warn(`receive refund notification, but token has refunded already | ${billingOption.billingId}`);
+            return;
+        }
+
+    }
+
+    else if ((eventCode === "REFUND" || eventCode === "CANCELLATION" || eventCode === "CANCEL_OR_REFUND") && isSuccess === "false") {
+        logger.warn(`refund failed notification is received for ${billingOption.billingId}, tokenRefundStatus ${billingOption.tokenRefundStatus}`);
+        return;
     }
 
     else {

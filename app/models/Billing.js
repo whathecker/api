@@ -6,7 +6,17 @@ let billingSchema =  new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     type: { type: String, required: true },
     recurringDetail: { type: String, default: '' },
-    billingId: { type: String, unique: true }
+    billingId: { type: String, unique: true },
+    tokenRefundStatus: {
+        type: String,
+        uppercase: true,
+        enum: ['NOT_REQUIRED', 'REQUIRED', 'REFUNDED'],
+        default: 'NOT_REQUIRED'
+        /** 
+         * Status to represent if amount being processed to create payment token
+         * has refunded or not.
+         */
+    }
 });
 
 billingSchema.plugin(uniqueValidator);

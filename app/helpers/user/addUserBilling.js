@@ -34,8 +34,10 @@ function addUserBilling (req, res, next) {
                 newBilling.user = req.user._id;
                 newBilling.type = req.body.type;
                 newBilling.billingId = newBilling.setBillingId();
+                newBilling.tokenRefundStatus = 'REQUIRED';
                 
                 let adyenPayload = req.body.billingDetail;
+                console.log(adyenPayload);
                 // use billingId for non-checkout payment request
                 adyenPayload.reference = newBilling.billingId;
                 adyenPayload.shopperReference = user.userId;

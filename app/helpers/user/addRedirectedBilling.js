@@ -35,7 +35,8 @@ function addRedirectedBilling (req, res, next) {
                 newBilling.user = req.user._id;
                 newBilling.type = null; /** updated later from adyen response */
                 newBilling.billingId = null; /** updated later from adyen response */
-
+                newBilling.tokenRefundStatus = 'REQUIRED';
+                
                 adyenAxios.post('/payments/details', payload)
                 .then((response) => {
                     console.log(response.data);
