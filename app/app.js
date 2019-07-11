@@ -43,6 +43,8 @@ app.use(bodyParser.json());
 
 // message receiver for adyen notification
 require('./utils/messageQueue/queue-receivers');
+// message receiver for transactional email
+require('./utils/messageQueue/mailQueue-receivers');
 
 // mount routes
 app.use(require('./controllers'));
