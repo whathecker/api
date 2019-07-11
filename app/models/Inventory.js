@@ -3,7 +3,9 @@ const mongoose = require('mongoose'),
 
 let inventorySchema = new Schema({
     product: { type: Schema.Types.ObjectId, ref: 'Product' },
-    quantity: { type: Number, default: 0 }
+    quantity: { type: Number, default: 0 },
+    creationDate: { type: Date, default: Date.now },
+    lastModified: { type: Date, default: Date.now }
     // add carted schema later
     // ref: https://docs.mongodb.com/ecosystem/use-cases/inventory-management/
 });

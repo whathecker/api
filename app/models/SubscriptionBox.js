@@ -21,7 +21,9 @@ let subscriptionBoxSchema = new Schema({
     boxType: { type: String, required: true },
     boxTypeCode: { type: String, required: true },
     items: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
-    prices: [pricesSchema]
+    prices: [pricesSchema],
+    creationDate: { type: Date, default: Date.now },
+    lastModified: { type: Date, default: Date.now }
 });
 
 subscriptionBoxSchema.plugin(uniqueValidator);

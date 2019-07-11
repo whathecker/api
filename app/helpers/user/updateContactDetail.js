@@ -4,6 +4,9 @@ const logger = require('../../utils/logger');
 function updateContactDetail (req, res, next) {
     
     console.log(req.body);
+
+    let update = req.body;
+    update.lastModified = Date.now();
     
     if (req.user) {
         const options = { new: true };

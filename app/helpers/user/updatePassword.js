@@ -24,7 +24,9 @@ function updatePassword (req, res, next) {
                 
                 if (passwordValidity) {
                     user.hash = user.setPassword(user, newPassword);
+                    user.lastModified = Date.now();
                     user.markModified('hash');
+                    user.markModified('lastModified');
                     user.save().then((user) => {
                         if (user) {
                             logger.info(`password update request has processed ${user.email}`);

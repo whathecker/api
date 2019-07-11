@@ -79,7 +79,10 @@ function removeUserBilling (req, res, next) {
 
                                     Promise.all([
                                         Billing.findByIdAndDelete(billing._id),
-                                        User.findByIdAndUpdate(req.user._id, { $pull: { "billingOptions": billing._id }})
+                                        User.findByIdAndUpdate(req.user._id, { 
+                                            $pull: { "billingOptions": billing._id },
+                                            lastModified: Date.now()
+                                        })
                                     ])
                                     .then((values) => {
     

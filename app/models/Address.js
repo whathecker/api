@@ -17,7 +17,9 @@ let addressSchema = new Schema({
     streetName: { type: String, required: true },
     city: { type: String, required: true },
     province: { type: String },
-    country: { type: String, required: true }
+    country: { type: String, required: true },
+    creationDate: { type: Date, default: Date.now },
+    lastModified: { type: Date, default: Date.now }
 });
 addressSchema.plugin(uniqueValidator);
 const Address = mongoose.model('Address', addressSchema);

@@ -16,7 +16,9 @@ let billingSchema =  new Schema({
          * Status to represent if amount being processed to create payment token
          * has refunded or not.
          */
-    }
+    },
+    creationDate: { type: Date, default: Date.now },
+    lastModified: { type: Date, default: Date.now }
 });
 
 billingSchema.plugin(uniqueValidator);

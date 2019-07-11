@@ -46,7 +46,9 @@ function updateDefaultBilling (req, res, next) {
                     if (billing) {
                         //console.log(billing._id);
                         user.defaultBillingOption = billing._id;
+                        user.lastModified = Date.now();
                         user.markModified('defaultBillingOption');
+                        user.markModified('lastModified');
 
                         for (let i = 0; i < user.subscriptions.length; i++) {
                             //console.log(user.subscriptions[i]._id);
@@ -56,7 +58,9 @@ function updateDefaultBilling (req, res, next) {
                             .then((subscription) => {
                                 if (subscription) {
                                     subscription.paymentMethod = billing._id;
+                                    subscription.lastModified = Date.now();
                                     subscription.markModified('paymentMethod');
+                                    subscription.markModified('lastModified');
                                     subscription.save();
                                 }
                             }).catch(next);

@@ -23,6 +23,9 @@ function deleteAddress (req, res, next) {
         }
 
         user.addresses.pull(address_id);
+        user.lastModified = Date.now();
+        user.markModified('addresses');
+        user.markModified('lastModified');
         Promise.all([
             Address.findByIdAndRemove(address_id),
             user.save()

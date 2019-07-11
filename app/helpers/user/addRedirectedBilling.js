@@ -77,7 +77,9 @@ function addRedirectedBilling (req, res, next) {
                         newBilling.type = paymentType;
                         newBilling.billingId = billingId;
                         user.billingOptions.push(newBilling);
+                        user.lastModified = Date.now();
                         user.markModified('billingOptions');
+                        user.markModified('lastModified');
                         Promise.all([
                             newBilling.save(),
                             user.save()

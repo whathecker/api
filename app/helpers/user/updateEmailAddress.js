@@ -29,7 +29,9 @@ function updateEmailAddress (req, res, next) {
                         if (!user) {
                             // process email update
                             origianlUser.email = newEmail;
+                            origianlUser.lastModified = Date.now();
                             origianlUser.markModified('email');
+                            origianlUser.markModified('lastModified');
                             origianlUser.save()
                             .then((user) => {
                                 if (user) {

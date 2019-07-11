@@ -8,6 +8,7 @@ function resetPassword (req, res, next) {
     
 
     if (!token || !password) {
+        logger.warn(`resetPassword request has rejected | bad request`);
         return res.status(400).json({
             message: 'bad request | missing parameters'
         });
@@ -18,6 +19,7 @@ function resetPassword (req, res, next) {
         const tokenSecret = "5rYIkazQmdGwfDN1Y2BhAUZLgad25DUI";
 
         if (!user) {
+            logger.warn(`resetPassword request has failed | no user was found`);
             return res.status(422).json({
                 message: 'token is invalid or expired'
             });
@@ -31,6 +33,7 @@ function resetPassword (req, res, next) {
                     user.pwdResetToken = '';
                     user.markModified('pwdResetToken');
                     user.save().then(() => {
+                        logger.warn(`resetPassword request has failed | token is invalid or expired | ${user.email}`);
                         return res.status(422).json({
                             message: 'token is invalid or expired'
                         });
@@ -42,6 +45,8 @@ function resetPassword (req, res, next) {
                         user.markModified('hash');
                         user.pwdResetToken = '';
                         user.markModified('pwdResetToken');
+                        user.lastModified = Date.now();
+                        user.markModified('lastModified');
                         user.save().then((user) => {
                             if (user) {
                                 return res.status(200).json({

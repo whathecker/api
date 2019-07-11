@@ -20,7 +20,9 @@ let productSchema = new Schema({
     brandCode: { type: String },
     volume: { type: String },
     skinType: { type: String },
-    prices : [pricesSchema]
+    prices : [pricesSchema],
+    creationDate: { type: Date, default: Date.now },
+    lastModified: { type: Date, default: Date.now }
 });
 
 productSchema.plugin(uniqueValidator);

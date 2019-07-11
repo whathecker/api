@@ -36,7 +36,9 @@ function upsertAddress (req, res, next) {
             address.user = req.user._id;
 
             user.addresses.push(address);
+            user.lastModified = Date.now();
             user.markModified('addresses');
+            user.markModified('lastModified');
             
             Promise.all([
                 user.save(),
@@ -65,12 +67,16 @@ function upsertAddress (req, res, next) {
                 streetName: req.body.streetName,
                 city: req.body.city,
                 province: req.body.province,
-                country: req.body.country
+                country: req.body.country,
+                lastModified: Date.now()
             }
 
             Address.findByIdAndUpdate(address_id, updates, options)
             .then((address) => {
                 if (address) {
+                    user.lastModified = Date.now();
+                    user.markModified('lastModified');
+                    user.save();
                     loggeer.info(`upsertAddress request has updated existing address ${address_id}`)
                     return res.status(200).json({
                         status: res.status,
