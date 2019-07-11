@@ -24,8 +24,7 @@ function processNotificationCheckout (notification, order) {
         const paymentStatusUpdate = { status: 'AUTHORIZED'};
         const orderStatusUpdate = { status: 'PAID' };
 
-        if (order.paymentStatus.status === "OPEN" ||
-        order.paymentStatus.status === "PENDING") {
+        if (order.paymentStatus.status === "OPEN" || order.paymentStatus.status === "PENDING") {
             // payment status is only updated to AUTHORIZED
             // when prev status is OPEN or PENDING
             order.paymentStatus = paymentStatusUpdate;
@@ -61,9 +60,7 @@ function processNotificationCheckout (notification, order) {
             const paymentStatusUpdate = { status: 'REFUSED' };
             const orderStatusUpdate = { status: 'OVERDUE' };
 
-            if (order.paymentStatus.status === "OPEN" ||
-            order.paymentStatus.status === "PENDING"
-            ) {
+            if (order.paymentStatus.status === "OPEN" || order.paymentStatus.status === "PENDING") {
                 // payment status is only updated to REFUSED
                 // when prev status is OPEN or PENDING
                 order.paymentStatus = paymentStatusUpdate;
@@ -140,6 +137,55 @@ function processNotificationCheckout (notification, order) {
             }
         }).catch(console.warn);
         
+    }
+
+    else if ((eventCode === "REFUND" || eventCode === "CANCELLATION" || eventCode === "CANCEL_OR_REFUND") && isSuccess === "true") {
+        const orderStatus = order.orderStatus.status;
+        const paymentStatus = order.paymentStatus.status;
+        
+        // payment status is only updated to REFUNDED or CANCELLED
+        // when prev status is OPEN or AUTHORIZED or PENDING
+        if (paymentStatus === "OPEN" || paymentStatus === "AUTHORIZED" || paymentStatus === "PENDING") {
+            let nextPaymentStatus;
+            (eventCode === "REFUND")? nextPaymentStatus = { status: "REFUNDED" } : null;
+            (eventCode === "CANCELLATION")? nextPaymentStatus = { status: "CANCELLED" } : null;
+
+            if (eventCode === "CANCEL_OR_REFUND") {
+                const moditicationType = notification.notificationItems[0].NotificationRequestItem.additionalData['modification.action'];
+                (moditicationType === "cancel")? nextPaymentStatus = { status: "CANCELLED" } : null;
+                (moditicationType === "refund")? nextPaymentStatus = { status: "REFUNDED" } : null;
+            }
+
+            order.paymentStatus = nextPaymentStatus;
+            order.paymentHistory.push(nextPaymentStatus);
+            order.markModified('paymentStatus');
+            order.markModified('paymentHistory');
+            logger.info(`${order.orderNumber} | new paymentStatus updated ${order.paymentStatus}`);
+            logger.info(`${order.orderNumber} | new paymentHistory updated ${order.paymentHistory}`);
+
+            // order status is only updated to CANCELLED 
+            // when prev status is RECEIVED or PENDING or PAID
+            if (orderStatus === "RECEIVED" || orderStatus === "PENDING" || orderStatus === "PAID") {
+                const nextOrderStatus = { status: "CANCELLED" };
+                order.orderStatus = nextOrderStatus;
+                order.orderStatusHistory.push(nextOrderStatus);
+                order.markModified('orderStatus');
+                order.markModified('orderStatusHistory');
+                logger.info(`${order.orderNumber} | new orderStatus updated ${order.orderStatus}`);
+                logger.info(`${order.orderNumber} | new orderStatusHistory updated ${order.orderStatusHistory}`);
+            }
+
+            return order.save().then((order) =>{
+                logger.info(`${order.orderNumber} | process refund notification and save in db`);
+            }).catch(console.warn);
+        }
+
+        
+    }
+
+    else if ((eventCode === "REFUND" || eventCode === "CANCELLATION" || eventCode === "CANCEL_OR_REFUND") && isSuccess === "false") {
+        logger.warn(`refund or cancelled fail notification has received | ${order.orderNumber}`);
+        return;
     }
 
     else {

@@ -25,7 +25,7 @@ function getUserBillings (req, res, next) {
         })
         .then((user) => {
             if (user) {
-                console.log(user);
+                //console.log(user);
                 const defaultBillingOption = user.defaultBillingOption;
 
                 let billingOptions = {
