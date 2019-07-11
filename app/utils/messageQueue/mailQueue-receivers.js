@@ -4,6 +4,7 @@ const open = require('amqplib');
 const rabbitMQConnection = require('./rabbitMQConnector');
 const logger = require('../logger');
 const axiosSendGrid = require('../../../axios-sendgrid');
+const axiosSlackSendgrid = require('../../../axios-slack-sendgrid');
 
 /**
  * private function: convertDeliveryFrequency
@@ -162,9 +163,35 @@ function startMQConnection () {
                                                 return;
                                             }
                                         }).catch((error) => {
-                                            logger.warn(`welcome email delivery has failed | subscriptionId: ${message.subscriptionId} email: ${message.email}`);
-                                            error? ch.nack(msg, false, false): null;
-                                            return;
+
+                                            if (error) {
+                                                const payload = {
+                                                    text: `${emailType} email delivery has failed`,
+                                                    attachments: [
+                                                        {
+                                                            fallback: "Investigate undelivered email issue",
+                                                            author_name: "Chokchok",
+                                                            title: "Please investigate cause of delivery failure",
+                                                            text: JSON.stringify(error.response)
+                                                        }
+                                                    ]
+                                                }
+
+                                                axiosSlackSendgrid.post('', payload)
+                                                .then((response) => {
+                                                    if (response.status === 200) {
+                                                        logger.info('error messaage has posted to Slack channel');
+                                                    }
+                                                }).catch((error) => {
+                                                    if (error) {
+                                                        logger.warn(`failed to post error message to Slack`);
+                                                    }
+                                                });
+
+                                                logger.warn(`welcome email delivery has failed | subscriptionId: ${message.subscriptionId} email: ${message.email}`);
+                                                return ch.nack(msg, false, false);
+                                            }
+
                                         });
                                     }
 
@@ -226,9 +253,36 @@ function startMQConnection () {
                                     return;
                                 }
                             }).catch((error) => {
-                                logger.warn(`password reset email delivery has failed | ${message.email}`);
-                                error? ch.nack(msg, false, false): null;
-                                return;
+
+                                if (error) {
+                                    const payload = {
+                                        text: `${emailType} email delivery has failed`,
+                                        attachments: [
+                                            {
+                                                fallback: "Investigate undelivered email issue",
+                                                author_name: "Chokchok",
+                                                title: "Please investigate cause of delivery failure",
+                                                text: JSON.stringify(error.response)
+                                            }
+                                        ]
+                                    }
+
+                                    axiosSlackSendgrid.post('', payload)
+                                    .then((response) => {
+                                        if (response.status === 200) {
+                                            logger.info('error messaage has posted to Slack channel');
+                                        }
+                                    }).catch((error) => {
+                                        if (error) {
+                                            logger.warn(`failed to post error message to Slack`);
+                                        }
+                                    });
+
+                                    logger.warn(`password reset email delivery has failed | ${message.email}`);
+                                    return ch.nack(msg, false, false);
+                                }
+
+
                             });
                         break;
 
@@ -258,9 +312,35 @@ function startMQConnection () {
                                     return;
                                 }
                             }).catch((error) => {
-                                logger.warn(`password reset-nouser email delivery has failed | ${message.email}`);
-                                error? ch.nack(msg, false, false): null;
-                                return;
+
+                                if (error) {
+                                    const payload = {
+                                        text: `${emailType} email delivery has failed`,
+                                        attachments: [
+                                            {
+                                                fallback: "Investigate undelivered email issue",
+                                                author_name: "Chokchok",
+                                                title: "Please investigate cause of delivery failure",
+                                                text: JSON.stringify(error.response)
+                                            }
+                                        ]
+                                    }
+
+                                    axiosSlackSendgrid.post('', payload)
+                                    .then((response) => {
+                                        if (response.status === 200) {
+                                            logger.info('error messaage has posted to Slack channel');
+                                        }
+                                    }).catch((error) => {
+                                        if (error) {
+                                            logger.warn(`failed to post error message to Slack`);
+                                        }
+                                    });
+
+                                    logger.warn(`password reset-nouser email delivery has failed | ${message.email}`);
+                                    return ch.nack(msg, false, false);
+                                }
+                                
                             });
                         break;
                     }
