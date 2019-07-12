@@ -2,6 +2,7 @@ const logger = require('../../utils/logger');
 const User = require('../../models/User');
 const axiosSendGrid = require('../../../axios-sendgrid');
 const axiosTruemail = require('../../../axios-truemail');
+const axiosSlackTruemail = require('../../../axios-slack-truemail');
 
 function optinToNewsletter (req, res, next) {
     const email = req.body.email;
@@ -42,8 +43,24 @@ function optinToNewsletter (req, res, next) {
                         
                         const payload = [{ email: email }];
 
-                        (response.data.status === "throttle_triggered")?
-                        logger.warn('truemail api rate exceeded') : null;
+                        if (response.data.status === "throttle_triggered") {
+                            logger.warn('truemail api rate exceeded');
+                            const payload = {
+                                text: "Truemail API credit limit is reached!",
+                                attachments: [
+                                    {
+                                        fallback: "Charge your Truemail API credit",
+                                        author_name: "Chokchok",
+                                        title: "Please charge more TrueMail API credit",
+                                        text: "visit https://truemail.io/ and sign-in to admin account, buy more credit"
+                                    }
+                                ]
+                            }
+                            axiosSlackTruemail.post('', payload)
+                            .then((response) => {
+                            }).catch(next);
+                        }
+                        
 
                         axiosSendGrid.post('/contactdb/recipients', payload)
                         .then((response) => {
@@ -60,11 +77,17 @@ function optinToNewsletter (req, res, next) {
                             }
 
                             if (response.status === 201 && newCount === 1) {
-                                logger.info(`optinToNewsletter request has processed | ${email}`);
-                                return res.status(201).json({
-                                    result: 'success',
-                                    message: 'user subscribed to newsletter'
-                                });
+                                user.newsletterOptin = true;
+                                user.lastModified = Date.now();
+                                user.markModified('newsletterOptin');
+                                user.markModified('lastModified');
+                                user.save().then(() => {
+                                    logger.info(`optinToNewsletter request has processed | ${email}`);
+                                    return res.status(201).json({
+                                        result: 'success',
+                                        message: 'user subscribed to newsletter'
+                                    });
+                                }).catch(next);
                             }
 
                         }).catch(next);
