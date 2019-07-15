@@ -27,6 +27,7 @@ const addUserBilling = require('../../../helpers/user/addUserBilling');
 const addRedirectedBilling = require('../../../helpers/user/addRedirectedBilling');
 const updateDefaultBilling = require('../../../helpers/user/updateDefaultBilling');
 const removeUserBilling = require('../../../helpers/user/removeUserBilling');
+const updatePackage = require('../../../helpers/user/updatePackage');
 const apiAuth = require('../../../middlewares/verifyApikey');
 
 const isLocal = process.env.NODE_ENV === "local";
@@ -142,7 +143,7 @@ router.post('/user/billings/payment', userAuth, addUserBilling);
 router.post('/user/billings/payment/details', userAuth, addRedirectedBilling);
 router.put('/user/billings/payment/default', userAuth, updateDefaultBilling);
 router.delete('/user/billings/payment/:billingId', userAuth, removeUserBilling);
-//router.put('/user/subscription/package', userAuth);
+router.put('/user/subscription/package', userAuth, updatePackage);
 router.post('/user', createUser);
 
 
