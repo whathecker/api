@@ -142,6 +142,7 @@ router.post('/user/billings/payment', userAuth, addUserBilling);
 router.post('/user/billings/payment/details', userAuth, addRedirectedBilling);
 router.put('/user/billings/payment/default', userAuth, updateDefaultBilling);
 router.delete('/user/billings/payment/:billingId', userAuth, removeUserBilling);
+//router.put('/user/subscription/package', userAuth);
 router.post('/user', createUser);
 
 

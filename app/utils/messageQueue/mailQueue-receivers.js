@@ -5,6 +5,7 @@ const rabbitMQConnection = require('./rabbitMQConnector');
 const logger = require('../logger');
 const axiosSendGrid = require('../../../axios-sendgrid');
 const axiosSlackSendgrid = require('../../../axios-slack-sendgrid');
+const Subscription = require('../../models/Subscription');
 
 /**
  * private function: convertDeliveryFrequency
