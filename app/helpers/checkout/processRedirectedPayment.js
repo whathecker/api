@@ -93,7 +93,12 @@ function processRedirectedPayment (req, res, next) {
     let subscription = new Subscription();
     const countryInLowerCase = payloadForUser.shippingAddress.country.toLowerCase();
     subscription.subscriptionId = subscription.createSubscriptionId(currentEnv, countryInLowerCase);
-    subscription.package = payloadPackage._id;
+    //subscription.package = payloadPackage._id;
+    const subscriptionItem = {
+        itemId: payloadPackage.id,
+        quantity: 1
+    }
+    subscription.subscribedItems = [subscriptionItem];
     subscription.user = newUser._id;
     subscription.paymentMethod = billingOption._id;
 
@@ -102,8 +107,8 @@ function processRedirectedPayment (req, res, next) {
     order.orderNumber = null; /* updated later from response of Adyen */
     order.invoiceNumber = order.createInvoiceNumber();
     order.isSubscription = true; 
-    order.package = payloadPackage._id;
-    order.items = payloadPackage.items;
+    //order.package = payloadPackage._id;
+    //order.items = payloadPackage.items;
 
     const itemAmount = {
         itemId: payloadPackage.id,

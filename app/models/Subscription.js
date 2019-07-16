@@ -13,6 +13,11 @@ let deliveryScheduleSchema = new Schema({
     isActive: { type: Boolean, default: true }
 }, { _id: false });
 
+let packageSchema = new Schema({
+    itemId: { type: String },
+    quantity: { type: Number, default: 1 }
+}, { _id: false });
+
 let subscriptionSchema = new Schema({
     subscriptionId: {
         type: String,
@@ -37,7 +42,7 @@ let subscriptionSchema = new Schema({
     deliverySchedules: [deliveryScheduleSchema],
     endDate: { type: Date },
     isWelcomeEmailSent: { type: Boolean, default: false },
-    package: { type: Schema.Types.ObjectId, ref: 'SubscriptionBox' },
+    subscribedItems: [packageSchema],
     user: { type: Schema.Types.ObjectId, ref: 'User'},
     paymentMethod: { type: Schema.Types.ObjectId, ref: 'Billing' },
     orders: [ { type: Schema.Types.ObjectId, ref: 'Order' }],

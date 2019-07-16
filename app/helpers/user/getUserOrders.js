@@ -5,14 +5,12 @@ function getUserOrders (req, res, next) {
 
     if (req.user) {
         User.findById(req.user._id)
-        .populate({
-            path: 'orders',
-            populate: { path: 'package'}
-        })
+        .populate('orders')
         .then((user) => {
             if (user) {
                 let orders = [];
                 for (let i = 0; i < user.orders.length; i++) {
+                    console.log(user.orders[i]);
                     const order = {
                         orderNumber: user.orders[i].orderNumber,
                         isSubscription: user.orders[i].isSubscription,
@@ -24,7 +22,7 @@ function getUserOrders (req, res, next) {
                         shippingCarrier: user.orders[i].shippingCarrier,
                         trackingNumber: user.orders[i].trackingNumber,
                         creationDate: user.orders[i].creationDate,
-                        package: user.orders[i].package
+                        orderAmount: user.orders[i].orderAmount
                     }
                     orders.push(order);
                 }

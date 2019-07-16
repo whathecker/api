@@ -56,7 +56,7 @@ let itemAmountSchema = new Schema ({
     sumOfGrossPrice: { type: String, default: "0" },
     sumOfNetPrice: { type: String, default: "0" },
     
-})
+}, { _id: false });
 let orderAmountSchema = new Schema({
     currency: { type: String, lowercase: true },
     totalDiscount: { type: String, default: "0" },
@@ -94,13 +94,15 @@ let orderSchema = new Schema({
     isDelivered: { type: Boolean, default: false },
     deliveredDate: { type: Date },
     lastModified: { type: Date, default: Date.now },
-    package: { type: Schema.Types.ObjectId, ref: 'SubscriptionBox'},
+
+    /* package: { type: Schema.Types.ObjectId, ref: 'SubscriptionBox'} */ /**delete this? */
+    /*
     items: [
-        { type: Schema.Types.ObjectId, ref: 'Product' }
-    ],
+        { type: Schema.Types.ObjectId, ref: 'Product' } 
+    ], */
     shippedItems: [
-        { type: Schema.Types.ObjectId, ref: 'Product'}
-    ],
+        { type: Schema.Types.ObjectId, ref: 'Product'} 
+    ], 
     orderAmountPerItem: [itemAmountSchema],
     orderAmount: orderAmountSchema,
     shippedAmountPerItem: [itemAmountSchema],
@@ -179,7 +181,11 @@ Order.prototype.setSumOfItemPrice = (price, quantity) => {
     let sumOfPrice = priceInNum * quantity;
     return sumOfPrice.toFixed(2);
 }
-
+/**
+ * @param {array} items
+ * Take orderAmountPerItem field as parameter
+ * return orderAmount which is representation of total order amount
+ */
 Order.prototype.setTotalAmount = (items, currency) => {
     let totalDiscount = 0;
     let totalVat = 0;

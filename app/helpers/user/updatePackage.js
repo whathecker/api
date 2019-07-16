@@ -23,7 +23,7 @@ function updatePackage (req, res, next) {
 
             if (subscription) {
                 
-                SubcriptionBox.findOne({ boxType: boxType})
+                SubcriptionBox.findOne({ boxType: boxType })
                 .then((box) => {
 
                     if (!box) {
@@ -35,9 +35,10 @@ function updatePackage (req, res, next) {
                     }
 
                     if (box) {
-                        const newPackage = box._id;
-                        subscription.package = newPackage;
-                        subscription.markModified('package');
+                        subscription.subscribedItems[0].itemId = box.id;
+                        subscription.lastModified = Date.now();
+                        subscription.markModified('subscribedItems');
+                        subscription.markModified('lastModified');
                         subscription.save();
                         logger.info(`updatePacage request has processed, package updated | ${subscription.subscriptionId}`);
                         return res.status(200).json({
