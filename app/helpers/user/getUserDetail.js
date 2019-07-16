@@ -12,9 +12,7 @@ async function getUserDetail (req, res, next) {
         .populate('subscriptions')
         .then((user) => {
             if (user) {
-                //console.log(user);
-                //console.log(user.subscriptions[0])
-                
+                //console.log(user);            
 
                 let billingOptions = [];
                 for (let i = 0; i < user.billingOptions.length; i++) {
@@ -23,6 +21,28 @@ async function getUserDetail (req, res, next) {
                         type: user.billingOptions[i].type
                     }
                     billingOptions.push(billingOption);
+                }
+
+                const deliverySchedules = user.subscriptions[0].deliverySchedules;
+                const sortedDeliverySchedules = Array.from(deliverySchedules).sort((a, b) => {
+                    if (a.nextDeliveryDate < b.nextDeliveryDate) {
+                        return -1;
+                    }
+                    if (a.nextDeliveryDate > b.nextDeliveryDate) {
+                        return 1;
+                    }
+                    return 0;
+                });
+
+                let nextDelivery = null;
+                for (let i = 0; i < sortedDeliverySchedules.length; i++) {
+                    const isProcessed = sortedDeliverySchedules[i].isProcessed;
+                    const isActive = sortedDeliverySchedules[i].isActive;
+
+                    if ((isProcessed === false) && isActive) {
+                        nextDelivery = sortedDeliverySchedules[i];
+                        break;
+                    }
                 }
 
                 
@@ -62,21 +82,24 @@ async function getUserDetail (req, res, next) {
                             },
                             subscription: {
                                 id: user.subscriptions[0].subscriptionId,
-                                creationDate: user.subscriptions[0].creationDate
+                                creationDate: user.subscriptions[0].creationDate,
+                                deliveryFrequency: user.subscriptions[0].deliveryFrequency,
+                                delivertyDay: user.subscriptions[0].deliveryDay,
+                                nextDelivery: nextDelivery
                             },
                             subscribedItems: enrichedItems,
                             billingOptions: billingOptions
                         }
 
-                        logger.info(`get user request has returned user ${user.email}`);
+                        logger.info(`getUserDeail request has returned user ${user.email}`);
                         return res.status(200).json(userData);
                     }
                 });
 
             } else {
-                logger.info(`get user request has not returned user`);
+                logger.info(`getUserDeail request has not returned user`);
                 return res.status(204).json({
-                    status: res.status,
+                    status: "failed",
                     message: 'no user'
                 });
             }

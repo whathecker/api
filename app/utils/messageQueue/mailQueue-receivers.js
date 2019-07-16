@@ -141,7 +141,7 @@ function startMQConnection () {
                                             deliveryMonth: convertDeliveryMonth(message.firstDeliverySchedule.month),
                                             deliveryYear: message.firstDeliverySchedule.year,
                                             senderName: 'Chokchok V.O.F',
-                                            senderAddress: 'Commelinestraat 42',
+                                            senderAddress: 'Commelinstraat 42',
                                             senderCity: 'Amsterdam',
                                             senderCountry: 'Netherlands',
                                             loginLink: ''
@@ -214,6 +214,7 @@ function startMQConnection () {
                                             return ch.nack(msg, false, false)
                                         } else {
                                             logger.warn(`welcome email delivery has failed as subscrption has not found | message has acknowledged as retry count exceed 5`);
+                                            // add Slack integration here
                                             return ch.ack(msg);
                                         }
                                         
@@ -234,7 +235,7 @@ function startMQConnection () {
                                 firstName: message.firstName,
                                 resetLink: '',
                                 senderName: 'Chokchok V.O.F',
-                                senderAddress: 'Commelinestraat 42',
+                                senderAddress: 'Commelinstraat 42',
                                 senderCity: 'Amsterdam',
                                 senderCountry: 'Netherlands'
                             }
@@ -293,7 +294,7 @@ function startMQConnection () {
                                 email: message.email,
                                 forgotPwdLink: '',
                                 senderName: 'Chokchok V.O.F',
-                                senderAddress: 'Commelinestraat 42',
+                                senderAddress: 'Commelinstraat 42',
                                 senderCity: 'Amsterdam',
                                 senderCountry: 'Netherlands'
                             }
