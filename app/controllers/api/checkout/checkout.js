@@ -5,6 +5,7 @@ const completeCheckout = require('../../../helpers/checkout/completeCheckout');
 const processRedirectedPayment = require('../../../helpers/checkout/processRedirectedPayment');
 const getAddressDetail = require('../../../helpers/checkout/getAddressDetail');
 const handleNotification = require('../../../helpers/checkout/handleNotification');
+const getSubscriptionConf = require('../../../helpers/checkout/getSubscriptionConf');
 const apiAuth = require('../../../middlewares/verifyApikey');
 
 // endpoint to check if email is associated with account or not
@@ -19,5 +20,7 @@ router.post('/payment', apiAuth, completeCheckout);
 router.post('/payment/details', apiAuth, processRedirectedPayment)
 
 router.post('/payment/notification', handleNotification);
+
+router.get('/subscription/:subscriptionId', apiAuth, getSubscriptionConf);
 
 module.exports = router;    

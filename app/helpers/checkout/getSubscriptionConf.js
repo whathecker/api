@@ -1,6 +1,7 @@
 const Subscription = require('../../models/Subscription');
 const SubscriptionBox = require('../../models/SubscriptionBox');
 const logger = require('../../utils/logger');
+
 function getSubscription (req, res, next) {
     
     const subscriptionId = req.params.subscriptionId;
