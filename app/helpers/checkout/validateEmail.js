@@ -24,6 +24,17 @@ function checkDuplicateEmail (req, res, next) {
                     .then((response) => {
                         const result = response.data.result;
                         const status = response.data.status;
+                        
+                        // timeout request for edge case email addresses
+                        // e.g. domain from naver.com..etc
+                        res.setTimeout(50, () => {
+                            logger.warn(`validateEmail request has processed but failed to get verification from TrueMail, check if ${email} is valid with user | take too long to get response from TrueMail`);
+                            return res.status(200).json({
+                                status: "success",
+                                result: "no_result",
+                                message: "email validation failed - timeout"
+                            })
+                        });
 
                         if (status === "throttle_triggered") {
 
