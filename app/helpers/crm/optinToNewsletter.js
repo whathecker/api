@@ -10,6 +10,7 @@ function optinToNewsletter (req, res, next) {
     if (!email) {
         logger.warn(`optinToNewsletter request has rejected | bad request |`);
         return res.status(400).json({
+            status: "failed",
             message: 'bad request'
         });
     }
@@ -24,9 +25,10 @@ function optinToNewsletter (req, res, next) {
                     //console.log(response);
 
                     const result = response.data.result;
+                    const status = response.data.status;
 
 
-                    if (response.status === 200 && result === "invalid") {
+                    if (status === "success" && result === "invalid") {
                         logger.info(`optinToNewsletter request has rejected | email address invalid | ${email}`);
                         return res.status(422).json({
                             result: 'failed',
@@ -38,12 +40,12 @@ function optinToNewsletter (req, res, next) {
                     // optin user when email is valid 
                     // or when truemail api exceed rate limit
 
-                    if (response.data.status === "throttle_triggered" ||
-                        (response.status === 200 && result === "valid")) {
+                    if (status === "throttle_triggered" ||
+                        (status === "success" && result === "valid")) {
                         
                         const payload = [{ email: email }];
 
-                        if (response.data.status === "throttle_triggered") {
+                        if (status === "throttle_triggered") {
                             logger.warn('truemail api rate exceeded');
                             const payload = {
                                 text: "Truemail API credit limit is reached!",

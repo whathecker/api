@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const checkDuplicateEmail = require('../../../helpers/checkout/checkDuplicateEmail');
+const validateEmail = require('../../../helpers/checkout/validateEmail');
 const getPaymentMethods = require('../../../helpers/checkout/getPaymentMethods');
 const completeCheckout = require('../../../helpers/checkout/completeCheckout');
 const processRedirectedPayment = require('../../../helpers/checkout/processRedirectedPayment');
@@ -9,7 +9,7 @@ const getSubscriptionConf = require('../../../helpers/checkout/getSubscriptionCo
 const apiAuth = require('../../../middlewares/verifyApikey');
 
 // endpoint to check if email is associated with account or not
-router.post('/email', apiAuth, checkDuplicateEmail); 
+router.post('/email', apiAuth, validateEmail); 
 
 router.post('/address', apiAuth, getAddressDetail);
 
