@@ -10,4 +10,6 @@ router.use('/mail', require('./mail/mail'));
 router.use('/crm', require('./crm/crm'));
 router.use('/', require('./user/user'));
 
+router.use('/admin/users', require('./admin/adminUser/adminUser'));
+
 module.exports = router;

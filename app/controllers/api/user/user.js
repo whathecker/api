@@ -147,7 +147,6 @@ router.put('/user/subscription/package', userAuth, updatePackage);
 router.post('/user', createUser);
 
 
-
 // to add admin protection for this endpoint
 router.delete('/user', (req, res, next) => {
 

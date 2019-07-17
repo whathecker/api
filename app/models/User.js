@@ -39,6 +39,7 @@ let userSchema = new Schema({
     lastLogin: { type: Date },
     isEmailVerified: { type: Boolean, default: false },
     newsletterOptin: { type: Boolean, default: false },
+    adminApprovalRequired: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false }
 });
 
@@ -81,4 +82,6 @@ User.prototype.setUserId = () => {
 
     return prefix.concat(month, year, seconds,random5digitsInt);
 }
+
+
 module.exports = User;
