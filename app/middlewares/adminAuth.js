@@ -29,6 +29,7 @@ function isAdminAuth (req, res, next) {
         jwt.verify(token, tokenSecret, (err, decoded) => {
             if (err) {
                 console.log(err);
+                logger.warn(`adminUser is unauthenticated, request is rejected | unknown error`);
                 return res.status(401).json({
                     status: 'unauthenticated',
                     message: 'invalid or expired token'
@@ -37,12 +38,14 @@ function isAdminAuth (req, res, next) {
             } else {
                 console.log(decoded);
                 if (decoded.expires < Date.now()) {
+                    logger.warn(`adminUser is unauthenticated, request is rejected | expired token`);
                     return res.status(401).json({
                         status: 'unauthenticated',
                         message: 'invalid or expired token'
                     });
                 }
                 if (!decoded.user_id || decoded.userType !== 'admin') {
+                    logger.warn(`adminUser is unauthenticated, request is rejected | invalid token`);
                     return res.status(401).json({
                         status: 'unauthenticated',
                         message: 'invalid or expired token'

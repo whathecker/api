@@ -45,10 +45,11 @@ function create5DigitInteger () {
     return num.toString();
 }
 
+// not used, adminUser use bcrypt for setting password
 AdminUser.prototype.setPassword = (user, password) => {
     return crypto.pbkdf2Sync(password, user.salt, 10000, 512, 'sha512').toString('hex');
 }
-
+// not used, adminUser use bcrypt for validate password
 AdminUser.prototype.validatePassword = (user, password) => {
     const hashed = crypto.pbkdf2Sync(password, user.salt, 10000, 512, 'sha512').toString('hex');
     return hashed === user.hash;

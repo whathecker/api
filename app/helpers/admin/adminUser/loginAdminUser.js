@@ -1,5 +1,6 @@
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
+const logger = require('../../../utils/logger');
 
 const isLocal = process.env.NODE_ENV === "local";
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -11,6 +12,7 @@ function loginAdminUser (req, res, next) {
             return next(error);
         }
         if (!user) {
+            logger.warn(`loginAdminUser request has not processed | wrong login detail`);
             return res.status(401).json({
                 status: "failed",
                 message: "wrong credentials"
@@ -52,7 +54,7 @@ function loginAdminUser (req, res, next) {
             }
 
             res.cookie('jwt', token, cookieOption); 
-                
+            logger.info(`loginAdminUser request has processed | ${user._id}`);    
             return res.status(200).end();
         });
         

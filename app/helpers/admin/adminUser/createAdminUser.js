@@ -1,6 +1,5 @@
 const AdminUser = require('../../../models/AdminUser');
 const logger = require('../../../utils/logger');
-//const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 
 function createAdminUser (req, res, next) {
@@ -8,6 +7,7 @@ function createAdminUser (req, res, next) {
     const password = req.body.password;
     
     if (!email || !password) {
+        logger.error(`createAdminUser request has failed | parameter missing`);
         return res.status(400).json({
             status: 'failed',
             message: 'bad request'
@@ -17,6 +17,7 @@ function createAdminUser (req, res, next) {
     const emailDomain = email.split('@')[1];
 
     if (emailDomain !== "hellochokchok.com") {
+        logger.info(`createAdminUser request has rejected | please use company email domain`);
         return res.status(200).json({
             status: 'failed',
             result: 'invalid_email',
@@ -41,6 +42,7 @@ function createAdminUser (req, res, next) {
                         newAdmin.userId = newAdmin.setAdminUserId();
                         newAdmin.adminApprovalRequired = false;
                         newAdmin.save().then(()=>{
+                            logger.info(`createAdminUser request has processed | ${email}`);
                             return res.status(201).json({
                                 status: 'success',
                                 result: 'processed',
@@ -53,6 +55,7 @@ function createAdminUser (req, res, next) {
             }
 
             if (user) {
+                logger.warn(`createAdminUser request has not processed | duplicated email | ${email}`);
                 return res.status(200).json({
                     status: 'failed',
                     result: 'duplicated_email',
