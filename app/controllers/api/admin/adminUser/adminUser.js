@@ -1,19 +1,13 @@
 const router = require('express').Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-//const passportJWT = require('passport-jwt');
-//const JWTStrategy = passportJWT.Strategy;
-const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
-const logger = require('../../../../utils/logger');
 const AdminUser = require('../../../../models/AdminUser');
 const apiAuth = require('../../../../middlewares/verifyApikey');
 const adminAuth = require('../../../../middlewares/adminAuth');
 const createAdminUser = require('../../../../helpers/admin/adminUser/createAdminUser');
-
-const isLocal = process.env.NODE_ENV === "local";
-const isDevelopment = process.env.NODE_ENV === "development";
-const isProduction = process.env.NODE_ENV === "production";
+const loginAdminUser = require('../../../../helpers/admin/adminUser/loginAdminUser');
 
 router.use(apiAuth);
 router.use(passport.initialize());
@@ -25,7 +19,8 @@ passport.use('admin-local', new LocalStrategy({
 
         try {
             const adminUser = await AdminUser.findOne({ email: email }).exec();
-            const passwordMatch = adminUser.validatePassword(adminUser, password);
+            const passwordMatch = await bcrypt.compare(password, adminUser.hash);
+            //const passwordMatch = adminUser.validatePassword(adminUser, password);
 
             if (passwordMatch) {
                 return done(null, adminUser);
@@ -39,78 +34,8 @@ passport.use('admin-local', new LocalStrategy({
 
 }));
 
-/*
-passport.use(new JWTStrategy({
-    jwtFromRequest: req => req.cookies.jwt,
-    secretOrKey: 'secret'
-    }, (jwtPayload, done) => {
-        if (Date.now() > jwtPayload.expires) {
-            return done('jwt expired');
-        }
-
-        return done(null, jwtPayload);
-    }
-)); */
-
-router.post('/user/login', (req, res, next) => {
-    passport.authenticate('admin-local', 
-    { session: false },
-    (err, user) => {
-
-        if (err) { 
-            return next(err) 
-        }
-        if (!user) {
-            return res.status(400).end();
-        }
-
-        // jwtPayload
-        const payload = {
-            user_id: user._id,
-            userType: 'admin',
-            expires: Date.now() + 60000
-        };
-
-        req.logIn(payload, {session: false}, (err) => {
-            if (err) { 
-                return next(err) 
-            };
-            const token = jwt.sign(JSON.stringify(payload), 'secret');
-
-            let cookieOption;
-
-            if (isLocal) {
-                cookieOption = {
-                    httpOnly: false,
-                    sameSite: false,
-                    secure: false,
-                    maxAge: 60000
-                }
-            } 
-
-            if (isDevelopment || isProduction) {
-                cookieOption = {
-                    httpOnly: false,
-                    sameSite: false,
-                    secure: true,
-                    domain: './hellochokchok.com',
-                    maxAge: 60000
-                }
-            }
-
-            res.cookie('jwt', token, cookieOption); 
-                
-            return res.status(200).end();
-        });
-    })(req, res, next);
-})
-
+router.post('/user/login', loginAdminUser);
 router.post('/user', createAdminUser);
 
-/*
-router.get('/user/auth', adminAuth, (req, res, next) => {
-    //console.log(req.headers.cookie);
-    return res.status(200).end();
-}); */
 
 module.exports = router;
