@@ -16,7 +16,7 @@ function createAdminUser (req, res, next) {
     const emailDomain = email.split('@')[1];
 
     if (emailDomain !== "hellochokchok.com") {
-        return res.status(422).json({
+        return res.status(200).json({
             status: 'failed',
             result: 'invalid_email',
             message: 'invalid email address is used'
@@ -25,17 +25,17 @@ function createAdminUser (req, res, next) {
 
     if (emailDomain === "hellochokchok.com") {
 
-        User.findOne({ email: email})
+        AdminUser.findOne({ email: email})
         .then((user) => {
             if (!user) {
                 // create admin
                 
-                const newAdmin = new User();
+                const newAdmin = new AdminUser();
                 newAdmin.email = email;
                 newAdmin.salt = crypto.randomBytes(64).toString('hex');
                 newAdmin.hash = newAdmin.setPassword(newAdmin, password);
                 newAdmin.userId = newAdmin.setAdminUserId();
-                newAdmin.isAdmin = true;
+                newAdmin.adminApprovalRequired = false;
                 newAdmin.save().then(()=>{
                     return res.status(201).json({
                         status: 'success',
@@ -46,7 +46,7 @@ function createAdminUser (req, res, next) {
             }
 
             if (user) {
-                return res.status(422).json({
+                return res.status(200).json({
                     status: 'failed',
                     result: 'duplicated_email',
                     message: 'duplicated email address is used'

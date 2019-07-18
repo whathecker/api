@@ -31,8 +31,8 @@ let adminUserSchema = new Schema({
     lastModified: { type: Date, default: Date.now },
     lastLogin: { type: Date },
     isEmailVerified: { type: Boolean, default: false },
-    adminApprovalRequired: { type: Boolean, default: false },
-    isAdmin: { type: Boolean, default: false }
+    adminApprovalRequired: { type: Boolean, default: true },
+    isActive: { type: Boolean, default: true }
 });
 
 adminUserSchema.plugin(uniqueValidator);
