@@ -1,6 +1,6 @@
 const AdminUser = require('../../../models/AdminUser');
 const logger = require('../../../utils/logger');
-const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 function createAdminUser (req, res, next) {
     const email = req.body.email;
@@ -31,27 +31,22 @@ function createAdminUser (req, res, next) {
         .then((user) => {
             if (!user) {
                 // create admin
-                
-                const hashCost = 10;
-                bcrypt.hash(password, hashCost)
-                .then((hashedPWD) => {
-                    if (hashedPWD){
-                        const newAdmin = new AdminUser();
-                        newAdmin.email = email;
-                        newAdmin.hash = hashedPWD;
-                        newAdmin.userId = newAdmin.setAdminUserId();
-                        newAdmin.adminApprovalRequired = false;
-                        newAdmin.save().then(()=>{
-                            logger.info(`createAdminUser request has processed | ${email}`);
-                            return res.status(201).json({
-                                status: 'success',
-                                result: 'processed',
-                                message: 'admin signup request has processed'
-                            });
-                        }).catch(next);
-                    }
-                }).catch(next);
             
+                const newAdmin = new AdminUser();
+                newAdmin.email = email;
+                newAdmin.salt = crypto.randomBytes(64).toString('hex');
+                newAdmin.hash = newAdmin.setPassword(newAdmin, password);
+                newAdmin.userId = newAdmin.setAdminUserId();
+                newAdmin.adminApprovalRequired = false;
+                newAdmin.save().then(()=>{
+                    logger.info(`createAdminUser request has processed | ${email}`);
+                    return res.status(201).json({
+                        status: 'success',
+                        result: 'processed',
+                        message: 'admin signup request has processed'
+                    });
+                }).catch(next);
+                    
             }
 
             if (user) {

@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt');
 
 const AdminUser = require('../../../../models/AdminUser');
 const apiAuth = require('../../../../middlewares/verifyApikey');
@@ -19,7 +18,7 @@ passport.use('admin-local', new LocalStrategy({
 
         try {
             const adminUser = await AdminUser.findOne({ email: email }).exec();
-            const passwordMatch = await bcrypt.compare(password, adminUser.hash);
+            const passwordMatch = adminUser.validatePassword(adminUser, password);
             //const passwordMatch = adminUser.validatePassword(adminUser, password);
 
             if (!passwordMatch || !AdminUser) {
