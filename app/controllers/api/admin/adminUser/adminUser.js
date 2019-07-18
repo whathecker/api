@@ -1,13 +1,14 @@
 const router = require('express').Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const passportJWT = require('passport-jwt');
-const JWTStrategy = passportJWT.Strategy;
+//const passportJWT = require('passport-jwt');
+//const JWTStrategy = passportJWT.Strategy;
 const jwt = require('jsonwebtoken');
 
 const logger = require('../../../../utils/logger');
 const AdminUser = require('../../../../models/AdminUser');
 const apiAuth = require('../../../../middlewares/verifyApikey');
+const adminAuth = require('../../../../middlewares/adminAuth');
 const createAdminUser = require('../../../../helpers/admin/adminUser/createAdminUser');
 
 const isLocal = process.env.NODE_ENV === "local";
@@ -38,6 +39,7 @@ passport.use('admin-local', new LocalStrategy({
 
 }));
 
+/*
 passport.use(new JWTStrategy({
     jwtFromRequest: req => req.cookies.jwt,
     secretOrKey: 'secret'
@@ -48,7 +50,7 @@ passport.use(new JWTStrategy({
 
         return done(null, jwtPayload);
     }
-));
+)); */
 
 router.post('/user/login', (req, res, next) => {
     passport.authenticate('admin-local', 
@@ -81,7 +83,8 @@ router.post('/user/login', (req, res, next) => {
                 cookieOption = {
                     httpOnly: false,
                     sameSite: false,
-                    secure: false
+                    secure: false,
+                    maxAge: 60000
                 }
             } 
 
@@ -91,6 +94,7 @@ router.post('/user/login', (req, res, next) => {
                     sameSite: false,
                     secure: true,
                     domain: './hellochokchok.com',
+                    maxAge: 60000
                 }
             }
 
@@ -102,5 +106,11 @@ router.post('/user/login', (req, res, next) => {
 })
 
 router.post('/user', createAdminUser);
+
+/*
+router.get('/user/auth', adminAuth, (req, res, next) => {
+    //console.log(req.headers.cookie);
+    return res.status(200).end();
+}); */
 
 module.exports = router;
