@@ -6,6 +6,7 @@ const isLocal = process.env.NODE_ENV === "local";
 const isDevelopment = process.env.NODE_ENV === "development";
 const isProduction = process.env.NODE_ENV === "production";
 
+
 function loginAdminUser (req, res, next) {
     passport.authenticate('admin-local', { session: false }, (error, user) => {
         if (error) {
@@ -30,6 +31,7 @@ function loginAdminUser (req, res, next) {
             if (err) { 
                 return next(err) 
             };
+        
             const token = jwt.sign(JSON.stringify(payload), 'secret');
 
             let cookieOption;

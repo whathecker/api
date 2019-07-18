@@ -37,9 +37,6 @@ const isProduction = process.env.NODE_ENV === "production";
 
 
 router.use(apiAuth);
-//router.use(passport.initialize());
-
-
 
 if (isLocal) {
     router.use(session({ 

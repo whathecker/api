@@ -22,6 +22,9 @@ passport.use('admin-local', new LocalStrategy({
             const passwordMatch = await bcrypt.compare(password, adminUser.hash);
             //const passwordMatch = adminUser.validatePassword(adminUser, password);
 
+            if (!passwordMatch || !AdminUser) {
+                return done(null, false);
+            }
             if (passwordMatch) {
                 return done(null, adminUser);
             } else {
