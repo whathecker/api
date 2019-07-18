@@ -1,12 +1,13 @@
-const express = require('express'),
-    mongoose = require('mongoose'),
-    bodyParser = require('body-parser'),
-    connector = require('./utils/connector'),
-    morgan = require('morgan'),
-    cors = require('cors'),
-    dbString = connector.getDBString(),
-    helmet = require('helmet'),
-    app = express();
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const connector = require('./utils/connector');
+const morgan = require('morgan');
+const cors = require('cors');
+const dbString = connector.getDBString();
+const helmet = require('helmet');
+const app = express();
+
 
 const dbOptions = {
     connectTimeoutMS: 30000, // Give up initial connection after 30 seconds
@@ -20,8 +21,10 @@ mongoose.connect(dbString, dbOptions, (err) => {
     console.log(`successfully connected to database`);
 }); 
 
+const isLocal = process.env.NODE_ENV === "local";
 const isDevelopment = process.env.NODE_ENV === "development";
 const isProduction = process.env.NODE_ENV === "production";
+
 
 const corsOptions = {
     origin: [

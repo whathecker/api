@@ -49,6 +49,11 @@ AdminUser.prototype.setPassword = (user, password) => {
     return crypto.pbkdf2Sync(password, user.salt, 10000, 512, 'sha512').toString('hex');
 }
 
+AdminUser.prototype.validatePassword = (user, password) => {
+    const hashed = crypto.pbkdf2Sync(password, user.salt, 10000, 512, 'sha512').toString('hex');
+    return hashed === user.hash;
+}
+
 AdminUser.prototype.setAdminUserId = ()=> {
     let prefix = "ADMIN"
     const random5digitsInt = create5DigitInteger();

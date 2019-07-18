@@ -1,14 +1,15 @@
 const router = require('express').Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const session = require('express-session');
+const Mongostore = require('connect-mongo')(session);
+const connector = require('../../../utils/connector');
+const dbString = connector.getDBString();
+
 //const crypto = require('crypto');
 const User = require('../../../models/User');
 const logger = require('../../../utils/logger');
 const userAuth = require('../../../middlewares/auth');
-const connector = require('../../../utils/connector');
-const dbString = connector.getDBString();
-const session = require('express-session');
-const Mongostore = require('connect-mongo')(session);
 
 const getUserDetail = require('../../../helpers/user/getUserDetail');
 const getUserAddresses = require('../../../helpers/user/getUserAddresses');
@@ -34,7 +35,9 @@ const isLocal = process.env.NODE_ENV === "local";
 const isDevelopment = process.env.NODE_ENV === "development";
 const isProduction = process.env.NODE_ENV === "production";
 
+
 router.use(apiAuth);
+//router.use(passport.initialize());
 
 
 
@@ -69,7 +72,7 @@ if (isLocal) {
         rolling: true,
         store: new Mongostore({ url: dbString })
     }));
-} 
+}   
 
 router.use(passport.initialize());
 router.use(passport.session());
@@ -87,9 +90,8 @@ passport.deserializeUser((id, done) => {
     });
 });
 
-
 // configure passport local strategy
-passport.use('user-local',new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, (email, password, done) => {
+passport.use('user-local', new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, (email, password, done) => {
     
     User.findOne({ email: email }, (err, user)=> {
         if (err) { 
