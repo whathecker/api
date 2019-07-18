@@ -89,7 +89,7 @@ passport.deserializeUser((id, done) => {
 
 
 // configure passport local strategy
-passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, (email, password, done) => {
+passport.use('user-local',new LocalStrategy({ usernameField: 'email', passwordField: 'password' }, (email, password, done) => {
     
     User.findOne({ email: email }, (err, user)=> {
         if (err) { 
@@ -109,7 +109,7 @@ passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'passwor
 
 router.post('/user/login', (req, res, next) => {
 
-    passport.authenticate('local',  (err, user, info) => {
+    passport.authenticate('user-local',  (err, user, info) => {
         if (err) { return next(err) }
         if (!user) { return res.status(400).end(); }
 
