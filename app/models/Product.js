@@ -11,6 +11,7 @@ let pricesSchema = new Schema({
 }, { _id: false });
 
 let productSchema = new Schema({
+    channel: { type: String },
     id: { type: String, required: true, unique: true, index: true },
     name: { type: String, required: true },
     description: { type: String, required: true },

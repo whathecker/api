@@ -1,10 +1,15 @@
-const router = require('express').Router(),
-    Product = require('../../../models/Product'),
-    logger = require('../../../utils/logger'),
-    productIdPrefixes = require('../../../utils/productIdPrefixes'),
-    apiAuth =  require('../../../middlewares/verifyApikey');
+const router = require('express').Router();
+const Product = require('../../../models/Product');
+const logger = require('../../../utils/logger');
+const productIdPrefixes = require('../../../utils/productIdPrefixes');
+const apiAuth =  require('../../../middlewares/verifyApikey');
+const adminAuth = require('../../../middlewares/adminAuth');
+
+const getProducts = require('../../../helpers/products/getProducts');
 
 router.use(apiAuth);
+
+router.get('/', adminAuth, getProducts);
 
 // add auth middleware in this route
 router.post('/', (req, res, next) => {

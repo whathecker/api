@@ -24,7 +24,7 @@ function loginAdminUser (req, res, next) {
         const payload = {
             user_id: user._id,
             userType: 'admin',
-            expires: Date.now() + 60000
+            expires: Date.now() + 7200000
         };
 
         req.logIn(payload, {session: false}, (err) => {
@@ -41,7 +41,7 @@ function loginAdminUser (req, res, next) {
                     httpOnly: false,
                     sameSite: false,
                     secure: false,
-                    maxAge: 60000
+                    maxAge: 7200000
                 }
             } 
 
@@ -51,7 +51,7 @@ function loginAdminUser (req, res, next) {
                     sameSite: false,
                     secure: true,
                     domain: './hellochokchok.com',
-                    maxAge: 60000
+                    maxAge: 7200000
                 }
             }
 
