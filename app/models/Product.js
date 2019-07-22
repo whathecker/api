@@ -10,8 +10,17 @@ let pricesSchema = new Schema({
     netPrice: { type: String, default: "0 "}
 }, { _id: false });
 
+let inventorySchema = new Schema({
+    quantityOnHand: { type: Number, default: 0 },
+    quarantaine: { type: Number, default: 0 },
+    lastModified: { type: Date, default: Date.now },
+    /** add carted as array to hold QTY in cart of user
+     * and create Cart model to support shopping cart 
+     */
+}, { _id: false });
+
 let productSchema = new Schema({
-    channel: { type: String },
+    channel: { type: String, uppercase: true, enum: ['EU'], default: 'EU' },
     id: { type: String, required: true, unique: true, index: true },
     name: { type: String, required: true },
     description: { type: String, required: true },
@@ -22,6 +31,7 @@ let productSchema = new Schema({
     volume: { type: String },
     skinType: { type: String },
     prices : [pricesSchema],
+    inventory: inventorySchema,
     creationDate: { type: Date, default: Date.now },
     lastModified: { type: Date, default: Date.now }
 });

@@ -18,10 +18,14 @@ passport.use('admin-local', new LocalStrategy({
 
         try {
             const adminUser = await AdminUser.findOne({ email: email }).exec();
+            console.log(adminUser);
+            if (!adminUser) {
+                return done(null, false);
+            }
             const passwordMatch = adminUser.validatePassword(adminUser, password);
             //const passwordMatch = adminUser.validatePassword(adminUser, password);
 
-            if (!passwordMatch || !AdminUser) {
+            if (!passwordMatch) {
                 return done(null, false);
             }
             if (passwordMatch) {
