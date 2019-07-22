@@ -3,8 +3,8 @@ const mongoose = require('mongoose'),
     uniqueValidator = require('mongoose-unique-validator');
 
 let pricesSchema = new Schema({
-    region: { type: String, lowercase: true },
-    currency: { type: String, lowercase: true },
+    region: { type: String, lowercase: true, enum: ['eu'], default: 'eu' },
+    currency: { type: String, lowercase: true, enum: ['euro'], default: 'euro' },
     price: { type: String, default: "0" },
     vat: { type: String, default: "0"},
     netPrice: { type: String, default: "0 "}

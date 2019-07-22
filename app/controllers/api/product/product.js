@@ -7,12 +7,38 @@ const adminAuth = require('../../../middlewares/adminAuth');
 
 const getProducts = require('../../../helpers/products/getProducts');
 const getProductById = require('../../../helpers/products/getProductById');
+const createProduct = require('../../../helpers/products/createProduct');
+const updateProduct = require('../../../helpers/products/updateProduct');
 
 router.use(apiAuth);
 
 router.get('/', adminAuth, getProducts);
 
-// add auth middleware in this route
+router.get('/product/:id', adminAuth, getProductById);
+router.put('/product/:id', adminAuth, updateProduct);
+router.post('/product', adminAuth, createProduct);
+router.delete('/:id', (req, res, next) => {
+    /*
+    if (!req.params.id) {
+        logger.warn('product delete request has rejected as id param is missing');
+        return res.status(400).json({ message: 'bad request' });
+    }*/
+
+    Product.findOneAndRemove({ id: req.params.id })
+        .then((product)=> {
+            if (!product) {
+                logger.warn('product delete request has rejected as product is unknown')
+                return res.status(204).json({ message: 'can not find product' })
+            }
+            logger.info(`product delete request has succeed: ${product}`);
+            return res.status(200).json(product);
+        }).catch(next);
+});
+
+module.exports = router;
+
+
+/*
 router.post('/', (req, res, next) => {
 
     if (!req.body.name || !req.body.description || !req.body.category || !req.body.brand) {
@@ -69,9 +95,8 @@ router.post('/', (req, res, next) => {
         return res.status(201).send(product);
     }).catch(next);
 
-});
 
-router.put('/:id', (req, res, next) => {
+    router.put('/:id', (req, res, next) => {
     if (!req.params.id || !req.body.update) {
         logger.warn(`product update request has rejected as param is missing`);
         return res.status(400).json({ message: 'bad request' });
@@ -89,25 +114,4 @@ router.put('/:id', (req, res, next) => {
             return res.status(200).send(product);
         }).catch(next);
 });
-
-router.get('/product/:id', adminAuth, getProductById);
-
-router.delete('/:id', (req, res, next) => {
-    /*
-    if (!req.params.id) {
-        logger.warn('product delete request has rejected as id param is missing');
-        return res.status(400).json({ message: 'bad request' });
-    }*/
-
-    Product.findOneAndRemove({ id: req.params.id })
-        .then((product)=> {
-            if (!product) {
-                logger.warn('product delete request has rejected as product is unknown')
-                return res.status(204).json({ message: 'can not find product' })
-            }
-            logger.info(`product delete request has succeed: ${product}`);
-            return res.status(200).json(product);
-        }).catch(next);
-});
-
-module.exports = router;
+}); */
