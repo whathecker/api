@@ -1,6 +1,6 @@
-const mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    uniqueValidator = require('mongoose-unique-validator');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const uniqueValidator = require('mongoose-unique-validator');
 
 let pricesSchema = new Schema({
     region: { type: String, lowercase: true, enum: ['eu'], default: 'eu' },

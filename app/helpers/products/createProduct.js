@@ -1,8 +1,10 @@
 const Product = require('../../models/Product');
+const Category = require('../../models/Category');
+const Brand = require('../../models/Brand');
+const SkinType =  require('../../models/SkinType');
 const logger = require('../../utils/logger');
-const productIdPrefixes = require('../../utils/productidPrefixes');
 
-function createProduct (req, res, next) {
+async function createProduct (req, res, next) {
     if (!req.body.name || !req.body.description || !req.body.category || !req.body.brand) {
         logger.warn(`createProduct request has rejected as param is missing`);
         return res.status(400).json({ 
@@ -14,26 +16,22 @@ function createProduct (req, res, next) {
     const product = new Product();
     product.name = req.body.name;
     product.description = req.body.description;
-    product.category = product.findCategory(req.body.category, productIdPrefixes);
-    product.categoryCode = product.findCategoryCode(product.category, productIdPrefixes);
-    product.brand = product.findBrand(req.body.brand, productIdPrefixes);
-    product.brandCode = product.findBrandCode(product.brand, productIdPrefixes);
+    const category = await Category.findOne({ categoryName: req.body.category }).exec();
+    const brand = await Brand.findOne({ brandName: req.body.brand }).exec();
+    
+    product.category = category.categoryName;
+    product.categoryCode = categoryCode;
+    product.brand = brand.brandName;
+    product.brandCode = brand.brandCode;
 
     if (req.body.volume) {
         // set accepted values
         product.volume = req.body.volume;
     }
     if (req.body.skinType) {
-
-        if (product.isSkintypeValid(req.body.skinType)) {
-            product.skinType = req.body.skinType 
-        } else {
-            return res.status(422).json({ 
-                status: 'failed',
-                message: 'invalid skinType' 
-            });
-        }
-         
+        const skinTypeObj = await SkinType.findOne({ skinType: req.body.skinType }).exec();
+        product.skinType = skinTypeObj.skinType;
+  
     }
     if (req.body.prices) {
 
@@ -58,7 +56,7 @@ function createProduct (req, res, next) {
                 req.body.prices[i].vat = product.setVat(price, vatRate);
                 req.body.prices[i].netPrice = product.setNetPrice(price, vatRate);
             }
-            console.log(req.body.prices);
+            //console.log(req.body.prices);
             product.prices = req.body.prices
         } 
         
