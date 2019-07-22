@@ -32,6 +32,7 @@ let productSchema = new Schema({
     skinType: { type: String },
     prices : [pricesSchema],
     inventory: inventorySchema,
+    inventoryHistory: [inventorySchema],
     creationDate: { type: Date, default: Date.now },
     lastModified: { type: Date, default: Date.now }
 });

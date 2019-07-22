@@ -20,7 +20,7 @@ async function createProduct (req, res, next) {
     const brand = await Brand.findOne({ brandName: req.body.brand }).exec();
     
     product.category = category.categoryName;
-    product.categoryCode = categoryCode;
+    product.categoryCode = category.categoryCode;
     product.brand = brand.brandName;
     product.brandCode = brand.brandCode;
 
@@ -67,6 +67,7 @@ async function createProduct (req, res, next) {
             quantityOnHand : req.body.quantityOnHand,
             lastModified : Date.now()
         }
+        product.inventoryHistory = [product.inventory];
     }
 
     product.id = product.createProductId(product.brandCode, product.categoryCode);
