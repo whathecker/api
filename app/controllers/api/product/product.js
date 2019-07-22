@@ -6,6 +6,7 @@ const apiAuth =  require('../../../middlewares/verifyApikey');
 const adminAuth = require('../../../middlewares/adminAuth');
 
 const getProducts = require('../../../helpers/products/getProducts');
+const getProductById = require('../../../helpers/products/getProductById');
 
 router.use(apiAuth);
 
@@ -89,24 +90,7 @@ router.put('/:id', (req, res, next) => {
         }).catch(next);
 });
 
-router.get('/:id', (req, res, next) => {
-
-    /*
-    if (!req.params.id) {
-        logger.warn(`product get request has rejected as param is missing`);
-        return res.status(400).json({ message: 'bad request' });
-    } */
-
-    Product.findOne({ id: req.params.id })
-        .then((product) => {
-            if (!product) {
-                logger.warn(`product get request has rejected as product id is unknown`)
-                return res.status(204).json({ message: 'can not find product'});
-            }
-            logger.info(`product get has succeed: ${product}`);
-            return res.status(200).send(product);
-        }).catch(next);
-});
+router.get('/product/:id', adminAuth, getProductById);
 
 router.delete('/:id', (req, res, next) => {
     /*

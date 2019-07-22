@@ -64,14 +64,14 @@ describe('test product apis', () => {
         });
     });
     test('Test product get will success', () => {
-        return request(app).get(`/products/${createdProduct.id}`)
+        return request(app).get(`/products/product/${createdProduct.id}`)
         .set('X-API-Key', testData.apikey)
         .then((response) => {
             expect(response.status).toBe(200);
         });
     });
     test('Test product get will fail as param is missing', () => {
-        return request(app).get(`/products`)
+        return request(app).get(`/products/product`)
         .set('X-API-Key', testData.apikey)
         .then((response) => {
             expect(response.status).toBe(404);
@@ -80,7 +80,7 @@ describe('test product apis', () => {
 
     
     test('Test product get will fail as param is unknown', () => {
-        return request(app).get(`/products/id`)
+        return request(app).get(`/products/product/id`)
         .set('X-API-Key', testData.apikey)
         .then((response) => {
             expect(response.status).toBe(204);
@@ -101,7 +101,7 @@ describe('test product apis', () => {
     });
 
     test('Test product get will success with new detail', () => {
-        return request(app).get(`/products/${createdProduct.id}`)
+        return request(app).get(`/products/product/${createdProduct.id}`)
         .set('X-API-Key', testData.apikey)
         .then((response) => {
             expect(response.body.name).toBe("this is new name");
