@@ -16,7 +16,8 @@ function createBrand (req, res, next) {
         const newBrand = new Brand();
         newBrand.brandCode = brandCode;
         newBrand.brandName = brandName;
-        newBrand.save((brand) => {
+        newBrand.save()
+        .then((brand) => {
             if (brand) {
                 return res.status(201).json({
                     status: 'success',

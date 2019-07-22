@@ -17,7 +17,8 @@ function createCategory (req, res, next) {
         const newCategory = new Category();
         newCategory.categoryName = categoryName;
         newCategory.categoryCode = categoryCode;
-        newCategory.save((category) => {
+        newCategory.save()
+        .then((category) => {
             if (category) {
                 return res.status(201).json({
                     status: 'success',

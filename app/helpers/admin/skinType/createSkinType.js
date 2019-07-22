@@ -15,7 +15,8 @@ function createSkinType (req, res, next) {
     if (skinType) {
         const newSkinType = new SkinType();
         newSkinType.skinType = skinType;
-        newSkinType.save((skinType) => {
+        newSkinType.save()
+        .then((skinType) => {
             if (skinType) {
                 logger.info(`createSkinType request has processed | ${newSkinType.skinType} has created`);
                 return res.status(201).json({
