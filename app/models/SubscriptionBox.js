@@ -8,8 +8,8 @@ let itemSchema = new Schema({
 }, { _id: false }); */
 
 let pricesSchema = new Schema({
-    region: { type: String, lowercase: true },
-    currency: { type: String, lowercase: true },
+    region: { type: String, lowercase: true, enum: ['eu'], default: 'eu' },
+    currency: { type: String, lowercase: true, enum: ['euro'], default: 'euro' },
     vat: { type: String, default: "0" },
     price: { type: String, default: "0" },
     netPrice: { type: String, default: "0" }
