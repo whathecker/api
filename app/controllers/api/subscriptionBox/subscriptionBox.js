@@ -1,9 +1,13 @@
-const router = require('express').Router(),
-    logger = require('../../../utils/logger'),
-    SubscriptionBox = require('../../../models/SubscriptionBox'),
-    Product = require('../../../models/Product'),
-    subscriptionBoxIdPrefixes = require('../../../utils/subscriptionBoxIdPrefixes'),
-    apiAuth = require('../../../middlewares/verifyApikey');
+const router = require('express').Router();
+const logger = require('../../../utils/logger');
+const SubscriptionBox = require('../../../models/SubscriptionBox');
+const Product = require('../../../models/Product');
+const subscriptionBoxIdPrefixes = require('../../../utils/subscriptionBoxIdPrefixes');
+const apiAuth = require('../../../middlewares/verifyApikey');
+const adminAuth = require('../../../middlewares/adminAuth');
+const getSubscriptionBoxes = require('../../../helpers/subscriptionBox/getSubscriptionBoxes');
+const getSubscriptionBoxById = require('../../../helpers/subscriptionBox/getSubscriptionBoxById');
+const createSubscriptionBox = require('../../../helpers/subscriptionBox/createSubscriptionBox');
 
 router.use(apiAuth);
 
@@ -97,26 +101,11 @@ router.post('/', (req, res, next) => {
     
     
 });
+// no admin auth as it's consumed at checkout
 
-router.get('/', (req, res, next) => {
-    // add query param to populate item detail
-    SubscriptionBox.find()
-        .then((data) => {
-            if (!data) {
-                logger.warn('request was accepted but no data is returned');
-                return res.status(204).json({ message: 'no data' });
-            }
-            //populate items sub document before sending response to client
-            logger.info(`request has succeed`);
-            return res.status(200).json(data);
-        })
-        .catch(next);
-});
-
-router.get('/:id', (req, res, next) => {
-
-});
-
+router.get('/', getSubscriptionBoxes);
+router.get('/subscriptionBox/:id', adminAuth, getSubscriptionBoxById);
+router.post('/subscriptionBox', adminAuth, createSubscriptionBox);
 
 router.delete('/:id', (req, res, next) => {
     SubscriptionBox.findOneAndRemove({ id: req.params.id })

@@ -15,6 +15,7 @@ function createSkinType (req, res, next) {
     if (skinType) {
         const newSkinType = new SkinType();
         newSkinType.skinType = skinType;
+        newSkinType.skinTypeCode = newSkinType.setSkinTypeCode(newSkinType.skinType);
         newSkinType.save()
         .then((skinType) => {
             if (skinType) {

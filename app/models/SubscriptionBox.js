@@ -16,6 +16,7 @@ let pricesSchema = new Schema({
 }, { _id: false });
 
 let subscriptionBoxSchema = new Schema({
+    channel: { type: String, uppercase: true, enum: ['EU'], default: 'EU' },
     id: { type: String, required: true, unique: true, index: true },
     name: { type: String, required: true },
     boxType: { type: String, required: true },
@@ -30,7 +31,7 @@ subscriptionBoxSchema.plugin(uniqueValidator);
 
 const SubscriptionBox = mongoose.model('SubscriptionBox', subscriptionBoxSchema);
 
-
+// legacy method: to remove!
 SubscriptionBox.prototype.findPackageType = (skinTypeInput, prefixes) => {
     if (!skinTypeInput) { throw new Error('Invalid param: skinType cannot be empty'); }
 
@@ -44,13 +45,16 @@ SubscriptionBox.prototype.findPackageType = (skinTypeInput, prefixes) => {
     return packageType;
 
 }
-
+// legacy method: to remove!
 SubscriptionBox.prototype.findPackageTypeCode = (packageTypeInput, prefixes) => {
     if (!packageTypeInput) {
         throw new Error('Invalid param: packageTypeInput cannot be blank');
     }
+
     return prefixes.boxTypePrefix[packageTypeInput];
 }
+
+
 
 
 SubscriptionBox.prototype.createPackageId = (skinTypeCode) => {
