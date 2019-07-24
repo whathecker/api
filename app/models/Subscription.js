@@ -19,6 +19,7 @@ let packageSchema = new Schema({
 }, { _id: false });
 
 let subscriptionSchema = new Schema({
+    channel: { type: String, uppercase: true, enum: ['EU'], default: 'EU' },
     subscriptionId: {
         type: String,
         required: true,
@@ -46,6 +47,7 @@ let subscriptionSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: 'User'},
     paymentMethod: { type: Schema.Types.ObjectId, ref: 'Billing' },
     orders: [ { type: Schema.Types.ObjectId, ref: 'Order' }],
+    isActive: { type: Boolean, default: true }
 });
 
 subscriptionSchema.plugin(uniqueValidator);
