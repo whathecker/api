@@ -16,6 +16,11 @@ function optinToNewsletter (req, res, next) {
     }
 
     if (email) {
+
+        const sendGridpayload = {
+            contacts: [{ email: email }]
+        };
+
         User.findOne({ email: email })
         .then((user) => {
             if (!user) {
@@ -43,7 +48,6 @@ function optinToNewsletter (req, res, next) {
                     if (status === "throttle_triggered" ||
                         (status === "success" && result === "valid")) {
                         
-                        const payload = [{ email: email }];
 
                         if (status === "throttle_triggered") {
                             logger.warn('truemail api rate exceeded');
@@ -64,33 +68,18 @@ function optinToNewsletter (req, res, next) {
                         }
                         
 
-                        axiosSendGrid.post('/contactdb/recipients', payload)
+                        axiosSendGrid.put('/marketing/contacts', sendGridpayload)
                         .then((response) => {
                             //console.log(response);
 
-                            const newCount = response.data.new_count;
-
-                            if (response.status === 201 && newCount === 0) {
-                                logger.info(`optinToNewsletter request has not processed | user already optted-in| ${email}`);
-                                return res.status(200).json({
-                                    result: 'failed',
-                                    message: 'user has already optin'
+                            if (response.status === 202) {
+                                logger.info(`optinToNewsletter request has processed | ${email}`);
+                                return res.status(201).json({
+                                    result: 'success',
+                                    message: 'user subscribed to newsletter'
                                 });
                             }
-
-                            if (response.status === 201 && newCount === 1) {
-                                user.newsletterOptin = true;
-                                user.lastModified = Date.now();
-                                user.markModified('newsletterOptin');
-                                user.markModified('lastModified');
-                                user.save().then(() => {
-                                    logger.info(`optinToNewsletter request has processed | ${email}`);
-                                    return res.status(201).json({
-                                        result: 'success',
-                                        message: 'user subscribed to newsletter'
-                                    });
-                                }).catch(next);
-                            }
+                            
 
                         }).catch(next);
                         
@@ -109,14 +98,11 @@ function optinToNewsletter (req, res, next) {
 
             if (user && user.newsletterOptin === false) {
                 //console.log(user);
-                const payload = [{ email: email }];
 
-                axiosSendGrid.post('/contactdb/recipients', payload)
+                axiosSendGrid.put('/marketing/contacts', sendGridpayload)
                 .then((response) => {
                     //console.log(response);
-                    
-                    if (response.status === 201) {
-
+                    if (response.status === 202) {
                         user.newsletterOptin = true;
                         user.lastModified = Date.now();
                         user.markModified('newsletterOptin');
@@ -128,9 +114,8 @@ function optinToNewsletter (req, res, next) {
                                 message: 'user subscribed to newsletter'
                             });
                         }).catch(next);
-
-                    }
-
+                    } 
+                
                 }).catch(next);
             }
 
