@@ -49,6 +49,8 @@ app.use(bodyParser.json());
 require('./utils/messageQueue/queue-receivers');
 // message receiver for transactional email
 require('./utils/messageQueue/mailQueue-receivers');
+// message receiver for inventory update
+require('./utils/messageQueue/inventoryQueue-receivers');
 
 // mount routes
 app.use(require('./controllers'));

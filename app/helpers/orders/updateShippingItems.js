@@ -1,0 +1,96 @@
+const Order = require('../../models/Order');
+const logger = require('../../utils/logger');
+const open = require('amqplib');
+const rabbitMQConnection = require('../../utils/messageQueue/rabbitMQConnector');
+const inventoryQueue = 'inventory';
+const inventoryRetryQueue = 'inventory-retry';
+const inventoryEx = 'inventory';
+const inventoryRetryEx = 'inventory-retry';
+
+
+function updateShippingDetail (req, res, next) {
+    console.log(req.body.update);
+    if (!req.body.orderNumber || !req.body.update) {
+        logger.warn(`updateShippingDetail request has rejected as param is missing`);
+        return res.status(400).json({ 
+            status: 'failed',
+            message: 'bad request' 
+        });
+    }
+
+    Order.findOne({ orderNumber: req.params.id })
+    .then(order => {
+        if (!order) {
+            logger.warn(`updateShippingDetail request is failed | unknown order number`);
+            return res.status(422).json({
+                status: 'failed',
+                message: 'unknown order number'
+            });
+        }
+
+        if (order) {
+            //console.log(order);
+            const itemsToUpdate = req.body.update.items;
+            if (itemsToUpdate && itemsToUpdate.length !== 0) {
+                const mappedArray = itemsToUpdate.map(item => {
+                    const itemAmount = {
+                        itemId: item.id,
+                        name: item.name,
+                        quantity: item.qtyToShip,
+                        currency: item.prices[0].currency,
+                        originalPrice: item.prices[0].price,
+                        discount: "0",
+                        vat: item.prices[0].vat,
+                        netPrice: item.prices[0].netPrice,
+                        grossPrice: item.prices[0].price,
+                        sumOfDiscount: order.setSumOfItemPrice(0, item.qtyToShip),
+                        sumOfVat: order.setSumOfItemPrice(item.prices[0].vat, item.qtyToShip),
+                        sumOfGrossPrice: order.setSumOfItemPrice(item.prices[0].price, item.qtyToShip),
+                        sumOfNetPrice: order.setSumOfItemPrice(item.prices[0].netPrice, item.qtyToShip)
+                    }
+                    return item = itemAmount;
+
+                });
+                const totalAmount = order.setTotalAmount(mappedArray, mappedArray[0].currency);
+                order.shippedAmountPerItem = mappedArray;
+                order.shippedAmount = totalAmount;
+                order.markModified('shippedAmountPerItem');
+                order.markModified('shippedAmount');
+
+                // dispatch message to deduct inventory
+                open.connect(rabbitMQConnection()).then(connection => {
+                    connection.createChannel()
+                    .then(ch => {
+                        const exchange = ch.assertExchange(inventoryEx, 'direct', { durable: true});
+                        const retryExchange = ch.assertExchange(inventoryRetryEx, 'direct', { durable: true });
+                        const bindQueue = ch.bindQueue(inventoryQueue, inventoryEx);
+                        const bindRetryQueue = ch.bindQueue(inventoryRetryQueue, inventoryRetryEx);
+
+                        Promise.all([
+                            exchange,
+                            retryExchange,
+                            bindQueue,
+                            bindRetryQueue
+                        ]).then(() => {
+                            ch.publish(inventoryEx, '', Buffer.from(JSON.stringify(mappedArray)), { persistent: true });
+                            ch.close().then(() => {
+                                connection.close();
+                            });
+                        }).catch(next);
+
+                    }).catch(next);
+
+                }).catch(next);
+            }
+
+            order.save().then(() => {
+                return res.status(200).json({
+                    status: 'success',
+                    message: 'shipping detail of order is updated'
+                });
+            });
+        }
+    });
+}
+
+module.exports = updateShippingDetail;

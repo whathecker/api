@@ -94,10 +94,8 @@ function startMQConnection () {
             return ch.consume(mailQueue, (msg) => {
                 if (msg !== null) {
                     console.log('mail message');
-                    console.log(msg);
                     const message = JSON.parse(msg.content);
                     const emailType = message.emailType;
-                    
                     console.log(message);
                     let payloadToSendGrid = {
                         from: {

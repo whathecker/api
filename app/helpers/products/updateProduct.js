@@ -72,6 +72,16 @@ async function updateProduct (req, res, next) {
                     product.markModified('prices');
                 }
             }
+
+            if (req.body.quantityOnHand) {
+                product.inventory.quantityOnHand = req.body.quantityOnHand;
+                product.inventory.lastModified = Date.now();
+                const inventoryInstance = product.inventory;
+                product.inventoryHistory.push(inventoryInstance);
+                product.markModified('inventory');
+                product.markModified('inventoryHistory');
+            }
+            
             product.lastModified = Date.now();
             product.markModified('lastModified');
             product.save().then(() => {
