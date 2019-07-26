@@ -89,7 +89,7 @@ let orderSchema = new Schema({
     deliverySchedule: { type: Date },
     isShipped: { type: Boolean, default: false },
     shippedDate: { type: Date },
-    shippingCarrier: { type: String },
+    courier: { type: String, enum: ['DHL'] },
     trackingNumber: [{ type: String }],
     isDelivered: { type: Boolean, default: false },
     deliveredDate: { type: Date },
@@ -99,10 +99,10 @@ let orderSchema = new Schema({
     /*
     items: [
         { type: Schema.Types.ObjectId, ref: 'Product' } 
-    ], */
+    ], 
     shippedItems: [
         { type: Schema.Types.ObjectId, ref: 'Product'} 
-    ], 
+    ], */
     orderAmountPerItem: [itemAmountSchema],
     orderAmount: orderAmountSchema,
     shippedAmountPerItem: [itemAmountSchema],

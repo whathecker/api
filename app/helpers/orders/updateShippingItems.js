@@ -36,72 +36,84 @@ function updateShippingDetail (req, res, next) {
                     status: 'failed',
                     message: 'cannot update packed item of shipped order'
                 });
-            } else {
-                const itemsToUpdate = req.body.update.items;
-                if (itemsToUpdate && itemsToUpdate.length !== 0) {
-                    const mappedArray = itemsToUpdate.map(item => {
-                        const itemAmount = {
-                            itemId: item.id,
-                            name: item.name,
-                            quantity: item.qtyToShip,
-                            currency: item.prices[0].currency,
-                            originalPrice: item.prices[0].price,
-                            discount: "0",
-                            vat: item.prices[0].vat,
-                            netPrice: item.prices[0].netPrice,
-                            grossPrice: item.prices[0].price,
-                            sumOfDiscount: order.setSumOfItemPrice(0, item.qtyToShip),
-                            sumOfVat: order.setSumOfItemPrice(item.prices[0].vat, item.qtyToShip),
-                            sumOfGrossPrice: order.setSumOfItemPrice(item.prices[0].price, item.qtyToShip),
-                            sumOfNetPrice: order.setSumOfItemPrice(item.prices[0].netPrice, item.qtyToShip)
-                        }
-                        return item = itemAmount;
+            }
 
-                    });
-                    const totalAmount = order.setTotalAmount(mappedArray, mappedArray[0].currency);
-                    order.shippedAmountPerItem = mappedArray;
-                    order.shippedAmount = totalAmount;
-                    order.markModified('shippedAmountPerItem');
-                    order.markModified('shippedAmount');
+            if (order.shippedAmountPerItem.length > 0) {
+                logger.warn(`updateShippingDetail request is failed | order are packed already`);
+                return res.status(422).json({
+                    status: 'failed',
+                    message: "cannot updated already packed order, remove all items in the list first"
+                });
+            }
+            
+            
+            const itemsToUpdate = req.body.update.items;
+            if (itemsToUpdate && itemsToUpdate.length !== 0) {
+                const mappedArray = itemsToUpdate.map(item => {
+                    const itemAmount = {
+                        itemId: item.id,
+                        name: item.name,
+                        quantity: item.qtyToShip,
+                        currency: item.prices[0].currency,
+                        originalPrice: item.prices[0].price,
+                        discount: "0",
+                        vat: item.prices[0].vat,
+                        netPrice: item.prices[0].netPrice,
+                        grossPrice: item.prices[0].price,
+                        sumOfDiscount: order.setSumOfItemPrice(0, item.qtyToShip),
+                        sumOfVat: order.setSumOfItemPrice(item.prices[0].vat, item.qtyToShip),
+                        sumOfGrossPrice: order.setSumOfItemPrice(item.prices[0].price, item.qtyToShip),
+                        sumOfNetPrice: order.setSumOfItemPrice(item.prices[0].netPrice, item.qtyToShip)
+                    }
+                    return item = itemAmount;
 
-                    // dispatch message to deduct inventory
-                    open.connect(rabbitMQConnection()).then(connection => {
-                        connection.createChannel()
-                        .then(ch => {
-                            const exchange = ch.assertExchange(inventoryEx, 'direct', { durable: true});
-                            const retryExchange = ch.assertExchange(inventoryRetryEx, 'direct', { durable: true });
-                            const bindQueue = ch.bindQueue(inventoryQueue, inventoryEx);
-                            const bindRetryQueue = ch.bindQueue(inventoryRetryQueue, inventoryRetryEx);
+                });
+                const totalAmount = order.setTotalAmount(mappedArray, mappedArray[0].currency);
+                order.shippedAmountPerItem = mappedArray;
+                order.shippedAmount = totalAmount;
+                order.lastModified = Date.now();
+                order.markModified('lastModified');
+                order.markModified('shippedAmountPerItem');
+                order.markModified('shippedAmount');
 
-                            Promise.all([
-                                exchange,
-                                retryExchange,
-                                bindQueue,
-                                bindRetryQueue
-                            ]).then(() => {
-                                const message = {
-                                    action: 'deduct',
-                                    items: mappedArray
-                                }
-                                ch.publish(inventoryEx, '', Buffer.from(JSON.stringify(message)), { persistent: true });
-                                ch.close().then(() => {
-                                    connection.close();
-                                });
+                // dispatch message to deduct inventory
+                open.connect(rabbitMQConnection()).then(connection => {
+                    connection.createChannel()
+                    .then(ch => {
+                        const exchange = ch.assertExchange(inventoryEx, 'direct', { durable: true});
+                        const retryExchange = ch.assertExchange(inventoryRetryEx, 'direct', { durable: true });
+                        const bindQueue = ch.bindQueue(inventoryQueue, inventoryEx);
+                        const bindRetryQueue = ch.bindQueue(inventoryRetryQueue, inventoryRetryEx);
+
+                        Promise.all([
+                            exchange,
+                            retryExchange,
+                            bindQueue,
+                            bindRetryQueue
+                        ]).then(() => {
+                            const message = {
+                                action: 'deduct',
+                                items: mappedArray
+                            }
+                            ch.publish(inventoryEx, '', Buffer.from(JSON.stringify(message)), { persistent: true });
+                            ch.close().then(() => {
+                                connection.close();
                             });
                         });
-
-                    }).catch(next);
-
-                }
-
-                order.save().then(() => {
-                    return res.status(200).json({
-                        status: 'success',
-                        message: 'shipping detail of order is updated'
                     });
-                });
+
+                }).catch(next);
 
             }
+
+            order.save().then(() => {
+                return res.status(200).json({
+                    status: 'success',
+                    message: 'shipping detail of order is updated'
+                });
+            });
+
+            
         }
     });
 }

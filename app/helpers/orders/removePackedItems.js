@@ -57,7 +57,8 @@ function removePackedItems (req, res, next) {
                 if (filteredShippedItems.length !== 0) {
                     order.shippedAmount = order.setTotalAmount(filteredShippedItems, filteredShippedItems[0].currency);
                 }
-                
+                order.lastModified = Date.now();
+                order.markModified('lastModified');
                 order.markModified('shippedAmountPerItem');
                 order.markModified('shippedAmount');
     
