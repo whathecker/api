@@ -31,7 +31,7 @@ function startMQConnection () {
                     console.log(message);
                    
                     // deduct inventory and update related fields of each product
-                    async.each(message, function (e, callback) {
+                    async.each(message.items, function (e, callback) {
                         Product.findOne({ id: e.itemId })
                         .then(product => {
                             if (!product) {
@@ -40,9 +40,23 @@ function startMQConnection () {
                                 callback();
                             }
                             if (product) {
-                                const qtyToDeduct = e.quantity;
+                                const actionType = message.action;
                                 const currentQty = product.inventory.quantityOnHand;
-                                product.inventory.quantityOnHand = currentQty - qtyToDeduct;
+                                switch(actionType) {
+                                    case 'deduct':
+                                        const qtyToDeduct = e.quantity;
+                                        product.inventory.quantityOnHand = currentQty - qtyToDeduct;
+                                        break;
+                                    case 'add':
+                                        const qtyToAdd = e.quantity;
+                                        product.inventory.quantityOnHand = currentQty + qtyToAdd;
+                                        break;
+                                    default:
+                                        console.log('unknonw actionType');
+                                        break;
+
+                                }
+
                                 product.inventory.lastModified = Date.now();
                                 const inventoryUpdate = product.inventory;
                                 product.inventoryHistory.push(inventoryUpdate);
@@ -57,10 +71,10 @@ function startMQConnection () {
                     }, function (err) {
                         if (err) {
                             console.log(err);
-                            logger.error(`inventory deduction has processed, but there was an error`);
+                            logger.error(`inventory update has processed, but there was an error`);
                             return ch.ack(msg);
                         } else {
-                            logger.info(`inventory deductions have processed`);
+                            logger.info(`inventory update have processed | actionType: ${message.action}`);
                             return ch.ack(msg);
                         }
                     });
