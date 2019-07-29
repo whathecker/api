@@ -91,7 +91,7 @@ let orderSchema = new Schema({
     shippedDate: { type: Date },
     courier: { type: String, enum: ['DHL'] },
     trackingNumber: [{ type: String }],
-    isDelivered: { type: Boolean, default: false },
+    isConfEmailDelivered: { type: Boolean, default: false },
     deliveredDate: { type: Date },
     lastModified: { type: Date, default: Date.now },
 

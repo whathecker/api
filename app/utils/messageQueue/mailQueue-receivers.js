@@ -6,6 +6,7 @@ const logger = require('../logger');
 const axiosSendGrid = require('../../../axios-sendgrid');
 const axiosSlackSendgrid = require('../../../axios-slack-sendgrid');
 const Subscription = require('../../models/Subscription');
+const Order = require('../../models/Order');
 
 /**
  * private function: convertDeliveryFrequency
@@ -71,6 +72,55 @@ function convertDeliveryDay (deliveryDay) {
     return convertedValue;
 } 
 
+/**
+ * 
+ * @param {array} trackingNums 
+ * Convert array of tracking numbers to concatenated string
+ */
+function concatTrackingNums (trackingNums) {
+    if (trackingNums.length === 1) {
+        return trackingNums[0];
+    }
+
+    if (trackingNums.length > 1) {
+        return trackingNums.reduce((accumulator, currentValue, index) => {
+            if (index === 0) {
+                return accumulator.concat('', currentValue);
+            }
+
+            if (index !== 0) {
+                return accumulator.concat(', ', currentValue);
+            }
+            
+        }, 'Tracking number(s): ');
+    }
+}
+
+function dispatchErrorToSlack (error, emailType) {
+    const payload = {
+        text: `${emailType} email delivery has failed`,
+        attachments: [
+            {
+                fallback: "Investigate undelivered email issue",
+                author_name: "Chokchok",
+                title: "Please investigate cause of delivery failure",
+                text: JSON.stringify(error.response)
+            }
+        ]
+    }
+
+    axiosSlackSendgrid.post('', payload)
+    .then((response) => {
+        if (response.status === 200) {
+            logger.info('error messaage has posted to Slack channel');
+        }
+    }).catch((error) => {
+        if (error) {
+            logger.warn(`failed to post error message to Slack`);
+        }
+    });
+}
+
 function startMQConnection () {
     open.connect(rabbitMQConnection())
     .then((connection) => {
@@ -111,6 +161,91 @@ function startMQConnection () {
                     };
 
                     switch (emailType) {
+                        case 'shippingConf':
+                            Order.findOne({ orderNumber: message.orderNumber })
+                            .populate({
+                                path: 'user',
+                                populate: { path: 'subscriptions defaultShippingAddress' }
+                            })
+                            .then(order => {
+
+                                if (!order) {
+                                    
+                                    if (msg.properties.headers['x-death']) {
+                                        const retryCount = msg.properties.headers['x-death'][0].count;
+
+                                        if (retryCount <= 5) {
+                                            logger.warn(`shippingConf email delivery has rejected as oirder has not found | retry count ${retryCount}`);
+                                            return ch.nack(msg, false, false)
+                                        } else {
+                                            logger.warn(`shippingConf email delivery has failed as order has not found | message has acknowledged as retry count exceed 5`);
+                                            // add Slack integration here
+                                            return ch.ack(msg);
+                                        }
+                                        
+                                    } else {
+                                        // reject when subscription isn't found
+                                        logger.warn(`shippingConf email delivery has rejected as order has not found | retry count: 0`);
+                                        return ch.nack(msg, false, false);
+                                    }
+                                    
+                                }
+
+                                if (order) {
+                                    console.log(order);
+                                    order.isConfEmailDelivered = true;
+                                    order.markModified('isConfEmailDelivered');
+                                    const month = order.shippedDate.getMonth();
+                                    const year = order.shippedDate.getFullYear();
+                                    const date = order.shippedDate.getDate();
+                                    const day = order.shippedDate.getDay();
+                                    const postalCode = order.user.defaultShippingAddress.postalCode;
+
+                                    payloadToSendGrid.template_id = "d-95693c68a6ea4683bc76bf72544d4f3e";
+                                    payloadToSendGrid.personalizations[0].dynamic_template_data = {
+                                        firstName: order.user.firstName,
+                                        deliveryDate: `${convertDeliveryDay(day)} ${date} ${convertDeliveryMonth(month)} ${year}`,
+                                        subscriptionId: order.user.subscriptions[0].subscriptionId,
+                                        courier: order.courier,
+                                        trackingNumbers: concatTrackingNums(order.trackingNumber),
+                                        trackingLink: `https://www.dhlparcel.nl/nl/consument/volg-je-pakket?tc=${order.trackingNumber[0]}&pc=${postalCode}&lc=nl-NL`,
+                                        senderName: 'Chokchok V.O.F',
+                                        senderAddress: 'Commelinstraat 42',
+                                        senderCity: 'Amsterdam',
+                                        senderCountry: 'Netherlands',
+                                        loginLink: ''
+                                    }
+
+                                    if (process.env.NODE_ENV === "production") {
+                                        payloadToSendGrid.personalizations[0].dynamic_template_data.loginLink = 'https://www.hellochokchok.com/login';
+                                    } 
+                                    if (process.env.NODE_ENV !== "production") {
+                                        payloadToSendGrid.personalizations[0].dynamic_template_data.loginLink = 'https://test.hellochokchok.com/login';
+                                    }
+
+                                    axiosSendGrid.post('/mail/send', payloadToSendGrid)
+                                    .then((response) => {
+                                        console.log(response);
+                                        if (response.status === 202) {
+                                            order.save();
+                                            ch.ack(msg);
+                                            logger.info(`shippingConf email has delivered | orderNumber: ${message.orderNumber} email: ${message.email}`);
+                                            return;
+                                        }
+                                    }).catch((error) => {
+
+                                        if (error) {
+                                            dispatchErrorToSlack(error, emailType);
+                                            logger.warn(`shippongConf email delivery has failed | subscriptionId: ${message.orderNumber} email: ${message.email}`);
+                                            return ch.nack(msg, false, false);
+                                        }
+
+                                    });
+                                }
+                            }).catch(console.warn);
+
+                            break;
+                            
                         case 'welcome':
                             Subscription.findOne({ subscriptionId: message.subscriptionId })
                             .then((subscription) => {

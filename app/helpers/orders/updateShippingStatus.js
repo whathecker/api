@@ -2,7 +2,7 @@ const Order = require('../../models/Order');
 const logger = require('../../utils/logger');
 
 function updateShippingStatus (req, res, next) {
-    console.log(req.body.update);
+    //console.log(req.body.update);
     if (!req.body.update) {
         logger.warn(`updateShippingStatus request has rejected as param is missing`);
         return res.status(400).json({ 
@@ -12,6 +12,10 @@ function updateShippingStatus (req, res, next) {
     }
 
     Order.findOne({ orderNumber: req.params.id })
+    .populate({
+        path: 'user',
+        populate: { path: 'subscriptions' }
+    })
     .then(order => {
         if (!order) {
             logger.warn(`updateShippingStatus request is failed | unknown order number`);
@@ -21,12 +25,13 @@ function updateShippingStatus (req, res, next) {
             });
         }
         if (order) {
-            console.log(order);
+            //console.log(order);
 
             if (order.shippedAmountPerItem.length > 0) {
                 order.courier = req.body.update.courier;
                 order.trackingNumber = req.body.update.trackingNumber;
                 order.isShipped = true;
+                order.shippedDate =  Date.now();
                 order.lastModified = Date.now();
                 order.orderStatus = {
                     status: 'SHIPPED',
@@ -43,6 +48,8 @@ function updateShippingStatus (req, res, next) {
                 order.save().then(() => {
                     return res.status(200).json({
                         status: 'success',
+                        orderNumber: order.orderNumber,
+                        email: order.user.email,
                         message: 'order is marked as shipped'
                     });
                 });

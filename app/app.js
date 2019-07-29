@@ -29,7 +29,7 @@ const isProduction = process.env.NODE_ENV === "production";
 const corsOptions = {
     origin: [
         'http://localhost:3000', 
-        'http://localhost:9000',
+        'http://localhost:9231',
         'https://test.hellochokchok.com', 
         'https://www.hellochokchok.com' 
     ],
