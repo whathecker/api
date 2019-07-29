@@ -4,6 +4,7 @@ const mongoose = require('mongoose'),
     subscriptionPrefixes = require('../utils/subscriptionPrefixes');
 
 let deliveryScheduleSchema = new Schema({
+    orderNumber: { type: String },
     nextDeliveryDate : { type: Date },
     year: { type: Number },
     month: { type: Number },
@@ -84,7 +85,7 @@ Subscription.prototype.createSubscriptionId = (env, country) => {
     return subscriptionId.concat(envPrefix, middlePrefix, countryPrefix, create5DigitInteger(), create5DigitInteger());
 }
 
-Subscription.prototype.setFirstDeliverySchedule = (deliveryDay) => {
+Subscription.prototype.setFirstDeliverySchedule = (deliveryDay, orderNumber) => {
     const dateAtMoment = Date.now();
     const dateAtMomentInObj = new Date(dateAtMoment);
     const dayOfCurrentDate = dateAtMomentInObj.getDay();
@@ -106,6 +107,7 @@ Subscription.prototype.setFirstDeliverySchedule = (deliveryDay) => {
     const deliveryDateinMSeconds = dateAtMoment + (gapBetweenDates * 24 * 60 * 60 * 1000);
     const deliveryDateInObj = new Date(deliveryDateinMSeconds);
     const deliverySchedule = {
+        orderNumber: orderNumber,
         nextDeliveryDate: deliveryDateinMSeconds,
         year: deliveryDateInObj.getFullYear(),
         month: deliveryDateInObj.getMonth(),
@@ -116,7 +118,7 @@ Subscription.prototype.setFirstDeliverySchedule = (deliveryDay) => {
     return deliverySchedule;
 }
 
-Subscription.prototype.setDeliverySchedule = (prevDeliverySchdule, deliveryFrequncy, deliveryDay) => {
+Subscription.prototype.setDeliverySchedule = (prevDeliverySchdule, deliveryFrequncy, deliveryDay, orderNumber) => {
     // get previous deliverySchedule in milliseconds
     const prevDateInTime = prevDeliverySchdule.getTime();
     const prevDateInObj = new Date(prevDateInTime);
@@ -143,6 +145,7 @@ Subscription.prototype.setDeliverySchedule = (prevDeliverySchdule, deliveryFrequ
     const nextDeliveryDateinObj = new Date(nextDeliveryDate);
     
     let deliverySchedule = {
+        orderNumber: orderNumber? orderNumber : '',
         nextDeliveryDate: nextDeliveryDate,
         year: nextDeliveryDateinObj.getFullYear(),
         month: nextDeliveryDateinObj.getMonth(),

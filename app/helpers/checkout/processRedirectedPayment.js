@@ -139,15 +139,7 @@ function processRedirectedPayment (req, res, next) {
     // set first deliverySchedule in subscription
     subscription.deliveryFrequency = 28; /** default value */
     subscription.deliveryDay = 4; /** default value */
-    subscription.firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay);
-    const firstDeliveryDate = subscription.firstDeliverySchedule.nextDeliveryDate;
-    subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
-    subscription.deliverySchedules = [
-        subscription.firstDeliverySchedule,
-        subscription.nextDeliverySchedule
-    ];
-    // add first delivery schedule in first order
-    order.deliverySchedule = firstDeliveryDate;
+    
 
     // retrieve order for subscription
     subscription.orders = [order];
@@ -196,6 +188,16 @@ function processRedirectedPayment (req, res, next) {
                 order.orderNumber = response.data.merchantReference;
                 order.paymentMethod.type = response.data.paymentMethod;
                 billingOption.type = response.data.paymentMethod;
+
+                subscription.firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
+                const firstDeliveryDate = subscription.firstDeliverySchedule.nextDeliveryDate;
+                subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
+                subscription.deliverySchedules = [
+                    subscription.firstDeliverySchedule,
+                    subscription.nextDeliverySchedule
+                ];
+                // add first delivery schedule in first order
+                order.deliverySchedule = firstDeliveryDate;
                 
                 Promise.all([
                     newUser.save(),
@@ -225,6 +227,16 @@ function processRedirectedPayment (req, res, next) {
                 order.paymentMethod.type = response.data.paymentMethod;
                 billingOption.type = response.data.paymentMethod;
                 
+                subscription.firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
+                const firstDeliveryDate = subscription.firstDeliverySchedule.nextDeliveryDate;
+                subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
+                subscription.deliverySchedules = [
+                    subscription.firstDeliverySchedule,
+                    subscription.nextDeliverySchedule
+                ];
+                // add first delivery schedule in first order
+                order.deliverySchedule = firstDeliveryDate;
+
                 Promise.all([
                     newUser.save(),
                     billingOption.save(),
@@ -253,6 +265,16 @@ function processRedirectedPayment (req, res, next) {
                 order.orderNumber = response.data.merchantReference;
                 order.paymentMethod.type = response.data.paymentMethod;
                 billingOption.type = response.data.paymentMethod;
+
+                subscription.firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
+                const firstDeliveryDate = subscription.firstDeliverySchedule.nextDeliveryDate;
+                subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
+                subscription.deliverySchedules = [
+                    subscription.firstDeliverySchedule,
+                    subscription.nextDeliverySchedule
+                ];
+                // add first delivery schedule in first order
+                order.deliverySchedule = firstDeliveryDate;
 
                 Promise.all([
                     newUser.save(),
@@ -284,6 +306,16 @@ function processRedirectedPayment (req, res, next) {
                 order.orderNumber = response.data.merchantReference;
                 order.paymentMethod.type = response.data.paymentMethod;
                 billingOption.type = response.data.paymentMethod;
+
+                subscription.firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
+                const firstDeliveryDate = subscription.firstDeliverySchedule.nextDeliveryDate;
+                subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
+                subscription.deliverySchedules = [
+                    subscription.firstDeliverySchedule,
+                    subscription.nextDeliverySchedule
+                ];
+                // add first delivery schedule in first order
+                order.deliverySchedule = firstDeliveryDate;
 
                 Promise.all([
                     newUser.save(),

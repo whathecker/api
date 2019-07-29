@@ -1,5 +1,6 @@
 const Order = require('../../models/Order');
 const logger = require('../../utils/logger');
+const Subscription = require('../../models/Subscription');
 
 function updateShippingStatus (req, res, next) {
     //console.log(req.body.update);
@@ -25,7 +26,7 @@ function updateShippingStatus (req, res, next) {
             });
         }
         if (order) {
-            //console.log(order);
+            console.log(order);
 
             if (order.shippedAmountPerItem.length > 0) {
                 order.courier = req.body.update.courier;
@@ -45,14 +46,36 @@ function updateShippingStatus (req, res, next) {
                 order.markModified('lastModified');
                 order.markModified('courier');
                 order.markModified('trackingNumber');
-                order.save().then(() => {
-                    return res.status(200).json({
-                        status: 'success',
-                        orderNumber: order.orderNumber,
-                        email: order.user.email,
-                        message: 'order is marked as shipped'
+                
+                Subscription.findById(order.user.subscriptions[0]._id)
+                .then(subscription => {
+                    let deliverySchedules = Array.from(subscription.deliverySchedules);
+                    deliverySchedules.forEach(e => {
+                        if (e.orderNumber === order.orderNumber) {
+                            e.isProcessed = true;
+                        }
                     });
-                });
+                    subscription.deliverySchedules = deliverySchedules;
+                    subscription.markModified('deliverySchedules');
+                    
+                    
+                    Promise.all([
+                        subscription.save(),
+                        order.save()
+                    ])
+                    .then(values => {
+                        return res.status(200).json({
+                            status: 'success',
+                            orderNumber: order.orderNumber,
+                            email: order.user.email,
+                            message: 'order is marked as shipped'
+                        });
+
+                    }).catch(next); 
+
+                }).catch(next);
+                
+               
 
             } else {
                 logger.warn(`updateShippingStatus request is failed | no items packed yet`);
