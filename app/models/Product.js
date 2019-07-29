@@ -34,7 +34,8 @@ let productSchema = new Schema({
     inventory: inventorySchema,
     inventoryHistory: [inventorySchema],
     creationDate: { type: Date, default: Date.now },
-    lastModified: { type: Date, default: Date.now }
+    lastModified: { type: Date, default: Date.now },
+    eanCode: { type: String }
 });
 
 productSchema.plugin(uniqueValidator);
