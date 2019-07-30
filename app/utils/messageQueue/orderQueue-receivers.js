@@ -48,6 +48,7 @@ function startMQConnection () {
                         const country = subscription.user.defaultShippingAddress.country.toLowerCase();
                         if (!subscription.isActive) {
                             // ack message 
+                            logger.warn(`createOrder action for subscription num ${subscription.subscriptionId} is failed | subscription is not active`);
                             return ch.ack(msg);
                         }
 
@@ -138,35 +139,32 @@ function startMQConnection () {
                                     }, (err) => {
                                         if (err) {
                                             // fire message to Slack
+                                            logger.error(`createOrder action for subscription num ${subscription.subscriptionId} is failed | unexpected error in async loop`);
                                             return ch.nack(msg, false, false);
                                         }
                                         
                                         order.orderAmountPerItem = orderAmountPerItem;
                                         order.orderAmount=  order.setTotalAmount(order.orderAmountPerItem, 'euro');
                                         subscription.orders.push(order);
-                                        console.log(order);
-                                        console.log(subscription);
 
                                         Promise.all([
                                             order.save(),
                                             subscription.save()
                                         ]).then(values => {
                                             if (values) {
+                                                logger.info(`createOrder action for subscription num ${subscription.subscriptionId} is processed | new order ${order.orderNumber}`);
                                                 return ch.ack(msg);
                                             }
                                             
                                         }).catch(error => {
                                             if (error) {
                                                 // fire message to Slack
+                                                logger.error(`createOrder action for subscription num ${subscription.subscriptionId} is failed | failed to save updates in db`);
                                                 return ch.nack(msg, false, false);
                                             } 
                                         });
 
                                     });
-                                   
-                                    //console.log(order);
-                                    //console.log(deliverySchedules);
-                                    //console.log(lastIndexSchedule);
                                     
                                     break;
                             }
