@@ -1,7 +1,7 @@
-const mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    uniqueValidator = require('mongoose-unique-validator'),
-    orderNumberPrefixes = require('../../app/utils/orderNumberPrefixes');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const uniqueValidator = require('mongoose-unique-validator');
+const orderNumberPrefixes = require('../../app/utils/orderNumberPrefixes');
 
 let addressSchema = new Schema({
     firstName: { type: String },

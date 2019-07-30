@@ -51,6 +51,7 @@ require('./utils/messageQueue/queue-receivers');
 require('./utils/messageQueue/mailQueue-receivers');
 // message receiver for inventory update
 require('./utils/messageQueue/inventoryQueue-receivers');
+require('./utils/messageQueue/orderQueue-receivers');
 
 // mount routes
 app.use(require('./controllers'));

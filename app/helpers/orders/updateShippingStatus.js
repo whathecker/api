@@ -1,6 +1,12 @@
 const Order = require('../../models/Order');
 const logger = require('../../utils/logger');
 const Subscription = require('../../models/Subscription');
+const open = require('amqplib');
+const rabbitMQConnection = require('../../utils/messageQueue/rabbitMQConnector');
+const orderQueue = 'order';
+const orderRetryQueue = 'order-retry';
+const orderEx = 'order';
+const orderRetryEx = 'order-retry';
 
 function updateShippingStatus (req, res, next) {
     //console.log(req.body.update);
@@ -55,23 +61,54 @@ function updateShippingStatus (req, res, next) {
                             e.isProcessed = true;
                         }
                     });
+
                     subscription.deliverySchedules = deliverySchedules;
                     subscription.markModified('deliverySchedules');
                     
-                    
-                    Promise.all([
-                        subscription.save(),
-                        order.save()
-                    ])
-                    .then(values => {
-                        return res.status(200).json({
-                            status: 'success',
-                            orderNumber: order.orderNumber,
-                            email: order.user.email,
-                            message: 'order is marked as shipped'
-                        });
+                    open.connect(rabbitMQConnection()).then(connection => {
+                        connection.createChannel()
+                        .then(ch => {
+                            const exchange = ch.assertExchange(orderEx, 'direct', { durable: true});
+                            const retryExchange = ch.assertExchange(orderRetryEx, 'direct', { durable: true });
+                            const bindQueue = ch.bindQueue(orderQueue, orderEx);
+                            const bindRetryQueue = ch.bindQueue(orderRetryQueue, orderRetryEx);
+    
+                            Promise.all([
+                                exchange,
+                                retryExchange,
+                                bindQueue,
+                                bindRetryQueue
+                            ]).then(() => {
+                                const message = {
+                                    actionType: 'createOrder',
+                                    subscriptionId: order.user.subscriptions[0].subscriptionId,
+                                    orderNumber: order.orderNumber
+                                }
+                                ch.publish(orderEx, '', Buffer.from(JSON.stringify(message)), { persistent: true });
+                                ch.close().then(() => {
+                                    connection.close();
 
-                    }).catch(next); 
+                                    Promise.all([
+                                        subscription.save(),
+                                        order.save()
+                                    ])
+                                    .then(values => {
+                                        return res.status(200).json({
+                                            status: 'success',
+                                            orderNumber: order.orderNumber,
+                                            email: order.user.email,
+                                            message: 'order is marked as shipped'
+                                        });
+                
+                                    }).catch(next); 
+
+                                });
+                                
+                            })
+                        });
+                    }).catch(next);
+                    
+                    
 
                 }).catch(next);
                 
