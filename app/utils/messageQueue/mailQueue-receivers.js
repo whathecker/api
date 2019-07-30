@@ -79,7 +79,7 @@ function convertDeliveryDay (deliveryDay) {
  */
 function concatTrackingNums (trackingNums) {
     if (trackingNums.length === 1) {
-        return trackingNums[0];
+        return `Tracking number: ${trackingNums[0]}`;
     }
 
     if (trackingNums.length > 1) {
@@ -92,7 +92,7 @@ function concatTrackingNums (trackingNums) {
                 return accumulator.concat(', ', currentValue);
             }
             
-        }, 'Tracking number(s): ');
+        }, 'Tracking numbers: ');
     }
 }
 

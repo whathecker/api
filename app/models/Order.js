@@ -94,15 +94,6 @@ let orderSchema = new Schema({
     isConfEmailDelivered: { type: Boolean, default: false },
     deliveredDate: { type: Date },
     lastModified: { type: Date, default: Date.now },
-
-    /* package: { type: Schema.Types.ObjectId, ref: 'SubscriptionBox'} */ /**delete this? */
-    /*
-    items: [
-        { type: Schema.Types.ObjectId, ref: 'Product' } 
-    ], 
-    shippedItems: [
-        { type: Schema.Types.ObjectId, ref: 'Product'} 
-    ], */
     orderAmountPerItem: [itemAmountSchema],
     orderAmount: orderAmountSchema,
     shippedAmountPerItem: [itemAmountSchema],

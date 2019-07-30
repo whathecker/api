@@ -62,6 +62,11 @@ function updateShippingStatus (req, res, next) {
                         }
                     });
 
+                    if (order.orderNumber === subscription.firstDeliverySchedule.orderNumber) {
+                        subscription.firstDeliverySchedule.isProcessed = true;
+                        subscription.markModified('firstDeliverySchedule');
+                    }
+
                     subscription.deliverySchedules = deliverySchedules;
                     subscription.markModified('deliverySchedules');
                     

@@ -146,12 +146,12 @@ function startMQConnection () {
                                         order.orderAmountPerItem = orderAmountPerItem;
                                         order.orderAmount=  order.setTotalAmount(order.orderAmountPerItem, 'euro');
                                         subscription.orders.push(order);
-
                                         Promise.all([
                                             order.save(),
                                             subscription.save()
                                         ]).then(values => {
                                             if (values) {
+                                                console.log(values);
                                                 logger.info(`createOrder action for subscription num ${subscription.subscriptionId} is processed | new order ${order.orderNumber}`);
                                                 return ch.ack(msg);
                                             }
@@ -159,6 +159,7 @@ function startMQConnection () {
                                         }).catch(error => {
                                             if (error) {
                                                 // fire message to Slack
+                                                console.log(error);
                                                 logger.error(`createOrder action for subscription num ${subscription.subscriptionId} is failed | failed to save updates in db`);
                                                 return ch.nack(msg, false, false);
                                             } 
