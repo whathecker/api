@@ -45,13 +45,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
-// message receiver for adyen notification
-require('./utils/messageQueue/queue-receivers');
-// message receiver for transactional email
+// MQ receivers
+require('./utils/messageQueue/queue-receivers'); /** adyen notification receivers */
 require('./utils/messageQueue/mailQueue-receivers');
-// message receiver for inventory update
 require('./utils/messageQueue/inventoryQueue-receivers');
 require('./utils/messageQueue/orderQueue-receivers');
+require('./utils/messageQueue/recurringQueue-receivers');
 
 // mount routes
 app.use(require('./controllers'));

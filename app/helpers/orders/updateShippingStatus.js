@@ -33,7 +33,15 @@ function updateShippingStatus (req, res, next) {
         }
         if (order) {
             console.log(order);
+            if (order.orderStatus.status !== 'PAID') {
+                logger.warn(`updateShippingStatus request is failed | order has not paid`);
+                return res.status(422).json({
+                    status: 'failed',
+                    message: 'cannot updated shipping status of un paid order'
+                });
+            }
 
+            // shipping status can be updated when there is packed item
             if (order.shippedAmountPerItem.length > 0) {
                 order.courier = req.body.update.courier;
                 order.trackingNumber = req.body.update.trackingNumber;
@@ -56,12 +64,14 @@ function updateShippingStatus (req, res, next) {
                 Subscription.findById(order.user.subscriptions[0]._id)
                 .then(subscription => {
                     let deliverySchedules = Array.from(subscription.deliverySchedules);
-                    deliverySchedules.forEach(e => {
-                        if (e.orderNumber === order.orderNumber) {
-                            e.isProcessed = true;
+                    // find the order in deliverySchedules and mark it as processed
+                    deliverySchedules.forEach(deliverySchedule => {
+                        if (deliverySchedule.orderNumber === order.orderNumber) {
+                            deliverySchedule.isProcessed = true;
                         }
                     });
 
+                    // update processed status when shipped is firstDelivery
                     if (order.orderNumber === subscription.firstDeliverySchedule.orderNumber) {
                         subscription.firstDeliverySchedule.isProcessed = true;
                         subscription.markModified('firstDeliverySchedule');

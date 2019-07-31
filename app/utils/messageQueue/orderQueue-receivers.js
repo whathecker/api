@@ -8,8 +8,6 @@ const Subscription = require('../../models/Subscription');
 const SubscriptionBox = require('../../models/SubscriptionBox');
 const async = require('async');
 
-
-
 function startMQConnection () {
     open.connect(rabbitMQConnection())
     .then(connection => {
@@ -32,13 +30,10 @@ function startMQConnection () {
             return ch.consume(orderQueue, (msg)=> {
                 if (msg !== null) {
                     const message = JSON.parse(msg.content);
+                    const actionType = message.actionType;
                     console.log(message);
 
-                    const actionType = message.actionType;
-
-                    Subscription.findOne({
-                        subscriptionId: message.subscriptionId
-                    })
+                    Subscription.findOne({ subscriptionId: message.subscriptionId })
                     .populate({
                         path: 'user',
                         populate: { path: 'defaultShippingAddress defaultBillingAddress' }
@@ -46,8 +41,8 @@ function startMQConnection () {
                     .populate('paymentMethod')
                     .then(subscription => {
                         const country = subscription.user.defaultShippingAddress.country.toLowerCase();
+                        
                         if (!subscription.isActive) {
-                            // ack message 
                             logger.warn(`createOrder action for subscription num ${subscription.subscriptionId} is failed | subscription is not active`);
                             return ch.ack(msg);
                         }
@@ -93,8 +88,7 @@ function startMQConnection () {
 
                                     let deliverySchedules = Array.from(subscription.deliverySchedules);
                                     const lastIndexSchedule = deliverySchedules[deliverySchedules.length - 1];
-                                    //console.log(deliverySchedules);
-                                    //console.log(lastIndexSchedule);
+                                    
                                     if (lastIndexSchedule.isProcessed) {
                                         // set new schedule and create order
                                         const newDeliverySchedule = subscription.setDeliverySchedule(lastIndexSchedule.nextDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay, order.orderNumber);
@@ -103,19 +97,22 @@ function startMQConnection () {
                                         subscription.markModified('deliverySchedules');
                                         subscription.markModified('nextDeliverySchedule');
                                     }
-                                    if (lastIndexSchedule.isProcessed === false) {
-                                        // create order and assign orderNumber to lastIndexSchedule
+                                    // scenarios when first order is delivered, and 2nd order is created
+                                    // create order and assign orderNumber to lastIndexSchedule
+                                    if (lastIndexSchedule.isProcessed === false) {   
                                         deliverySchedules[deliverySchedules.length - 1].orderNumber = order.orderNumber;
-                                        //console.log(deliverySchedules);
                                         subscription.deliverySchedules = deliverySchedules;
-                                        //subscription.nextDeliverySchedule = newDeliverySchedule;
+                                        subscription.nextDeliverySchedule = deliverySchedules[deliverySchedules.length - 1];
                                         subscription.markModified('deliverySchedules');
+                                        subscription.markModified('nextDeliverySchedule');
                                     }
+
+                                    order.deliverySchedule = subscription.nextDeliverySchedule.nextDeliveryDate;
 
                                     let orderAmountPerItem = [];
                                     const items = subscription.subscribedItems;
                                     async.each(items, (item, callback)=> {
-                                        SubscriptionBox.findOne({id: item.itemId})
+                                        SubscriptionBox.findOne({ id: item.itemId })
                                         .then(subscriptionBox => {
                                         
                                             const itemAmount = {
@@ -146,12 +143,12 @@ function startMQConnection () {
                                         order.orderAmountPerItem = orderAmountPerItem;
                                         order.orderAmount=  order.setTotalAmount(order.orderAmountPerItem, 'euro');
                                         subscription.orders.push(order);
+
                                         Promise.all([
                                             order.save(),
                                             subscription.save()
                                         ]).then(values => {
                                             if (values) {
-                                                console.log(values);
                                                 logger.info(`createOrder action for subscription num ${subscription.subscriptionId} is processed | new order ${order.orderNumber}`);
                                                 return ch.ack(msg);
                                             }

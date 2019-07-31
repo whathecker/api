@@ -13,15 +13,25 @@ function getPaymentMethods (req, res, next) {
     }
 
     let payload = req.body;
-    console.log(payload)
     adyenAxios.post('/paymentMethods', payload)
         .then((response) => {
-            console.log(response.status);
             if (response.status === 200) {
+
+                let paymentMethods = [];
+                response.data.paymentMethods.forEach(e => {
+                    if (e.type !== 'sepadirectdebit') {
+                        paymentMethods.push(e);
+                    }
+                });
+                const data = {
+                    groups: response.data.groups,
+                    paymentMethods: paymentMethods
+                }
+                
                 logger.info('/paymentOptions request was successful');
-                return res.status(200).json(response.data);
+                return res.status(200).json(data);
             }
-            console.log(response.data);   
+            
         }).catch(next);
 }
 

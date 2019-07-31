@@ -143,7 +143,7 @@ function startMQConnection () {
         ]).then((ok) => {
             return ch.consume(mailQueue, (msg) => {
                 if (msg !== null) {
-                    console.log('mail message');
+                    //console.log('mail message');
                     const message = JSON.parse(msg.content);
                     const emailType = message.emailType;
                     console.log(message);
@@ -225,7 +225,7 @@ function startMQConnection () {
 
                                     axiosSendGrid.post('/mail/send', payloadToSendGrid)
                                     .then((response) => {
-                                        console.log(response);
+                                        //console.log(response);
                                         if (response.status === 202) {
                                             order.save();
                                             ch.ack(msg);
@@ -289,7 +289,7 @@ function startMQConnection () {
 
                                         axiosSendGrid.post('/mail/send', payloadToSendGrid)
                                         .then((response) => {
-                                            console.log(response);
+                                            //console.log(response);
                                             if (response.status === 202) {
                                                 subscription.save();
                                                 ch.ack(msg);
@@ -381,7 +381,7 @@ function startMQConnection () {
 
                             axiosSendGrid.post('/mail/send', payloadToSendGrid)
                             .then((response) =>{
-                                console.log(response);
+                                //console.log(response);
                                 if (response.status === 202) {
                                     ch.ack(msg);
                                     logger.info(`password reset email has delivered | ${message.email}`);
@@ -440,7 +440,7 @@ function startMQConnection () {
                             
                             axiosSendGrid.post('/mail/send', payloadToSendGrid)
                             .then((response) => {
-                                console.log(response);
+                                //console.log(response);
                                 if (response.status === 202) {
                                     ch.ack(msg);
                                     logger.info(`password reset-nouser email has devliered | ${message.email}`);
