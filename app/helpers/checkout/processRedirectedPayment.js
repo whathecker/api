@@ -93,7 +93,7 @@ function processRedirectedPayment (req, res, next) {
     let subscription = new Subscription();
     const countryInLowerCase = payloadForUser.shippingAddress.country.toLowerCase();
     subscription.subscriptionId = subscription.createSubscriptionId(currentEnv, countryInLowerCase);
-    //subscription.package = payloadPackage._id;
+
     const subscriptionItem = {
         itemId: payloadPackage.id,
         quantity: 1
@@ -107,8 +107,6 @@ function processRedirectedPayment (req, res, next) {
     order.orderNumber = null; /* updated later from response of Adyen */
     order.invoiceNumber = order.createInvoiceNumber();
     order.isSubscription = true; 
-    //order.package = payloadPackage._id;
-    //order.items = payloadPackage.items;
 
     const itemAmount = {
         itemId: payloadPackage.id,
@@ -167,6 +165,8 @@ function processRedirectedPayment (req, res, next) {
             const optinStatus = newUser.newsletterOptin;
             console.log(response.data);
 
+            // submit optin request to sendGrid 
+            // when user optted in during checkout
             if ((resultCode === "Authorised" && optinStatus) ||
                 (resultCode === "Received" && optinStatus)) {
                 
@@ -188,16 +188,17 @@ function processRedirectedPayment (req, res, next) {
                 order.orderNumber = response.data.merchantReference;
                 order.paymentMethod.type = response.data.paymentMethod;
                 billingOption.type = response.data.paymentMethod;
+    
+                const firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
+                const nextDeliverySchedule =  subscription.setDeliverySchedule(firstDeliverySchedule.nextDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
 
-                subscription.firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
-                const firstDeliveryDate = subscription.firstDeliverySchedule.nextDeliveryDate;
-                subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
                 subscription.deliverySchedules = [
-                    subscription.firstDeliverySchedule,
-                    subscription.nextDeliverySchedule
+                    firstDeliverySchedule,
+                    nextDeliverySchedule
                 ];
+
                 // add first delivery schedule in first order
-                order.deliverySchedule = firstDeliveryDate;
+                order.deliverySchedule = firstDeliverySchedule.nextDeliveryDate;
                 
                 Promise.all([
                     newUser.save(),
@@ -227,15 +228,15 @@ function processRedirectedPayment (req, res, next) {
                 order.paymentMethod.type = response.data.paymentMethod;
                 billingOption.type = response.data.paymentMethod;
                 
-                subscription.firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
-                const firstDeliveryDate = subscription.firstDeliverySchedule.nextDeliveryDate;
-                subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
+                const firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
+                const nextDeliverySchedule =  subscription.setDeliverySchedule(firstDeliverySchedule.nextDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
+
                 subscription.deliverySchedules = [
-                    subscription.firstDeliverySchedule,
-                    subscription.nextDeliverySchedule
+                    firstDeliverySchedule,
+                    nextDeliverySchedule
                 ];
                 // add first delivery schedule in first order
-                order.deliverySchedule = firstDeliveryDate;
+                order.deliverySchedule = firstDeliverySchedule.nextDeliveryDate
 
                 Promise.all([
                     newUser.save(),
@@ -266,15 +267,15 @@ function processRedirectedPayment (req, res, next) {
                 order.paymentMethod.type = response.data.paymentMethod;
                 billingOption.type = response.data.paymentMethod;
 
-                subscription.firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
-                const firstDeliveryDate = subscription.firstDeliverySchedule.nextDeliveryDate;
-                subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
+                const firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
+                const nextDeliverySchedule =  subscription.setDeliverySchedule(firstDeliverySchedule.nextDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
+
                 subscription.deliverySchedules = [
-                    subscription.firstDeliverySchedule,
-                    subscription.nextDeliverySchedule
+                    firstDeliverySchedule,
+                    nextDeliverySchedule
                 ];
                 // add first delivery schedule in first order
-                order.deliverySchedule = firstDeliveryDate;
+                order.deliverySchedule = firstDeliverySchedule.nextDeliveryDate;
 
                 Promise.all([
                     newUser.save(),
@@ -307,15 +308,15 @@ function processRedirectedPayment (req, res, next) {
                 order.paymentMethod.type = response.data.paymentMethod;
                 billingOption.type = response.data.paymentMethod;
 
-                subscription.firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
-                const firstDeliveryDate = subscription.firstDeliverySchedule.nextDeliveryDate;
-                subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
+                const firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
+                const nextDeliverySchedule =  subscription.setDeliverySchedule(firstDeliverySchedule.nextDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
+
                 subscription.deliverySchedules = [
-                    subscription.firstDeliverySchedule,
-                    subscription.nextDeliverySchedule
+                    firstDeliverySchedule,
+                    nextDeliverySchedule
                 ];
                 // add first delivery schedule in first order
-                order.deliverySchedule = firstDeliveryDate;
+                order.deliverySchedule = firstDeliverySchedule.nextDeliveryDate;
 
                 Promise.all([
                     newUser.save(),

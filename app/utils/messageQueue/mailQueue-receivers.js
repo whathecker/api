@@ -147,6 +147,7 @@ function startMQConnection () {
                     const message = JSON.parse(msg.content);
                     const emailType = message.emailType;
                     console.log(message);
+                    
                     let payloadToSendGrid = {
                         from: {
                             email: 'chokchok@hellochokchok.com'

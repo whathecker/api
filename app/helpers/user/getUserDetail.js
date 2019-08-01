@@ -34,12 +34,13 @@ async function getUserDetail (req, res, next) {
                     return 0;
                 });
 
+                // find next un-processed deliveryschedule
                 let nextDelivery = null;
                 for (let i = 0; i < sortedDeliverySchedules.length; i++) {
                     const isProcessed = sortedDeliverySchedules[i].isProcessed;
-                    const isActive = sortedDeliverySchedules[i].isActive;
+                    //const isActive = sortedDeliverySchedules[i].isActive;
 
-                    if ((isProcessed === false) && isActive) {
+                    if ((isProcessed === false)) {
                         nextDelivery = sortedDeliverySchedules[i];
                         break;
                     }
@@ -47,7 +48,6 @@ async function getUserDetail (req, res, next) {
 
                 
                 let enrichedItems = [];
-                
                 const items = user.subscriptions[0].subscribedItems;
 
                 async.each(items, function(item, callback){

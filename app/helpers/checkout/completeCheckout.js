@@ -128,16 +128,15 @@ function completeCheckout (req, res, next) {
     // set first deliverySchedule in subscription
     subscription.deliveryFrequency = 28;
     subscription.deliveryDay = 4;
-    subscription.firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
-    const firstDeliveryDate = subscription.firstDeliverySchedule.nextDeliveryDate;
-    subscription.nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
+    const firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
+    const nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliverySchedule.nextDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
     subscription.deliverySchedules = [
-        subscription.firstDeliverySchedule,
-        subscription.nextDeliverySchedule
+        firstDeliverySchedule,
+        nextDeliverySchedule
     ];
+
     // add first delivery schedule in first order
-    order.deliverySchedule = firstDeliveryDate;
-    // retrieve order for subscription
+    order.deliverySchedule = firstDeliverySchedule.nextDeliveryDate;
     subscription.orders = [order];
 
     // update user object

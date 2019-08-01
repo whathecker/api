@@ -32,7 +32,6 @@ function updateShippingStatus (req, res, next) {
             });
         }
         if (order) {
-            console.log(order);
             if (order.orderStatus.status !== 'PAID') {
                 logger.warn(`updateShippingStatus request is failed | order has not paid`);
                 return res.status(422).json({
@@ -64,21 +63,21 @@ function updateShippingStatus (req, res, next) {
                 Subscription.findById(order.user.subscriptions[0]._id)
                 .then(subscription => {
                     let deliverySchedules = Array.from(subscription.deliverySchedules);
-                    // find the order in deliverySchedules and mark it as processed
-                    deliverySchedules.forEach(deliverySchedule => {
-                        if (deliverySchedule.orderNumber === order.orderNumber) {
-                            deliverySchedule.isProcessed = true;
-                        }
-                    });
-
-                    // update processed status when shipped is firstDelivery
-                    if (order.orderNumber === subscription.firstDeliverySchedule.orderNumber) {
-                        subscription.firstDeliverySchedule.isProcessed = true;
-                        subscription.markModified('firstDeliverySchedule');
+                    
+                    // first element is always the next one to deliver
+                    if (order.orderNumber !== deliverySchedules[0].orderNumber) {
+                        // return error
+                        logger.warn(`updateShippingStatus request is failed | first order need to be shipped first`);
+                        return res.status(422).json({
+                            status: 'failed',
+                            message: 'first order need to be shipped first'
+                        });
                     }
 
-                    subscription.deliverySchedules = deliverySchedules;
-                    subscription.markModified('deliverySchedules');
+                    if (order.orderNumber === deliverySchedules[0].orderNumber) {
+                        subscription.deliverySchedules = subscription.clearFirstQueuedSchedule(deliverySchedules);
+                        subscription.markModified('deliverySchedules');
+                    }
                     
                     open.connect(rabbitMQConnection()).then(connection => {
                         connection.createChannel()

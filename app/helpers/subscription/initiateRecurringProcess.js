@@ -57,6 +57,7 @@ function initiateRecurringProcess (req, res, next) {
     //console.log(deliveryMonth);
     //console.log(deliveryYear);
     Subscription.find({
+        isActive: true
         /*
         'nextDeliverySchedule.year': deliveryYear,
         'nextDeliverySchedule.month': deliveryMonth,
@@ -79,31 +80,10 @@ function initiateRecurringProcess (req, res, next) {
             let orderBatch = [];
 
             async.each(subscriptions, (subscription, callback) => {
-                
-                
-                const orderNumber = subscription.nextDeliverySchedule.orderNumber;
-                const isProcessed = subscription.nextDeliverySchedule.isActive;
-                //const isActive = subscription.nextDeliverySchedule.isActive;
+                ßß
+                const orderNumber = subscription.deliverySchedules[0].orderNumber;
 
-                if (isProcessed === true) {
-                    logger.warn(`initiateRecurringProcess | skip ${subscription.subscriptionId} in the process | nextDeliverySchedule is marked as processed`);
-                    callback();
-                }
-                /*
-                if (isActive === false) {
-                    logger.warn(`initiateRecurringProcess | skip ${subscription.subscriptionId} in the process | nextDeliverySchedule is inactive`);
-                    callback();
-                } */
-                if (orderNumber === '') {
-                    // orderNumber is updated when prev order is shipped
-                    // when orderNumber is '' that means prev order isn't shipped
-                    // thus when orderNumber is '', it's not included in recurring batch
-                    logger.warn(`initiateRecurringProcess | skip ${subscription.subscriptionId} in the process | orderNumber has not assigned to next delivery schedule | check if first delivery has delivered`);
-                    callback();
-                }
-                
-                if (orderNumber !== '') {
-                    Order.findOne({ orderNumber: orderNumber })
+                Order.findOne({ orderNumber: orderNumber })
                     .populate('user', 'userId')
                     .then(order => {
                         if (order) {
@@ -126,8 +106,6 @@ function initiateRecurringProcess (req, res, next) {
                     .catch(error => {
                         error? next(error) : null;
                     });
-
-                }
                 
             }, (error) => {
                 if (error) {

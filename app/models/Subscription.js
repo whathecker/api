@@ -10,8 +10,7 @@ let deliveryScheduleSchema = new Schema({
     month: { type: Number },
     date: { type: Number },
     day: { type: Number },
-    isProcessed: { type: Boolean, default: false },
-    /* isActive: { type: Boolean, default: true } */
+    isProcessed: { type: Boolean, default: false }, /** this field is not in use */
 }, { _id: false });
 
 let packageSchema = new Schema({
@@ -39,8 +38,6 @@ let subscriptionSchema = new Schema({
         enum: [ 0, 1, 2, 3, 4, 5, 6],
         default: 4
     },
-    firstDeliverySchedule: deliveryScheduleSchema,
-    nextDeliverySchedule: deliveryScheduleSchema,
     deliverySchedules: [deliveryScheduleSchema],
     endDate: { type: Date },
     isWelcomeEmailSent: { type: Boolean, default: false },
@@ -91,15 +88,15 @@ Subscription.prototype.setFirstDeliverySchedule = (deliveryDay, orderNumber) => 
     const dayOfCurrentDate = dateAtMomentInObj.getDay();
     let gapBetweenDates;
 
-   
+   // find next clostest deliveryDay
     if (dayOfCurrentDate < deliveryDay) {
         gapBetweenDates = deliveryDay - dayOfCurrentDate;
     }
-
     if (dayOfCurrentDate > deliveryDay) {
         gapBetweenDates = 7 - (dayOfCurrentDate - deliveryDay);   
     }
-
+    // when order is placed on the date of deliveryDay (default: Thursday)
+    // first delivery day will be Friday as exception
     if (dayOfCurrentDate === deliveryDay) {
         gapBetweenDates = 1;
     }
@@ -108,7 +105,7 @@ Subscription.prototype.setFirstDeliverySchedule = (deliveryDay, orderNumber) => 
     const deliveryDateInObj = new Date(deliveryDateinMSeconds);
     const deliverySchedule = {
         orderNumber: orderNumber,
-        nextDeliveryDate: deliveryDateinMSeconds,
+        nextDeliveryDate: deliveryDateInObj,
         year: deliveryDateInObj.getFullYear(),
         month: deliveryDateInObj.getMonth(),
         date: deliveryDateInObj.getDate(),
@@ -125,17 +122,16 @@ Subscription.prototype.setDeliverySchedule = (prevDeliverySchdule, deliveryFrequ
     const dayOfPrevDate = prevDateInObj.getDay();
     let gapBetweenDates = 0;
     let nextDeliveryDate;
-    // adjust next delivery to deliveryDay setup
+
+    // find nextDeliveryDate
     if (dayOfPrevDate < deliveryDay) {
         gapBetweenDates = deliveryDay - dayOfPrevDate;
         nextDeliveryDate = prevDateInTime + ((deliveryFrequncy + gapBetweenDates)* 24 * 60 * 60 * 1000);
     }
-
     if (dayOfPrevDate > deliveryDay) {
         gapBetweenDates = dayOfPrevDate - deliveryDay;
         nextDeliveryDate = prevDateInTime + ((deliveryFrequncy - gapBetweenDates)* 24 * 60 * 60 * 1000);
     }
-
     if (dayOfPrevDate === deliveryDay) {
         nextDeliveryDate = prevDateInTime + ((deliveryFrequncy)* 24 * 60 * 60 * 1000);
     }
@@ -156,6 +152,19 @@ Subscription.prototype.setDeliverySchedule = (prevDeliverySchdule, deliveryFrequ
     return deliverySchedule;
 }
 
+Subscription.prototype.clearFirstQueuedSchedule = (queueItems) => {
+    const deliverySchedules = queueItems;
+    deliverySchedules.sort((a, b) => {
+        if (a.nextDeliveryDate < b.nextDeliveryDate) {
+            return -1;
+        }
+        if (a.nextDeliveryDate > b.nextDeliveryDate) {
+            return 1;
+        }
+    }).shift();
+
+    return deliverySchedules;
+}
 module.exports = Subscription;
 
 

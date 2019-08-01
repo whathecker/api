@@ -36,7 +36,7 @@ function getSubscription (req, res, next) {
                 .then((subscriptionBox) => {
 
                     if (!subscriptionBox) {
-                        logger.info('/subscriptions/subscription request returned 204 | wrong parameter')
+                        logger.info('getSubscriptionConf request has failed | wrong parameter')
                         return res.status(204).json({
                             status: 'failed',
                             message: 'wrong subscribedItemID'
@@ -44,7 +44,7 @@ function getSubscription (req, res, next) {
                     }
 
                     if (subscriptionBox) {
-                        logger.info('/subscriptions/subscription request returned 200');
+                        logger.info('getSubscriptionConf request has processed');
                         return res.status(200).json({
                             status: 'success',
                             message: 'subscription has returned',
@@ -80,8 +80,8 @@ function getSubscription (req, res, next) {
                             },
                             deliveryFrequency: subscription.deliveryFrequency,
                             deliveryDay: subscription.deliveryDay,
-                            firstDeliverySchedule: subscription.firstDeliverySchedule,
-                            nextDeliverySchedule: subscription.nextDeliverySchedule,
+                            firstDeliverySchedule: subscription.deliverySchedules[0],
+                            nextDeliverySchedule: subscription.deliverySchedules[1],
                             deliverySchedules: subscription.deliverySchedules
                         });
                     }
@@ -89,7 +89,7 @@ function getSubscription (req, res, next) {
 
                  
             } else {
-                logger.info('/subscriptions/subscription request returned 204, no data found')
+                logger.info('getSubscriptionConf request has failed | no data found')
                 return res.status(204).json({
                     status: 'failed',
                     message: 'subscription not found'

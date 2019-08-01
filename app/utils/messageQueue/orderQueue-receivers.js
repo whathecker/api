@@ -88,26 +88,20 @@ function startMQConnection () {
 
                                     let deliverySchedules = Array.from(subscription.deliverySchedules);
                                     const lastIndexSchedule = deliverySchedules[deliverySchedules.length - 1];
-                                    
-                                    if (lastIndexSchedule.isProcessed) {
-                                        // set new schedule and create order
-                                        const newDeliverySchedule = subscription.setDeliverySchedule(lastIndexSchedule.nextDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay, order.orderNumber);
+
+                                    // first element in the queue is next order to deliver
+                                    order.deliverySchedule = deliverySchedules[0].nextDeliveryDate;
+                                    // assign orderNumber to first element in the queue
+                                    subscription.deliverySchedules[0].orderNumber = order.orderNumber;
+
+                                    // when there is less than 2 elements in the queue
+                                    // create next delivery date
+                                    if (deliverySchedules.length < 2) {
+                                        const newDeliverySchedule = subscription.setDeliverySchedule(lastIndexSchedule.nextDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
                                         subscription.deliverySchedules.push(newDeliverySchedule);
-                                        subscription.nextDeliverySchedule = newDeliverySchedule;
-                                        subscription.markModified('deliverySchedules');
-                                        subscription.markModified('nextDeliverySchedule');
-                                    }
-                                    // scenarios when first order is delivered, and 2nd order is created
-                                    // create order and assign orderNumber to lastIndexSchedule
-                                    if (lastIndexSchedule.isProcessed === false) {   
-                                        deliverySchedules[deliverySchedules.length - 1].orderNumber = order.orderNumber;
-                                        subscription.deliverySchedules = deliverySchedules;
-                                        subscription.nextDeliverySchedule = deliverySchedules[deliverySchedules.length - 1];
-                                        subscription.markModified('deliverySchedules');
-                                        subscription.markModified('nextDeliverySchedule');
                                     }
 
-                                    order.deliverySchedule = subscription.nextDeliverySchedule.nextDeliveryDate;
+                                    subscription.markModified('deliverySchedules');
 
                                     let orderAmountPerItem = [];
                                     const items = subscription.subscribedItems;
