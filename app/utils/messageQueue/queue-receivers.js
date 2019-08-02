@@ -337,7 +337,7 @@ function startMQConnection () {
 
                 if (msg !== null) {
                     const message = JSON.parse(msg.content);
-                    console.log(message);
+                    //console.log(message);
                     console.log(message.notificationItems[0]);
                     // refactor this part
                     const merchanRef = message.notificationItems[0].NotificationRequestItem.merchantReference;
@@ -350,12 +350,10 @@ function startMQConnection () {
                         Order.findOne({ orderNumber: merchanRef })
                         .then((order) => {
                             if (order) {
-                                console.log(order);
                                 processNotificationCheckout(message, order);
                                 return ch.ack(msg);
                             } else if (!order && msg.properties.headers['x-death']){
-                                console.log(msg);
-                                console.log(msg.properties.headers);
+                                
                                 const retryCount = msg.properties.headers['x-death'][0].count;
                                 if (retryCount <= 5) {
                                     return ch.nack(msg, false, false);
@@ -375,7 +373,6 @@ function startMQConnection () {
                     if (merchanRef.length === 13) {
                         Billing.findOne({ billingId: merchanRef })
                         .then((billingOption) => {
-                            console.log(billingOption);
 
                             if (billingOption) {
                                 processNotificationNonCheckout(message, billingOption);

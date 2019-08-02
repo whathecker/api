@@ -80,15 +80,20 @@ function initiateRecurringProcess (req, res, next) {
             let orderBatch = [];
 
             async.each(subscriptions, (subscription, callback) => {
-                ßß
+                
                 const orderNumber = subscription.deliverySchedules[0].orderNumber;
+                if (!subscription.isActive) {
+                    // skip inactive subscription from recurring process
+                    callback();
+                }
 
-                Order.findOne({ orderNumber: orderNumber })
+                if (subscription.isActive) {
+                    Order.findOne({ orderNumber: orderNumber })
                     .populate('user', 'userId')
                     .then(order => {
                         if (order) {
                             const orderStatus = order.orderStatus.status;
-
+    
                             // orders are batched only when status is either RECEIVED or OVERDUE
                             if (orderStatus === "RECEIVED" || orderStatus === "OVERDUE") {
                                 const orderToProcess = {
@@ -106,7 +111,8 @@ function initiateRecurringProcess (req, res, next) {
                     .catch(error => {
                         error? next(error) : null;
                     });
-                
+                }
+                          
             }, (error) => {
                 if (error) {
                     next(error);

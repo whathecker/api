@@ -104,7 +104,7 @@ Subscription.prototype.setFirstDeliverySchedule = (deliveryDay, orderNumber) => 
     const deliveryDateinMSeconds = dateAtMoment + (gapBetweenDates * 24 * 60 * 60 * 1000);
     const deliveryDateInObj = new Date(deliveryDateinMSeconds);
     const deliverySchedule = {
-        orderNumber: orderNumber,
+        orderNumber: orderNumber? orderNumber : '',
         nextDeliveryDate: deliveryDateInObj,
         year: deliveryDateInObj.getFullYear(),
         month: deliveryDateInObj.getMonth(),
