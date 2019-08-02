@@ -2,7 +2,7 @@ const logger = require('../../utils/logger');
 const User = require('../../models/User');
 const axiosSendGrid = require('../../../axios-sendgrid');
 const axiosTruemail = require('../../../axios-truemail');
-const axiosSlackTruemail = require('../../../axios-slack-truemail');
+const errorDispatchers = require('../../utils/errorDispatchers/errorDispatchers');
 
 function optinToNewsletter (req, res, next) {
     const email = req.body.email;
@@ -17,9 +17,7 @@ function optinToNewsletter (req, res, next) {
 
     if (email) {
 
-        const sendGridpayload = {
-            contacts: [{ email: email }]
-        };
+        const sendGridpayload = { contacts: [{ email: email }] };
 
         User.findOne({ email: email })
         .then((user) => {
@@ -39,7 +37,6 @@ function optinToNewsletter (req, res, next) {
                             result: 'failed',
                             message: 'invalid email address'
                         });
-
                     }
 
                     // optin user when email is valid 
@@ -48,29 +45,12 @@ function optinToNewsletter (req, res, next) {
                     if (status === "throttle_triggered" ||
                         (status === "success" && result === "valid")) {
                         
-
-                        if (status === "throttle_triggered") {
-                            logger.warn('truemail api rate exceeded');
-                            const payload = {
-                                text: "Truemail API credit limit is reached!",
-                                attachments: [
-                                    {
-                                        fallback: "Charge your Truemail API credit",
-                                        author_name: "Chokchok",
-                                        title: "Please charge more TrueMail API credit",
-                                        text: "visit https://truemail.io/ and sign-in to admin account, buy more credit"
-                                    }
-                                ]
-                            }
-                            axiosSlackTruemail.post('', payload)
-                            .then((response) => {
-                            }).catch(next);
-                        }
+                        status === "throttle_triggered"? 
+                            errorDispatchers.dispatchTruemailRatelimitError() : null;
+    
                         
-
                         axiosSendGrid.put('/marketing/contacts', sendGridpayload)
                         .then((response) => {
-                            //console.log(response);
 
                             if (response.status === 202) {
                                 logger.info(`optinToNewsletter request has processed | ${email}`);
@@ -80,8 +60,10 @@ function optinToNewsletter (req, res, next) {
                                 });
                             }
                             
-
-                        }).catch(next);
+                        }).catch(error => {
+                            errorDispatchers.dispatchSendGridOptinError(error);
+                            next(error);
+                        });
                         
                     }
                 }).catch(next);
@@ -116,7 +98,10 @@ function optinToNewsletter (req, res, next) {
                         }).catch(next);
                     } 
                 
-                }).catch(next);
+                }).catch(error => {
+                    errorDispatchers.dispatchSendGridOptinError(error);
+                    next(error);
+                });
             }
 
         }).catch(next);

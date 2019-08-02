@@ -4,9 +4,9 @@ const open = require('amqplib');
 const rabbitMQConnection = require('./rabbitMQConnector');
 const logger = require('../logger');
 const axiosSendGrid = require('../../../axios-sendgrid');
-const axiosSlackSendgrid = require('../../../axios-slack-sendgrid');
 const Subscription = require('../../models/Subscription');
 const Order = require('../../models/Order');
+const errorDispatchers = require('../errorDispatchers/errorDispatchers');
 
 /**
  * private function: convertDeliveryFrequency
@@ -96,30 +96,6 @@ function concatTrackingNums (trackingNums) {
     }
 }
 
-function dispatchErrorToSlack (error, emailType) {
-    const payload = {
-        text: `${emailType} email delivery has failed`,
-        attachments: [
-            {
-                fallback: "Investigate undelivered email issue",
-                author_name: "Chokchok",
-                title: "Please investigate cause of delivery failure",
-                text: JSON.stringify(error.response)
-            }
-        ]
-    }
-
-    axiosSlackSendgrid.post('', payload)
-    .then((response) => {
-        if (response.status === 200) {
-            logger.info('error messaage has posted to Slack channel');
-        }
-    }).catch((error) => {
-        if (error) {
-            logger.warn(`failed to post error message to Slack`);
-        }
-    });
-}
 
 function startMQConnection () {
     open.connect(rabbitMQConnection())
@@ -236,7 +212,7 @@ function startMQConnection () {
                                     }).catch((error) => {
 
                                         if (error) {
-                                            dispatchErrorToSlack(error, emailType);
+                                            errorDispatchers.dispatchSendGridEmailError(error, emailType);
                                             logger.warn(`shippongConf email delivery has failed | subscriptionId: ${message.orderNumber} email: ${message.email}`);
                                             return ch.nack(msg, false, false);
                                         }
@@ -251,6 +227,11 @@ function startMQConnection () {
                             Subscription.findOne({ subscriptionId: message.subscriptionId })
                             .then((subscription) => {
                                 if (subscription) {
+
+                                    if (subscription.isWelcomeEmailSent === true) {
+                                        logger.info(`welcome email has already delivered | subscriptionId: ${message.subscriptionId} email: ${message.email}`);
+                                        return ch.ack(msg);
+                                    }
 
                                     // update status of email sent to true
                                     if (subscription.isWelcomeEmailSent === false) {
@@ -298,45 +279,15 @@ function startMQConnection () {
                                                 return;
                                             }
                                         }).catch((error) => {
-
+                                            
                                             if (error) {
-                                                const payload = {
-                                                    text: `${emailType} email delivery has failed`,
-                                                    attachments: [
-                                                        {
-                                                            fallback: "Investigate undelivered email issue",
-                                                            author_name: "Chokchok",
-                                                            title: "Please investigate cause of delivery failure",
-                                                            text: JSON.stringify(error.response)
-                                                        }
-                                                    ]
-                                                }
-
-                                                axiosSlackSendgrid.post('', payload)
-                                                .then((response) => {
-                                                    if (response.status === 200) {
-                                                        logger.info('error messaage has posted to Slack channel');
-                                                    }
-                                                }).catch((error) => {
-                                                    if (error) {
-                                                        logger.warn(`failed to post error message to Slack`);
-                                                    }
-                                                });
-
+                                                errorDispatchers.dispatchSendGridEmailError(error, emailType);
                                                 logger.warn(`welcome email delivery has failed | subscriptionId: ${message.subscriptionId} email: ${message.email}`);
                                                 return ch.nack(msg, false, false);
                                             }
-
                                         });
                                     }
 
-                                    else if (subscription.isWelcomeEmailSent === true) {
-                                        logger.info(`welcome email has already delivered | subscriptionId: ${message.subscriptionId} email: ${message.email}`);
-                                        ch.ack(msg);
-                                        return;
-                                    }
-
-                                    // save update to DB and call sendGrid
                                 }
                                 if (!subscription) {
                                     
@@ -384,41 +335,15 @@ function startMQConnection () {
                             .then((response) =>{
                                 //console.log(response);
                                 if (response.status === 202) {
-                                    ch.ack(msg);
                                     logger.info(`password reset email has delivered | ${message.email}`);
-                                    return;
+                                    return ch.ack(msg);
                                 }
                             }).catch((error) => {
-
                                 if (error) {
-                                    const payload = {
-                                        text: `${emailType} email delivery has failed`,
-                                        attachments: [
-                                            {
-                                                fallback: "Investigate undelivered email issue",
-                                                author_name: "Chokchok",
-                                                title: "Please investigate cause of delivery failure",
-                                                text: JSON.stringify(error.response)
-                                            }
-                                        ]
-                                    }
-
-                                    axiosSlackSendgrid.post('', payload)
-                                    .then((response) => {
-                                        if (response.status === 200) {
-                                            logger.info('error messaage has posted to Slack channel');
-                                        }
-                                    }).catch((error) => {
-                                        if (error) {
-                                            logger.warn(`failed to post error message to Slack`);
-                                        }
-                                    });
-
+                                    errorDispatchers.dispatchSendGridEmailError(error, emailType);
                                     logger.warn(`password reset email delivery has failed | ${message.email}`);
                                     return ch.nack(msg, false, false);
                                 }
-
-
                             });
                         break;
 
@@ -443,40 +368,15 @@ function startMQConnection () {
                             .then((response) => {
                                 //console.log(response);
                                 if (response.status === 202) {
-                                    ch.ack(msg);
                                     logger.info(`password reset-nouser email has devliered | ${message.email}`);
-                                    return;
+                                    return ch.ack(msg);
                                 }
                             }).catch((error) => {
-
                                 if (error) {
-                                    const payload = {
-                                        text: `${emailType} email delivery has failed`,
-                                        attachments: [
-                                            {
-                                                fallback: "Investigate undelivered email issue",
-                                                author_name: "Chokchok",
-                                                title: "Please investigate cause of delivery failure",
-                                                text: JSON.stringify(error.response)
-                                            }
-                                        ]
-                                    }
-
-                                    axiosSlackSendgrid.post('', payload)
-                                    .then((response) => {
-                                        if (response.status === 200) {
-                                            logger.info('error messaage has posted to Slack channel');
-                                        }
-                                    }).catch((error) => {
-                                        if (error) {
-                                            logger.warn(`failed to post error message to Slack`);
-                                        }
-                                    });
-
+                                    errorDispatchers.dispatchSendGridEmailError(error, emailType);
                                     logger.warn(`password reset-nouser email delivery has failed | ${message.email}`);
                                     return ch.nack(msg, false, false);
                                 }
-                                
                             });
                         break;
                     }

@@ -7,12 +7,11 @@ const crypto = require('crypto');
 const logger = require('../../utils/logger');
 const adyenAxios = require('../../../axios-adyen');
 const axiosSendGrid = require('../../../axios-sendgrid');
+const errorDispatchers = require('../../utils/errorDispatchers/errorDispatchers');
 
 
 function isAddressesSame (billingAddress, shippingAddress) {
-
     let compareResult = true;
-
     for (let prop in shippingAddress) {
         if (shippingAddress[prop] !== billingAddress[prop]) {
             compareResult = false;
@@ -170,17 +169,19 @@ function processRedirectedPayment (req, res, next) {
             if ((resultCode === "Authorised" && optinStatus) ||
                 (resultCode === "Received" && optinStatus)) {
                 
-                const payload = [{ email: newUser.email }];
-                axiosSendGrid.post('/contactdb/recipients', payload)
-                .then((response) => {
-                    const newCount = response.data.new_count;
-                    if (response.status === 201 && newCount === 0) {
-                        logger.info(`user has already optted-in (checkout) | ${newUser.email}`);
+                const payload = {
+                    contacts: [{ email: newUser.email }]
+                };
+
+                axiosSendGrid.put('/marketing/contacts', payload)
+                .then(response => {
+                    if (response.status === 202) {
+                        logger.info(`successfully send optin request to sendGrid`);
                     }
-                    if (response.status === 201 && newCount === 1) {
-                        logger.info(`user has been optted-in to newsletter (checkout) ${newUser.email}`);
-                    }
-                }).catch(next);
+                }).catch(error => {
+                    errorDispatchers.dispatchSendGridOptinError(error);
+                    next(error);
+                });
             }
 
             if (resultCode === "Authorised" && addressComparison === true) {

@@ -1,7 +1,7 @@
 const User = require('../../models/User');
 const logger = require('../../utils/logger');
 const axiosTrueMail = require('../../../axios-truemail');
-const axiosSlackTrueMail = require('../../../axios-slack-truemail');
+const errorDispatchers = require('../../utils/errorDispatchers/errorDispatchers');
 
 function checkDuplicateEmail (req, res, next) {
     // find if account exist with email address
@@ -39,29 +39,13 @@ function checkDuplicateEmail (req, res, next) {
                         if (status === "throttle_triggered") {
 
                             logger.warn('truemail api rate exceeded');
-
-                            const payload = {
-                                text: `Truemail API credit limit is reached! (checkout)`,
-                                attachments: [
-                                    {
-                                        fallback: "Charge your Truemail API credit",
-                                        author_name: "Chokchok",
-                                        title: `Please charge more TrueMail API credit | and check this email ${email}`,
-                                        text: "visit https://truemail.io/ and sign-in to admin account, buy more credit"
-                                    }
-                                ]
-                            }
-                            axiosSlackTrueMail.post('', payload)
-                            .then((response) => {
-                                if (response) {
-                                    logger.warn(`validateEmail request has processed but failed to get verification from TrueMail, check if ${email} is valid with user | check Truemail credit`);
-                                    return res.status(200).json({
-                                        status: "success",
-                                        result: "no_result",
-                                        message: "email validation failed - rate exceed"
-                                    });
-                                }
-                            }).catch(next);
+                            errorDispatchers.dispatchTruemailRatelimitError(email);
+                            logger.warn(`validateEmail request has processed but failed to get verification from TrueMail, check if ${email} is valid with user | check Truemail credit`);
+                            return res.status(200).json({
+                                status: "success",
+                                result: "no_result",
+                                message: "email validation failed - rate exceed"
+                            });
                         }
 
                         if (status === "success" && result === "invalid") {
@@ -84,30 +68,13 @@ function checkDuplicateEmail (req, res, next) {
 
                         if (status === "general_failure" || status === "temp_unavail") {
                             logger.warn('truemail api return error: ' + status);
-
-                            const payload = {
-                                text: `Truemail API returned error (checkout)`,
-                                attachments: [
-                                    {
-                                        fallback: "Check with Truemail Support",
-                                        author_name: "Chokchok",
-                                        title: `Following email: ${email}, is unverified due to TrueMail API error`,
-                                        text: "Double check if email address is legit, contact TrueMail support for error in API"
-                                    }
-                                ]
-                            }
-
-                            axiosSlackTrueMail.post('', payload)
-                            .then((response) => {
-                                if (response) {
-                                    logger.warn(`validateEmail request has processed but failed to get verification from TrueMail, check if ${email} is valid with user | check Truemail API Error`);
-                                    return res.status(200).json({
-                                        status: "success",
-                                        result: "no_result",
-                                        message: "email validation failed - error"
-                                    });
-                                }
-                            }).catch(next);
+                            errorDispatchers.dispatchTruemailError(email);
+                            logger.warn(`validateEmail request has processed but failed to get verification from TrueMail, check if ${email} is valid with user | check Truemail API Error`);
+                            return res.status(200).json({
+                                status: "success",
+                                result: "no_result",
+                                message: "email validation failed - error"
+                            });
                             
                         }
 
