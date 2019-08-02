@@ -106,6 +106,11 @@ function generateInvoiceInfo (doc, invoiceNumber, creationDate, shippedDate) {
     const month = convertMonthToString(creationDateInTime.getMonth());
     const date = set2DigitsDate(creationDateInTime.getDate());
 
+    const shippedDateInTime = new Date(shippedDate);
+    const shippedYear = shippedDateInTime.getFullYear().toString();
+    const shippedMonth = convertMonthToString(shippedDateInTime.getMonth());
+    const shippedDay = set2DigitsDate(shippedDateInTime.getDate());
+
     // add shipped date later
     
     doc.fontSize(10)
@@ -116,7 +121,7 @@ function generateInvoiceInfo (doc, invoiceNumber, creationDate, shippedDate) {
     .font('Courier')
     .text(`${invoiceNumber}`, 160, 350, { align: "left"})
     .text(`${date} ${month} ${year}`, 160, 368, { align: "left"})
-    .text('Delivery date val', 160, 386, { align: "left"});
+    .text(`${shippedDay} ${shippedMonth} ${shippedYear}`, 160, 386, { align: "left" });
 }
 
 function generateTableHeader (doc) {
@@ -224,7 +229,7 @@ function getUserInvoice (req, res , next) {
 
                 res.set({
                     'Content-Type': 'application/pdf',
-                    'Content-Disposition': 'attachment; filename=example.pdf',
+                    'Content-Disposition': `attachment; filename=${order.invoiceNumber}.pdf`,
                     "Access-Control-Expose-Headers": 'Content-Disposition'
                 });
                 doc.end();

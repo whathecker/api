@@ -6,6 +6,7 @@ const logger = require('../logger');
 const Order = require('../../models/Order');
 const Subscription = require('../../models/Subscription');
 const SubscriptionBox = require('../../models/SubscriptionBox');
+const User = require('../../models/User');
 const async = require('async');
 
 function startMQConnection () {
@@ -137,24 +138,32 @@ function startMQConnection () {
                                         order.orderAmountPerItem = orderAmountPerItem;
                                         order.orderAmount=  order.setTotalAmount(order.orderAmountPerItem, 'euro');
                                         subscription.orders.push(order);
+                                        const user_id = subscription.user._id;
 
-                                        Promise.all([
-                                            order.save(),
-                                            subscription.save()
-                                        ]).then(values => {
-                                            if (values) {
-                                                logger.info(`createOrder action for subscription num ${subscription.subscriptionId} is processed | new order ${order.orderNumber}`);
-                                                return ch.ack(msg);
-                                            }
+                                        User.findById(user_id)
+                                        .then(user => {
+                                            user.orders.push(order);
+                                            user.markModified('orders');
                                             
-                                        }).catch(error => {
-                                            if (error) {
-                                                // fire message to Slack
-                                                console.log(error);
-                                                logger.error(`createOrder action for subscription num ${subscription.subscriptionId} is failed | failed to save updates in db`);
-                                                return ch.nack(msg, false, false);
-                                            } 
-                                        });
+                                            Promise.all([
+                                                order.save(),
+                                                subscription.save(),
+                                                user.save()
+                                            ]).then(values => {
+                                                if (values) {
+                                                    logger.info(`createOrder action for subscription num ${subscription.subscriptionId} is processed | new order ${order.orderNumber}`);
+                                                    return ch.ack(msg);
+                                                }
+                                                
+                                            }).catch(error => {
+                                                if (error) {
+                                                    // fire message to Slack
+                                                    console.log(error);
+                                                    logger.error(`createOrder action for subscription num ${subscription.subscriptionId} is failed | failed to save updates in db`);
+                                                    return ch.nack(msg, false, false);
+                                                } 
+                                            });
+                                        }).catch(console.warn);
 
                                     });
                                     

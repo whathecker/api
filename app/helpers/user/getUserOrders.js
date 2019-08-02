@@ -9,8 +9,9 @@ function getUserOrders (req, res, next) {
         .then((user) => {
             if (user) {
                 let orders = [];
+                
                 for (let i = 0; i < user.orders.length; i++) {
-                    console.log(user.orders[i]);
+                    //console.log(user.orders[i]);
                     const order = {
                         orderNumber: user.orders[i].orderNumber,
                         isSubscription: user.orders[i].isSubscription,
