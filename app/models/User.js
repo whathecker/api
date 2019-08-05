@@ -1,7 +1,7 @@
-const mongoose = require('mongoose'),
-    uniqueValidator = require('mongoose-unique-validator'),
-    Schema = mongoose.Schema,
-    crypto = require('crypto');
+const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
+const Schema = mongoose.Schema;
+const crypto = require('crypto');
 
 let userSchema = new Schema({
     email: { 
@@ -50,7 +50,9 @@ function create5DigitInteger () {
     const num = Math.floor(Math.random() * 90000) + 10000;
     return num.toString();
 }
-
+User.prototype.setSalt = () => {
+    return crypto.randomBytes(64).toString('hex');
+}
 User.prototype.setPassword = (user, password) => {
     return crypto.pbkdf2Sync(password, user.salt, 10000, 512, 'sha512').toString('hex');
 }
