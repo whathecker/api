@@ -1,9 +1,10 @@
 const axios = require('axios');
 
 let hostURL = null;
-
+let apikey;
 if (process.env.NODE_ENV === "local" || process.env.NODE_ENV === "development") {
     hostURL = 'https://checkout-test.adyen.com/checkout/v40';
+    apikey = process.env.ADYEN_APIKEY_TEST;
 }
 
 if (process.env.NODE_ENV === "production") {
@@ -20,7 +21,7 @@ instance = axios.create({
     baseURL: hostURL,
     headers: {
         'Content-Type': 'application/json',
-        'X-API-key': 'AQEjhmfuXNWTK0Qc+iSTmmszhOyUQxykUnrll3IX+Lj+mqAVq/4QwV1bDb7kfNy1WIxIIkxgBw==-Ff5ZXyIPtq03CJYXGhAvNZAHFihCNFHxVHdnH8hxlNQ=-vz6MLItG3TDKs92z',
+        'X-API-key': apikey,
         'Access-Control-Allow-Origin': '*'
     }
 });

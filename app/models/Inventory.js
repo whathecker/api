@@ -1,5 +1,5 @@
-const mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 let inventorySchema = new Schema({
     product: { type: Schema.Types.ObjectId, ref: 'Product' },

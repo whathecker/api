@@ -2,8 +2,12 @@ const axios = require('axios');
 
 let hostURL = null;
 
+let basicAuthUsername;
+let basicAuthPassword;
 if (process.env.NODE_ENV === "local" || process.env.NODE_ENV === "development") {
     hostURL = 'https://pal-test.adyen.com/pal/servlet/Recurring/V16';
+    basicAuthUsername = process.env.ADYEN_BASIC_AUTH_USERNAME_TEST;
+    basicAuthPassword = process.env.ADYEN_BASIC_AUTH_PASSWORD_TEST;
 }
 
 if (process.env.NODE_ENV === "production") {
@@ -23,8 +27,8 @@ instance = axios.create({
         'Access-Control-Allow-Origin': '*'
     },
     auth: {
-        username: 'ws@Company.ChokChok',
-        password: '7kI>jt&t1>%(^@41J~{qK*&V+'
+        username: basicAuthUsername,
+        password: basicAuthPassword
     }
 });
 

@@ -8,8 +8,6 @@ function getAddressDetail (req, res, next) {
     const houseNumber = req.body.houseNumber;
 
     //return res.status(400).end();
-
-    
     if (!postalCode || !houseNumber) {
 
         logger.warn('/checkout/address request returned 422 as postalCode or houseNumber param is missing');

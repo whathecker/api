@@ -1,6 +1,15 @@
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 
+let secret;
+if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+    secret = process.env.ADMIN_AUTH_SECRET_TEST;
+}
+
+if (process.env.NODE_ENV === 'production') {
+    secret = process.env.ADMIN_AUTH_SECRET_PROD;
+}
+
 function isAdminAuth (req, res, next) {
 
     const cookies = req.headers.cookie;
@@ -16,7 +25,7 @@ function isAdminAuth (req, res, next) {
     if (cookies) {
         const splitedCookies = cookies.split('; ');
         let token;
-        const tokenSecret = 'secret';
+        const tokenSecret = secret;
 
         for (let i = 0; i < splitedCookies.length; i++) {
             const cookieName = splitedCookies[i].split('=')[0];

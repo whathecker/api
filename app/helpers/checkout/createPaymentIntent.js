@@ -1,5 +1,5 @@
-const stripe = require('stripe')('sk_test_aDx9AJdnvPc6iQqGXVsrILEy00LfAdcOv1');
 const stripeHelpers = require('../../utils/stripe/stripeHelpers');
+const stripe = require('stripe')(stripeHelpers.retrieveApikey(process.env.NODE_ENV));
 const logger = require('../../utils/logger');
 
 async function createPaymentIntent (req, res, next) {

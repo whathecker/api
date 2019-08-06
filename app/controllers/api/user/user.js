@@ -63,7 +63,7 @@ if (isLocal) {
           domain: '.hellochokchok.com'
         },
         name: 'session',
-        secret: "B!DP7d#8hU^wMT+S",
+        secret: process.env.USER_AUTH_COOKIE_SECRET_PROD,
         saveUninitialized: false,
         resave: true,
         rolling: true,

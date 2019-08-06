@@ -10,9 +10,14 @@ const retryEx = 'notification-retry';
 
 function checkAdyenBasicAuth(credentials) {
     let isAuth = false;
-    if (credentials.name === 'chokchok-test' && 
-        credentials.pass === 'thisistestendpoint'
-    ) {
+    let username;
+    let password;
+    if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development'){
+        username = process.env.ADYEN_NOTIFICATION_AUTH_USERNAME_TEST;
+        password = process.env.ADYEN_NOTIFICATION_AUTH_PASSWORD_TEST;
+    }
+    
+    if (credentials.name === username && credentials.pass === password) {
         isAuth = true;
     }
     return isAuth;

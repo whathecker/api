@@ -1,6 +1,6 @@
-const mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    uniqueValidator = require('mongoose-unique-validator');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const uniqueValidator = require('mongoose-unique-validator');
 
 let apikeySchema = new Schema({
     name: { type: String, lowercase: true, required: [ true, 'apikey name cannot be blank' ], unique: true },

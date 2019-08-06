@@ -16,7 +16,7 @@ function resetPassword (req, res, next) {
 
     User.findOne({ pwdResetToken: token })
     .then((user) => {
-        const tokenSecret = "5rYIkazQmdGwfDN1Y2BhAUZLgad25DUI";
+        const tokenSecret = process.env.FORGOT_PWD_LINK_SECRET;
 
         if (!user) {
             logger.warn(`resetPassword request has failed | no user was found`);

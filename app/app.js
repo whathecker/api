@@ -8,6 +8,8 @@ const dbString = connector.getDBString();
 const helmet = require('helmet');
 const app = express();
 
+// load env variables
+require('dotenv').config();
 
 const dbOptions = {
     connectTimeoutMS: 30000, // Give up initial connection after 30 seconds

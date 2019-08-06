@@ -5,7 +5,7 @@ module.exports = function () {
     if (envVar === "local") {
         return 'amqp://guest:guest@localhost:5672/';
     } else {
-        return 'amqp://rabbitmq:rabbitmq@rabbitmq:5672/';
+        return `amqp://${process.env.RABBITMQ_USERNAME}:${process.env.RABBITMQ_PASSWORD}@rabbitmq:5672/`;
     }
 
 }

@@ -32,7 +32,7 @@ function sendForgotPasswordEmail (req, res, next) {
         if (user) {
             req.body.firstName = user.firstName;
             req.body.emailType = 'forgotpwd';  
-            const tokenSecret = "5rYIkazQmdGwfDN1Y2BhAUZLgad25DUI";
+            const tokenSecret = process.env.FORGOT_PWD_LINK_SECRET;
             // jwt expired in 6 hours
             const pwdResetToken = jwt.sign({
                 user_id: user._id

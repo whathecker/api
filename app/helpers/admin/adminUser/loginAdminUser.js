@@ -5,6 +5,10 @@ const logger = require('../../../utils/logger');
 const isLocal = process.env.NODE_ENV === "local";
 const isDevelopment = process.env.NODE_ENV === "development";
 const isProduction = process.env.NODE_ENV === "production";
+let secret;
+
+(isLocal || isDevelopment)? secret = process.env.ADMIN_AUTH_SECRET_TEST: null;
+(isProduction)? secret = process.env.ADMIN_AUTH_SECRET_PROD: null;
 
 
 function loginAdminUser (req, res, next) {
@@ -32,7 +36,7 @@ function loginAdminUser (req, res, next) {
                 return next(err) 
             };
         
-            const token = jwt.sign(JSON.stringify(payload), 'secret');
+            const token = jwt.sign(JSON.stringify(payload), secret);
 
             let cookieOption;
 

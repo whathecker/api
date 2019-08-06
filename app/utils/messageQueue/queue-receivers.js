@@ -10,11 +10,11 @@ const axiosSlackNotification = require('../../../axios-slack-notification');
 
 
 function processNotificationCheckout (notification, order) {
-    console.log(notification.notificationItems[0]);
+    //console.log(notification.notificationItems[0]);
     const eventCode = notification.notificationItems[0].NotificationRequestItem.eventCode;
     const isSuccess = notification.notificationItems[0].NotificationRequestItem.success;
-    console.log(eventCode);
-    console.log(isSuccess);
+    //console.log(eventCode);
+    //console.log(isSuccess);
 
     if (eventCode === "AUTHORISATION" && isSuccess === "true") {
         const paymentStatusUpdate = { status: 'AUTHORIZED'};

@@ -1,7 +1,7 @@
-const mongoose = require('mongoose'),
-    Schema =  mongoose.Schema,
-    uniqueValidator = require('mongoose-unique-validator'),
-    subscriptionPrefixes = require('../utils/subscriptionPrefixes');
+const mongoose = require('mongoose');
+const Schema =  mongoose.Schema;
+const uniqueValidator = require('mongoose-unique-validator');
+const subscriptionPrefixes = require('../utils/subscriptionPrefixes');
 
 let deliveryScheduleSchema = new Schema({
     orderNumber: { type: String },
