@@ -42,7 +42,14 @@ app.use(morgan('dev'));
 app.use(cors(corsOptions));
 (isDevelopment || isProduction)? app.set('trust proxy', 1): null;
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+    verify: (req, res, buf) =>{
+        const url = req.originalUrl;
+        if (url.startsWith('/checkout/payment/hook')) {
+            req.rawBody = buf.toString();
+        }
+    }
+}));
 
 
 // MQ receivers
@@ -51,6 +58,7 @@ require('./utils/messageQueue/mailQueue-receivers');
 require('./utils/messageQueue/inventoryQueue-receivers');
 require('./utils/messageQueue/orderQueue-receivers');
 require('./utils/messageQueue/recurringQueue-receivers');
+require('./utils/messageQueue/stripeQueue-receivers');
 
 // mount routes
 app.use(require('./controllers'));

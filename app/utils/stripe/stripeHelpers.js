@@ -16,5 +16,16 @@ module.exports = {
             }
         }
         return compareResult;
+    },
+    getEndpointSecret: (env) => {
+        let secret;
+        if (env === "local" || env === "development") {
+            secret = 'whsec_ru7wHcteQ9hMXzixtiEqa5zgcWZXBz2F';
+        }
+
+        if (env === "production") {
+            // add production secret
+        }
+        return secret;
     }
 }

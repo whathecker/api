@@ -26,6 +26,8 @@ async function completeCheckoutStripe (req, res, next) {
 
     // create customer on Stripe
     const stripeCustomer = await stripe.customers.create({
+        email: userDetail.email,
+        name: `${userDetail.firstName} ${userDetail.lastName}`,
         payment_method: paymentIntent.payment_method,
     });
     console.log(stripeCustomer);
@@ -133,20 +135,19 @@ async function completeCheckoutStripe (req, res, next) {
         type: paymentMethod, 
         recurringDetail: paymentIntent.payment_method /** adyen field - not used in Stripe */
     };
-    order.paymentStatus = { status: 'OPEN' };
-    order.orderStatus = { status: 'RECEIVED' };
-    order.paymentHistory.push(order.paymentStatus);
-    order.orderStatusHistory.push(order.orderStatus)  
+    const firstPaymentStatus = { status: 'OPEN', timestamp: Date.now()};
+    const firstOrderStatus = { status: 'RECEIVED', timestamp: Date.now()};
+    order.paymentStatus = { status: 'PAID', timestamp: Date.now()};
+    order.orderStatus = { status: 'AUTHORIZED', timestamp: Date.now()};
+    order.paymentHistory = [firstPaymentStatus, order.paymentStatus];
+    order.orderStatusHistory = [firstOrderStatus, order.orderStatus];
 
     // set first deliverySchedule in subscription
     subscription.deliveryFrequency = 28;
     subscription.deliveryDay = 4;
     const firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
     const nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliverySchedule.nextDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
-    subscription.deliverySchedules = [
-        firstDeliverySchedule,
-        nextDeliverySchedule
-    ];
+    subscription.deliverySchedules = [firstDeliverySchedule, nextDeliverySchedule];
     // add first delivery schedule in first order
     order.deliverySchedule = firstDeliverySchedule.nextDeliveryDate;
     subscription.orders = [order];

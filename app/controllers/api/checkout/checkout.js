@@ -9,6 +9,7 @@ const getSubscriptionConf = require('../../../helpers/checkout/getSubscriptionCo
 const apiAuth = require('../../../middlewares/verifyApikey');
 const createPaymentIntent = require('../../../helpers/checkout/createPaymentIntent');
 const completeCheckoutStripe = require('../../../helpers/checkout/completeCheckoutStripe');
+const handleStripeWebhook = require('../../../helpers/checkout/handleStripeWebhook');
 
 // endpoint to check if email is associated with account or not
 router.post('/email', apiAuth, validateEmail); 
@@ -16,6 +17,7 @@ router.post('/email', apiAuth, validateEmail);
 router.post('/address', apiAuth, getAddressDetail);
 router.post('/payment/session', apiAuth, createPaymentIntent); 
 router.post('/payment/confirmation', apiAuth, completeCheckoutStripe);
+router.post('/payment/hook',handleStripeWebhook);
 
 router.post('/paymentOptions', apiAuth, getPaymentMethods);
 router.post('/payment', apiAuth, completeCheckout);
