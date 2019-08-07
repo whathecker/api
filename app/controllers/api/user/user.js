@@ -24,6 +24,7 @@ const getResetPasswordToken = require('../../../helpers/user/getResetPasswordTok
 const getUserOrders = require('../../../helpers/user/getUserOrders');
 const getUserInvoice = require('../../../helpers/user/getUserInvoice');
 const getUserBillings = require('../../../helpers/user/getUserBillings');
+const getUserBillingsStripe = require('../../../helpers/user/getUserBillingsStripe');
 const addUserBilling = require('../../../helpers/user/addUserBilling');
 const addRedirectedBilling = require('../../../helpers/user/addRedirectedBilling');
 const updateDefaultBilling = require('../../../helpers/user/updateDefaultBilling');
@@ -137,7 +138,7 @@ router.put('/user/password/reset', resetPassword);
 router.get('/user/password/reset/:token', getResetPasswordToken);
 router.get('/user/orders', userAuth, getUserOrders);
 router.get('/user/orders/order/:orderNumber/invoice', userAuth, getUserInvoice);
-router.get('/user/billings', userAuth, getUserBillings);
+router.get('/user/billings', userAuth, getUserBillingsStripe);
 router.post('/user/billings/payment', userAuth, addUserBilling);
 router.post('/user/billings/payment/details', userAuth, addRedirectedBilling);
 router.put('/user/billings/payment/default', userAuth, updateDefaultBilling);
