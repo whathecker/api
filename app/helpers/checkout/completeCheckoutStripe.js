@@ -24,6 +24,8 @@ async function completeCheckoutStripe (req, res, next) {
         });
     }
 
+    
+
     // create customer on Stripe
     const stripeCustomer = await stripe.customers.create({
         email: userDetail.email,
@@ -132,13 +134,13 @@ async function completeCheckoutStripe (req, res, next) {
     order.orderAmount = order.setTotalAmount(order.orderAmountPerItem, 'euro');
     order.user = newUser._id;
     order.paymentMethod = {
-        type: paymentMethod, 
+        type: billingOption.type, 
         recurringDetail: paymentIntent.payment_method /** adyen field - not used in Stripe */
     };
     const firstPaymentStatus = { status: 'OPEN', timestamp: Date.now()};
     const firstOrderStatus = { status: 'RECEIVED', timestamp: Date.now()};
-    order.paymentStatus = { status: 'PAID', timestamp: Date.now()};
-    order.orderStatus = { status: 'AUTHORIZED', timestamp: Date.now()};
+    order.paymentStatus = { status: 'AUTHORIZED', timestamp: Date.now()};
+    order.orderStatus = { status: 'PAID', timestamp: Date.now()};
     order.paymentHistory = [firstPaymentStatus, order.paymentStatus];
     order.orderStatusHistory = [firstOrderStatus, order.orderStatus];
 
@@ -156,7 +158,16 @@ async function completeCheckoutStripe (req, res, next) {
     newUser.orders = [order];
     newUser.billingOptions = [billingOption];
     newUser.defaultBillingOption = billingOption;
-
+    
+    // enrich paymentIntent with created information
+    const metaData = {
+        metadata: {
+            orderNumber: order.orderNumber,
+            subscriptionId: subscription.subscriptionId
+        }
+    }
+    
+    
     if (isAddressSame === true) {
         Promise.all([
             newUser.save(),
@@ -164,7 +175,8 @@ async function completeCheckoutStripe (req, res, next) {
             shippingAddress.save(),
             !isAddressSame? billingAddress.save() : null ,
             subscription.save(),
-            order.save()
+            order.save(),
+            stripe.paymentIntents.update(paymentIntent.id, metaData)
         ])
         .then(values => {
             if (values) {
