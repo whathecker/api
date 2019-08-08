@@ -26,11 +26,12 @@ const getUserInvoice = require('../../../helpers/user/getUserInvoice');
 const createSetupIntent = require('../../../helpers/user/createSetupIntent');
 //const getUserBillings = require('../../../helpers/user/getUserBillings');
 const getUserBillingsStripe = require('../../../helpers/user/getUserBillingsStripe');
-const addUserBilling = require('../../../helpers/user/addUserBilling');
+//const addUserBilling = require('../../../helpers/user/addUserBilling');
 const addUserBillingStripe = require('../../../helpers/user/addUserBillingStripe');
 const addRedirectedBilling = require('../../../helpers/user/addRedirectedBilling');
 const updateDefaultBilling = require('../../../helpers/user/updateDefaultBilling');
 const removeUserBilling = require('../../../helpers/user/removeUserBilling');
+const removeUserBillingStripe = require('../../../helpers/user/removeUserBillingStripe');
 const updatePackage = require('../../../helpers/user/updatePackage');
 const apiAuth = require('../../../middlewares/verifyApikey');
 
@@ -145,7 +146,7 @@ router.post('/user/billings/payment/session', userAuth, createSetupIntent);
 router.post('/user/billings/payment', userAuth, addUserBillingStripe);
 router.post('/user/billings/payment/details', userAuth, addRedirectedBilling);
 router.put('/user/billings/payment/default', userAuth, updateDefaultBilling);
-router.delete('/user/billings/payment/:billingId', userAuth, removeUserBilling);
+router.delete('/user/billings/payment/:billingId', userAuth, removeUserBillingStripe);
 router.put('/user/subscription/package', userAuth, updatePackage);
 router.post('/user', createUser);
 
