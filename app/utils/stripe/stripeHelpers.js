@@ -32,12 +32,12 @@ module.exports = {
         return secret;
     },
     
-    retrieveApikey: (env) => {
+    retrieveApikey: () => {
         let apikey;
-        if (env === 'local' || env === 'development') {
+        if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
             apikey = process.env.STRIPE_APIKEY_TEST;
         }
-        if (env === 'production') {
+        if (process.env.NODE_ENV === 'production') {
             apikey = process.env.STRIPE_APIKEY_PROD;
         }
         return apikey;
