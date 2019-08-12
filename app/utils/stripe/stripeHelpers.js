@@ -27,7 +27,7 @@ module.exports = {
         }
 
         if (env === "production") {
-            // add production secret
+            secret = process.env.STRIPE_ENDPOINT_SECRET_PROD
         }
         return secret;
     },
