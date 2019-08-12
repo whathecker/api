@@ -18,7 +18,7 @@
       {
         "name": "nodeapp",
         "hostname": "nodeapp",
-        "image": "243549454379.dkr.ecr.eu-west-3.amazonaws.com/chokchok_api",
+        "image": "243549454379.dkr.ecr.eu-west-3.amazonaws.com/chokchok_api_prod",
         "essential": false,
         "memoryReservation": 400,
         "portMappings": [
