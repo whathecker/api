@@ -53,8 +53,8 @@ function loginAdminUser (req, res, next) {
                 cookieOption = {
                     httpOnly: false,
                     sameSite: false,
-                    secure: true,
-                    domain: './hellochokchok.com',
+                    secure: false,
+                    //domain: './hellochokchok.com',
                     maxAge: 7200000
                 }
             }
