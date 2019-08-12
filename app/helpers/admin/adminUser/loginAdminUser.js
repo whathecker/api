@@ -53,15 +53,15 @@ function loginAdminUser (req, res, next) {
                 cookieOption = {
                     httpOnly: false,
                     sameSite: false,
-                    secure: false,
-                    //domain: './hellochokchok.com',
+                    secure: true,
+                    domain: './hellochokchok.com',
                     maxAge: 7200000
                 }
             }
 
             res.cookie('jwt', token, cookieOption); 
             logger.info(`loginAdminUser request has processed | ${user._id}`);    
-            return res.status(200).end();
+            return res.status(200).send(token);
         });
         
     })(req, res, next);

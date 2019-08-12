@@ -50,7 +50,7 @@ if (isLocal) {
           sameSite: false,
           httpOnly: false
         },
-        name: 'session',
+        name: 'chokchok_session',
         secret: "secret",
         saveUninitialized: false,
         resave: true,
@@ -66,7 +66,7 @@ if (isLocal) {
           httpOnly: false,
           domain: '.hellochokchok.com'
         },
-        name: 'session',
+        name: 'chokchok_session',
         secret: process.env.USER_AUTH_COOKIE_SECRET_PROD,
         saveUninitialized: false,
         resave: true,
@@ -125,9 +125,11 @@ router.post('/user/login', (req, res, next) => {
 });
 
 router.get('/user/logout', userAuth, (req, res, next) => {
-
     req.logout();
-    res.status(200).json({ message: "user session has terminated" });
+    req.session.destroy();
+    res.clearCookie('chokchok_session');
+    return res.status(200).json({ message: "user session has terminated" });
+    
 });
 
 router.get('/user', userAuth, getUserDetail);
