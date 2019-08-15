@@ -8,6 +8,7 @@ const dbString = connector.getDBString();
 const helmet = require('helmet');
 const app = express();
 
+
 // load env variables
 require('dotenv').config();
 
@@ -16,7 +17,7 @@ const dbOptions = {
     keepAlive: 300000,
     reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
     reconnectInterval: 500, // Reconnect every 500ms
-}
+} 
 
 mongoose.connect(dbString, dbOptions, (err) => {
     if (err) throw err;

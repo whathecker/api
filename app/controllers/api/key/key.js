@@ -1,8 +1,8 @@
-const router = require('express').Router(),
-    Apikey = require('../../../models/Apikey'),
-    crypto = require('crypto'),
-    logger = require('../../../utils/logger'),
-    apiAuth = require('../../../middlewares/verifyApikey');
+const router = require('express').Router();
+const Apikey = require('../../../models/Apikey');
+const crypto = require('crypto');
+const logger = require('../../../utils/logger');
+const apiAuth = require('../../../middlewares/verifyApikey');
 
 router.use(apiAuth);
 
