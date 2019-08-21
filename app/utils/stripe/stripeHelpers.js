@@ -1,7 +1,6 @@
 module.exports = {
     convertAmountFormat: (amount) => {
         return parseInt(amount.split('.').join(''));
-         
     },
 
     convertCurrencyFormat: (currency) => {
@@ -22,7 +21,7 @@ module.exports = {
 
     getEndpointSecret: (env) => {
         let secret;
-        if (env === "local" || env === "development") {
+        if (env === "test" || env === "local" || env === "development") {
             secret = process.env.STRIPE_ENDPOINT_SECRET_TEST;
         }
 
@@ -34,10 +33,11 @@ module.exports = {
     
     retrieveApikey: () => {
         let apikey;
-        if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+        const env = process.env.NODE_ENV;
+        if (env === "test" || env=== 'local' || env === 'development') {
             apikey = process.env.STRIPE_APIKEY_TEST;
         }
-        if (process.env.NODE_ENV === 'production') {
+        if (env === 'production') {
             apikey = process.env.STRIPE_APIKEY_PROD;
         }
         return apikey;

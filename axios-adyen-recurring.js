@@ -4,13 +4,14 @@ let hostURL = null;
 
 let basicAuthUsername;
 let basicAuthPassword;
-if (process.env.NODE_ENV === "local" || process.env.NODE_ENV === "development") {
+const env = process.env.NODE_ENV;
+if (env === "local" || env === "development" || env === "test") {
     hostURL = 'https://pal-test.adyen.com/pal/servlet/Recurring/V16';
     basicAuthUsername = process.env.ADYEN_BASIC_AUTH_USERNAME_TEST;
     basicAuthPassword = process.env.ADYEN_BASIC_AUTH_PASSWORD_TEST;
 }
 
-if (process.env.NODE_ENV === "production") {
+if (env === "production") {
     // add production hostURL of Adyen here
 }
 

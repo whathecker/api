@@ -4,7 +4,7 @@ let hostURL = null;
 
 const currentEnv = process.env.NODE_ENV;
 
-if (currentEnv === "local" || currentEnv === "development") {
+if (currentEnv === 'test' ||currentEnv === "local" || currentEnv === "development") {
     hostURL = 'https://hooks.slack.com/services/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';
 }
 

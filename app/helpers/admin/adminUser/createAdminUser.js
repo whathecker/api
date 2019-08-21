@@ -27,7 +27,7 @@ function createAdminUser (req, res, next) {
 
     if (emailDomain === "hellochokchok.com") {
 
-        AdminUser.findOne({ email: email})
+        AdminUser.findOne({ email: email })
         .then((user) => {
             if (!user) {
                 // create admin

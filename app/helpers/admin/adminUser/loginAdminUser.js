@@ -2,12 +2,14 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const logger = require('../../../utils/logger');
 
+const isTest = process.env.NODE_ENV === "test";
 const isLocal = process.env.NODE_ENV === "local";
 const isDevelopment = process.env.NODE_ENV === "development";
 const isProduction = process.env.NODE_ENV === "production";
+
 let secret;
 
-(isLocal || isDevelopment)? secret = process.env.ADMIN_AUTH_SECRET_TEST: null;
+(isLocal || isDevelopment || isTest)? secret = process.env.ADMIN_AUTH_SECRET_TEST: null;
 (isProduction)? secret = process.env.ADMIN_AUTH_SECRET_PROD: null;
 
 
