@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Apikey = require('../../models/Apikey');
 const AdminUser = require('../../models/AdminUser');
 const Brand = require('../../models/Brand');
+const Category = require('../../models/Category');
 
 module.exports = {
     createTestApikey : () => {
@@ -22,7 +23,7 @@ module.exports = {
             const adminUser = new AdminUser();
             adminUser.email = 'yunjae.oh@hellochokchok.com';
             adminUser.salt = adminUser.setSalt();
-            adminUser.hash = adminUser.setPassword(adminUser, 'thisistestpassword');
+            adminUser.hash = adminUser.setPassword(adminUser, process.env.TEST_ADMIN_USER_PASSWORD);
             adminUser.adminApprovalRequired = false;
             adminUser.userId = adminUser.setAdminUserId();
             adminUser.save()
@@ -66,5 +67,16 @@ module.exports = {
                 reject(error);
             });
         })
+    },
+    removeTestCategories: () => {
+        return new Promise((resolve, reject) => {
+            Category.collection.drop()
+            .then(() => {
+                resolve('Category collection is droppped');
+            })
+            .catch(error => {
+                reject(error);
+            });
+        });
     }
 }
