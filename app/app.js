@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cookies = require('cookie-parser');
 const connector = require('./utils/connector');
 const morgan = require('morgan');
 const cors = require('cors');
@@ -44,6 +45,7 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(cors(corsOptions));
 (isDevelopment || isProduction)? app.set('trust proxy', 1): null;
+app.use(cookies());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({
     verify: (req, res, buf) =>{

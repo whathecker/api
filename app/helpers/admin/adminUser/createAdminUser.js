@@ -31,10 +31,9 @@ function createAdminUser (req, res, next) {
         .then((user) => {
             if (!user) {
                 // create admin
-            
                 const newAdmin = new AdminUser();
                 newAdmin.email = email;
-                newAdmin.salt = crypto.randomBytes(64).toString('hex');
+                newAdmin.salt = newAdmin.setSalt();
                 newAdmin.hash = newAdmin.setPassword(newAdmin, password);
                 newAdmin.userId = newAdmin.setAdminUserId();
                 newAdmin.adminApprovalRequired = false;

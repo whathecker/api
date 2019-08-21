@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "localtest": "NODE_ENV='local' PORT=8081 jest --runInBand --forceExit",
-    "test": "NODE_ENV='test' PORT=8081 jest adminUser --runInBand --forceExit",
+    "test": "NODE_ENV='test' PORT=8081 jest brand --runInBand --forceExit",
     "localstart": "NODE_ENV='local' PORT=8081 nodemon server.js",
     "start": "node ./node_modules/pm2/bin/pm2 start server.js -i 'max' --name chokchok-backend",
     "poststart": "node ./node_modules/pm2/bin/pm2 logs"
@@ -17,6 +17,7 @@
     "async": "^2.6.3",
     "axios": "^0.19.0",
     "connect-mongo": "^2.0.3",
+    "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
     "express": "^4.16.4",

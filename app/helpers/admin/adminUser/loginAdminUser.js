@@ -42,7 +42,7 @@ function loginAdminUser (req, res, next) {
 
             let cookieOption;
 
-            if (isLocal) {
+            if (isLocal || isTest) {
                 cookieOption = {
                     httpOnly: false,
                     sameSite: false,

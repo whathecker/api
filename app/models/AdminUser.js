@@ -44,7 +44,9 @@ function create5DigitInteger () {
     const num = Math.floor(Math.random() * 90000) + 10000;
     return num.toString();
 }
-
+AdminUser.prototype.setSalt = () => {
+    return crypto.randomBytes(64).toString('hex');
+}
 AdminUser.prototype.setPassword = (user, password) => {
     return crypto.pbkdf2Sync(password, user.salt, 10000, 512, 'sha512').toString('hex');
 }

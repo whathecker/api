@@ -1,7 +1,7 @@
-const request = require('supertest'),
-    session = require('supertest-session'),
-    app = require('../../../app'),
-    testCredentical = require('../../../config/test/usercredential');
+const request = require('supertest');
+const session = require('supertest-session');
+const app = require('../../../app');
+const testCredentical = require('../../../config/test/usercredential');
 
 
 describe('test user apis', () => {

@@ -2,19 +2,25 @@ const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 
 let secret;
-if (process.env.NODE_ENV === 'local' || process.env.NODE_ENV === 'development') {
+const env = process.env.NODE_ENV;
+if (env === 'test' || env === 'local' || env === 'development') {
     secret = process.env.ADMIN_AUTH_SECRET_TEST;
 }
 
-if (process.env.NODE_ENV === 'production') {
+if (env === 'production') {
     secret = process.env.ADMIN_AUTH_SECRET_PROD;
 }
 
 function isAdminAuth (req, res, next) {
 
-    const cookies = req.headers.cookie;
+    //const cookies = req.headers.cookie;
+    //console.log(cookies);
+    //console.log(req.headers);
+    //console.log(req.cookies);
+    //console.log(req);
+    const cookie = req.cookies.jwt;
 
-    if (!cookies) {
+    if (!cookie) {
         logger.warn(`adminUser is unauthenticated, request is rejected | no cookies in request`);
         return res.status(401).json({
             status: 'unauthenticated',
@@ -22,18 +28,19 @@ function isAdminAuth (req, res, next) {
         });
     }
    
-    if (cookies) {
-        const splitedCookies = cookies.split('; ');
-        let token;
+    if (cookie) {
+        //const splitedCookies = cookies.split('; ');
+        //let token;
         const tokenSecret = secret;
-
+        const token = cookie;
+        /* 
         for (let i = 0; i < splitedCookies.length; i++) {
             const cookieName = splitedCookies[i].split('=')[0];
             if (cookieName === 'jwt') {
                 token = splitedCookies[i].split('=')[1];
                 break;
             } 
-        }
+        } */
 
         jwt.verify(token, tokenSecret, (err, decoded) => {
             if (err) {

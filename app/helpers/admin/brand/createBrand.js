@@ -14,7 +14,7 @@ function createBrand (req, res, next) {
 
     if (brandCode && brandName) {
         const newBrand = new Brand();
-        newBrand.brandCode = brandCode;
+        newBrand.brandCode = brandCode.toUpperCase();
         newBrand.brandName = brandName;
         newBrand.save()
         .then((brand) => {

@@ -5,6 +5,6 @@ const createBrand = require('../../../../helpers/admin/brand/createBrand');
 const getBrands = require('../../../../helpers/admin/brand/getBrands');
 
 router.use(apiAuth);
-router.get('/', getBrands);
-router.post('/brand', createBrand);
+router.get('/', adminAuth, getBrands);
+router.post('/brand', adminAuth, createBrand);
 module.exports = router;

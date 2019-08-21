@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Apikey = require('../../models/Apikey');
 const AdminUser = require('../../models/AdminUser');
+const Brand = require('../../models/Brand');
 
 module.exports = {
     createTestApikey : () => {
@@ -9,13 +10,29 @@ module.exports = {
             apikey.name = 'test';
             apikey.key = apikey.createApikey();
             apikey.save().then((apikey) => {
-                console.log(apikey);
                 resolve(apikey.key);
             })
             .catch(error => {
                 reject(error);
             });
         });
+    },
+    createTestAdminUser: () => {
+        return new Promise((resolve, reject) => {
+            const adminUser = new AdminUser();
+            adminUser.email = 'yunjae.oh@hellochokchok.com';
+            adminUser.salt = adminUser.setSalt();
+            adminUser.hash = adminUser.setPassword(adminUser, 'thisistestpassword');
+            adminUser.adminApprovalRequired = false;
+            adminUser.userId = adminUser.setAdminUserId();
+            adminUser.save()
+            .then(adminUser => {
+                resolve(adminUser);
+            })
+            .catch(error => {
+                reject(error);
+            });
+        })
     },
     removeTestApikeys: () => {
         return new Promise((resolve, reject) => {
@@ -33,6 +50,17 @@ module.exports = {
             AdminUser.collection.drop()
             .then(() => {
                 resolve('AdminUser is dropped');
+            })
+            .catch(error => {
+                reject(error);
+            });
+        })
+    },
+    removeTestBrands: () => {
+        return new Promise((resolve, reject) => {
+            Brand.collection.drop()
+            .then(() => {
+                resolve('Brand collection is droppped');
             })
             .catch(error => {
                 reject(error);
