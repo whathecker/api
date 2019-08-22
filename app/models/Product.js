@@ -97,7 +97,7 @@ Product.prototype.isSkintypeValid = (skinTypeInput) => {
     }
     return false;
 }
-
+//obsolete method: delete later
 Product.prototype.isPriceDataValid = (priceInput) => {
     let isInputValid = true;
 

@@ -14,8 +14,29 @@ async function updateProduct (req, res, next) {
     }
 
     const category = await Category.findOne({ categoryName: req.body.category }).exec();
-    const brand = await Brand.findOne({ brandName: req.body.brand }).exec();
     const skinType = await SkinType.findOne({ skinType: req.body.skinType }).exec();
+    const brand = await Brand.findOne({ brandName: req.body.brand }).exec();
+
+    if (req.body.category && !category) {
+        return res.status(422).json({ 
+            status: 'failed',
+            message: `unknonw category name` 
+        });
+    }
+
+    if (req.body.skinType && !skinType) {
+        return res.status(422).json({ 
+            status: 'failed',
+            message: `unknonw skinType name` 
+        });
+    }
+
+    if (req.body.brand && !brand) {
+        return res.status(422).json({ 
+            status: 'failed',
+            message: `unknonw brand name` 
+        });
+    }
 
     Product.findOne({ id: req.params.id })
     .then((product) => {
@@ -53,6 +74,14 @@ async function updateProduct (req, res, next) {
                 product.markModified('brandCode');
             }
             if (req.body.prices) {
+
+                if (!Array.isArray(req.body.prices)) {
+                    return res.status(422).json({ 
+                        status: 'failed',
+                        message: 'invalid data type: prices' 
+                    });
+                }
+
                 const isPriceDataValid = product.isPriceDataValid(req.body.prices);
                 if (!isPriceDataValid) {
                     logger.warn(`updateProduct request has rejected as prices param isn't valid`);
@@ -74,6 +103,12 @@ async function updateProduct (req, res, next) {
             }
 
             if (req.body.quantityOnHand) {
+                if (isNaN(req.body.quantityOnHand)) {
+                    return res.status(422).json({ 
+                        status: 'failed',
+                        message: 'invalid quantityOnHand format' 
+                    });
+                }
                 product.inventory.quantityOnHand = req.body.quantityOnHand;
                 product.inventory.lastModified = Date.now();
                 const inventoryInstance = product.inventory;

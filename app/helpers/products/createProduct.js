@@ -19,6 +19,20 @@ async function createProduct (req, res, next) {
     const category = await Category.findOne({ categoryName: req.body.category }).exec();
     const brand = await Brand.findOne({ brandName: req.body.brand }).exec();
     
+    if (!category) {
+        return res.status(422).json({ 
+            status: 'failed',
+            message: 'invalid data type: category' 
+        });
+    }
+
+    if (!brand) {
+        return res.status(422).json({ 
+            status: 'failed',
+            message: 'invalid data type: brand' 
+        });
+    }
+
     product.category = category.categoryName;
     product.categoryCode = category.categoryCode;
     product.brand = brand.brandName;
@@ -28,11 +42,19 @@ async function createProduct (req, res, next) {
         // set accepted values
         product.volume = req.body.volume;
     }
+    
     if (req.body.skinType) {
         const skinTypeObj = await SkinType.findOne({ skinType: req.body.skinType }).exec();
+
+        if (!skinTypeObj) {
+            return res.status(422).json({ 
+                status: 'failed',
+                message: 'invalid data type: skinType' 
+            });
+        }
         product.skinType = skinTypeObj.skinType;
-  
     }
+
     if (req.body.prices) {
 
         if (!Array.isArray(req.body.prices)) {
