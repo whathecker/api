@@ -5,7 +5,7 @@ const createSkinType = require('../../../../helpers/admin/skinType/createSkinTyp
 const getSkinTypes = require('../../../../helpers/admin/skinType/getSkinTypes');
 router.use(apiAuth);
 
-router.get('/', getSkinTypes);
-router.post('/skintype', createSkinType);
+router.get('/', adminAuth, getSkinTypes);
+router.post('/skintype', adminAuth, createSkinType);
 
 module.exports = router;

@@ -3,6 +3,7 @@ const Apikey = require('../../models/Apikey');
 const AdminUser = require('../../models/AdminUser');
 const Brand = require('../../models/Brand');
 const Category = require('../../models/Category');
+const SkinType = require('../../models/SkinType');
 
 module.exports = {
     createTestApikey : () => {
@@ -73,6 +74,17 @@ module.exports = {
             Category.collection.drop()
             .then(() => {
                 resolve('Category collection is droppped');
+            })
+            .catch(error => {
+                reject(error);
+            });
+        });
+    },
+    removeTestSkinTypes: () => {
+        return new Promise((resolve, reject) => {
+            SkinType.collection.drop()
+            .then(() => {
+                resolve('SkinType collection is dropped');
             })
             .catch(error => {
                 reject(error);
