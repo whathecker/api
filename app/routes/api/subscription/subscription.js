@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const apiAuth = require('../../../middlewares/verifyApikey');
 const adminAuth = require('../../../middlewares/adminAuth');
-const getSubscriptions = require('../../../helpers/subscription/getSubscriptions');
-const getSubscriptionById = require('../../../helpers/subscription/getSubscriptionById');
-const initiateRecurringProcess = require('../../../helpers/subscription/initiateRecurringProcess');
-const changeSubscriptionStatus = require('../../../helpers/subscription/changeSubscriptionStatus');
+const getSubscriptions = require('../../../controllers/subscription/getSubscriptions');
+const getSubscriptionById = require('../../../controllers/subscription/getSubscriptionById');
+const initiateRecurringProcess = require('../../../controllers/subscription/initiateRecurringProcess');
+const changeSubscriptionStatus = require('../../../controllers/subscription/changeSubscriptionStatus');
 
 router.use(apiAuth);
 router.get('/', adminAuth, getSubscriptions);

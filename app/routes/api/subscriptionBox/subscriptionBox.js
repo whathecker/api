@@ -5,11 +5,11 @@ const Product = require('../../../models/Product');
 const subscriptionBoxIdPrefixes = require('../../../utils/subscriptionBoxIdPrefixes');
 const apiAuth = require('../../../middlewares/verifyApikey');
 const adminAuth = require('../../../middlewares/adminAuth');
-const getSubscriptionBoxes = require('../../../helpers/subscriptionBox/getSubscriptionBoxes');
-const getSubscriptionBoxById = require('../../../helpers/subscriptionBox/getSubscriptionBoxById');
-const createSubscriptionBox = require('../../../helpers/subscriptionBox/createSubscriptionBox');
-const updateSubscriptionBox = require('../../../helpers/subscriptionBox/updateSubscriptionBox');
-const deleteSubscriptionBox = require('../../../helpers/subscriptionBox/deleteSubscriptionBox');
+const getSubscriptionBoxes = require('../../../controllers/subscriptionBox/getSubscriptionBoxes');
+const getSubscriptionBoxById = require('../../../controllers/subscriptionBox/getSubscriptionBoxById');
+const createSubscriptionBox = require('../../../controllers/subscriptionBox/createSubscriptionBox');
+const updateSubscriptionBox = require('../../../controllers/subscriptionBox/updateSubscriptionBox');
+const deleteSubscriptionBox = require('../../../controllers/subscriptionBox/deleteSubscriptionBox');
 
 router.use(apiAuth);
 

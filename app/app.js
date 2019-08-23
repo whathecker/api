@@ -66,7 +66,7 @@ require('./utils/messageQueue/recurringQueue-receivers');
 require('./utils/messageQueue/stripeQueue-receivers');
 
 // mount routes
-app.use(require('./controllers'));
+app.use(require('./routes'));
 
 // 404 checker
 app.use((req, res, next) => {

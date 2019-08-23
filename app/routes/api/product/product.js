@@ -2,11 +2,11 @@ const router = require('express').Router();
 const apiAuth =  require('../../../middlewares/verifyApikey');
 const adminAuth = require('../../../middlewares/adminAuth');
 
-const getProducts = require('../../../helpers/products/getProducts');
-const getProductById = require('../../../helpers/products/getProductById');
-const createProduct = require('../../../helpers/products/createProduct');
-const updateProduct = require('../../../helpers/products/updateProduct');
-const deleteProduct = require('../../../helpers/products/deleteProduct');
+const getProducts = require('../../../controllers/products/getProducts');
+const getProductById = require('../../../controllers/products/getProductById');
+const createProduct = require('../../../controllers/products/createProduct');
+const updateProduct = require('../../../controllers/products/updateProduct');
+const deleteProduct = require('../../../controllers/products/deleteProduct');
 
 router.use(apiAuth);
 

@@ -5,8 +5,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const AdminUser = require('../../../../models/AdminUser');
 const apiAuth = require('../../../../middlewares/verifyApikey');
 const adminAuth = require('../../../../middlewares/adminAuth');
-const createAdminUser = require('../../../../helpers/admin/adminUser/createAdminUser');
-const loginAdminUser = require('../../../../helpers/admin/adminUser/loginAdminUser');
+const createAdminUser = require('../../../../controllers/admin/adminUser/createAdminUser');
+const loginAdminUser = require('../../../../controllers/admin/adminUser/loginAdminUser');
 
 router.use(apiAuth);
 router.use(passport.initialize());

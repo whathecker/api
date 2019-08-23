@@ -1,11 +1,11 @@
 const router = require('express').Router();
 const apiAuth = require('../../../middlewares/verifyApikey');
 const adminAuth = require('../../../middlewares/adminAuth');
-const getOrders = require('../../../helpers/orders/getOrders');
-const getOrderByOrdernumber = require('../../../helpers/orders/getOrderByOrdernumber');
-const updateShippingItems = require('../../../helpers/orders/updateShippingItems');
-const removePackedItems = require('../../../helpers/orders/removePackedItems');
-const updateShippingStatus = require('../../../helpers/orders/updateShippingStatus');
+const getOrders = require('../../../controllers/orders/getOrders');
+const getOrderByOrdernumber = require('../../../controllers/orders/getOrderByOrdernumber');
+const updateShippingItems = require('../../../controllers/orders/updateShippingItems');
+const removePackedItems = require('../../../controllers/orders/removePackedItems');
+const updateShippingStatus = require('../../../controllers/orders/updateShippingStatus');
 
 router.use(apiAuth);
 
