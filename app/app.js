@@ -9,7 +9,6 @@ const dbString = connector.getDBString();
 const helmet = require('helmet');
 const app = express();
 
-
 // load env variables
 require('dotenv').config();
 
