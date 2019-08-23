@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
 const Apikey = require('../../models/Apikey');
 const AdminUser = require('../../models/AdminUser');
 const Brand = require('../../models/Brand');
 const Category = require('../../models/Category');
 const SkinType = require('../../models/SkinType');
 const Product = require('../../models/Product');
+const SubscriptionBox = require('../../models/SubscriptionBox');
 
 module.exports = {
     createTestApikey : () => {
@@ -110,6 +110,81 @@ module.exports = {
         });
 
     },
+    createTestProducts: () => {
+        return new Promise((resolve, reject) => {
+
+            const product1 = new Product();
+
+            product1.name = 'test product 1';
+            product1.description = 'this is test product 1';
+            product1.category = process.env.TEST_CATEGORY_NAME;
+            product1.categoryCode = process.env.TEST_CATEGORY_CODE;
+            product1.brand = process.env.TEST_BRAND_NAME_1;
+            product1.brandCode = process.env.TEST_BRAND_CODE_1;
+            product1.skinType = 'dry';
+            product1.id = product1.createProductId(product1.brandCode, product1.categoryCode);
+            product1.prices = [{
+                region: 'eu',
+                currency: 'euro',
+                price: '10.00',
+                vat: product1.setVat('10.00', 0.21),
+                netPrice: product1.setNetPrice('10.00', 0.21)
+            }];
+            product1.inventory = { quantityOnHand: 10 };
+            product1.inventoryHistory = [product1.inventory];
+
+            const product2 = new Product();
+            product2.name = 'test product 2';
+            product2.description = 'this is test product 2';
+            product2.category = process.env.TEST_CATEGORY_NAME;
+            product2.categoryCode = process.env.TEST_CATEGORY_CODE;
+            product2.brand = process.env.TEST_BRAND_NAME_2;
+            product2.brandCode = process.env.TEST_BRAND_CODE_2;
+            product2.skinType = 'normal';
+            product2.id = product2.createProductId(product2.brandCode, product2.categoryCode);
+            product2.prices = [{
+                region: 'eu',
+                currency: 'euro',
+                price: '10.00',
+                vat: product2.setVat('10.00', 0.21),
+                netPrice: product2.setNetPrice('10.00', 0.21)
+            }];
+            product2.inventory = { quantityOnHand: 10 };
+            product2.inventoryHistory = [product2.inventory];
+
+            const product3 = new Product();
+            product3.name = 'test product 3';
+            product3.description = 'this is test product 3';
+            product3.category = process.env.TEST_CATEGORY_NAME;
+            product3.categoryCode = process.env.TEST_CATEGORY_CODE;
+            product3.brand = process.env.TEST_BRAND_NAME_3;
+            product3.brandCode = process.env.TEST_BRAND_CODE_3;
+            product3.skinType = 'normal';
+            product3.id = product3.createProductId(product3.brandCode, product3.categoryCode);
+            product3.prices = [{
+                region: 'eu',
+                currency: 'euro',
+                price: '10.00',
+                vat: product3.setVat('10.00', 0.21),
+                netPrice: product3.setNetPrice('10.00', 0.21)
+            }];
+            product3.inventory = { quantityOnHand: 10 };
+            product3.inventoryHistory = [product3.inventory];
+
+            Promise.all([
+                product1.save(),
+                product2.save(),
+                product3.save()
+            ])
+            .then(products => {
+                resolve(products);
+            })
+            .catch(error => {
+                reject(error);
+            });
+            
+        });
+    },
     removeTestApikeys: () => {
         return new Promise((resolve, reject) => {
             Apikey.collection.drop()
@@ -170,6 +245,17 @@ module.exports = {
             Product.collection.drop()
             .then(() => {
                 resolve('Product collection is droppped');
+            })
+            .catch(error => {
+                reject(error);
+            });
+        });
+    },
+    removeTestSubscriptionBoxes: () => {
+        return new Promise((resolve, reject) => {
+            SubscriptionBox.collection.drop()
+            .then(() => {
+                resolve('SubscriptionBox collection is dropped');
             })
             .catch(error => {
                 reject(error);

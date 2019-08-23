@@ -103,13 +103,13 @@ router.post('/', (req, res, next) => {
     
     
 });
-// no admin auth as it's consumed at checkout
-
+// getSubscriptionBoxes is not adminAuth protected, as it's consumed at checkout
 router.get('/', getSubscriptionBoxes);
 router.get('/subscriptionBox/:id', adminAuth, getSubscriptionBoxById);
 router.post('/subscriptionBox', adminAuth, createSubscriptionBox);
 router.put('/subscriptionBox/:id', adminAuth, updateSubscriptionBox);
 router.delete('/subscriptionBox/:id', adminAuth, deleteSubscriptionBox);
+
 router.delete('/:id', (req, res, next) => {
     SubscriptionBox.findOneAndRemove({ id: req.params.id })
         .then((subscriptionBox) => {

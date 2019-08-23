@@ -14,6 +14,28 @@ async function updateSubscriptionBox (req, res, next) {
     
     const boxType = await SkinType.findOne({ skinType: req.body.boxType }).exec();
 
+    if (!boxType && req.body.boxType) {
+        logger.warn(`updateSubscriptionBox request has rejected as boxType is unknown`);
+        return res.status(422).json({ 
+            status: 'failed',
+            message: `unknonw boxType` 
+        });
+    }
+
+    if (!Array.isArray(req.body.items) && req.body.items) {
+        return res.status(422).json({
+            status: 'failed',
+            message: 'data type of items is invalid'
+        });
+    }
+
+    if (!Array.isArray(req.body.prices) && req.body.prices) {
+        return res.status(422).json({
+            status: 'failed',
+            message: 'data type of prices is invalid'
+        });
+    }
+
     SubscriptionBox.findOne({ id: req.params.id })
     .then((box) => {
         if (!box) {
@@ -24,6 +46,7 @@ async function updateSubscriptionBox (req, res, next) {
             });
         }
         if (box) {
+
             if (req.body.name) {
                 box.name = req.body.name;
                 box.markModified('name');
@@ -77,26 +100,7 @@ async function updateSubscriptionBox (req, res, next) {
             });
         }
     }).catch(next);
-
-
-    /*
-
-    SubscriptionBox.findOneAndUpdate({ id: req.params.id }, update)
-    .then((subscriptionBox) => {
-        if(!subscriptionBox) {
-            logger.warn(`updateSubscriptionBox request has rejected as product id is unknown`);
-            return res.status(204).json({ 
-                status: 'failed',
-                message: `can not find product` 
-            });
-        }
-        logger.info(`updateSubscriptionBox has succeed: ${subscriptionBox.id}`);
-        return res.status(200).json({
-            status: "success",
-            subscriptionBox: subscriptionBox,
-            message: 'subscriptionBox data is updated'
-        });
-    }) */
+    
 }
 
 module.exports = updateSubscriptionBox;

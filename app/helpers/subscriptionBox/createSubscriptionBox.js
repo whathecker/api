@@ -14,6 +14,13 @@ async function createSubscriptionBox (req, res, next) {
 
     const subscriptionBox = new SubscriptionBox();
     const boxType = await SkinType.findOne({ skinType: req.body.boxType }).exec();
+    if (!boxType) {
+        logger.warn(`createSubscriptionBox request has rejected as boxType param is invalid`);
+        return res.status(422).json({ 
+            status: 'failed',
+            message: 'invalid data' 
+        });
+    }
     subscriptionBox.boxType = boxType.skinType;
     subscriptionBox.boxTypeCode = boxType.skinTypeCode;
     subscriptionBox.id = subscriptionBox.createPackageId(subscriptionBox.boxTypeCode);
@@ -49,7 +56,7 @@ async function createSubscriptionBox (req, res, next) {
     // update items field
     if (Array.isArray(req.body.items) === false) {
         logger.warn(`createSubscriptionBox request has rejected as items param isn't array`);
-        return res.status(400).json({
+        return res.status(422).json({
             status: 'failed',
             message: 'bad request'
         });  
@@ -69,6 +76,7 @@ async function createSubscriptionBox (req, res, next) {
         logger.info(`createSubscriptionBox request has processed | new package: ${subscriptionBox.id}`);
         return res.status(201).json({
             status: 'success',
+            subscriptionBox: subscriptionBox,
             message: 'new box created'
         });
     });
