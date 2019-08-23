@@ -17,8 +17,8 @@ describe('Test admin brand endpoints', () => {
         .then(values => {
             //console.log(values);
             apikey = values[0];
-            email = values[1].email;
-            password = process.env.TEST_ADMIN_USER_PASSWORD;
+            email = testHelpers.dummyAdminUserDetail.email;
+            password = testHelpers.dummyAdminUserDetail.password;
 
             return testSession.post('/admin/users/user/login')
             .set('X-API-Key', apikey)

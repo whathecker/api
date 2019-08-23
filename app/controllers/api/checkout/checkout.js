@@ -17,8 +17,9 @@ router.post('/email', apiAuth, validateEmail);
 router.post('/address', apiAuth, getAddressDetail);
 router.post('/payment/session', apiAuth, createPaymentIntent); 
 router.post('/payment/confirmation', apiAuth, completeCheckoutStripe);
-router.post('/payment/hook',handleStripeWebhook);
+router.post('/payment/hook', handleStripeWebhook);
 
+// adyen checkout endpoints
 router.post('/paymentOptions', apiAuth, getPaymentMethods);
 router.post('/payment', apiAuth, completeCheckout);
 router.post('/payment/details', apiAuth, processRedirectedPayment)

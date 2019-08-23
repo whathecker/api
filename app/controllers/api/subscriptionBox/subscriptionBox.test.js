@@ -7,7 +7,7 @@ let testSession = null;
 let createdProducts = null;
 let createdBox = null;
 
-describe('Test package apis', () => {
+describe('Test package endpoints', () => {
     testSession = session(app);
 
     beforeAll(() => {
@@ -20,8 +20,8 @@ describe('Test package apis', () => {
         ])
         .then(values => {
             apikey = values[0];
-            email = values[1].email;
-            password = process.env.TEST_ADMIN_USER_PASSWORD;
+            email = testHelpers.dummyAdminUserDetail.email;
+            password = testHelpers.dummyAdminUserDetail.password;
 
             // asssign dummy products in variable for subsequnet test runs
             createdProducts = values[3];

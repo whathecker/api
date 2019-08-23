@@ -10,7 +10,7 @@ const payload_invalid_category = {
     name: 'test product',
     description: 'this is test product',
     category: 'invalid',
-    brand: process.env.TEST_BRAND_NAME_1,
+    brand: testHelpers.dummyBrandDetails[0].brandName,
     skinType: 'dry',
     prices: [{
         region: 'eu',
@@ -35,8 +35,8 @@ const payload_invalid_brand = {
 const payload_invalid_skinType = {
     name: 'test product',
     description: 'this is test product',
-    category: process.env.TEST_CATEGORY_NAME,
-    brand: process.env.TEST_BRAND_NAME_1,
+    category: testHelpers.dummyCategoryDetail.categoryName,
+    brand: testHelpers.dummyBrandDetails[0].brandName,
     skinType: 'invalid',
     prices: [{
         region: 'eu',
@@ -47,8 +47,8 @@ const payload_invalid_skinType = {
 const payload_invalid_price = {
     name: 'test product',
     description: 'this is test product',
-    category: process.env.TEST_CATEGORY_NAME,
-    brand: process.env.TEST_BRAND_NAME_1,
+    category: testHelpers.dummyCategoryDetail.categoryName,
+    brand: testHelpers.dummyBrandDetails[0].brandName,
     skinType: 'invalid',
     prices: {
         region: 'eu',
@@ -60,8 +60,8 @@ const payload_invalid_price = {
 const payload_invalid_qtyType = {
     name: 'test product',
     description: 'this is test product',
-    category: process.env.TEST_CATEGORY_NAME,
-    brand: process.env.TEST_BRAND_NAME_1,
+    category: testHelpers.dummyCategoryDetail.categoryName,
+    brand: testHelpers.dummyBrandDetails[0].brandName,
     skinType: 'dry',
     prices: [{
         region: 'eu',
@@ -74,8 +74,8 @@ const payload_invalid_qtyType = {
 const payload_success = {
     name: 'test product',
     description: 'this is test product',
-    category: process.env.TEST_CATEGORY_NAME,
-    brand: process.env.TEST_BRAND_NAME_1,
+    category: testHelpers.dummyCategoryDetail.categoryName,
+    brand: testHelpers.dummyBrandDetails[0].brandName,
     skinType: 'dry',
     prices: [{
         region: 'eu',
@@ -101,8 +101,8 @@ describe('Test product endpoints', () => {
         ])
         .then(values => {
             apikey = values[0];
-            email = values[1].email;
-            password = process.env.TEST_ADMIN_USER_PASSWORD;
+            email = testHelpers.dummyAdminUserDetail.email;
+            password = testHelpers.dummyAdminUserDetail.password;
 
             return testSession.post('/admin/users/user/login')
             .set('X-API-Key', apikey)
@@ -239,14 +239,12 @@ describe('Test product endpoints', () => {
         });
     });
 
-    
-
     test('updateProduct fail - invalid brandName', () => {
         return testSession.put(`/products/product/${createdProduct.id}`)
         .set('X-API-Key', apikey)
         .send({
             brand: 'invalid',
-            category: process.env.TEST_CATEGORY_NAME,
+            category: testHelpers.dummyCategoryDetail.categoryName,
             skinType: 'dry'
         })
         .then(response => {
@@ -258,7 +256,7 @@ describe('Test product endpoints', () => {
         return testSession.put(`/products/product/${createdProduct.id}`)
         .set('X-API-Key', apikey)
         .send({
-            brand: process.env.TEST_BRAND_NAME_1,
+            brand: testHelpers.dummyBrandDetails[0].brandName,
             category: 'invalid',
             skinType: 'dry'
         })
@@ -271,8 +269,8 @@ describe('Test product endpoints', () => {
         return testSession.put(`/products/product/${createdProduct.id}`)
         .set('X-API-Key', apikey)
         .send({
-            brand: process.env.TEST_BRAND_NAME_1,
-            category: process.env.TEST_CATEGORY_NAME,
+            brand: testHelpers.dummyBrandDetails[0].brandName,
+            category: testHelpers.dummyCategoryDetail.categoryName,
             skinType: 'invalid'
         })
         .then(response => {
