@@ -56,7 +56,7 @@ Subscription.prototype.createSubscriptionId = (env, country) => {
     let envPrefix;
     // refactor to actual env variable in use
     if (
-        env=== "local" || env === "development" || env === "staging" || env === "production") {
+        env === "test" ||env=== "local" || env === "development" || env === "staging" || env === "production") {
         envPrefix = subscriptionPrefixes.enviornmentPrefix[env];
     } else {
         throw new Error("Parameter 'env' contain invalid value");

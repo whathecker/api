@@ -242,6 +242,11 @@ module.exports = {
             
         });
     },
+    createTestPackages: () => {
+        return new Promise((resolve, reject) => {
+
+        });
+    },
     createTestSubscribedUser: () => {
         return new Promise((resolve, reject) => {
             // create user instance with basic info
@@ -250,6 +255,7 @@ module.exports = {
             // create billing instance
             // create subscription instance
             // create order instance
+            // extend subscription instance
             // extend user instance with billing
             // extend user instance with subscription
             // extend user instance with order

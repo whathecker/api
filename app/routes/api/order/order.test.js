@@ -8,12 +8,15 @@ describe('Test order endpoints', () => {
     const testSession = session(app);
 
     beforeAll(() => {
+        
         return Promise.all([
             testHelpers.createTestApikey(),
             testHelpers.createTestAdminUser(),
-            // create user
-            // create subscription
-            // create order
+            testHelpers.createTestProducts(),
+            // create products
+            // create packages
+            // create subscribed user
+
         ])
         .then(values => {
             apikey = values[0],
@@ -35,7 +38,8 @@ describe('Test order endpoints', () => {
     afterAll(() => {
         return Promise.all([
             testHelpers.removeTestAdminUsers(),
-            testHelpers.removeTestApikeys()
+            testHelpers.removeTestApikeys(),
+            testHelpers.removeTestProducts()
         ]);
     });
 

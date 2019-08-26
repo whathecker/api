@@ -31,4 +31,7 @@ billingInterface.createBillingInstance = (paymentDetail, user_id) => {
     billing.billingId = paymentDetail.payment_method;
 
     return billing;
+    
 }
+
+module.exports = billingInterface;

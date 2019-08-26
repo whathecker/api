@@ -116,7 +116,7 @@ Order.prototype.createOrderNumber = (env, country) => {
 
     let envPrefix;
     // refactor to actual env variable in use
-    if (env=== "local" || env === "development" || env === "staging" || env === "production") {
+    if (env === "test" || env=== "local" || env === "development" || env === "staging" || env === "production") {
         envPrefix = orderNumberPrefixes.enviornmentPrefix[env];
     } else {
         throw new Error("Parameter 'env' contain invalid value");
