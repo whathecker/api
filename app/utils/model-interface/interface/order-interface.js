@@ -148,4 +148,30 @@ orderInterfaces.updateAuthStatusOfFirstOrder = (orderInstance) => {
     return orderInstance;
 }
 
+/**
+ * public method: addDeliverySchedule
+ * @param {Object} orderInstance 
+ * instance of Order model to add item detail
+ * @param {Object} deliverySchedule 
+ * object contains nextDeliveryDate
+ * 
+ * Return: extended instance of Order with nextDeliverySchedule
+ * 
+ */
+
+orderInterfaces.addDeliverySchedule = (orderInstance, deliverySchedule) => {
+    
+    if (!orderInstance) {
+        throw new Error('Missing argument: orderInstance');
+    }
+    if (!deliverySchedule) {
+        throw new Error('Missing argument: deliverySchedule');
+    }
+
+    orderInstance.deliverySchedule = deliverySchedule.nextDeliveryDate;
+
+    return orderInstance;
+
+}
+
 module.exports = orderInterfaces;

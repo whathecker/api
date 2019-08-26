@@ -69,4 +69,65 @@ userInterfaces.addAddressesToUser = (userInstance, shippingAddress, billingAddre
     return userInstance;
 }
 
+userInterfaces.addOrderToUser = (userInstance, orderInstance) => {
+
+    if (!userInstance) {
+        throw new Error('missing argument: userInstance');
+    }
+
+    if (!orderInstance) {
+        throw new Error('missing argument: orderInstance');
+    }
+
+    userInstance.orders.push(orderInstance);
+
+    return userInstance;
+
+}
+
+userInterfaces.addSubscriptionToUser = (userInstance, subscriptionInstance) => {
+    
+    if (!userInstance) {
+        throw new Error('missing argument: userInstance');
+    }
+
+    if (!subscriptionInstance) {
+        throw new Error('missing argument: subscriptionInstance');
+    }
+
+    userInstance.subscriptions.push(subscriptionInstance);
+
+    return userInstance;
+}
+
+userInterfaces.addBillingOptionToUser = (userInstance, billingInstance) => {
+
+    if (!userInstance) {
+        throw new Error('missing argument: userInstance');
+    }
+
+    if (!billingInstance) {
+        throw new Error('missing argument: billingInstance');
+    }
+
+    userInstance.billingOptions.push(billingInstance);
+
+    return userInstance;
+}
+
+userInterfaces.setDefaultBillingOption = (userInstance, billingInstance) => {
+    
+    if (!userInstance) {
+        throw new Error('missing argument: userInstance');
+    }
+
+    if (!billingInstance) {
+        throw new Error('missing argument: billingInstance');
+    }
+
+    userInstance.defaultBillingOption = billingInstance;
+
+    return userInstance;
+}
+
 module.exports = userInterfaces;

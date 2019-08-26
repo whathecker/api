@@ -8,6 +8,8 @@ const SubscriptionBox = require('../../models/SubscriptionBox');
 const User = require('../../models/User');
 const Address = require('../../models/Address');
 const Billing = require('../../models/Billing');
+const Subscription = require('../../models/Subscription');
+const Order = require('../../models/Order');
 
 const modelInterface = require('../model-interface');
 
@@ -130,6 +132,46 @@ const dummyProductDetails = [
         qty: 10
     }
 ];
+const dummyBoxDetails = [
+    { 
+        boxType: {
+            skinType: 'dry',
+            skinTypeCode: 'DR'
+        },
+        name: 'test package - 1',
+        prices: [{
+            region: 'eu',
+            currency: 'euro',
+            price: '24.95',
+        }]
+    }, 
+    {
+        boxType: {
+            skinType: 'normal',
+            skinTypeCode: 'NM'
+        },
+        name: 'test package - 2',
+        prices: [{
+            region: 'eu',
+            currency: 'euro',
+            price: '24.95',
+        }]
+    },
+    {
+        boxType: {
+            skinType: 'oily',
+            skinTypeCode: 'OL'
+        },
+        name: 'test package - 3',
+        prices: [{
+            region: 'eu',
+            currency: 'euro',
+            price: '24.95',
+        }]
+    }
+];
+
+
 
 module.exports = {
     dummyUserDetail: dummyUserDetail,
@@ -137,11 +179,13 @@ module.exports = {
     dummyCategoryDetail: dummyCategoryDetail,
     dummySkinTypeDetails: dummySkinTypeDetails,
     dummyAdminUserDetail: dummyAdminUserDetail,
+    dummyBoxDetails: dummyBoxDetails,
+    dummyProductDetails: dummyProductDetails,
 
     createTestApikey : () => {
         return new Promise((resolve, reject) => {
             
-            const apikey = modelInterface.apikeyInterfaces.createApikeyInstance(dummyApikeyDetail);
+            const apikey = modelInterface.apikey.createApikeyInstance(dummyApikeyDetail);
 
             apikey.save().then((apikey) => {
                 resolve(apikey.key);
@@ -155,7 +199,7 @@ module.exports = {
     createTestAdminUser: () => {
         return new Promise((resolve, reject) => {
 
-            const adminUser = modelInterface.adminUserInterfaces.createAdminUserInstance(dummyAdminUserDetail);
+            const adminUser = modelInterface.adminUser.createAdminUserInstance(dummyAdminUserDetail);
 
             adminUser.save()
             .then(adminUser => {
@@ -170,9 +214,9 @@ module.exports = {
     createTestBrands: () => {
         return new Promise((resolve, reject) => {
 
-            const brand1 = modelInterface.brandInterfaces.createBrandInstance(dummyBrandDetails[0]);
-            const brand2 = modelInterface.brandInterfaces.createBrandInstance(dummyBrandDetails[1]);
-            const brand3 = modelInterface.brandInterfaces.createBrandInstance(dummyBrandDetails[2]);
+            const brand1 = modelInterface.brand.createBrandInstance(dummyBrandDetails[0]);
+            const brand2 = modelInterface.brand.createBrandInstance(dummyBrandDetails[1]);
+            const brand3 = modelInterface.brand.createBrandInstance(dummyBrandDetails[2]);
 
             Promise.all([
                 brand1.save(),
@@ -190,7 +234,7 @@ module.exports = {
     createTestCategories: () => {
         return new Promise((resolve, reject) => {
 
-            const category1 = modelInterface.categoryInterfaces.createCategoryInstance(dummyCategoryDetail);
+            const category1 = modelInterface.category.createCategoryInstance(dummyCategoryDetail);
             category1.save().then(category => {
                 resolve(category);
             })
@@ -203,9 +247,9 @@ module.exports = {
     createTestSkinTypes: () => {
         return new Promise((resolve, reject) => {
 
-            const skinType1 = modelInterface.skinTypeInterfaces.createSkinTypeInstance(dummySkinTypeDetails[0]);
-            const skinType2 = modelInterface.skinTypeInterfaces.createSkinTypeInstance(dummySkinTypeDetails[1]);
-            const skinType3 = modelInterface.skinTypeInterfaces.createSkinTypeInstance(dummySkinTypeDetails[2]);
+            const skinType1 = modelInterface.skinType.createSkinTypeInstance(dummySkinTypeDetails[0]);
+            const skinType2 = modelInterface.skinType.createSkinTypeInstance(dummySkinTypeDetails[1]);
+            const skinType3 = modelInterface.skinType.createSkinTypeInstance(dummySkinTypeDetails[2]);
 
             Promise.all([
                 skinType1.save(),
@@ -224,9 +268,9 @@ module.exports = {
     createTestProducts: () => {
         return new Promise((resolve, reject) => {
 
-            const product1 = modelInterface.productInterfaces.createProductInstance(dummyProductDetails[0]);
-            const product2 = modelInterface.productInterfaces.createProductInstance(dummyProductDetails[1]);
-            const product3 = modelInterface.productInterfaces.createProductInstance(dummyProductDetails[2]);
+            const product1 = modelInterface.product.createProductInstance(dummyProductDetails[0]);
+            const product2 = modelInterface.product.createProductInstance(dummyProductDetails[1]);
+            const product3 = modelInterface.product.createProductInstance(dummyProductDetails[2]);
 
             Promise.all([
                 product1.save(),
@@ -242,27 +286,135 @@ module.exports = {
             
         });
     },
-    createTestPackages: () => {
+    /**
+     * public method: createTestPackages
+     * 
+     * @param {Array} products 
+     * Array contain Product instances
+     * 
+     * Return: Promise (resolve with created packages, reject with error)
+     */
+
+    createTestSubscriptionBoxes: (products) => {
         return new Promise((resolve, reject) => {
 
+            let box1 = modelInterface.box.createBoxInstance(dummyBoxDetails[0]);
+            let box2 = modelInterface.box.createBoxInstance(dummyBoxDetails[1]);
+            let box3 = modelInterface.box.createBoxInstance(dummyBoxDetails[2]);
+
+            box1 = modelInterface.box.addPriceDetail(box1,dummyBoxDetails[0].prices);
+            box2 = modelInterface.box.addPriceDetail(box2, dummyBoxDetails[1].prices);
+            box3 = modelInterface.box.addPriceDetail(box3, dummyBoxDetails[2].prices);
+
+            box1 = modelInterface.box.addItemDetails(box1, products);
+            box2 = modelInterface.box.addItemDetails(box2, products);
+            box3 = modelInterface.box.addItemDetails(box3, products);
+
+            Promise.all([
+                box1.save(),
+                box2.save(),
+                box3.save()
+            ])
+            .then(boxes => {
+                resolve(boxes);
+            })
+            .catch(error => {
+                reject(error);
+            });
+            
         });
     },
-    createTestSubscribedUser: () => {
+    createTestSubscribedUser: (packages) => {
+
         return new Promise((resolve, reject) => {
+
             // create user instance with basic info
+            let user = modelInterface.user.createUserInstance(dummyUserDetail);
+            
             // create address instances
+            let shippingAddress = modelInterface.address.createAddressInstance(dummyUserDetail.shippingAddress, user._id);
+            let billingAddress = modelInterface.address.createAddressInstance(dummyUserDetail.billingAddress, user._id);
+            
             // extend user instance with addresses
+            user = modelInterface.user.addAddressesToUser(user, shippingAddress, billingAddress);
+
             // create billing instance
+            let billing = modelInterface.billing.createBillingInstance(dummyUserDetail.paymentDetail, user._id);
+
+            const dummySubscriptionDetail = {
+                country: 'netherlands',
+                package: {
+                    id: packages[0].id,
+                    quantity: 1
+                }
+            };
+
             // create subscription instance
+            let subscription = modelInterface.subscription.createSubscriptionInstance(dummySubscriptionDetail, user._id, billing._id);
+            
+            const dummyOrderDetail = {
+                country: 'netherlands',
+                isSubscription: true,
+                deliveryInfo: {
+                    deliveryFrequency: 28,
+                    deliveryDay: 4
+                },
+                item: {
+                    id: packages[0].id,
+                    name: packages[0].name,
+                    quantity: 1,
+                    prices: packages[0].prices
+                }
+            }
             // create order instance
+            let order = modelInterface.order.createOrderInstance(dummyOrderDetail.country, dummyOrderDetail.isSubscription, user._id);
+            order = modelInterface.order.addItemDetail(order, dummyOrderDetail.item);
+            order = modelInterface.order.addBillingInfo(order, billing, dummyUserDetail.paymentDetail.payment_method);
+            order = modelInterface.order.updateAuthStatusOfFirstOrder(order);
+
             // extend subscription instance
+            subscription = modelInterface.subscription.addFirstDeliveryInfos(subscription, dummyOrderDetail.deliveryInfo, order);
+            subscription = modelInterface.subscription.addOrderInSubscription(subscription, order);
+            
+            // extend deliverySchedule at order instance
+            order = modelInterface.order.addDeliverySchedule(order, subscription.deliverySchedules[0]);
+
             // extend user instance with billing
+            user = modelInterface.user.addBillingOptionToUser(user, billing);
             // extend user instance with subscription
+            user = modelInterface.user.addSubscriptionToUser(user, subscription);
             // extend user instance with order
+            user = modelInterface.user.addOrderToUser(user, order);
+            user = modelInterface.user.setDefaultBillingOption(user, order);
 
 
             // save all instances and resolve promise
-        })
+            Promise.all([
+                user.save(),
+                shippingAddress.save(),
+                billingAddress.save(),
+                billing.save(),
+                subscription.save(),
+                order.save()
+            ])
+            .then(values => {
+
+                const result = {
+                    user: values[0],
+                    shippingAddress: values[1],
+                    billingAddress: values[2],
+                    billing: values[3],
+                    subscription: values[4],
+                    order: values[5]
+                }
+
+                resolve(result);
+            })
+            .catch(error => {
+                reject(error);
+            });
+
+        });
     },
     removeTestApikeys: () => {
         return new Promise((resolve, reject) => {
@@ -343,7 +495,14 @@ module.exports = {
     },
     removeTestSubscribedUser: () => {
         return new Promise((resolve, reject) => {
-            User.collection.drop()
+            
+            Promise.all([
+                User.collection.drop(),
+                Address.collection.drop(),
+                Billing.collection.drop(),
+                Subscription.collection.drop(),
+                Order.collection.drop()
+            ])
             .then(() => {
                 resolve('User collection is dropped');
             })
@@ -351,5 +510,5 @@ module.exports = {
                 reject(error);
             });
         });
-    }
+    },
 }

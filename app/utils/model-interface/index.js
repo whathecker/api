@@ -12,16 +12,16 @@ const orderInterfaces = require('./interface/order-interface');
 const boxInterfaces = require('./interface/box-interface');
 
 module.exports = {
-    addressInterfaces: addressInterfaces,
-    brandInterfaces: brandInterfaces,
-    apikeyInterfaces: apikeyInterfaces,
-    adminUserInterfaces: adminUserInterfaces,
-    categoryInterfaces: categoryInterfaces,
-    skinTypeInterfaces: skinTypeInterfaces,
-    productInterfaces: productInterfaces,
-    userInterfaces: userInterfaces,
-    billingInterfaces: billingInterfaces,
-    subscriptionInterfaces: subscriptionInterfaces,
-    orderInterfaces: orderInterfaces,
-    boxInterfaces: boxInterfaces
+    address: addressInterfaces,
+    brand: brandInterfaces,
+    apikey: apikeyInterfaces,
+    adminUser: adminUserInterfaces,
+    category: categoryInterfaces,
+    skinType: skinTypeInterfaces,
+    product: productInterfaces,
+    user: userInterfaces,
+    billing: billingInterfaces,
+    subscription: subscriptionInterfaces,
+    order: orderInterfaces,
+    box: boxInterfaces
 }

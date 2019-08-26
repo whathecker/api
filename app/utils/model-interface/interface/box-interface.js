@@ -36,7 +36,7 @@ boxInterface.createBoxInstance = (boxDetail) => {
  * 
  * @param {Array} priceDetails 
  * Array contain price objects with following fields:
- * price, vatRate
+ * price, region, currency
  * 
  * Return: extended instance of Order with price detail
  */
