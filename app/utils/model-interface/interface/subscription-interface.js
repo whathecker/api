@@ -14,7 +14,7 @@ const subscriptionInterfaces = {};
  * @param {String} billing_id 
  * object_id of Billing instance associated with the Subscription instance to be created
  * 
- * Return: new instance of Billing
+ * Return: new instance of Subscription
  */
 
 subscriptionInterfaces.createSubscriptionInstance = (subscriptionDetail, user_id, billing_id) => {

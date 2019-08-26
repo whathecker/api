@@ -8,6 +8,8 @@ const productInterfaces = require('./interface/product-interface');
 const userInterfaces = require('./interface/user-interface');
 const billingInterfaces = require('./interface/billing-interface');
 const subscriptionInterfaces = require('./interface/subscription-interface');
+const orderInterfaces = require('./interface/order-interface');
+const boxInterfaces = require('./interface/box-interface');
 
 module.exports = {
     addressInterfaces: addressInterfaces,
@@ -19,5 +21,7 @@ module.exports = {
     productInterfaces: productInterfaces,
     userInterfaces: userInterfaces,
     billingInterfaces: billingInterfaces,
-    subscriptionInterfaces: subscriptionInterfaces
+    subscriptionInterfaces: subscriptionInterfaces,
+    orderInterfaces: orderInterfaces,
+    boxInterfaces: boxInterfaces
 }

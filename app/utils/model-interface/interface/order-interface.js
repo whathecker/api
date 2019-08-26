@@ -31,7 +31,7 @@ orderInterfaces.createOrderInstance = (country, isSubscription, user_id) => {
     }
 
     const currentEnv = process.env.NODE_ENV;
-    const country = country.toLowerCase();
+    country = country.toLowerCase();
 
     const order = new Order();
     order.orderNumber = order.createOrderNumber(currentEnv, country);
