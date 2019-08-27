@@ -416,6 +416,52 @@ module.exports = {
 
         });
     },
+    /**
+     * public method: enrichProductsArray
+     * 
+     * @param {Array} products 
+     * Array contain Product instances
+     * 
+     * Return: Promise 
+     * resolve with enriched products array with isChecked, qtyToShip fields
+     * result is used for sumbitting payload for updateShippingItems call
+     * rejected with error
+     */
+    enrichProductsArray: (products) => {
+        return new Promise((resolve, reject) => {
+            if (!products) {
+                reject(new Error('missing argument: products'));
+            }
+            if (!Array.isArray(products)) {
+                reject(new Error('invalid argument type: products is not array'));
+            }
+            const enrichedProducts = products.map(product => {
+    
+                const enrichedProduct = {
+                    channel: product.channel,
+                    _id: product._id,
+                    prices: product.prices,
+                    inventoryHistory: product.inventoryHistory,
+                    creationDate: product.creationDate,
+                    lastModified: product.lastModified,
+                    name: product.name,
+                    description: product.description,
+                    category: product.category,
+                    categoryCode: product.categoryCode,
+                    brand: product.brand,
+                    brandCode: product.brandCode,
+                    skinType: product.skinType,
+                    id: product.id,
+                    inventory: product.inventory,
+                    isChecked: true,
+                    qtyToShip: 2
+                };
+                return enrichedProduct;
+            });
+            
+            resolve(enrichedProducts);
+        });
+    },
     removeTestApikeys: () => {
         return new Promise((resolve, reject) => {
             Apikey.collection.drop()

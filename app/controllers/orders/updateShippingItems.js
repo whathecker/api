@@ -9,8 +9,9 @@ const inventoryRetryEx = 'inventory-retry';
 
 
 function updateShippingDetail (req, res, next) {
+    console.log(req.params.ordernumber);
     console.log(req.body.update);
-    if (!req.body.orderNumber || !req.body.update) {
+    if (!req.body.update) {
         logger.warn(`updateShippingDetail request has rejected as param is missing`);
         return res.status(400).json({ 
             status: 'failed',
@@ -18,7 +19,7 @@ function updateShippingDetail (req, res, next) {
         });
     }
 
-    Order.findOne({ orderNumber: req.params.id })
+    Order.findOne({ orderNumber: req.params.ordernumber })
     .then(order => {
         if (!order) {
             logger.warn(`updateShippingDetail request is failed | unknown order number`);
@@ -42,7 +43,7 @@ function updateShippingDetail (req, res, next) {
                 logger.warn(`updateShippingDetail request is failed | order are packed already`);
                 return res.status(422).json({
                     status: 'failed',
-                    message: "cannot updated already packed order, remove all items in the list first"
+                    message: "cannot update already packed order, remove all items in the list first"
                 });
             }
             
@@ -65,6 +66,7 @@ function updateShippingDetail (req, res, next) {
                         sumOfGrossPrice: order.setSumOfItemPrice(item.prices[0].price, item.qtyToShip),
                         sumOfNetPrice: order.setSumOfItemPrice(item.prices[0].netPrice, item.qtyToShip)
                     }
+                    console.log(itemAmount);
                     return item = itemAmount;
 
                 });

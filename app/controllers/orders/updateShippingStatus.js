@@ -18,7 +18,7 @@ function updateShippingStatus (req, res, next) {
         });
     }
 
-    Order.findOne({ orderNumber: req.params.id })
+    Order.findOne({ orderNumber: req.params.ordernumber })
     .populate({
         path: 'user',
         populate: { path: 'subscriptions' }
@@ -107,8 +107,10 @@ function updateShippingStatus (req, res, next) {
                                         order.save()
                                     ])
                                     .then(values => {
+                                        console.log(values[0]);
                                         return res.status(200).json({
                                             status: 'success',
+                                            subscription: values[0],
                                             orderNumber: order.orderNumber,
                                             email: order.user.email,
                                             message: 'order is marked as shipped'

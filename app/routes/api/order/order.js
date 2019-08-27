@@ -10,9 +10,9 @@ const updateShippingStatus = require('../../../controllers/orders/updateShipping
 router.use(apiAuth);
 
 router.get('/', adminAuth, getOrders);
-router.get('/order/:id', adminAuth, getOrderByOrdernumber);
-router.put('/order/:id/shipping', adminAuth, updateShippingStatus);
-router.put('/order/:id/shipping/items', adminAuth, updateShippingItems);
-router.delete('/order/:id/shipping/items/:item', adminAuth, removePackedItems);
+router.get('/order/:ordernumber', adminAuth, getOrderByOrdernumber);
+router.put('/order/:ordernumber/shipping', adminAuth, updateShippingStatus);
+router.put('/order/:ordernumber/shipping/items', adminAuth, updateShippingItems);
+router.delete('/order/:ordernumber/shipping/items/:itemId', adminAuth, removePackedItems);
 
 module.exports = router;

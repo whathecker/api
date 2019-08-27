@@ -9,8 +9,8 @@ const inventoryRetryEx = 'inventory-retry';
 
 function removePackedItems (req, res, next) {
 
-    const orderNumber = req.params.id;
-    const itemId = req.params.item;
+    const orderNumber = req.params.ordernumber;
+    const itemId = req.params.itemId;
     
     Order.findOne({ orderNumber: orderNumber })
     .then(order => {
@@ -91,11 +91,12 @@ function removePackedItems (req, res, next) {
     
                 }).catch(next);
     
-                order.save();
-                logger.warn(`removePackedItems request is processed | ${itemId} has removed from packed list`);
-                return res.status(200).json({
-                    status: 'success',
-                    message: 'removed'
+                order.save().then((order) => {
+                    logger.warn(`removePackedItems request is processed | ${itemId} has removed from packed list`);
+                    return res.status(200).json({
+                        status: 'success',
+                        message: 'removed'
+                    });
                 });
             }
             

@@ -34,6 +34,7 @@ function startMQConnection () {
                     async.each(message.items, function (e, callback) {
                         Product.findOne({ id: e.itemId })
                         .then(product => {
+                            
                             if (!product) {
                                 // trigget investigation
                                 logger.warn(`attempted to update inventory but failed: product id is unknonw`);

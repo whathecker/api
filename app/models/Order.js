@@ -169,7 +169,9 @@ Order.prototype.createInvoiceNumber = () => {
 
 Order.prototype.setSumOfItemPrice = (price, quantity) => {
     const priceInNum = Number(price).toFixed(2);
+    //console.log(priceInNum);
     let sumOfPrice = priceInNum * quantity;
+    //console.log(sumOfPrice);
     return sumOfPrice.toFixed(2);
 }
 /**

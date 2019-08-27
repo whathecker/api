@@ -3,7 +3,7 @@ const logger = require('../../utils/logger');
 
 function getOrderByOrdernumber (req, res, next) {
 
-    Order.findOne({ orderNumber: req.params.id })
+    Order.findOne({ orderNumber: req.params.ordernumber })
     .populate({
         path: 'user',
         populate: { path: 'defaultShippingAddress defaultBillingAddress'},
