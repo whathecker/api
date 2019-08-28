@@ -121,7 +121,7 @@ Order.prototype.createOrderNumber = (env, country) => {
     } else {
         throw new Error("Parameter 'env' contain invalid value");
     }
-    console.log(envPrefix);
+    //console.log(envPrefix);
 
     let countryPrefix;
     if (country === "netherlands" || country === "germany" || country === "america") {
@@ -129,7 +129,7 @@ Order.prototype.createOrderNumber = (env, country) => {
     } else {
         throw new Error("Parameter 'country' contain invalid value");
     }
-    console.log(countryPrefix);
+    //console.log(countryPrefix);
 
 
     let orderNumber = '';
@@ -191,10 +191,10 @@ Order.prototype.setTotalAmount = (items, currency) => {
         const vatOfItem = Number(items[i].sumOfVat);
         const netPriceOfItem = Number(items[i].sumOfNetPrice);
         const grossPriceOfItem = Number(items[i].sumOfGrossPrice);
-        console.log(discountOfItem);
-        console.log(vatOfItem);
-        console.log(netPriceOfItem);
-        console.log(grossPriceOfItem);
+        //console.log(discountOfItem);
+        //console.log(vatOfItem);
+        //console.log(netPriceOfItem);
+        //console.log(grossPriceOfItem);
 
         totalDiscount += discountOfItem;
         totalVat += vatOfItem;
@@ -202,10 +202,10 @@ Order.prototype.setTotalAmount = (items, currency) => {
         totalAmount += grossPriceOfItem;
     
     }
-    console.log(totalDiscount);
-    console.log(totalVat);
-    console.log(totalNetPrice);
-    console.log(totalAmount);
+    //console.log(totalDiscount);
+    //console.log(totalVat);
+    //console.log(totalNetPrice);
+    //console.log(totalAmount);
 
     let orderAmount = {
         currency: currency,

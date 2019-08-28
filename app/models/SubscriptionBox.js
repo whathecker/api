@@ -75,19 +75,19 @@ SubscriptionBox.prototype.isPriceDataValid = (priceInput) => {
 
     priceInput.forEach((price) => {
         for (const prop in price) {
-            console.log(prop);
+            //console.log(prop);
 
             // technical dept alert!!! make it dynamic later
             if (prop === 'region') {
                 if (price[prop] !== 'eu') {
-                    console.log(price[prop]);
+                    //console.log(price[prop]);
                     isInputValid = false;
                 }
             }
             // technical dept alert!!! make it dynamic later
             if (prop === 'currency') {
                 if (price[prop] !== 'euro') {
-                    console.log(price[prop]);
+                    //console.log(price[prop]);
                     isInputValid = false;
                 }    
             }

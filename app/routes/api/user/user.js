@@ -35,6 +35,7 @@ const removeUserBillingStripe = require('../../../controllers/user/removeUserBil
 const updatePackage = require('../../../controllers/user/updatePackage');
 const apiAuth = require('../../../middlewares/verifyApikey');
 
+const isTest = process.env.NODE_ENV === "test";
 const isLocal = process.env.NODE_ENV === "local";
 const isDevelopment = process.env.NODE_ENV === "development";
 const isProduction = process.env.NODE_ENV === "production";
@@ -42,7 +43,7 @@ const isProduction = process.env.NODE_ENV === "production";
 
 router.use(apiAuth);
 
-if (isLocal) {
+if (isLocal || isTest) {
     router.use(session({ 
         cookie: {
           maxAge: 600000,

@@ -61,7 +61,7 @@ Subscription.prototype.createSubscriptionId = (env, country) => {
     } else {
         throw new Error("Parameter 'env' contain invalid value");
     }
-    console.log(envPrefix);
+    //console.log(envPrefix);
 
     const middlePrefix = "SB";
 
@@ -71,7 +71,7 @@ Subscription.prototype.createSubscriptionId = (env, country) => {
     } else {
         throw new Error("Parameter 'country' contain invalid value");
     }
-    console.log(countryPrefix);
+    //console.log(countryPrefix);
 
     function create5DigitInteger () {
         const num = Math.floor(Math.random() * 90000) + 10000;
