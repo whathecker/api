@@ -7,6 +7,14 @@ function updateEmailAddress (req, res, next) {
     const password = req.body.password;
     const newEmail = req.body.newEmail;
 
+    if (!originalEmail || !password || !newEmail) {
+        logger.warn(`updateEmailAddress request has failed - bad request`)
+        return res.status(400).json({
+            status: res.status,
+            message: 'bad request'
+        });
+    }
+
     if (req.user) {
         User.findById(req.user._id)
         .then((user) => {
@@ -26,6 +34,15 @@ function updateEmailAddress (req, res, next) {
                 if (passwordValidity) {
                     User.findOne({ email: newEmail })
                     .then((user) => {
+
+                        if (user) {
+                            logger.warn(`email address update request has rejected as new email aqddress alreadty exist  new email: ${newEmail}`)
+                            return res.status(422).json({
+                                status: res.status,
+                                message: 'duplicated email'
+                            });
+                        }
+
                         if (!user) {
                             // process email update
                             origianlUser.email = newEmail;
@@ -35,7 +52,7 @@ function updateEmailAddress (req, res, next) {
                             origianlUser.save()
                             .then((user) => {
                                 if (user) {
-                                    console.log(user);
+                                    //console.log(user);
                                     logger.info(`email address update request has processed | old email: ${originalEmail} new email: ${user.email}`)
                                     return res.status(200).json({
                                         status: res.status,
@@ -46,13 +63,9 @@ function updateEmailAddress (req, res, next) {
                             })
                             .catch(next);
 
-                        } else {
-                            logger.warn(`email address update request has rejected as new email aqddress alreadty exist  new email: ${newEmail}`)
-                            return res.status(422).json({
-                                status: res.status,
-                                message: 'duplicated email'
-                            });
-                        }
+                        } 
+
+                         
                     }).catch(next);
                 } 
 

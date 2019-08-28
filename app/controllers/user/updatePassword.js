@@ -6,6 +6,13 @@ function updatePassword (req, res, next) {
 
     const password = req.body.password;
     const newPassword = req.body.newPassword;
+    if (!password || !newPassword) {
+        logger.warn(`updatePassword request has failed - bad request`);
+        return res.status(400).json({
+            status: 'failed',
+            message: 'bad request'
+        });
+    }
 
     if (req.user) {
         

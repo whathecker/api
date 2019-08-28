@@ -2,8 +2,16 @@ const User = require('../../models/User');
 const logger = require('../../utils/logger');
 
 function updateContactDetail (req, res, next) {
-    
+
     console.log(req.body);
+
+    if (!req.body.firstName || !req.body.lastName || !req.body.mobileNumber) {
+        logger.warn(`updateContactDetail request has failed: bad request`)
+        return res.status(400).json({
+            status: 'failed',
+            message: 'bad request'
+        });
+    }
 
     let update = req.body;
     update.lastModified = Date.now();
@@ -11,7 +19,7 @@ function updateContactDetail (req, res, next) {
     if (req.user) {
         const options = { new: true };
 
-        User.findByIdAndUpdate(req.user._id, req.body, options)
+        User.findByIdAndUpdate(req.user._id, update, options)
         .then((user) => {
             if (user) {
                 logger.info(`updateContactDetail request has processed ${user.email}`)

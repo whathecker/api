@@ -1,12 +1,18 @@
-const User = require('../../models/User');
 const Subscription = require('../../models/Subscription');
 const SubcriptionBox = require('../../models/SubscriptionBox');
 const logger = require('../../utils/logger');
 
 function updatePackage (req, res, next) {
-    console.log(req.body);
 
     const boxType = req.body.boxType;
+
+    if (!boxType) {
+        logger.warn(`updatePackage request has failed - bad request`);
+        return res.status(400).json({
+            status: 'failed',
+            message: 'bad request'
+        });
+    }
    
     if (req.user) {
 
@@ -15,7 +21,7 @@ function updatePackage (req, res, next) {
 
             if (!subscription) {
                 logger.warn(`updatePackage request has failed | no subscription found | ${req.user._id}`);
-                return res.status(204).json({
+                return res.status(422).json({
                     status: 'failed',
                     message: 'no subscription'
                 });
@@ -28,7 +34,7 @@ function updatePackage (req, res, next) {
 
                     if (!box) {
                         logger.warn(`updatePackage request has failed | no SubcriptionBox found | ${subscription.subscriptionId}`);
-                        return res.status(204).json({
+                        return res.status(422).json({
                             status: 'failed',
                             message: 'invalid param: boxType'
                         });

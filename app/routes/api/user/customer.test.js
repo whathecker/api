@@ -5,6 +5,8 @@ const testHelpers = require('../../../utils/test/testHelpers');
 let apikey = null;
 let products = null;
 let addresses = null;
+let boxes = null;
+let createdOrder =  null;
 
 describe('Test user endpoints', () => {
     const testSession = session(app);
@@ -22,11 +24,14 @@ describe('Test user endpoints', () => {
 
             return testHelpers.createTestSubscriptionBoxes(products)
             .then(boxes => {
+                // assign value for subsequent testings
+                boxes = boxes;
 
                 return testHelpers.createTestSubscribedUser(boxes)
                 .then(result => {
                     
                     addresses = result.user.addresses;
+                    createdOrder = result.order;
                     // login user
                     return testSession.post('/user/login')
                     .set('X-API-Key', apikey)
@@ -85,6 +90,7 @@ describe('Test user endpoints', () => {
     });
 
     describe('address related endpoints', () => {
+
         test('getUserAddresses success', () => {
             return testSession.get('/user/addresses')
             .set('X-API-Key', apikey)
@@ -204,8 +210,169 @@ describe('Test user endpoints', () => {
             });
         });
     });
+
+    describe('contact detail related endpoints', () => {
+
+        test('updateContactDetail fail - bad request', () => {
+            return testSession.put('/user/contact')
+            .set('X-API-Key', apikey)
+            .send({})
+            .then(response => {
+                expect(response.status).toBe(400);
+            });
+        });
+
+        test('updateContactDetail success', () => {
+            return testSession.put('/user/contact')
+            .set('X-API-Key', apikey)
+            .send({
+                firstName: 'updated',
+                lastName: 'updated',
+                mobileNumber: ' '
+            })
+            .then(response => {
+                expect(response.status).toBe(200);
+            });
+        });
+
+        test('updateEmailAddress fail - bad request', () => {
+            return testSession.put('/user/email')
+            .set('X-API-Key', apikey)
+            .send({})
+            .then(response => {
+                expect(response.status).toBe(400);
+            });
+        });
+
+        test('updateEmailAddress fail - invalid password', () => {
+            return testSession.put('/user/email')
+            .set('X-API-Key', apikey)
+            .send({
+                email: testHelpers.dummyUserDetail.email,
+                password: 'fakepassword',
+                newEmail: 'yunjae.oh.kr@gmail.com'
+            })
+            .then(response => {
+                expect(response.status).toBe(403);
+            });
+        });
+
+        test('updateEmailAddress fail - duplicated email', () => {
+            return testSession.put('/user/email')
+            .set('X-API-Key', apikey)
+            .send({
+                email: testHelpers.dummyUserDetail.email,
+                password: testHelpers.dummyUserDetail.password,
+                newEmail: 'yunjae.oh.nl@gmail.com'
+            })
+            .then(response => {
+                expect(response.status).toBe(422);
+            });
+        });
+
+        test('updateEmailAddress success', () => {
+            return testSession.put('/user/email')
+            .set('X-API-Key', apikey)
+            .send({
+                email: testHelpers.dummyUserDetail.email,
+                password: testHelpers.dummyUserDetail.password,
+                newEmail: 'yunjae.oh.kr@gmail.com'
+            })
+            .then(response => {
+                expect(response.status).toBe(200);
+            });
+        });
+
+        test('updatePassword request fail - bad request', () => {
+            return testSession.put('/user/password')
+            .set('X-API-Key', apikey)
+            .send({})
+            .then(response => {
+                expect(response.status).toBe(400);
+            });
+        });
+
+        test('updatePassword request fail - invalid password', () => {
+            return testSession.put('/user/password')
+            .set('X-API-Key', apikey)
+            .send({
+                password: 'invalid',
+                newPassword: 'newpassword'
+            })
+            .then(response => {
+                expect(response.status).toBe(403);
+            });
+        });
+
+        test('updatePassword request success', () => {
+            return testSession.put('/user/password')
+            .set('X-API-Key', apikey)
+            .send({
+                password: testHelpers.dummyUserDetail.password,
+                newPassword: 'thisisnewpassword'
+            })
+            .then(response => {
+                expect(response.status).toBe(200);
+            });
+        });
+
+    });
+
+    describe('order related endpoints,', () => {
+
+        test('getUserOrders success', () => {
+            return testSession.get('/user/orders')
+            .set('X-API-Key', apikey)
+            .then(response => {
+                expect(response.status).toBe(200);
+                expect(response.body.orders.length).toBeGreaterThan(0);
+            });
+        });
+
+        test('getUserInvoice success', () => {
+            return testSession.get(`/user/orders/order/${createdOrder.orderNumber}/invoice`)
+            .set('X-API-Key', apikey)
+            .then(response => {
+                expect(response.status).toBe(200);
+            });
+        });
+
+    });
+        
+
+    describe('updatePackage endpoint', () => {
+
+        test('updatePackage fail - bad request', () => {
+            return testSession.put('/user/subscription/package')
+            .set('X-API-Key', apikey)
+            .send({})
+            .then(response => {
+                expect(response.status).toBe(400);
+            });
+        });
+
+        test('updatePackage fail - invalid boxType', () => {
+            return testSession.put('/user/subscription/package')
+            .set('X-API-Key', apikey)
+            .send({
+                boxType: 'oilyhy'
+            })
+            .then(response => {
+                expect(response.status).toBe(422);
+            });
+        });
+
+        test('updatePackage success', () => {
+            return testSession.put('/user/subscription/package')
+            .set('X-API-Key', apikey)
+            .send({
+                boxType: 'oily'
+            })
+            .then(response => {
+                expect(response.status).toBe(200);
+            });
+        });
+
+    });
     
-
-
-
 });
