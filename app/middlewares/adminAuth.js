@@ -52,7 +52,7 @@ function isAdminAuth (req, res, next) {
                 });
 
             } else {
-                console.log(decoded);
+                //console.log(decoded);
                 if (decoded.expires < Date.now()) {
                     logger.warn(`adminUser is unauthenticated, request is rejected | expired token`);
                     return res.status(401).json({

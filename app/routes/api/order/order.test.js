@@ -17,7 +17,7 @@ describe('Test order endpoints', () => {
             testHelpers.createTestProducts(),
         ])
         .then(values => {
-            apikey = values[0],
+            apikey = values[0];
             email = values[1].email;
             password = process.env.TEST_ADMIN_USER_PASSWORD;
             products = values[2];
