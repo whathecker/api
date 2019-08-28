@@ -60,18 +60,6 @@ describe('Test admin brand endpoints', () => {
         });
     });
 
-    test('createBrand faile - wrong param type', () => {
-        return testSession.post('/admin/brands/brand')
-        .set('X-API-Key', apikey)
-        .send({
-            brandName: 'test',
-            brandCode: 1
-        })
-        .then(response => {
-            expect(response.status).not.toBe(201);
-        });
-    })
-
     test('createBrand success', () => {
         return testSession.post('/admin/brands/brand')
         .set('X-API-Key', apikey)

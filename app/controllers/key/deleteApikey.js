@@ -5,7 +5,7 @@ function deleteApikey (req, res, next) {
 
     const key_id = req.params.key_id;
 
-    modelInterface.apikeyInterfaces.removeApikeyByDbId(key_id)
+    modelInterface.apikey.removeApikeyByDbId(key_id)
     .then(result => {
         
         if (!result) { 

@@ -11,7 +11,7 @@ function createApikey (req, res, next) {
         });
     }
 
-    const apikey = modelInterface.apikeyInterfaces.createApikeyInstance({
+    const apikey = modelInterface.apikey.createApikeyInstance({
         name: req.body.name
     });
 
