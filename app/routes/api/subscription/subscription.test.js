@@ -98,8 +98,59 @@ describe('Test subscription endpoints', () => {
             expect(subscription.deliverySchedules[0]).toHaveProperty('month');
             expect(subscription.deliverySchedules[0]).toHaveProperty('date');
             expect(subscription.deliverySchedules[0]).toHaveProperty('day');
-            
+
         });
     });
+
+    test('changeSubscriptionStatus fail - bad request', () => {
+        return testSession.put(`/subscriptions/subscription/invalid/status`)
+        .set('X-API-Key', apikey)
+        .send({
+        })
+        .then(response => {
+            expect(response.status).toBe(400);
+        });
+    });
+
+    test('changeSubscriptionStatus fail - unknown subscription', () => {
+        return testSession.put(`/subscriptions/subscription/invalid/status`)
+        .set('X-API-Key', apikey)
+        .send({
+            update: {
+                isActive: false
+            }
+        })
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('changeSubscriptionStatus success - inactive subscription', () => {
+        return testSession.put(`/subscriptions/subscription/${createdSubscription.subscriptionId}/status`)
+        .set('X-API-Key', apikey)
+        .send({
+            update: {
+                isActive: false
+            }
+        })
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
+
+    test('changeSubscriptionStatus success - inactive subscription', () => {
+        return testSession.put(`/subscriptions/subscription/${createdSubscription.subscriptionId}/status`)
+        .set('X-API-Key', apikey)
+        .send({
+            update: {
+                isActive: true
+            }
+        })
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
+
+    
 
 });

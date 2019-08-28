@@ -54,7 +54,7 @@ function changeSubscriptionStatus (req, res, next) {
 
                             const message = {
                                 actionType: 'cancelOutstandingOrders',
-                                subscriptionId: subscription.subscriptionId,
+                                subscriptionId: subscription.subscriptionId
                             }
                             ch.publish(orderEx, '', Buffer.from(JSON.stringify(message)), { persistent: true });
                             ch.close().then(() => {
@@ -98,7 +98,7 @@ function changeSubscriptionStatus (req, res, next) {
 
                             const message = {
                                 actionType: 'createOrder',
-                                subscriptionId: subscription.subscriptionId,
+                                subscriptionId: subscription.subscriptionId
                             }
                             ch.publish(orderEx, '', Buffer.from(JSON.stringify(message)), { persistent: true });
                             ch.close().then(() => {
