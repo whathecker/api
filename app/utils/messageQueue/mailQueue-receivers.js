@@ -186,7 +186,7 @@ function startMQConnection () {
                                         courier: order.courier,
                                         trackingNumbers: concatTrackingNums(order.trackingNumber),
                                         trackingLink: `https://www.dhlparcel.nl/nl/consument/volg-je-pakket?tc=${order.trackingNumber[0]}&pc=${postalCode}&lc=nl-NL`,
-                                        senderName: 'Chokchok V.O.F',
+                                        senderName: 'V.O.F chokchok',
                                         senderAddress: 'Commelinstraat 42',
                                         senderCity: 'Amsterdam',
                                         senderCountry: 'Netherlands',
@@ -255,7 +255,7 @@ function startMQConnection () {
                                             deliveryDate: message.firstDeliverySchedule.date,
                                             deliveryMonth: convertDeliveryMonth(message.firstDeliverySchedule.month),
                                             deliveryYear: message.firstDeliverySchedule.year,
-                                            senderName: 'Chokchok V.O.F',
+                                            senderName: 'V.O.F chokchok',
                                             senderAddress: 'Commelinstraat 42',
                                             senderCity: 'Amsterdam',
                                             senderCountry: 'Netherlands',
@@ -319,7 +319,7 @@ function startMQConnection () {
                             payloadToSendGrid.personalizations[0].dynamic_template_data = {
                                 firstName: message.firstName,
                                 resetLink: '',
-                                senderName: 'Chokchok V.O.F',
+                                senderName: 'V.O.F chokchok',
                                 senderAddress: 'Commelinstraat 42',
                                 senderCity: 'Amsterdam',
                                 senderCountry: 'Netherlands'
@@ -352,7 +352,7 @@ function startMQConnection () {
                             payloadToSendGrid.personalizations[0].dynamic_template_data = {
                                 email: message.email,
                                 forgotPwdLink: '',
-                                senderName: 'Chokchok V.O.F',
+                                senderName: 'V.O.F chokchok',
                                 senderAddress: 'Commelinstraat 42',
                                 senderCity: 'Amsterdam',
                                 senderCountry: 'Netherlands'
