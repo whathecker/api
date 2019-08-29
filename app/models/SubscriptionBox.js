@@ -10,9 +10,9 @@ let itemSchema = new Schema({
 let pricesSchema = new Schema({
     region: { type: String, lowercase: true, enum: ['eu'], default: 'eu' },
     currency: { type: String, lowercase: true, enum: ['euro'], default: 'euro' },
-    vat: { type: String, default: "0" },
-    price: { type: String, default: "0" },
-    netPrice: { type: String, default: "0" }
+    vat: { type: String, default: "0.00" },
+    price: { type: String, default: "0.00" },
+    netPrice: { type: String, default: "0.00" }
 }, { _id: false });
 
 let subscriptionBoxSchema = new Schema({

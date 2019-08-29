@@ -48,10 +48,10 @@ function removePackedItems (req, res, next) {
                 if (filteredShippedItems.length === 0) {
                     order.shippedAmount = {
                         currency: '',
-                        totalDiscount: "0",
-                        totalVat: "0",
-                        totalAmount: "0",
-                        totalNetPrice: "0"
+                        totalDiscount: "0.00",
+                        totalVat: "0.00",
+                        totalAmount: "0.00",
+                        totalNetPrice: "0.00"
                     }
                 }
                 if (filteredShippedItems.length !== 0) {

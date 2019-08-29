@@ -45,24 +45,24 @@ let itemAmountSchema = new Schema ({
     quantity: { type: Number, default: 1 },
     currency: { type: String, lowercase: true },
 
-    originalPrice: { type: String, default: "0" },
-    discount: { type: String, default: "0" },
-    vat: { type: String, default: "0"},
-    grossPrice: { type: String, default: "0" },
-    netPrice: { type: String, default: "0" },
+    originalPrice: { type: String, default: "0.00" },
+    discount: { type: String, default: "0.00" },
+    vat: { type: String, default: "0.00"},
+    grossPrice: { type: String, default: "0.00" },
+    netPrice: { type: String, default: "0.00" },
 
-    sumOfDiscount: { type: String, default: "0"},
-    sumOfVat : { type: String, default: "0"},
-    sumOfGrossPrice: { type: String, default: "0" },
-    sumOfNetPrice: { type: String, default: "0" },
+    sumOfDiscount: { type: String, default: "0.00"},
+    sumOfVat : { type: String, default: "0.00"},
+    sumOfGrossPrice: { type: String, default: "0.00" },
+    sumOfNetPrice: { type: String, default: "0.00" },
     
 }, { _id: false });
 let orderAmountSchema = new Schema({
     currency: { type: String, lowercase: true },
-    totalDiscount: { type: String, default: "0" },
-    totalVat: { type: String, default: "0" },
-    totalAmount: { type: String, default: "0" },
-    totalNetPrice: { type: String, default: "0" }
+    totalDiscount: { type: String, default: "0.00" },
+    totalVat: { type: String, default: "0.00" },
+    totalAmount: { type: String, default: "0.00" },
+    totalNetPrice: { type: String, default: "0.00" }
 }, { _id: false });
 
 let orderSchema = new Schema({

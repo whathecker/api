@@ -256,10 +256,10 @@ describe('Test order endpoints', () => {
                 const order = response.body.order;
                 expect(response.status).toBe(200);
                 expect(order.shippedAmountPerItem).toHaveLength(0);
-                expect(order.shippedAmount.totalAmount).toBe('0');
-                expect(order.shippedAmount.totalVat).toBe('0');
-                expect(order.shippedAmount.totalDiscount).toBe('0');
-                expect(order.shippedAmount.totalNetPrice).toBe('0');
+                expect(order.shippedAmount.totalAmount).toBe('0.00');
+                expect(order.shippedAmount.totalVat).toBe('0.00');
+                expect(order.shippedAmount.totalDiscount).toBe('0.00');
+                expect(order.shippedAmount.totalNetPrice).toBe('0.00');
             });
         });
 
