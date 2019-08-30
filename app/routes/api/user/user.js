@@ -126,9 +126,16 @@ router.post('/user/login', (req, res, next) => {
 });
 
 router.get('/user/logout', userAuth, (req, res, next) => {
+
     req.logout();
     req.session.destroy();
-    res.clearCookie('chokchok_session');
+    if (isLocal || isTest) {
+        res.clearCookie('chokchok_session');
+    }
+    if (isDevelopment || isProduction) {
+        res.clearCookie('chokchok_session', { domain: '.hellochokchok.com', path: '/' });
+    }
+    
     return res.status(200).json({ message: "user session has terminated" });
     
 });
