@@ -56,7 +56,7 @@ function loginAdminUser (req, res, next) {
                     httpOnly: false,
                     sameSite: false,
                     secure: true,
-                    domain: './hellochokchok.com',
+                    domain: '.hellochokchok.com',
                     maxAge: 7200000
                 }
             }
