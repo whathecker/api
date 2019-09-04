@@ -84,7 +84,7 @@ async function createProduct (req, res, next) {
         
     }
 
-    if (req.body.quantityOnHand) {
+    if (req.body.quantityOnHand !== null || req.body.quantityOnHand !== undefined) {
         product.inventory = {
             quantityOnHand : req.body.quantityOnHand,
             lastModified : Date.now()
