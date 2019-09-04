@@ -34,6 +34,7 @@ const corsOptions = {
         'http://localhost:3000', 
         'http://localhost:9231',
         'https://test.hellochokchok.com', 
+        'https://backoffice.hellochokchok.com',
         'https://www.hellochokchok.com' 
     ],
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
