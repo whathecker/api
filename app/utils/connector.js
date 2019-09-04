@@ -18,7 +18,7 @@ connector.getDBString = () => {
     }
 
     if (envVar === "production") {
-        return `mongodb://${dbConfig.prod.username}:${dbConfig.prod.password}@cluster0-shard-00-00-jcvrs.mongodb.net:27017,cluster0-shard-00-01-jcvrs.mongodb.net:27017,cluster0-shard-00-02-jcvrs.mongodb.net:27017/chokchok?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority`;
+        return `mongodb://${dbConfig.prod.username}:${dbConfig.prod.password}@prod-shard-00-00-iltlw.mongodb.net:27017,prod-shard-00-01-iltlw.mongodb.net:27017,prod-shard-00-02-iltlw.mongodb.net:27017/chokchok?ssl=true&replicaSet=Prod-shard-0&authSource=admin&retryWrites=true&w=majority`;
     }
 
     return;
