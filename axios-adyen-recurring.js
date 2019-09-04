@@ -1,3 +1,4 @@
+/*
 const axios = require('axios');
 
 let hostURL = null;
@@ -31,6 +32,6 @@ instance = axios.create({
         username: basicAuthUsername,
         password: basicAuthPassword
     }
-});
+}); */
 
-module.exports = instance;
+module.exports = {};

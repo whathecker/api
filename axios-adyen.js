@@ -1,3 +1,4 @@
+/*
 const axios = require('axios');
 
 let hostURL = null;
@@ -26,6 +27,6 @@ instance = axios.create({
         'X-API-key': apikey,
         'Access-Control-Allow-Origin': '*'
     }
-});
+}); */
 
-module.exports = instance;
+module.exports = {};
