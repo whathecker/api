@@ -51,6 +51,7 @@ async function completeCheckoutStripe (req, res, next) {
 
     const isAddressSame = stripeHelpers.isAddressesSame(userDetail.billingAddress, userDetail.shippingAddress);
 
+    //console.log(isAddressSame)
     let shippingAddress = new Address();
     shippingAddress.firstName = userDetail.shippingAddress.firstName;
     shippingAddress.lastName = userDetail.shippingAddress.lastName;
@@ -167,30 +168,28 @@ async function completeCheckoutStripe (req, res, next) {
         }
     }
     
+    Promise.all([
+        newUser.save(),
+        billingOption.save(),
+        shippingAddress.save(),
+        !isAddressSame? billingAddress.save() : null ,
+        subscription.save(),
+        order.save(),
+        stripe.paymentIntents.update(paymentIntent.id, metaData)
+    ])
+    .then(values => {
+        if (values) {
+            logger.info(`checkout is successfully processed (no redirect) | ${newUser.email} is created`);     
+            return res.status(201).json({
+                status: 'success',
+                message: 'checkout success',
+                subscriptionId: subscription.subscriptionId,
+                orderNumber: order.orderNumber,
+                user: newUser.email
+            });
+        }
+    }).catch(next);
     
-    if (isAddressSame === true) {
-        Promise.all([
-            newUser.save(),
-            billingOption.save(),
-            shippingAddress.save(),
-            !isAddressSame? billingAddress.save() : null ,
-            subscription.save(),
-            order.save(),
-            stripe.paymentIntents.update(paymentIntent.id, metaData)
-        ])
-        .then(values => {
-            if (values) {
-                logger.info(`checkout is successfully processed (no redirect) | ${newUser.email} is created`);     
-                return res.status(201).json({
-                    status: 'success',
-                    message: 'checkout success',
-                    subscriptionId: subscription.subscriptionId,
-                    orderNumber: order.orderNumber,
-                    user: newUser.email
-                });
-            }
-        }).catch(next);
-    }
 }
 
 module.exports = completeCheckoutStripe;

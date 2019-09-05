@@ -65,12 +65,14 @@ Subscription.prototype.createSubscriptionId = (env, country) => {
 
     const middlePrefix = "SB";
 
-    let countryPrefix;
+    let countryPrefix = 'NL';
+    /*
     if (country === "netherlands" || country === "germany" || country === "america") {
         countryPrefix = subscriptionPrefixes.countryPrefix[country];
     } else {
         throw new Error("Parameter 'country' contain invalid value");
-    }
+    } */
+
     //console.log(countryPrefix);
 
     function create5DigitInteger () {
