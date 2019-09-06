@@ -58,12 +58,12 @@ app.use(bodyParser.json({
 
 
 // MQ receivers
-require('./utils/messageQueue/queue-receivers'); /** adyen notification receivers */
+//require('./utils/messageQueue/queue-receivers'); /** adyen notification receivers */
 require('./utils/messageQueue/mailQueue-receivers');
 require('./utils/messageQueue/inventoryQueue-receivers');
 require('./utils/messageQueue/orderQueue-receivers');
-require('./utils/messageQueue/recurringQueue-receivers');
-require('./utils/messageQueue/stripeQueue-receivers');
+require('./utils/messageQueue/recurringStripe-receivers');
+require('./utils/messageQueue/stripeQueue-receivers'); /** stripe webhook receiver */
 
 // mount routes
 app.use(require('./routes'));
