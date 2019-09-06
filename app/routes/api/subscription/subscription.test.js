@@ -77,7 +77,7 @@ describe('Test subscription endpoints', () => {
         });
     });
 
-    /*
+    
     
     test('getSubscriptionById success - check detail of newly created subscription', () => {
         return testSession.get(`/subscriptions/subscription/${createdSubscription.subscriptionId}`)
@@ -102,7 +102,7 @@ describe('Test subscription endpoints', () => {
             expect(subscription.deliverySchedules[0]).toHaveProperty('day'); 
 
         });
-    }); */
+    }); 
 
     test('changeSubscriptionStatus fail - bad request', () => {
         return testSession.put(`/subscriptions/subscription/invalid/status`)
