@@ -40,31 +40,34 @@ function initiateRecurringProcess (req, res, next) {
             interval = 1 * dayInMsec;
             break;
         default: 
-            console.log('unknonw attempt id');
+            logger.error(`initiateRecurringProcess request has failed | unknown attemp id`);
             return res.status(422).json({
                 status: 'failed',
                 message: 'unknown attempt id'
             });
     }
 
+    // create the due-orders to bill by adding interval and current date:
     const deliverySchedule = new Date(currentDate + interval);
     const deliveryMonth = deliverySchedule.getMonth();
     const deliveryYear = deliverySchedule.getFullYear();
     const deliveryDate = deliverySchedule.getDate();
     
-    //console.log(deliverySchedule);
-    //console.log(deliveryDate);
-    //console.log(deliveryMonth);
-    //console.log(deliveryYear);
+    logger.info(`initiateRecurringProcess | target delivery schedule: ${deliverySchedule}`);
+    logger.info(`initiateRecurringProcess | target delivery date: ${deliveryDate}`);
+    logger.info(`initiateRecurringProcess | target delivery month: ${deliveryMonth}`);
+    logger.info(`initiateRecurringProcess | target delivery year: ${deliveryYear}`);
+
     Subscription.find({
-        isActive: true
-        /*
+        //isActive: true
         'nextDeliverySchedule.year': deliveryYear,
         'nextDeliverySchedule.month': deliveryMonth,
         'nextDeliverySchedule.date': deliveryDate,
-        isActive: true */
+        isActive: true 
     })
     .then(subscriptions => {
+
+        logger.info('initiateRecurringProcess | retrieved subscriptions' + subscriptions);
     
         if (subscriptions.length === 0) {
             logger.warn(`initiateRecurringProcess request has failed | no subscriptions found`);
@@ -76,7 +79,7 @@ function initiateRecurringProcess (req, res, next) {
         }
         if (subscriptions.length !== 0) {
             
-
+            
             let orderBatch = [];
 
             async.each(subscriptions, (subscription, callback) => {
@@ -98,10 +101,10 @@ function initiateRecurringProcess (req, res, next) {
                             if (orderStatus === "RECEIVED" || orderStatus === "OVERDUE") {
                                 const orderToProcess = {
                                     orderNumber: order.orderNumber,
-                                    paymentMethod: order.paymentMethod,
+                                    paymentMethod: order.paymentMethod, /** payment method detail */
                                     orderAmountPerItem: order.orderAmountPerItem,
                                     orderAmount: order.orderAmount,
-                                    userId: order.user.userId
+                                    userId: order.user.userId /** stripe customer_id */
                                 }
                                 orderBatch.push(orderToProcess);
                             }       
@@ -146,6 +149,7 @@ function initiateRecurringProcess (req, res, next) {
                                 logger.warn(`initiateRecurringProcess has processed| ${orderBatch.length - 1} orders have been dispatched to recurring process`);
                                 return res.status(200).json({
                                     status: 'success',
+                                    attempt: req.params.attempt,
                                     orders: orderBatch,
                                     message: 'orders have batched to recurring process'
                                 });
