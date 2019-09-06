@@ -14,6 +14,8 @@ function initiateRecurringProcess (req, res, next) {
     
     const attempt = req.params.attempt;
     const currentDate = Date.now();
+    console.log(attempt);
+    console.log(currentDate);
     const dayInMsec = 86400000;
     let interval;
     
@@ -60,6 +62,7 @@ function initiateRecurringProcess (req, res, next) {
 
     Subscription.find({
         //isActive: true
+        
         'nextDeliverySchedule.year': deliveryYear,
         'nextDeliverySchedule.month': deliveryMonth,
         'nextDeliverySchedule.date': deliveryDate,
@@ -67,7 +70,7 @@ function initiateRecurringProcess (req, res, next) {
     })
     .then(subscriptions => {
 
-        logger.info('initiateRecurringProcess | retrieved subscriptions' + subscriptions);
+        logger.info(`initiateRecurringProcess | retrieved ${subscriptions.length} subscriptions`);
     
         if (subscriptions.length === 0) {
             logger.warn(`initiateRecurringProcess request has failed | no subscriptions found`);
@@ -106,6 +109,7 @@ function initiateRecurringProcess (req, res, next) {
                                     orderAmount: order.orderAmount,
                                     userId: order.user.userId /** stripe customer_id */
                                 }
+                                //console.log(orderToProcess);
                                 orderBatch.push(orderToProcess);
                             }       
                         }
@@ -146,7 +150,7 @@ function initiateRecurringProcess (req, res, next) {
                             ch.publish(recurringEx, '', Buffer.from(JSON.stringify(message)), { persistent: true });
                             ch.close().then(() => {
                                 connection.close();
-                                logger.warn(`initiateRecurringProcess has processed| ${orderBatch.length - 1} orders have been dispatched to recurring process`);
+                                logger.warn(`initiateRecurringProcess has processed| ${orderBatch.length} orders have been dispatched to recurring process`);
                                 return res.status(200).json({
                                     status: 'success',
                                     attempt: req.params.attempt,

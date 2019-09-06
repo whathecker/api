@@ -49,6 +49,7 @@ function startMQConnection () {
                             if (!subscription.isActive) {
                                 //logger.warn(`createOrder action for subscription num ${subscription.subscriptionId} is failed | subscription is not active`);
                                 //return ch.ack(msg);
+
                                 if (msg.properties.headers['x-death']) {
                                     const retryCount = msg.properties.headers['x-death'][0].count;
                                     if (retryCount <= 5) {
@@ -99,7 +100,7 @@ function startMQConnection () {
                                 order.paymentHistory = [order.paymentStatus];
                                 order.paymentMethod = {
                                     type: subscription.paymentMethod.type,
-                                    recurringDetail: subscription.paymentMethod.recurringDetail
+                                    recurringDetail: subscription.paymentMethod.billingId
                                 };
                                 let deliverySchedules = Array.from(subscription.deliverySchedules);
                                 const lastIndexSchedule = deliverySchedules[deliverySchedules.length - 1];
@@ -184,43 +185,59 @@ function startMQConnection () {
                         }
 
                         if (actionType === 'cancelOutstandingOrders') {
-                            async.each(subscription.orders, (order, callback) => {
-                                Order.findOne({ orderNumber: order.orderNumber })
-                                .then(order => {
-                                    const orderStatus = order.orderStatus.status;
-                                    if (orderStatus === 'RECEIVED') {
-                                        order.orderStatus = { status: 'CANCELLED' }
-                                        order.orderStatusHistory.push(order.orderStatus);
-                                        order.markModified('orderStatus');
-                                        order.markModified('orderStatusHistory');
-                                        order.lastModified = Date.now();
-                                        order.markModified('lastModified');
-                                        order.save();
-                                        callback();
-                                    }
-                                    else {
-                                        callback();
-                                    }
-                                })
-                            }, (error) => {
 
-                                if (error) {
-                                    // fire message to Slack
-                                    logger.error(`cancelOutstandingOrders action for subscription num ${subscription.subscriptionId} is failed | unexpected error in async loop`);
+
+                            if (msg.properties.headers['x-death']) {
+
+                                const retryCount = msg.properties.headers['x-death'][0].count;
+                                if (retryCount <= 5) {
                                     return ch.nack(msg, false, false);
+                                } else {
+                                    logger.warn(`cancelOutstandingOrders action has failed to processed more than 5 times`);
+                                    return ch.ack(msg);
                                 }
 
-                                // clear delivery schedules
-                                subscription.deliverySchedules = [];
-                                subscription.lastModified = Date.now();
-                                subscription.markModified('deliverySchedules');
-                                subscription.markModified('lastModified');
-                                subscription.save().then(()=> {
-                                    logger.info(`cancelOutstandingOrders action for subscription num ${subscription.subscriptionId} is processed`);
-                                    return ch.ack(msg);
-                                }).catch(console.warn);
+                            } else {
 
-                            });
+                                async.each(subscription.orders, (order, callback) => {
+                                    Order.findOne({ orderNumber: order.orderNumber })
+                                    .then(order => {
+                                        const orderStatus = order.orderStatus.status;
+                                        if (orderStatus === 'RECEIVED') {
+                                            order.orderStatus = { status: 'CANCELLED' }
+                                            order.orderStatusHistory.push(order.orderStatus);
+                                            order.markModified('orderStatus');
+                                            order.markModified('orderStatusHistory');
+                                            order.lastModified = Date.now();
+                                            order.markModified('lastModified');
+                                            order.save();
+                                            callback();
+                                        }
+                                        else {
+                                            callback();
+                                        }
+                                    })
+                                }, (error) => {
+    
+                                    if (error) {
+                                        // fire message to Slack
+                                        logger.error(`cancelOutstandingOrders action for subscription num ${subscription.subscriptionId} is failed | unexpected error in async loop`);
+                                        return ch.nack(msg, false, false);
+                                    }
+    
+                                    // clear delivery schedules
+                                    subscription.deliverySchedules = [];
+                                    subscription.lastModified = Date.now();
+                                    subscription.markModified('deliverySchedules');
+                                    subscription.markModified('lastModified');
+                                    subscription.save().then(()=> {
+                                        logger.info(`cancelOutstandingOrders action for subscription num ${subscription.subscriptionId} is processed`);
+                                        return ch.ack(msg);
+                                    }).catch(console.warn);
+    
+                                });
+                            }
+
                         }
                     
                     }).catch(console.warn);
