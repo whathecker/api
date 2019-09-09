@@ -63,7 +63,6 @@ function updateShippingStatus (req, res, next) {
                 Subscription.findById(order.user.subscriptions[0]._id)
                 .then(subscription => {
                     let deliverySchedules = Array.from(subscription.deliverySchedules);
-                    
                     // first element is always the next one to deliver
                     if (order.orderNumber !== deliverySchedules[0].orderNumber) {
                         // return error
@@ -107,7 +106,7 @@ function updateShippingStatus (req, res, next) {
                                         order.save()
                                     ])
                                     .then(values => {
-                                        console.log(values[0]);
+                                        //console.log(values[0]);
                                         return res.status(200).json({
                                             status: 'success',
                                             subscription: values[0],

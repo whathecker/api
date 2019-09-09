@@ -8,7 +8,7 @@ const recurringQueue = 'recurring';
 const recurringRetryQueue = 'recurring-retry';
 const recurringEx = 'recurring';
 const recurringRetryEx = 'recurring-retry';
-
+const slackMsgDispatcher =  require('../../utils/errorDispatchers/errorDispatchers');
 
 function initiateRecurringProcess (req, res, next) {
     
@@ -61,18 +61,20 @@ function initiateRecurringProcess (req, res, next) {
     logger.info(`initiateRecurringProcess | target delivery year: ${deliveryYear}`);
 
     Subscription.find({
-        //isActive: true
-        
+        isActive: true
+        /*
         'nextDeliverySchedule.year': deliveryYear,
         'nextDeliverySchedule.month': deliveryMonth,
         'nextDeliverySchedule.date': deliveryDate,
-        isActive: true 
+        isActive: true */
     })
     .then(subscriptions => {
 
         logger.info(`initiateRecurringProcess | retrieved ${subscriptions.length} subscriptions`);
     
         if (subscriptions.length === 0) {
+
+            slackMsgDispatcher.dispatchRecurringBatchStatus(attempt, deliverySchedule, subscriptions.length);
             logger.warn(`initiateRecurringProcess request has failed | no subscriptions found`);
             return res.status(200).json({
                 status: 'success',
@@ -150,6 +152,8 @@ function initiateRecurringProcess (req, res, next) {
                             ch.publish(recurringEx, '', Buffer.from(JSON.stringify(message)), { persistent: true });
                             ch.close().then(() => {
                                 connection.close();
+
+                                slackMsgDispatcher.dispatchRecurringBatchStatus(attempt, deliverySchedule, subscriptions.length);
                                 logger.warn(`initiateRecurringProcess has processed| ${orderBatch.length} orders have been dispatched to recurring process`);
                                 return res.status(200).json({
                                     status: 'success',

@@ -1,5 +1,6 @@
 const axiosSlackSendgrid = require('../../../axios-slack-sendgrid');
 const axiosSlackTruemail = require('../../../axios-slack-truemail');
+const axiosSlackRecurring = require('../../../axios-slack-recurring');
 const logger = require('../logger');
 
 module.exports = {
@@ -97,5 +98,74 @@ module.exports = {
                 logger.warn(`dispatchTruemailError request has failed to post error message to Slack`);
             }
         });
+    },
+    dispatchRecurringBatchStatus: (attempt, targetDeliverySchedule, batchLength) => {
+        let payload;
+
+        if (batchLength === 0) {
+            payload = {
+                text: `Recurring batch has not found matching orders for target delivery date`,
+                attachments: [
+                    {
+                        fallback: "no matching orders found",
+                        author_name: "Chokchok",
+                        title: `${batchLength} num of orders are dispatched`,
+                        text: `attempt num: ${attempt} | target delivery date: ${targetDeliverySchedule}`
+                    }
+                ]
+            };
+        } else {
+            payload = {
+                text: `Recurring batch has dispatched to MQ`,
+                attachments: [
+                    {
+                        fallback: "batch dispatched to MQ",
+                        author_name: "Chokchok",
+                        title: `${batchLength} num of orders are dispatched`,
+                        text: `attempt num: ${attempt} | target delivery date: ${targetDeliverySchedule}`
+                    }
+                ]
+            };
+        }
+
+        axiosSlackRecurring.post('', payload)
+        .then(response => {
+            if (response.status === 200) {
+                logger.info('dispatchRecurringBatchStatus request has posted message to Slack channel');
+            }
+        }).catch(error => {
+            if (error) {
+                logger.warn(`dispatchRecurringBatchStatus request has failed to post error message to Slack`);
+            }
+        });
+    },
+    dispatchRecurringProcessStatus: (attempt, orders, successOrder, failedOrder) => {
+        console.log(attempt);
+        console.log(orders);
+        console.log(successOrder);
+        console.log(failedOrder);
+        const payload = {
+            text: `Recurring batch has processed`,
+            attachments: [
+                {
+                    fallback: "recurring batch processed",
+                    author_name: "Chokchok",
+                    title: `${orders.length} num of orders are dispatched`,
+                    text: `attempt num: ${attempt} | num of success order ${successOrder.length} | success orders: ${successOrder} | num of failed order ${failedOrder.length} | failed orders: ${failedOrder}`
+                }
+            ]
+        };
+
+        axiosSlackRecurring.post('', payload)
+        .then(response => {
+            if (response.status === 200) {
+                logger.info('dispatchRecurringProcessStatus request has posted message to Slack channel');
+            }
+        }).catch(error => {
+            if (error) {
+                logger.warn(`dispatchRecurringProcessStatus request has failed to post error message to Slack`);
+            }
+        });
     }
+    
 }

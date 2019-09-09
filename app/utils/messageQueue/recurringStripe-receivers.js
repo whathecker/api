@@ -7,6 +7,7 @@ const logger = require('../logger');
 const Order = require('../../models/Order');
 const stripeHelpers = require('../stripe/stripeHelpers');
 const stripe = require('stripe')(stripeHelpers.retrieveApikey());
+const slackMsgDispatcher = require('../errorDispatchers/errorDispatchers');
 
 
 function startMQConnection () {
@@ -36,6 +37,10 @@ function startMQConnection () {
                     const attemptNum = message.attempt;
                     console.log(message);
 
+
+                    let authroizedOrders = [];
+                    let failedOrders = [];
+
                     if (actionType === 'payment') {
 
                         async.each(ordersBatch, (order, callback) => {
@@ -57,7 +62,7 @@ function startMQConnection () {
 
                                     if (paymentIntent.status === "succeeded") {
                                         logger.info(`recurring payment ${order.orderNumber} has been authorised`);
-        
+
                                         Order.findOne({ orderNumber: order.orderNumber })
                                         .then(order => {
                                             console.log(order);
@@ -74,6 +79,10 @@ function startMQConnection () {
                                             order.markModified('paymentHistory');
                                             order.markModified('lastModified');
                                             order.save();
+
+                                            // push order number to authroizedOrders to count auth order in batch
+                                            authroizedOrders.push(order.orderNumber);
+
                                             callback();
                                         });
                                     }
@@ -91,8 +100,14 @@ function startMQConnection () {
                                             order.markModified('orderStatusHistory');
                                             order.markModified('lastModified');
                                             order.save();
+                                            failedOrders.push(order.orderNumber);
                                             callback();
                                         });
+                                    }
+
+                                    if (paymentIntent.status !== 'succeeded') {
+                                        failedOrders.push(order.orderNumber);
+                                        callback()
                                     }
 
                                 } catch {
@@ -102,6 +117,9 @@ function startMQConnection () {
                             })();
                             
                         }, (error) => {
+
+                            slackMsgDispatcher.dispatchRecurringProcessStatus(attemptNum, ordersBatch, authroizedOrders, failedOrders);
+                            
                             if (error) {
                                 console.log(error);
                                 logger.error(`error(s) in recurring batch process | attempt Num: ${attemptNum} | ${ordersBatch.length} orders have processed`);
