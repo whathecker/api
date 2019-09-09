@@ -24,6 +24,7 @@ function updateShippingStatus (req, res, next) {
         populate: { path: 'subscriptions' }
     })
     .then(order => {
+
         if (!order) {
             logger.warn(`updateShippingStatus request is failed | unknown order number`);
             return res.status(422).json({
@@ -39,6 +40,14 @@ function updateShippingStatus (req, res, next) {
                     message: 'cannot updated shipping status of un paid order'
                 });
             }
+
+            if (order.shippedAmountPerItem.length === 0) {
+                logger.warn(`updateShippingStatus request is failed | no items packed yet`);
+                return res.status(422).json({
+                    status: 'failed',
+                    message: "no items are packed for this order, finish packing first"
+                }); 
+            } 
 
             // shipping status can be updated when there is packed item
             if (order.shippedAmountPerItem.length > 0) {
@@ -63,80 +72,90 @@ function updateShippingStatus (req, res, next) {
                 Subscription.findById(order.user.subscriptions[0]._id)
                 .then(subscription => {
                     let deliverySchedules = Array.from(subscription.deliverySchedules);
-                    // first element is always the next one to deliver
-                    if (order.orderNumber !== deliverySchedules[0].orderNumber) {
-                        // return error
-                        logger.warn(`updateShippingStatus request is failed | first order need to be shipped first`);
-                        return res.status(422).json({
-                            status: 'failed',
-                            message: 'first order need to be shipped first'
+
+                    if (subscription.isActive === false) {
+                        order.save().then(() => {
+                            logger.info(`updateShippingStatus request has processed | ${order.orderNumber} | shipping status updated to shipped`);
+                            return res.status(200).json({
+                                status: 'success',
+                                subscription: subscription,
+                                orderNumber: order.orderNumber,
+                                email: order.user.email,
+                                message: 'order is marked as shipped'
+                            });
                         });
                     }
 
-                    if (order.orderNumber === deliverySchedules[0].orderNumber) {
-                        subscription.deliverySchedules = subscription.clearFirstQueuedSchedule(deliverySchedules);
-                        subscription.markModified('deliverySchedules');
-                    }
-                    
-                    open.connect(rabbitMQConnection()).then(connection => {
-                        connection.createChannel()
-                        .then(ch => {
-                            const exchange = ch.assertExchange(orderEx, 'direct', { durable: true});
-                            const retryExchange = ch.assertExchange(orderRetryEx, 'direct', { durable: true });
-                            const bindQueue = ch.bindQueue(orderQueue, orderEx);
-                            const bindRetryQueue = ch.bindQueue(orderRetryQueue, orderRetryEx);
+                    if (subscription.isActive === true) {
+
+                        // first element is always the next one to deliver
+                        if (order.orderNumber !== deliverySchedules[0].orderNumber) {
+                            // return error
+                            logger.warn(`updateShippingStatus request is failed | first order need to be shipped first`);
+                            return res.status(422).json({
+                                status: 'failed',
+                                message: 'first order need to be shipped first'
+                            });
+                        }
+
+                        if (order.orderNumber === deliverySchedules[0].orderNumber) {
+                            subscription.deliverySchedules = subscription.clearFirstQueuedSchedule(deliverySchedules);
+                            subscription.markModified('deliverySchedules');
+                        }
+
+                        open.connect(rabbitMQConnection()).then(connection => {
+                            connection.createChannel()
+                            .then(ch => {
+                                const exchange = ch.assertExchange(orderEx, 'direct', { durable: true});
+                                const retryExchange = ch.assertExchange(orderRetryEx, 'direct', { durable: true });
+                                const bindQueue = ch.bindQueue(orderQueue, orderEx);
+                                const bindRetryQueue = ch.bindQueue(orderRetryQueue, orderRetryEx);
+        
+                                Promise.all([
+                                    exchange,
+                                    retryExchange,
+                                    bindQueue,
+                                    bindRetryQueue
+                                ]).then(() => {
+                                    const message = {
+                                        actionType: 'createOrder',
+                                        subscriptionId: order.user.subscriptions[0].subscriptionId,
+                                        orderNumber: order.orderNumber
+                                    }
+                                    ch.publish(orderEx, '', Buffer.from(JSON.stringify(message)), { persistent: true });
+                                    ch.close().then(() => {
+                                        connection.close();
     
-                            Promise.all([
-                                exchange,
-                                retryExchange,
-                                bindQueue,
-                                bindRetryQueue
-                            ]).then(() => {
-                                const message = {
-                                    actionType: 'createOrder',
-                                    subscriptionId: order.user.subscriptions[0].subscriptionId,
-                                    orderNumber: order.orderNumber
-                                }
-                                ch.publish(orderEx, '', Buffer.from(JSON.stringify(message)), { persistent: true });
-                                ch.close().then(() => {
-                                    connection.close();
-
-                                    Promise.all([
-                                        subscription.save(),
-                                        order.save()
-                                    ])
-                                    .then(values => {
-                                        //console.log(values[0]);
-                                        return res.status(200).json({
-                                            status: 'success',
-                                            subscription: values[0],
-                                            orderNumber: order.orderNumber,
-                                            email: order.user.email,
-                                            message: 'order is marked as shipped'
-                                        });
-                
-                                    }).catch(next); 
-
-                                });
-                                
-                            })
-                        });
-                    }).catch(next);
+                                        Promise.all([
+                                            subscription.save(),
+                                            order.save()
+                                        ])
+                                        .then(values => {
+                                            //console.log(values[0]);
+                                            logger.info(`updateShippingStatus request has processed | ${order.orderNumber} | shipping status updated to shipped`);
+                                            
+                                            return res.status(200).json({
+                                                status: 'success',
+                                                subscription: values[0],
+                                                orderNumber: order.orderNumber,
+                                                email: order.user.email,
+                                                message: 'order is marked as shipped'
+                                            });
                     
-                    
+                                        }).catch(next); 
+    
+                                    });
+                                    
+                                })
+                            });
+                        }).catch(next);
+
+                    }  
 
                 }).catch(next);
                 
-               
-
-            } else {
-                logger.warn(`updateShippingStatus request is failed | no items packed yet`);
-                return res.status(422).json({
-                    status: 'failed',
-                    message: "no items are packed for this order, finish packing first"
-                }); 
-            } 
-
+            }  
+        
         }
 
     }).catch(next);

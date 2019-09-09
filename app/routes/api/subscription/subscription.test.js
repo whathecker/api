@@ -5,6 +5,7 @@ const testHelpers = require('../../../utils/test/testHelpers');
 let apikey = null;
 let products = null;
 let createdSubscription = null;
+let createdOrder = null;
 
 describe('Test subscription endpoints', () => {
     const testSession = session(app);
@@ -30,7 +31,9 @@ describe('Test subscription endpoints', () => {
                 .then(result => {
 
                     createdSubscription = result.subscription;
+                    createdOrder = result.order;
                     console.log(createdSubscription);
+                    console.log(createdOrder);
                     
                     return testSession.post('/admin/users/user/login')
                     .set('X-API-Key', apikey)
@@ -140,6 +143,46 @@ describe('Test subscription endpoints', () => {
     });
 
     // add test case to check delivery schedule..
+
+    describe('Test updateShippingItems, updateShippingStatus at inactive subscription', () => {
+        let updatedItems;
+
+        beforeAll(() => {
+
+            return testHelpers.enrichProductsArray(products)
+            .then(enrichedProducts => {
+                updatedItems = enrichedProducts;
+                return;
+            })
+        });
+
+        test('updateShippingItems success', () => {
+            return testSession.put(`/orders/order/${createdOrder.orderNumber}/shipping/items`)
+            .set('X-API-Key', apikey)
+            .send({
+                update: { items: updatedItems }
+            })
+            .then(response => {
+                expect(response.status).toBe(200);
+            });
+        });
+
+        test('updateShippingStatus success', () => {
+            return testSession.put(`/orders/order/${createdOrder.orderNumber}/shipping`)
+            .set('X-API-Key', apikey)
+            .send({
+                update: {
+                    courier: 'DHL',
+                    trackingNumber: ['1234']
+                }
+            })
+            .then(response => {
+                const subscription = response.body.subscription;
+                expect(response.status).toBe(200);
+            });
+        });
+
+    })
 
     test('changeSubscriptionStatus success - active subscription', () => {
         
