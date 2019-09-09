@@ -139,7 +139,9 @@ describe('Test subscription endpoints', () => {
         });
     });
 
-    test('changeSubscriptionStatus success - inactive subscription', () => {
+    // add test case to check delivery schedule..
+
+    test('changeSubscriptionStatus success - active subscription', () => {
         
         setTimeout(() => {
             return testSession.put(`/subscriptions/subscription/${createdSubscription.subscriptionId}/status`)
@@ -155,6 +157,8 @@ describe('Test subscription endpoints', () => {
         }, 5000);
         
     });
+
+    //add test case to check delivery schedule
 
     
 
