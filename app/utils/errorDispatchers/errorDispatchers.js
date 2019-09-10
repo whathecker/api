@@ -121,7 +121,7 @@ module.exports = {
                     {
                         fallback: "batch dispatched to MQ",
                         author_name: "Chokchok",
-                        title: `${batchLength} num of orders are dispatched`,
+                        title: `${batchLength} num of orders are dispatched to MQ`,
                         text: `attempt num: ${attempt} | target delivery date: ${targetDeliverySchedule}`
                     }
                 ]
@@ -150,7 +150,7 @@ module.exports = {
                 {
                     fallback: "recurring batch processed",
                     author_name: "Chokchok",
-                    title: `${orders.length} num of orders are dispatched`,
+                    title: `${orders.length} num of orders are processed`,
                     text: `attempt num: ${attempt} | num of success order ${successOrder.length} | success orders: ${successOrder} | num of failed order ${failedOrder.length} | failed orders: ${failedOrder}`
                 }
             ]

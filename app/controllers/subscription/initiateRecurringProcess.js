@@ -75,7 +75,7 @@ function initiateRecurringProcess (req, res, next) {
         if (subscriptions.length === 0) {
 
             slackMsgDispatcher.dispatchRecurringBatchStatus(attempt, deliverySchedule, subscriptions.length);
-            logger.warn(`initiateRecurringProcess request has failed | no subscriptions found`);
+            logger.warn(`initiateRecurringProcess request has not processed | no subscriptions found`);
             return res.status(200).json({
                 status: 'success',
                 result: 'No_result',
