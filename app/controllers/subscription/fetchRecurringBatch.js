@@ -2,15 +2,9 @@ const Subscription = require('../../models/Subscription');
 const Order = require('../../models/Order');
 const logger = require('../../utils/logger');
 const async = require('async');
-const open = require('amqplib');
-const rabbitMQConnection = require('../../utils/messageQueue/rabbitMQConnector');
-const recurringQueue = 'recurring';
-const recurringRetryQueue = 'recurring-retry';
-const recurringEx = 'recurring';
-const recurringRetryEx = 'recurring-retry';
 const slackMsgDispatcher =  require('../../utils/errorDispatchers/errorDispatchers');
 
-function initiateRecurringProcess (req, res, next) {
+function fetchRecurringBatch (req, res, next) {
     
     const attempt = req.params.attempt;
     const currentDate = Date.now();
@@ -42,7 +36,7 @@ function initiateRecurringProcess (req, res, next) {
             interval = 1 * dayInMsec;
             break;
         default: 
-            logger.error(`initiateRecurringProcess request has failed | unknown attemp id`);
+            logger.error(`fetchRecurringBatch request has failed | unknown attemp id`);
             return res.status(422).json({
                 status: 'failed',
                 message: 'unknown attempt id'
@@ -55,10 +49,10 @@ function initiateRecurringProcess (req, res, next) {
     const deliveryYear = deliverySchedule.getFullYear();
     const deliveryDate = deliverySchedule.getDate();
     
-    logger.info(`initiateRecurringProcess | target delivery schedule: ${deliverySchedule}`);
-    logger.info(`initiateRecurringProcess | target delivery date: ${deliveryDate}`);
-    logger.info(`initiateRecurringProcess | target delivery month: ${deliveryMonth}`);
-    logger.info(`initiateRecurringProcess | target delivery year: ${deliveryYear}`);
+    logger.info(`fetchRecurringBatch | target delivery schedule: ${deliverySchedule}`);
+    logger.info(`fetchRecurringBatch | target delivery date: ${deliveryDate}`);
+    logger.info(`fetchRecurringBatch | target delivery month: ${deliveryMonth}`);
+    logger.info(`fetchRecurringBatch | target delivery year: ${deliveryYear}`);
 
     Subscription.find({
         isActive: true
@@ -70,12 +64,14 @@ function initiateRecurringProcess (req, res, next) {
     })
     .then(subscriptions => {
 
-        logger.info(`initiateRecurringProcess | retrieved ${subscriptions.length} subscriptions`);
+        console.log(subscriptions);
+
+        logger.info(`fetchRecurringBatch | retrieved ${subscriptions.length} subscriptions`);
     
         if (subscriptions.length === 0) {
 
             slackMsgDispatcher.dispatchRecurringBatchStatus(attempt, deliverySchedule, subscriptions.length);
-            logger.warn(`initiateRecurringProcess request has not processed | no subscriptions found`);
+            logger.warn(`fetchRecurringBatch request has failed | no subscriptions found`);
             return res.status(200).json({
                 status: 'success',
                 result: 'No_result',
@@ -105,6 +101,13 @@ function initiateRecurringProcess (req, res, next) {
                             // orders are batched only when status is either RECEIVED or OVERDUE
                             if (orderStatus === "RECEIVED" || orderStatus === "OVERDUE") {
                                 const orderToProcess = {
+                                    subscriptionId: subscription.subscriptionId,
+                                    isActive: subscription.isActive,
+                                    deliverySchedule: subscription.deliverySchedules[0].nextDeliveryDate,
+                                    deliveryFrequency: subscription.deliveryFrequency,
+                                    deliveryDay: subscription.deliveryDay,
+                                    paymentStatus: order.paymentStatus.status,
+                                    orderStatus: order.orderStatus.status,
                                     orderNumber: order.orderNumber,
                                     paymentMethod: order.paymentMethod, /** payment method detail */
                                     orderAmountPerItem: order.orderAmountPerItem,
@@ -126,47 +129,15 @@ function initiateRecurringProcess (req, res, next) {
                 if (error) {
                     next(error);
                 }
-                
-                // send the orderBatch to MQ
-                open.connect(rabbitMQConnection()).then(connection => {
-                    connection.createChannel()
-                    .then(ch => {
-                        const exchange = ch.assertExchange(recurringEx, 'direct', { durable: true});
-                        const retryExchange = ch.assertExchange(recurringRetryEx, 'direct', { durable: true });
-                        const bindQueue = ch.bindQueue(recurringQueue, recurringEx);
-                        const bindRetryQueue = ch.bindQueue(recurringRetryQueue, recurringRetryEx);
 
-                        Promise.all([
-                            exchange,
-                            retryExchange,
-                            bindQueue,
-                            bindRetryQueue
-                        ]).then(() => {
-
-                            const message = {
-                                action: 'payment',
-                                attempt: req.params.attempt,
-                                orders: orderBatch
-                            }
-
-                            ch.publish(recurringEx, '', Buffer.from(JSON.stringify(message)), { persistent: true });
-                            ch.close().then(() => {
-                                connection.close();
-
-                                slackMsgDispatcher.dispatchRecurringBatchStatus(attempt, deliverySchedule, subscriptions.length);
-                                logger.warn(`initiateRecurringProcess has processed| ${orderBatch.length} orders have been dispatched to recurring process`);
-                                return res.status(200).json({
-                                    status: 'success',
-                                    attempt: req.params.attempt,
-                                    orders: orderBatch,
-                                    message: 'orders have batched to recurring process'
-                                });
-                            }).catch(next);
-                        })
-
-                    });
-
-                }).catch(next);
+                //slackMsgDispatcher.dispatchRecurringBatchStatus(attempt, deliverySchedule, subscriptions.length);
+                logger.info(`fetchRecurringBatch has processed| ${orderBatch.length} orders have been returned`);
+                return res.status(200).json({
+                    status: 'success',
+                    attempt: req.params.attempt,
+                    orders: orderBatch,
+                    message: 'orders have batched to recurring process'
+                });
                 
             });
         
@@ -178,4 +149,4 @@ function initiateRecurringProcess (req, res, next) {
     
 }
 
-module.exports = initiateRecurringProcess;
+module.exports = fetchRecurringBatch;
