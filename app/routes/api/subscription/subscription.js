@@ -5,10 +5,11 @@ const getSubscriptions = require('../../../controllers/subscription/getSubscript
 const getSubscriptionById = require('../../../controllers/subscription/getSubscriptionById');
 const initiateRecurringProcess = require('../../../controllers/subscription/initiateRecurringProcess');
 const changeSubscriptionStatus = require('../../../controllers/subscription/changeSubscriptionStatus');
+const fetchRecurringBatch = require('../../../controllers/subscription/fetchRecurringBatch');
 
 router.use(apiAuth);
 router.get('/', adminAuth, getSubscriptions);
-router.get('/payments/recurring/:attempt', initiateRecurringProcess);
+router.get('/payments/recurring/:attempt', fetchRecurringBatch);
 router.put('/subscription/:id/status', adminAuth, changeSubscriptionStatus);
 router.get('/subscription/:id', adminAuth, getSubscriptionById);
 
