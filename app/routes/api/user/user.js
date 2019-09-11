@@ -105,8 +105,17 @@ passport.use('user-local', new LocalStrategy({ usernameField: 'email', passwordF
             logger.info('login validation failed, wrong email or password');
             return done(null, false);
         }
-        logger.info('login success');
-        return done(null, user);
+
+        if (user && user.validatePassword(user, password)) {
+            
+            user.lastLogin = Date.now();
+            user.markModified('lastLogin');
+            user.save();
+            logger.info(`login success ${user.email}`);
+            return done(null, user);
+            
+        }
+        
     }); 
 })); 
 
