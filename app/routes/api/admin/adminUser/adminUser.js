@@ -18,7 +18,7 @@ passport.use('admin-local', new LocalStrategy({
 
         try {
             const adminUser = await AdminUser.findOne({ email: email }).exec();
-            console.log(adminUser);
+            
             if (!adminUser) {
                 return done(null, false);
             }
@@ -29,6 +29,9 @@ passport.use('admin-local', new LocalStrategy({
                 return done(null, false);
             }
             if (passwordMatch) {
+                adminUser.lastLogin = Date.now();
+                adminUser.markModified('lastLogin');
+                adminUser.save();
                 return done(null, adminUser);
             } else {
                 return done('Incorrect email or password');
