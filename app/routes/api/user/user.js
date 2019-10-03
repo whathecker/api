@@ -11,6 +11,7 @@ const User = require('../../../models/User');
 const logger = require('../../../utils/logger');
 const userAuth = require('../../../middlewares/auth');
 
+const getUserSubscription = require('../../../controllers/user/getUserSubscription');
 const getUserDetail = require('../../../controllers/user/getUserDetail');
 const getUserAddresses = require('../../../controllers/user/getUserAddresses');
 const deleteAddress = require('../../../controllers/user/deleteAddress');
@@ -166,6 +167,7 @@ router.post('/user/billings/payment', userAuth, addUserBillingStripe);
 router.post('/user/billings/payment/details', userAuth, addRedirectedBilling);
 router.put('/user/billings/payment/default', userAuth, updateDefaultBilling);
 router.delete('/user/billings/payment/:billingId', userAuth, removeUserBillingStripe);
+router.get('/user/subscription', userAuth, getUserSubscription);
 router.put('/user/subscription/package', userAuth, updatePackage);
 router.post('/user', createUser);
 
