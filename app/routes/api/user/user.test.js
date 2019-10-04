@@ -89,6 +89,24 @@ describe('Test user endpoints', () => {
         });
     });
 
+    test('getUserSubscription success', () => {
+        return testSession.get('/user/subscription')
+        .set('X-API-Key', apikey)
+        .then(response => {
+            const subscription = response.body.subscription;
+            expect(response.status).toBe(200);
+            expect(subscription).toHaveProperty('channel');
+            expect(subscription).toHaveProperty('deliveryFrequency');
+            expect(subscription.deliveryFrequency).toBe(28);
+            expect(subscription).toHaveProperty('deliveryDay');
+            expect(subscription.deliveryDay).toBe(4)
+            expect(subscription).toHaveProperty('isActive');
+            expect(subscription.isActive).toBe(true);
+            expect(subscription).toHaveProperty('deliverySchedules');
+            expect(subscription).toHaveProperty('subscriptionId');
+        });
+    });
+
     describe('address related endpoints', () => {
 
         test('getUserAddresses success', () => {
