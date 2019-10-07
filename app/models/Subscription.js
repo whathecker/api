@@ -155,6 +155,7 @@ Subscription.prototype.setDeliverySchedule = (prevDeliverySchdule, deliveryFrequ
 }
 
 Subscription.prototype.clearFirstQueuedSchedule = (queueItems) => {
+
     const deliverySchedules = queueItems;
     deliverySchedules.sort((a, b) => {
         if (a.nextDeliveryDate < b.nextDeliveryDate) {
@@ -167,6 +168,58 @@ Subscription.prototype.clearFirstQueuedSchedule = (queueItems) => {
 
     return deliverySchedules;
 }
+
+
+/**
+ * Public method: convertDeliveryDayToInt
+ * @param {String} deliveryDay
+ * Convert string representation of deliveryDay to Integer value
+ * Return Integer representation of deliveryDay
+ */
+
+Subscription.prototype.convertDeliveryDayToInt = (deliveryDay) => {
+
+    if (!deliveryDay) {
+        return new Error("Missing arguments: deliveryDay");
+    }
+
+    let convertedValue;
+
+    (deliveryDay === 'Sunday')? convertedValue = 0 : null;
+    (deliveryDay === 'Monday')? convertedValue = 1 : null;
+    (deliveryDay === 'Tuesday')? convertedValue = 2 : null;
+    (deliveryDay === 'Wednesday')? convertedValue = 3 : null;
+    (deliveryDay === 'Thursday')? convertedValue = 4 : null;
+    (deliveryDay === 'Friday')? convertedValue = 5 : null;
+    (deliveryDay === 'Saturday')? convertedValue = 6 : null;
+
+    return convertedValue;
+
+}
+
+/**
+ * Public method: convertDeliveryFreqToInt
+ * @param {String} deliveryFrequency
+ * Convert string representation of deliveryFrequency to Integer value
+ * Return Integer representation of deliveryFrequency
+ */
+
+Subscription.prototype.convertDeliveryFreqToInt = (deliveryFrequency) => {
+
+    if (!deliveryFrequency) {
+        return new Error("Missing arguments: deliveryFrequency");
+    }
+
+    let convertedValue;
+
+    (deliveryFrequency === 'Weekly')? convertedValue = 7 : null;
+    (deliveryFrequency === 'Bi-weekly')? convertedValue = 14 : null;
+    (deliveryFrequency === 'Monthly')? convertedValue = 28 : null;
+
+    return convertedValue;
+
+}
+
 module.exports = Subscription;
 
 

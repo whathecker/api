@@ -34,6 +34,8 @@ const updateDefaultBilling = require('../../../controllers/user/updateDefaultBil
 //const removeUserBilling = require('../../../controllers/user/removeUserBilling');
 const removeUserBillingStripe = require('../../../controllers/user/removeUserBillingStripe');
 const updatePackage = require('../../../controllers/user/updatePackage');
+const updateDeliverySchedules = require('../../../controllers/user/updateDeliverySchedules');
+
 const apiAuth = require('../../../middlewares/verifyApikey');
 
 const isTest = process.env.NODE_ENV === "test";
@@ -169,6 +171,7 @@ router.put('/user/billings/payment/default', userAuth, updateDefaultBilling);
 router.delete('/user/billings/payment/:billingId', userAuth, removeUserBillingStripe);
 router.get('/user/subscription', userAuth, getUserSubscription);
 router.put('/user/subscription/package', userAuth, updatePackage);
+router.put('/user/subscription/delivery', userAuth, updateDeliverySchedules);
 router.post('/user', createUser);
 
 

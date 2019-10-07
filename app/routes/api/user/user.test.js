@@ -7,6 +7,7 @@ let products = null;
 let addresses = null;
 let boxes = null;
 let createdOrder =  null;
+let createdSubscription = null;
 
 describe('Test user endpoints', () => {
     const testSession = session(app);
@@ -32,6 +33,8 @@ describe('Test user endpoints', () => {
                     
                     addresses = result.user.addresses;
                     createdOrder = result.order;
+                    createdSubscription = result.subscription;
+
                     // login user
                     return testSession.post('/user/login')
                     .set('X-API-Key', apikey)
@@ -388,6 +391,63 @@ describe('Test user endpoints', () => {
             })
             .then(response => {
                 expect(response.status).toBe(200);
+            });
+        });
+
+    });
+
+    describe('updateDeliverySchedules endpoint', () => {
+
+        test('updateDeliverySchedules fail - bad request', () => {
+            return testSession.put('/user/subscription/delivery')
+            .set('X-API-Key', apikey)
+            .send({})
+            .then(response => {
+                expect(response.status).toBe(400);
+            });
+        });
+
+        test('updateDeliverySchedules fail - incorrect subscription id', () => {
+            return testSession.put('/user/subscription/delivery')
+            .set('X-API-Key', apikey)
+            .send({
+                subscription: {
+                    subscriptionId: 'DBSG10101343',
+                    deliveryFrequency: 'Weekly',
+                    isActive: true
+                }
+            })
+            .then(response => {
+                expect(response.status).toBe(422);
+            });
+        });
+
+        test('updateDeliverySchedules success', () => {
+            return testSession.put('/user/subscription/delivery')
+            .set('X-API-Key', apikey)
+            .send({
+                subscription: {
+                    subscriptionId: createdSubscription.subscriptionId,
+                    deliveryFrequency: 'Weekly',
+                    isActive: true
+                }
+            })
+            .then(response => {
+                expect(response.status).toBe(200);
+            });
+        });
+
+        test('getUserSubscription success', () => {
+            return testSession.get('/user/subscription')
+            .set('X-API-Key', apikey)
+            .then(response => {
+
+                const subscription = response.body.subscription;
+
+                expect(response.status).toBe(200);
+                expect(subscription.deliveryFrequency).toBe(7);
+                expect(subscription.deliverySchedules).toHaveLength(2);
+
             });
         });
 
