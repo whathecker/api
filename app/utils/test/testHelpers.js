@@ -10,6 +10,7 @@ const Address = require('../../models/Address');
 const Billing = require('../../models/Billing');
 const Subscription = require('../../models/Subscription');
 const Order = require('../../models/Order');
+const PauseReason = require('../../models/PauseReason');
 
 const modelInterface = require('../model-interface');
 
@@ -557,4 +558,15 @@ module.exports = {
             });
         });
     },
+    removeTestPauseReason: () => {
+        return new Promise((resolve, reject) => {
+            PauseReason.collection.drop()
+            .then(() => {
+                resolve('PauseReason collection is dropped');
+            })
+            .catch(error => {
+                reject(error);
+            });
+        });
+    }
 }

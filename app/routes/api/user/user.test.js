@@ -58,7 +58,8 @@ describe('Test user endpoints', () => {
             testHelpers.removeTestApikeys(),
             testHelpers.removeTestProducts(),
             testHelpers.removeTestSubscriptionBoxes(),
-            testHelpers.removeTestSubscribedUser()
+            testHelpers.removeTestSubscribedUser(),
+            testHelpers.removeTestPauseReason(),
         ]);
     });
 
@@ -451,6 +452,53 @@ describe('Test user endpoints', () => {
             });
         });
 
+    });
+
+    describe('updateSubscriptionStatus endpoint', () => {
+
+        test('updateDeliverySchedules fail - bad request', () => {
+            return testSession.put('/user/subscription/status')
+            .set('X-API-Key', apikey)
+            .send({})
+            .then(response => {
+                expect(response.status).toBe(400);
+            });
+        });
+
+        test('updateDeliverySchedules fail - incorrect subscription id', () => {
+            return testSession.put('/user/subscription/status')
+            .set('X-API-Key', apikey)
+            .send({
+                subscription: { subscriptionId: 'DBSG10101343' }
+            })
+            .then(response => {
+                expect(response.status).toBe(422);
+            });
+        });
+
+        test('updateDeliverySchedules success - inactive subscription', () => {
+            return testSession.put('/user/subscription/status')
+            .set('X-API-Key', apikey)
+            .send({
+                subscription: { subscriptionId: createdSubscription.subscriptionId }
+            })
+            .then(response => {
+                expect(response.status).toBe(200);
+            });
+        });
+
+        test('updateDeliverySchedules success - active subscription', () => {
+            setTimeout(() => {
+                return testSession.put('/user/subscription/status')
+                .set('X-API-Key', apikey)
+                .send({
+                    subscription: { subscriptionId: createdSubscription.subscriptionId }
+                })
+                .then(response => {
+                    expect(response.status).toBe(200);
+                });
+            }, 5000);
+        });
     });
     
 });

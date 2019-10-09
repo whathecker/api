@@ -12,7 +12,6 @@ function updateDeliverySchedules (req, res, next) {
             status: 'failed',
             message: 'bad request'
         });
-
     }
 
     const subscriptionId = req.body.subscription.subscriptionId;

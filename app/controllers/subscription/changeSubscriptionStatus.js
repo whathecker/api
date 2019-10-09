@@ -9,7 +9,7 @@ const orderRetryEx = 'order-retry';
 
 
 function changeSubscriptionStatus (req, res, next) {
-    console.log(req.body.update);
+    //console.log(req.body.update);
     if (!req.body.update) {
         logger.warn(`changeSubscriptionStatus request has rejected as param is missing`);
         return res.status(400).json({ 
@@ -28,7 +28,7 @@ function changeSubscriptionStatus (req, res, next) {
             });
         }
         if (subscription) {
-            console.log(subscription);
+            //console.log(subscription);
             subscription.isActive = req.body.update.isActive;
             subscription.lastModified = Date.now();
             subscription.markModified('isActive');
@@ -56,6 +56,7 @@ function changeSubscriptionStatus (req, res, next) {
                                 actionType: 'cancelOutstandingOrders',
                                 subscriptionId: subscription.subscriptionId
                             }
+
                             ch.publish(orderEx, '', Buffer.from(JSON.stringify(message)), { persistent: true });
                             ch.close().then(() => {
                                 connection.close();
@@ -95,7 +96,6 @@ function changeSubscriptionStatus (req, res, next) {
                             bindQueue,
                             bindRetryQueue
                         ]).then(() => {
-
                             const message = {
                                 actionType: 'createOrder',
                                 subscriptionId: subscription.subscriptionId
@@ -103,7 +103,6 @@ function changeSubscriptionStatus (req, res, next) {
                             ch.publish(orderEx, '', Buffer.from(JSON.stringify(message)), { persistent: true });
                             ch.close().then(() => {
                                 connection.close();
-
                                 subscription.save().then(()=> {
                                     logger.info(`changeSubscriptionStatus request has processed | ${subscription.subscriptionId} has activated`);
                                     return res.status(200).json({
