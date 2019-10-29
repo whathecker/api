@@ -7,6 +7,7 @@ const axiosSendGrid = require('../../../axios-sendgrid');
 const Subscription = require('../../models/Subscription');
 const Order = require('../../models/Order');
 const errorDispatchers = require('../errorDispatchers/errorDispatchers');
+const async = require('async');
 
 /**
  * private function: convertDeliveryFrequency
@@ -312,7 +313,7 @@ function startMQConnection () {
                                 } 
                             }).catch(console.warn);
 
-                        break;
+                            break;
 
                         case 'forgotpwd':
                             payloadToSendGrid.template_id = "d-701faee00c044eceb0cba00657666695";
@@ -345,7 +346,7 @@ function startMQConnection () {
                                     return ch.nack(msg, false, false);
                                 }
                             });
-                        break;
+                            break;
 
                         case 'forgotpwdnouser':
                             payloadToSendGrid.template_id = "d-1bd7cb0f47404e42aa9b9a9d714ace38";
@@ -378,7 +379,73 @@ function startMQConnection () {
                                     return ch.nack(msg, false, false);
                                 }
                             });
-                        break;
+                            break;
+
+                        case 'payment_reminder':
+                            const orderBatch = message.orders;
+
+                            let failedDelivery = [];
+                            let successfulDelivery = [];
+
+                            async.each(orderBatch, (order, callback) => {
+
+                                let payload = {
+                                    from: {
+                                        email: 'chokchok@hellochokchok.com'
+                                    }, 
+                                    personalizations: [{
+                                            to: [{
+                                                email: order.user.email
+                                            }],
+                                            dynamic_template_data: {
+                                                firstName: order.user.firstName,
+                                                lastName: order.user.lastName,
+                                                packageName: order.orderAmountPerItem[0].name,
+                                                qty: order.orderAmountPerItem[0].quantity,
+                                                price: order.orderAmount.totalAmount,
+                                                paymentLink: '',
+                                                contactLink: '',
+                                                senderName: 'V.O.F chokchok',
+                                                senderAddress: 'Commelinstraat 42',
+                                                senderCity: 'Amsterdam',
+                                                senderCountry: 'Netherlands'
+                                            }
+                                    }],
+                                    template_id: "d-a790dae99fec4c3daae227473207dc51"
+                                };
+
+                                axiosSendGrid.post('/mail/send', payload)
+                                .then(response => {
+                                    if (response.status === 202) {
+                                        successfulDelivery.push(order.orderNumber);
+                                        callback();
+                                    } 
+                                }).catch(error => {
+                                    if (error) {
+                                        errorDispatchers.dispatchSendGridEmailError(error, emailType);
+                                        logger.warn(`payment reminder email delivery has failed | order number: ${order.orderNumber} email: ${order.user.email}`);
+                                        failedDelivery.push(order.orderNumber);
+                                        callback(error);
+                                    }
+                                });
+
+                            }, (error) => {
+
+                                errorDispatchers.dispatchReminderProcessStatus(orderBatch, successfulDelivery, failedDelivery);
+
+                                if (error) {
+                                    console.log(error);
+                                    logger.error(`error(s) in recurring batch process| ${orderBatch.length} orders have processed`);
+                                    // send message to Slack
+                                    return ch.ack(msg);
+                                } else {
+                                    logger.info(`recurring batch have processed | ${orderBatch.length} orders have processed`);
+                                    // send message to Slack
+                                    return ch.ack(msg);
+                                }
+
+                            });
+                            break;
                     }
                 }
             });
