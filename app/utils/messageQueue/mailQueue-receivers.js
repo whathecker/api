@@ -389,6 +389,9 @@ function startMQConnection () {
 
                             async.each(orderBatch, (order, callback) => {
 
+                                // construct JWT and paymentLink
+                                // construct contactLink
+
                                 let payload = {
                                     from: {
                                         email: 'chokchok@hellochokchok.com'
