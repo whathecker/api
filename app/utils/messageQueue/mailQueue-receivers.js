@@ -8,6 +8,7 @@ const Subscription = require('../../models/Subscription');
 const Order = require('../../models/Order');
 const errorDispatchers = require('../errorDispatchers/errorDispatchers');
 const async = require('async');
+const jwt = require('jsonwebtoken');
 
 /**
  * private function: convertDeliveryFrequency
@@ -390,7 +391,27 @@ function startMQConnection () {
                             async.each(orderBatch, (order, callback) => {
 
                                 // construct JWT and paymentLink
+                                const tokenSecret = process.env.OVERDUE_ORDER_TOKEN_SECRET;
+                                const overdueOrderToken = jwt.sign({
+                                    userId: order.user.userId,
+                                    email: order.user.email,
+                                    orderNumber: order.orderNumber
+                                }, tokenSecret);
+
+                                let paymentLink;
+                                let contactLink;
                                 // construct contactLink
+                                if (process.env.NODE_ENV === "production") {
+                                    paymentLink = `https://www.hellochokchok.com/onlinepayment?order=${overdueOrderToken}`;
+                                    contactLink = 'https://www.hellochokchok.com/contact'
+                                }
+
+                                if (process.env.NODE_ENV !== "production") {
+                                    //paymentLink = `https://test.hellochokchok.com/onlinepayment?order=${overdueOrderToken}`;
+                                    //contactLink = 'https://test.hellochokchok.com/contact'
+                                    paymentLink = `http://localhost:3000/onlinepayment?order=${overdueOrderToken}`;
+                                    contactLink = 'http://localhost:3000//contact'
+                                }
 
                                 let payload = {
                                     from: {
@@ -406,8 +427,8 @@ function startMQConnection () {
                                                 packageName: order.orderAmountPerItem[0].name,
                                                 qty: order.orderAmountPerItem[0].quantity,
                                                 price: order.orderAmount.totalAmount,
-                                                paymentLink: '',
-                                                contactLink: '',
+                                                paymentLink: paymentLink,
+                                                contactLink: contactLink,
                                                 senderName: 'V.O.F chokchok',
                                                 senderAddress: 'Commelinstraat 42',
                                                 senderCity: 'Amsterdam',
