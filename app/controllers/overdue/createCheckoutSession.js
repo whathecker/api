@@ -7,9 +7,10 @@ async function createCheckoutSession (req, res, next) {
     const userId = req.body.userId;
     const email = req.body.email;
     const lineItems = req.body.lineItems;
+    const orderNumber = req.body.orderNumber;
     const token = req.body.token;
 
-    if (!userId || !email || !lineItems || !token) {
+    if (!userId || !email || !lineItems || !orderNumber || !token) {
         logger.warn(`createCheckoutSession request has failed | bad request`);
         return res.status(400).json({
             status: 'failed',
@@ -52,7 +53,8 @@ async function createCheckoutSession (req, res, next) {
         payment_method_types: ['card'],
         line_items: mappedLineItems,
         success_url: success_url,
-        cancel_url: cancel_url
+        cancel_url: cancel_url,
+        client_reference_id: orderNumber
     })
     .then(session => {
         return res.status(200).json({
