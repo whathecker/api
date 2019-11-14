@@ -402,14 +402,14 @@ function startMQConnection () {
                                 let contactLink;
                                 // construct contactLink
                                 if (process.env.NODE_ENV === "production") {
-                                    paymentLink = `https://www.hellochokchok.com/onlinepayment?order=${overdueOrderToken}`;
+                                    paymentLink = `https://www.hellochokchok.com/overduepayment?order=${overdueOrderToken}`;
                                     contactLink = 'https://www.hellochokchok.com/contact'
                                 }
 
                                 if (process.env.NODE_ENV !== "production") {
                                     //paymentLink = `https://test.hellochokchok.com/onlinepayment?order=${overdueOrderToken}`;
                                     //contactLink = 'https://test.hellochokchok.com/contact'
-                                    paymentLink = `http://localhost:3000/onlinepayment?order=${overdueOrderToken}`;
+                                    paymentLink = `http://localhost:3000/overduepayment?order=${overdueOrderToken}`;
                                     contactLink = 'http://localhost:3000//contact'
                                 }
 
