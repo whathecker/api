@@ -4,7 +4,7 @@ const Order = require('../../models/Order');
 
 async function getOverdueOrder (req, res, next) {
 
-    console.log(req.params.token);
+    //console.log(req.params.token);
     const token = req.params.token;
 
     if (!token) {
@@ -20,13 +20,13 @@ async function getOverdueOrder (req, res, next) {
         
         jwt.verify(token, tokenSecret, (err, decoded) => {
             if (err) {
-                console.log(err);
+                //console.log(err);
                 logger.warn(`getOverdueOrder request is failed | invalid token`);
                 return res.status(422).json({
                     message: "token is invalid"
                 });
             } else {
-                console.log(decoded);
+                //console.log(decoded);
                 Order.findOne({ orderNumber: decoded.orderNumber})
                 .then(order => {
                     if (!order) {
@@ -37,7 +37,7 @@ async function getOverdueOrder (req, res, next) {
                     }
 
                     if (order) {
-                        logger.warn(`getOverdueOrder request is processed | order number: ${order.orderNumber}`);
+                        logger.info(`getOverdueOrder request is processed | order number: ${order.orderNumber}`);
                         return res.status(200).json({
                             message: "success",
                             userId: decoded.userId,

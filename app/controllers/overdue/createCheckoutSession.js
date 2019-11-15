@@ -50,7 +50,7 @@ async function createCheckoutSession (req, res, next) {
 
     await stripe.checkout.sessions.create({
         customer: userId,
-        payment_method_types: ['card'],
+        payment_method_types: ['card', 'ideal'],
         line_items: mappedLineItems,
         success_url: success_url,
         cancel_url: cancel_url,

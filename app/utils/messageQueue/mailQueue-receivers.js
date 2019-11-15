@@ -407,7 +407,7 @@ function startMQConnection () {
                                 }
 
                                 if (process.env.NODE_ENV !== "production") {
-                                    paymentLink = `https://test.hellochokchok.com/onlinepayment?order=${overdueOrderToken}`;
+                                    paymentLink = `https://test.hellochokchok.com/overduepayment?order=${overdueOrderToken}`;
                                     contactLink = 'https://test.hellochokchok.com/contact'
                                 }
 
