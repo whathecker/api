@@ -1,6 +1,7 @@
 const axiosSlackSendgrid = require('../../../axios-slack-sendgrid');
 const axiosSlackTruemail = require('../../../axios-slack-truemail');
 const axiosSlackRecurring = require('../../../axios-slack-recurring');
+const axiosSlackReminder = require('./axios-slack-reminder');
 const logger = require('../logger');
 
 module.exports = {
@@ -164,6 +165,31 @@ module.exports = {
         }).catch(error => {
             if (error) {
                 logger.warn(`dispatchRecurringProcessStatus request has failed to post error message to Slack`);
+            }
+        });
+    },
+
+    dispatchReminderProcessStatus: (orders, successfulDelivery, failedDelivery) => {
+        const payload = {
+            text: `Payment reminder batch has processed`,
+            attachments: [
+                {
+                    fallback: "payment reminder batch processed",
+                    author_name: "hellochokchok",
+                    title: `${orders.length} num of orders are processed`,
+                    text: `num of successfully delivered email ${successfulDelivery.length} | success orders: ${successfulDelivery} | num of failed delivery ${failedDelivery.length} | failed orders: ${failedDelivery}`
+                }
+            ]
+        };
+
+        axiosSlackReminder.post('', payload)
+        .then(response => {
+            if (response.status === 200) {
+                logger.info('dispatchReminderProcessStatus request has posted message to Slack channel');
+            }
+        }).catch(error => {
+            if (error) {
+                logger.warn(`dispatchReminderProcessStatus request has failed to post error message to Slack`);
             }
         });
     }
