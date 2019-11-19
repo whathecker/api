@@ -145,8 +145,24 @@ async function completeCheckoutStripe (req, res, next) {
     order.paymentHistory = [firstPaymentStatus, order.paymentStatus];
     order.orderStatusHistory = [firstOrderStatus, order.orderStatus];
 
+    let deliveryFrequency;
+    
+    switch(userDetail.deliveryFrequency) {
+        case "weekly":
+            deliveryFrequency = 7;
+            break;
+        case "bi-weekly":
+            deliveryFrequency = 14;
+            break;
+        case "monthly": 
+            deliveryFrequency = 28;
+            break;
+        default:
+            deliveryFrequency = 28;
+            break;
+    }
     // set first deliverySchedule in subscription
-    subscription.deliveryFrequency = 28;
+    subscription.deliveryFrequency = deliveryFrequency;
     subscription.deliveryDay = 4;
     const firstDeliverySchedule = subscription.setFirstDeliverySchedule(subscription.deliveryDay, order.orderNumber);
     const nextDeliverySchedule = subscription.setDeliverySchedule(firstDeliverySchedule.nextDeliveryDate, subscription.deliveryFrequency, subscription.deliveryDay);
