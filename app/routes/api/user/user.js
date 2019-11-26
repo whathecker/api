@@ -16,6 +16,7 @@ const getUserDetail = require('../../../controllers/user/getUserDetail');
 const getUserAddresses = require('../../../controllers/user/getUserAddresses');
 const deleteAddress = require('../../../controllers/user/deleteAddress');
 const createUser = require('../../../controllers/user/createUser');
+const deleteUser = require('../../../controllers/user/deleteAddress');
 const upsertAddress = require('../../../controllers/user/upsertAddress');
 const updateContactDetail = require('../../../controllers/user/updateContactDetail');
 const updateEmailAddress = require('../../../controllers/user/updateEmailAddress');
@@ -37,6 +38,7 @@ const updatePackage = require('../../../controllers/user/updatePackage');
 const updateDeliverySchedules = require('../../../controllers/user/updateDeliverySchedules');
 const updateSubscriptionStatus = require('../../../controllers/user/updateSubscriptionStatus');
 const apiAuth = require('../../../middlewares/verifyApikey');
+const adminAuth = require('../../../middlewares/adminAuth');
 
 const isTest = process.env.NODE_ENV === "test";
 const isLocal = process.env.NODE_ENV === "local";
@@ -174,25 +176,6 @@ router.put('/user/subscription/package', userAuth, updatePackage);
 router.put('/user/subscription/delivery', userAuth, updateDeliverySchedules);
 router.put('/user/subscription/status', userAuth, updateSubscriptionStatus);
 router.post('/user', createUser);
-
-
-// to add admin protection for this endpoint
-router.delete('/user', (req, res, next) => {
-
-    if (!req.body.email) {
-        logger.warn('user delete request has rejected as email param is missing');
-        return res.status(400).json({ message: 'bad request' });
-    }
-
-    User.findOneAndRemove({ email: req.body.email })
-        .then((user) => {
-            if (!user) { 
-                logger.warn('user delete request has rejected as email is unknown')
-                return res.status(204).json({ message: 'can not find user'}); 
-            }
-            logger.info('user delete request has succeed');
-            return res.status(200).json({ message: 'success' });
-        }).catch(next);
-});
+router.delete('/user', adminAuth, deleteUser);
 
 module.exports = router;
