@@ -2,14 +2,25 @@
 
 This application is API that powers hellochokchok.com and its backoffice.
 
-Prerequisite run application locally:
+######Prerequisite run application locally:
 
 1. install rabbitmq
 ```
 brew install rabbitmq
 ```
+2. if you don't have node.js and npm installed locally, run following command
+```
+brew install node
+```
 
-DEPLOYMENT STEP:
+######Steps to run application locally:
+```
+npm install
+rabbitmq-server
+npm run localstart
+```
+
+######Deployment Step:
 - docker build . -t {IMAGE_NAME}
 or 
 - docker build . -t {IMAGE_NAME} (optional for PROD: -f Dockerfile.production)
