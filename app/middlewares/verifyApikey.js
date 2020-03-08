@@ -6,10 +6,12 @@ function verifyApikey (req, res, next) {
     if (!req.get('X-API-Key')) {
         return res.status(401).json({ message: 'unauthroized' });
     } else if (req.get('X-API-Key')) {
-        Apikey.findOne({ key: req.get('X-API-Key') }).then((key) => {
+        Apikey.findOne({ key: req.get('X-API-Key') })
+        .then((key) => {
             if (!key) {
                 return res.status(401).json({ message: 'unauthroized' });
-            } else {
+            } 
+            if (key) {
                 next();
             }
         }).catch(next);

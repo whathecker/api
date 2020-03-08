@@ -3,8 +3,6 @@ const logger = require('../../utils/logger');
 
 function updateContactDetail (req, res, next) {
 
-    console.log(req.body);
-
     if (!req.body.firstName || !req.body.lastName || !req.body.mobileNumber) {
         logger.warn(`updateContactDetail request has failed: bad request`)
         return res.status(400).json({
