@@ -1,5 +1,13 @@
 # API for hellochokchok.com
 
+This application is API that powers hellochokchok.com and its backoffice.
+
+To run application locally
+
+```
+rabbitmq-server
+```
+
 DEPLOYMENT STEP:
 - docker build . -t {IMAGE_NAME}
 or 
