@@ -1,3 +1,5 @@
+# API for hellochokchok.com
+
 DEPLOYMENT STEP:
 - docker build . -t {IMAGE_NAME}
 or 
