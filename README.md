@@ -1,9 +1,8 @@
 DEPLOYMENT STEP:
-- docker build . 
+- docker build . -t {IMAGE_NAME}
 or 
-- docker build . -f Dockerfile.production  (when it's production)
+- docker build . -t {IMAGE_NAME} (optional for PROD: -f Dockerfile.production)
 - ensure Dockerrun.aws.json use correct docker image repository (prod or non-prod)
-
-- push docker image to AWS ECR: https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html
-- aws ecr get-login --no-include-email --region eu-west-3 (authentication to ECR)
-https://docs.aws.amazon.com/AmazonECR/latest/userguide/Registries.html#registry_auth
+- aws ecr get-login --no-include-email --region eu-west-3 (authentication to ECR: https://docs.aws.amazon.com/AmazonECR/latest/userguide/Registries.html#registry_auth)
+- docker push {ECR_REGISTRY_URL} (https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html)
+- eb deploy {APPLICATION_NAME}
