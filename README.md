@@ -2,10 +2,11 @@
 
 This application is API that powers hellochokchok.com and its backoffice.
 
-To run application locally
+Prerequisite run application locally:
 
+1. install rabbitmq
 ```
-rabbitmq-server
+brew install rabbitmq
 ```
 
 DEPLOYMENT STEP:
