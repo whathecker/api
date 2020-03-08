@@ -14,10 +14,11 @@ brew install rabbitmq
 ```
 brew install node
 ```
+3. Install eb cli & aws cli
 
-3. Have db configuration file in app/config folder of project (contact author for more detail)
+4. Have db configuration file in app/config folder of project (contact author for more detail)
 
-4. Have .env file in source code (contact author for more detail)
+5. Have .env file in source code (contact author for more detail)
 
 
 
