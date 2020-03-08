@@ -15,10 +15,8 @@ brew install rabbitmq
 brew install node
 ```
 
-3. have db configuration file in app/config folder of project
-```
-contact author
-```
+3. have db configuration file in app/config folder of project (contact author for more detail)
+
 
 
 
