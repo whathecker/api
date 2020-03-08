@@ -17,6 +17,8 @@ brew install node
 
 3. Have db configuration file in app/config folder of project (contact author for more detail)
 
+4. Have .env file in source code (contact author for more detail)
+
 
 
 
