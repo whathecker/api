@@ -33,7 +33,7 @@ npm run localstart
 
 ### Deployment Step:
 
-- First: build docker image
+1. build docker image
 ```
 docker build . -t {IMAGE_NAME}
 ```
@@ -43,24 +43,24 @@ docker build . -t {IMAGE_NAME}
 docker build . -t {IMAGE_NAME} -f Dockerfile.production)
 ```
 
-- Second: Ensure Dockerrun.aws.json use correct docker image repository (prod or non-prod)
+2. Ensure Dockerrun.aws.json use correct docker image repository (prod or non-prod)
 
 
-- Thrid: Authentication to AWS ECR
+3. Authentication to AWS ECR
 ```
 aws ecr get-login --no-include-email --region eu-west-3
 ```
 Read more about [authentication to ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/Registries.html#registry_auth)
 
 
-- Fourth: Push docker image to ECR
+4. Push docker image to ECR
 ```
 docker push {YOUR_ECR_REGISTRY_URL}
 ```
 Read more from AWS documentation about [pushing docker img to ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html)
 
 
-- Finally: deploy build to eb instnace
+5. deploy build to eb instnace
 ```
 eb deploy {YOUR_APPLICATION_NAME}
 ```
