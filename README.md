@@ -6,16 +6,16 @@ This application is API that powers hellochokchok.com and its backoffice.
 
 ### Prerequisite run application locally:
 
-1. install rabbitmq
+1. Install rabbitmq
 ```
 brew install rabbitmq
 ```
-2. install node.js and npm (in case you don't have it locally)
+2. Install node.js and npm (in case you don't have it locally)
 ```
 brew install node
 ```
 
-3. have db configuration file in app/config folder of project (contact author for more detail)
+3. Have db configuration file in app/config folder of project (contact author for more detail)
 
 
 
@@ -31,7 +31,7 @@ npm run localstart
 
 ### Deployment Step:
 
-1. build docker image
+1. Build docker image
 ```
 docker build . -t {IMAGE_NAME}
 ```
@@ -58,7 +58,7 @@ docker push {YOUR_ECR_REGISTRY_URL}
 
 
 
-5. deploy build to eb instnace
+5. Deploy build to eb instnace
 ```
 eb deploy {YOUR_APPLICATION_NAME}
 ```
