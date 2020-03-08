@@ -8,7 +8,7 @@ This application is API that powers hellochokchok.com and its backoffice.
 ```
 brew install rabbitmq
 ```
-2. if you don't have node.js and npm installed locally, run following command
+2. install node.js and npm (in case you don't have it locally)
 ```
 brew install node
 ```
