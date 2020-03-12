@@ -1,5 +1,3 @@
-
-
 module.exports = (schema) => {
 
     return (payload) => {
