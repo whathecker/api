@@ -4,11 +4,14 @@ let buildCreateBrandObj = function(brandValidator) {
         brandCode
     } = {}) => {
 
-        let {error} = brandValidator({brandName, brandCode});
-        if (error) {
-            return new Error(error);
+        const result = brandValidator({brandName, brandCode});
+        
+        if (result instanceof Error) {
+            return result;
         }
+
         return new Brand(brandName, brandCode);
+
     }
 
 }
