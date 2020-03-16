@@ -2,6 +2,6 @@ const buildCreateCategoryObj = require('./category');
 const categorySchema = require('./category-schema');
 const validator = require('../validator')(categorySchema);
 
-const makeCategoryObj = buildCreateCategoryObj(validator);
+const createCategoryObj = buildCreateCategoryObj(validator);
 
-module.exports = makeCategoryObj;
+module.exports = createCategoryObj;
