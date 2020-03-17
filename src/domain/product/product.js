@@ -9,7 +9,7 @@ let buildCreateProductObj = function (productValidator) {
 }
 
 class ProductFactory {
-
+    //
 }
 
 class Product {

@@ -55,6 +55,7 @@ Product.prototype.createProductId = (brandCode, categoryCode) => {
     return productId.concat(brandCode, categoryCode, create5DigitInteger());
 }
 
+// not used
 Product.prototype.findCategory = (categoryInput, productIdPrefixes) => {
     for (let category in productIdPrefixes.categoryPrefix) {
         //console.log(category);
@@ -64,14 +65,14 @@ Product.prototype.findCategory = (categoryInput, productIdPrefixes) => {
     }
     return null;  
 }
-
+// not used
 Product.prototype.findCategoryCode = (categoryNameInput, productIdPrefixes) => {
     if (!categoryNameInput) {
         throw new Error('Invalid Param: categoryNameInput cannot be blank');
     }
     return productIdPrefixes.categoryPrefix[categoryNameInput];
 }
-
+// not used
 Product.prototype.findBrand = (brandInput, productIdPrefixes) => {
     for (let brand in productIdPrefixes.brandPrefix) {
         if (brandInput === brand) {
@@ -80,14 +81,14 @@ Product.prototype.findBrand = (brandInput, productIdPrefixes) => {
     }
     return null;
 }
-
+// not used
 Product.prototype.findBrandCode = (brandNameInput, productIdPrefixes) => {
     if (!brandNameInput) {
         throw new Error('Invalid Param: brandNameInput cannot be blank');
     }
     return productIdPrefixes.brandPrefix[brandNameInput]; 
 }
-
+// not used
 Product.prototype.isSkintypeValid = (skinTypeInput) => {
     const acceptedSkinTypeValues = ['normal', 'dry', 'oily'];
     for (let i = 0 ; i < acceptedSkinTypeValues.length; i++) {
