@@ -171,6 +171,16 @@ describe('Make product object', () => {
         expect(product.prices[0].netPrice).toBe('81.82');
     });
 
+
+    test('invalid channel', () => {
+        let payload = dummyData;
+        payload.channel = "APAC"
+        const product = createProductObj(payload);
+
+        expect(product instanceof Error).toBe(true);
+        expect(product.message).toBe(errors.genericErrors.invalid_channel.message);
+    });
+
     test('price cannot be zero', ()=> {
         let payload = dummyData;
         payload.prices[0].price = "0.00";
@@ -178,7 +188,7 @@ describe('Make product object', () => {
         const product = createProductObj(payload);
 
         expect(product instanceof Error).toBe(true);
-        expect(product.message).toBe(errors.genericErrors.zero_price);
+        expect(product.message).toBe(errors.genericErrors.zero_price.message);
     });
 
     test('invalid region in price', ()=> {
@@ -188,7 +198,7 @@ describe('Make product object', () => {
         const product = createProductObj(payload);
 
         expect(product instanceof Error).toBe(true);
-        expect(product.message).toBe(errors.genericErrors.invalid_region_in_price);
+        expect(product.message).toBe(errors.genericErrors.invalid_region_in_price.message);
     });
 
     test('invalid currency in price', ()=> {
@@ -198,7 +208,7 @@ describe('Make product object', () => {
         const product = createProductObj(payload);
 
         expect(product instanceof Error).toBe(true);
-        expect(product.message).toBe(errors.genericErrors.invalid_currency_in_price);
+        expect(product.message).toBe(errors.genericErrors.invalid_currency_in_price.message);
     });
 
     test('product id must have length of 9', () => {
@@ -222,7 +232,19 @@ describe('Make product object', () => {
         expect(product.id.slice(2, 4)).toBe(payload.categoryCode);
     });
 
+    test('when product id already exist, do not create new one', () => {
+        let payload = dummyData;
+        payload.id = "MSST10523";
+        const product = createProductObj(payload);
 
+        expect(product.id).toBe(payload.id);
+    });
+
+});
+
+
+
+describe('Type checking : product object', () => {
 
     test('product object must have a channel property', () => {
         let payload = dummyData;
@@ -603,5 +625,4 @@ describe('Make product object', () => {
         expect(product instanceof Error).toBe(true);
         expect(product.message).toBe(errors.typeErrors.lastModified_in_inventoryHistory.message);
     });
-
-});
+})

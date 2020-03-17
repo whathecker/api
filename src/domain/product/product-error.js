@@ -32,6 +32,7 @@ const genericErrors = Object.freeze({
     zero_price: new Error('Product object contain invalid price in prices field: price cannot be 0'),
     invalid_region_in_price: new Error('Product object contain invalid region in prices field: double check region field from your input'),
     invalid_currency_in_price: new Error('Product object contain invalid currency in prices field: double check currency field from your input'),
+    invalid_channel: new Error('Product object contain invalid channel property: double check your input')
 });
 
 
