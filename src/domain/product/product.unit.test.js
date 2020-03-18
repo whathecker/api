@@ -6,7 +6,7 @@ const validator = require('../validator')(productSchema);
 const createProductObj = buildCreateProductObj(validator);
 
 
-const dummyData = Object.freeze({   
+const dummyData = {   
     channel: 'EU',
     name: 'Missha sheetmask',
     description: 'This is a sheetmask from Missha',
@@ -28,21 +28,34 @@ const dummyData = Object.freeze({
         quantityOnHand: 10,
         quarantaine: 0,
     },
-    inventoryHistory: [this.inventory],
+    inventoryHistory: [{
+        quantityOnHand: 10,
+        quarantaine: 0,
+    }],
     creationDate: new Date('December 17, 1995 03:24:00'),
     lastModified: new Date('December 17, 1999 03:24:00')
-});
+};
+
+function copyObj(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
 
 describe('Make product object', () => {
 
     test('object is created - without volume and eanCode, creationDate, lastModified', ()=> {
         
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
+
+        const originalVolume = payload.volume;
+        const originalEanCode = payload.eanCode;
+        const originalCreationDate = payload.creationDate;
+        const originalLastModified = payload.lastModified;
+
         delete payload.volume;
         delete payload.eanCode;
         delete payload.creationDate;
         delete payload.lastModified;
-
+        
         const product = createProductObj(payload);
 
         expect(product.channel).toBe(payload.channel);
@@ -61,11 +74,17 @@ describe('Make product object', () => {
         expect(product.prices[0].netPrice).toBe('8.26');
         expect(product.inventory).toEqual(payload.inventory);
         expect(product.inventoryHistory).toContainEqual(payload.inventory);
+
+        expect(product.volume).not.toBe(originalVolume);
+        expect(product.eanCode).not.toBe(originalEanCode);
+        expect(product.creationDate).not.toBe(originalCreationDate);
+        expect(product.lastModified).not.toBe(originalLastModified);
     }); 
 
     test('object is created - with volume, creationDate, lastModified', ()=> {
 
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
+        const originalEanCode = payload.eanCode;
         delete payload.eanCode;
 
         const product = createProductObj(payload);
@@ -90,11 +109,14 @@ describe('Make product object', () => {
         expect(product.prices[0].netPrice).toBe('8.26');
         expect(product.inventory).toEqual(payload.inventory);
         expect(product.inventoryHistory).toContainEqual(payload.inventory);
+
+        expect(product.eanCode).not.toBe(originalEanCode);
     }); 
 
     test('object is created - with eanCode, creationDate, lastModified', ()=> {
 
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
+        const originalVolume = payload.volume;
         delete payload.volume;
 
         const product = createProductObj(payload);
@@ -119,10 +141,13 @@ describe('Make product object', () => {
         expect(product.prices[0].netPrice).toBe('8.26');
         expect(product.inventory).toEqual(payload.inventory);
         expect(product.inventoryHistory).toContainEqual(payload.inventory);
+
+        expect(product.volume).not.toBe(originalVolume);
     }); 
 
     test('object is created - with volume and eanCode', ()=> {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
+
         const product = createProductObj(payload);
 
         expect(product.volume).toBe(payload.volume);
@@ -149,9 +174,12 @@ describe('Make product object', () => {
         expect(product.inventoryHistory).toContainEqual(payload.inventory);
     }); 
 
-    test('object is created - price is 14.55 euro', ()=> {
-        let payload = dummyData;
+    test('set vat & netPrice - price is 14.55 euro', ()=> {
+        let payload = copyObj(dummyData);
         payload.prices[0].price = "14.55";
+
+        delete payload.prices[0].vat;
+        delete payload.prices[0].netPrice;
 
         const product = createProductObj(payload);
 
@@ -160,9 +188,12 @@ describe('Make product object', () => {
         expect(product.prices[0].netPrice).toBe('12.02');
     });
 
-    test('object is created - price is 99 euro', ()=> {
-        let payload = dummyData;
+    test('set vat & netPrice - price is 99 euro', ()=> {
+        let payload = copyObj(dummyData);
         payload.prices[0].price = "99";
+
+        delete payload.prices[0].vat;
+        delete payload.prices[0].netPrice;
 
         const product = createProductObj(payload);
 
@@ -173,8 +204,9 @@ describe('Make product object', () => {
 
 
     test('invalid channel', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.channel = "APAC"
+
         const product = createProductObj(payload);
 
         expect(product instanceof Error).toBe(true);
@@ -182,7 +214,7 @@ describe('Make product object', () => {
     });
 
     test('price cannot be zero', ()=> {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.prices[0].price = "0.00";
 
         const product = createProductObj(payload);
@@ -192,9 +224,9 @@ describe('Make product object', () => {
     });
 
     test('invalid region in price', ()=> {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.prices[0].region = "some odd region";
-
+        
         const product = createProductObj(payload);
 
         expect(product instanceof Error).toBe(true);
@@ -202,7 +234,7 @@ describe('Make product object', () => {
     });
 
     test('invalid currency in price', ()=> {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.prices[0].currency = "some odd currency";
 
         const product = createProductObj(payload);
@@ -213,6 +245,7 @@ describe('Make product object', () => {
 
     test('product id must have length of 9', () => {
         let payload = dummyData;
+
         const product = createProductObj(payload);
 
         expect(product.id).toHaveLength(9);
@@ -220,6 +253,7 @@ describe('Make product object', () => {
 
     test('first 2 chars of product id must be same as brandCode', () => {
         let payload = dummyData;
+
         const product = createProductObj(payload);
 
         expect(product.id.slice(0, 2)).toBe(payload.brandCode);
@@ -227,14 +261,16 @@ describe('Make product object', () => {
 
     test('third and forth chars of product id must be same as categoryCode', () => {
         let payload = dummyData;
+
         const product = createProductObj(payload);
 
         expect(product.id.slice(2, 4)).toBe(payload.categoryCode);
     });
 
     test('when product id already exist, do not create new one', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.id = "MSST10523";
+
         const product = createProductObj(payload);
 
         expect(product.id).toBe(payload.id);
@@ -247,7 +283,7 @@ describe('Make product object', () => {
 describe('Type checking : product object', () => {
 
     test('product object must have a channel property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.channel;
         
         const product = createProductObj(payload);
@@ -257,7 +293,7 @@ describe('Type checking : product object', () => {
     });
 
     test('channel property must be string', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.channel = 0;
 
         const product = createProductObj(payload); 
@@ -267,7 +303,7 @@ describe('Type checking : product object', () => {
     });
 
     test('product object must have a name property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.name;
 
         const product = createProductObj(payload);
@@ -277,7 +313,7 @@ describe('Type checking : product object', () => {
     });
 
     test('name property must be string', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.name = true;
 
         const product = createProductObj(payload);
@@ -287,7 +323,7 @@ describe('Type checking : product object', () => {
     });
 
     test('product object must have a description property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.description;
 
         const product = createProductObj(payload);
@@ -297,7 +333,7 @@ describe('Type checking : product object', () => {
     });
 
     test('description property must be string', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.description = 103;
 
         const product = createProductObj(payload);
@@ -307,7 +343,7 @@ describe('Type checking : product object', () => {
     });
 
     test('product object must have a category property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.category;
 
         const product = createProductObj(payload);
@@ -317,7 +353,7 @@ describe('Type checking : product object', () => {
     });
 
     test('category property must be string', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.category = 103;
 
         const product = createProductObj(payload);
@@ -327,7 +363,7 @@ describe('Type checking : product object', () => {
     });
 
     test('product object must have a categoryCode property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.categoryCode;
 
         const product = createProductObj(payload);
@@ -337,7 +373,7 @@ describe('Type checking : product object', () => {
     });
 
     test('categoryCode property must be string', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.categoryCode = 103;
 
         const product = createProductObj(payload);
@@ -347,7 +383,7 @@ describe('Type checking : product object', () => {
     });
 
     test('product object must have a brand property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.brand;
 
         const product = createProductObj(payload);
@@ -357,7 +393,7 @@ describe('Type checking : product object', () => {
     });
 
     test('brand property must be string', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.brand = null;
 
         const product = createProductObj(payload);
@@ -367,7 +403,7 @@ describe('Type checking : product object', () => {
     });
 
     test('product object must have a brandCode property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.brandCode;
 
         const product = createProductObj(payload);
@@ -377,7 +413,7 @@ describe('Type checking : product object', () => {
     });
 
     test('brandCode property must be string', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.brandCode = null;
 
         const product = createProductObj(payload);
@@ -387,7 +423,7 @@ describe('Type checking : product object', () => {
     });
 
     test('product object must have a skinType property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.skinType;
 
         const product = createProductObj(payload);
@@ -397,7 +433,7 @@ describe('Type checking : product object', () => {
     });
 
     test('skinType property must be string', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.skinType = null;
 
         const product = createProductObj(payload);
@@ -407,7 +443,7 @@ describe('Type checking : product object', () => {
     });
 
     test('volume property must be string if exist', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.volume = 12032;
 
         const product = createProductObj(payload);
@@ -417,7 +453,7 @@ describe('Type checking : product object', () => {
     });
 
     test('eanCode property must be string if exist', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.eanCode = 12032;
 
         const product = createProductObj(payload);
@@ -427,7 +463,7 @@ describe('Type checking : product object', () => {
     });
 
     test('creationDate property must be string if exist', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.creationDate = 'weird odd text';
 
         const product = createProductObj(payload);
@@ -437,7 +473,7 @@ describe('Type checking : product object', () => {
     });
 
     test('lastModified property must be string if exist', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.lastModified = 'weird odd text';
 
         const product = createProductObj(payload);
@@ -447,7 +483,7 @@ describe('Type checking : product object', () => {
     });
 
     test('prices property must have region property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.prices[0].region;
 
         const product = createProductObj(payload);
@@ -457,7 +493,7 @@ describe('Type checking : product object', () => {
     });
 
     test('region property in prices must be string', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.prices[0].region = 239012394;
 
         const product = createProductObj(payload);
@@ -467,7 +503,7 @@ describe('Type checking : product object', () => {
     });
 
     test('prices property must have currency property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.prices[0].currency;
 
         const product = createProductObj(payload);
@@ -477,7 +513,7 @@ describe('Type checking : product object', () => {
     });
 
     test('currency property in prices must be string', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.prices[0].currency = 239012394;
 
         const product = createProductObj(payload);
@@ -487,7 +523,7 @@ describe('Type checking : product object', () => {
     });
 
     test('prices property must have price property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.prices[0].price;
 
         const product = createProductObj(payload);
@@ -497,7 +533,7 @@ describe('Type checking : product object', () => {
     });
 
     test('price property in prices must be string', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.prices[0].price = 34904902290;
 
         const product = createProductObj(payload);
@@ -507,7 +543,7 @@ describe('Type checking : product object', () => {
     });
 
     test('vat property in prices must be string if exist', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.prices[0].vat = 12901290;
 
         const product = createProductObj(payload);
@@ -517,7 +553,7 @@ describe('Type checking : product object', () => {
     });
 
     test('netPrice property in prices must be string if exist', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.prices[0].netPrice = 12901290;
 
         const product = createProductObj(payload);
@@ -527,7 +563,7 @@ describe('Type checking : product object', () => {
     });
 
     test('inventory property must have quantityOnHand property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.inventory.quantityOnHand;
 
         const product = createProductObj(payload);
@@ -537,7 +573,7 @@ describe('Type checking : product object', () => {
     });
 
     test('quantityOnHand property in inventory must be number', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.inventory.quantityOnHand = 'some quantity';
 
         const product = createProductObj(payload);
@@ -547,7 +583,7 @@ describe('Type checking : product object', () => {
     });
 
     test('inventory property must have quarantaine property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.inventory.quarantaine;
 
         const product = createProductObj(payload);
@@ -557,7 +593,7 @@ describe('Type checking : product object', () => {
     });
 
     test('quarantaine property in inventory must be number', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.inventory.quarantaine = 'some quantity';
 
         const product = createProductObj(payload);
@@ -567,7 +603,7 @@ describe('Type checking : product object', () => {
     });
 
     test('lastModified property in inventory must be date if exist', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.inventory.lastModified = 'some date';
 
         const product = createProductObj(payload);
@@ -577,7 +613,7 @@ describe('Type checking : product object', () => {
     });
 
     test('item in inventoryHistory property must have quantityOnHand property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.inventoryHistory[0].quantityOnHand;
 
         const product = createProductObj(payload);
@@ -587,7 +623,7 @@ describe('Type checking : product object', () => {
     });
 
     test('quantityOnHand property in inventoryHistory must be number', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.inventoryHistory[0].quantityOnHand = 'some quantity';
 
         const product = createProductObj(payload);
@@ -597,7 +633,7 @@ describe('Type checking : product object', () => {
     });
 
     test('item in inventoryHistory property must have quarantaine property', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         delete payload.inventoryHistory[0].quarantaine;
 
         const product = createProductObj(payload);
@@ -607,7 +643,7 @@ describe('Type checking : product object', () => {
     });
 
     test('quarantaine property in inventoryHistory must be number', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.inventoryHistory[0].quarantaine = 'some quantity';
 
         const product = createProductObj(payload);
@@ -617,7 +653,7 @@ describe('Type checking : product object', () => {
     });
 
     test('lastModified property in inventoryHistory must be date', () => {
-        let payload = dummyData;
+        let payload = copyObj(dummyData);
         payload.inventoryHistory[0].lastModified = 'some date';
 
         const product = createProductObj(payload);

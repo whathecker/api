@@ -41,9 +41,9 @@ class SkinTypeFactory {
     static validateSkinType (skinType) {
         let result = false;
 
-        for (let element of Object.keys(enumSkinType)) {
+        for (let prop of Object.keys(enumSkinType)) {
             
-            if (skinType === enumSkinType[element]) {
+            if (skinType === enumSkinType[prop]) {
                 result = true;
                 break;
             }
