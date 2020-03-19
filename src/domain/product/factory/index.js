@@ -68,19 +68,24 @@ class ProductFactory {
         if (!result_is_vat_exist) {
             prices[0].vat = ProductFactory.setVat(prices[0].price, prices[0].region);
         } 
-        else if (result_is_vat_exist) {
+        
+        if (result_is_vat_exist) {
             const result_vat_format = ProductFactory.validatePriceFormat(prices[0].vat);
+            
             if (!result_vat_format) {
                 prices[0].vat = ProductFactory.correctPriceDigit(prices[0].vat);
             }
         }
 
+
         const result_is_net_price_exist = ProductFactory.isNetPriceExist(prices[0].netPrice);
         if (!result_is_net_price_exist) {
             prices[0].netPrice = ProductFactory.setNetPrice(prices[0].price, prices[0].region);
         }
-        else if (result_is_net_price_exist) {
+        
+        if (result_is_net_price_exist) {
             const result_is_net_price_format = ProductFactory.validatePriceFormat(prices[0].netPrice);
+            
             if (!result_is_net_price_format) {
                 prices[0].netPrice = ProductFactory.correctPriceDigit(prices[0].netPrice);
             }
@@ -157,6 +162,10 @@ class ProductFactory {
         let result =  false;
 
         const splittedPrice = price.split('.');
+
+        if (splittedPrice.length !== 2) {
+            return result;
+        }
 
         const primeNum = Number(splittedPrice[0]);
         const floatingPoint = Number(splittedPrice[1]);
@@ -275,7 +284,6 @@ class Product {
         this.inventory = inventory;
         this.inventoryHistory = inventoryHistory;
 
-        // optional properties
         (volume)? this.volume = volume: null;
         (creationDate)? this.creationDate = creationDate: null;
         (lastModified)? this.lastModified = lastModified: null;
