@@ -126,20 +126,18 @@ describe('Test ProductBaseFactory', () => {
         expect(result3).toBe('4.69');
     });
 
-    test('isProductIdExist must return false', () => {
-        /*
+    test('isIdExist must return false', () => {
         const id = undefined;
-        const result = ProductFactory.isProductIdExist(id);
+        const result = ProductBaseFactory.isIdExist(id);
 
-        expect(result).toBe(false); */
+        expect(result).toBe(false); 
     });
 
-    test('isProductIdExist must return true', () => {
-        /*
+    test('isIdExist must return true', () => { 
         const id = "MSST01235"
-        const result = ProductFactory.isProductIdExist(id);
+        const result = ProductBaseFactory.isIdExist(id);
 
-        expect(result).toBe(true); */
+        expect(result).toBe(true); 
     });
 
     test('createProductId must return correct product id format', () => {

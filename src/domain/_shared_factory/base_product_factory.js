@@ -123,7 +123,7 @@ class ProductBaseFactory {
         return netPrice.toFixed(2);
     }
 
-    static isProductIdExist (id) {
+    static isIdExist (id) {
         if (!id) {
             return false;
         }

@@ -1,5 +1,5 @@
 const errors = require('../product-error');
-const ProductBaseFactory = require('../../__shared_factory').product_base_factory;
+const ProductBaseFactory = require('../../_shared_factory').product_base_factory;
 
 class ProductFactory extends ProductBaseFactory {
     constructor({
@@ -79,7 +79,7 @@ class ProductFactory extends ProductBaseFactory {
         }
         
 
-        const result_is_product_id_exist = ProductFactory.isProductIdExist(id);
+        const result_is_product_id_exist = ProductFactory.isIdExist(id);
         if (!result_is_product_id_exist) {
             id = ProductFactory.createProductId(brandCode, categoryCode);
         }
