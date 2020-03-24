@@ -1,6 +1,6 @@
 const buildCreateBrandObj = require('./brand');
 const brandSchema = require('./brand-schema');
-const validator = require('../validator')(brandSchema);
+const validator = require('../_shared_validator')(brandSchema);
 
 const createBrandObj = buildCreateBrandObj(validator);
 

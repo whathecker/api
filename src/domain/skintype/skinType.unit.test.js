@@ -1,6 +1,6 @@
 const buildCreateSkinTypeObj = require('./skinType');
 const skinTypeSchema = require('./skinType-schema');
-const validator = require('../validator')(skinTypeSchema);
+const validator = require('../_shared_validator')(skinTypeSchema);
 
 const makeSkinTypeObj = buildCreateSkinTypeObj(validator);
 
