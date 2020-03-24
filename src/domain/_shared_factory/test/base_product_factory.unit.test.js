@@ -140,17 +140,6 @@ describe('Test ProductBaseFactory', () => {
         expect(result).toBe(true); 
     });
 
-    test('createProductId must return correct product id format', () => {
-        /*
-        const brandCode = 'MS';
-        const categoryCode = 'ST';
-        const id = ProductFactory.createProductId(brandCode,categoryCode);
-
-        expect(id).toHaveLength(9);
-        expect(id.slice(0,2)).toBe('MS');
-        expect(id.slice(2,4)).toBe('ST'); */
-    });
-
     test('create_five_digits_integer must return 5 digit integer', () => {
         const num1 = ProductBaseFactory.create_five_digits_integer();
         const num2 = ProductBaseFactory.create_five_digits_integer();
