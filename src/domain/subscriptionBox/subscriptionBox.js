@@ -1,4 +1,4 @@
-const errors = require('./subscriptionBox-error');
+const SubscriptionBoxFactory = require('./factory');
 
 let buildCreateSubscriptionBoxObj = function (subscriptionBoxValidator) {
     return ({
@@ -35,6 +35,8 @@ let buildCreateSubscriptionBoxObj = function (subscriptionBoxValidator) {
     }
 }
 
+
+/*
 const enum_channel = Object.freeze({
     0: 'EU'
 });
@@ -285,6 +287,6 @@ class SubscriptionBox {
         (creationDate)? this.creationDate = creationDate : null;
         (lastModified)? this.lastModified = lastModified : null;
     }
-}
+} */
 
 module.exports = buildCreateSubscriptionBoxObj;
