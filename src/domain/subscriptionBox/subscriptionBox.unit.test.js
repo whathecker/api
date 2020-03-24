@@ -49,7 +49,7 @@ describe('Make subscriptionBox object', () => {
         expect(subscriptionBox.boxType).toBe(payload.boxType);
         expect(subscriptionBox.boxTypeCode).toBe(payload.boxTypeCode);
 
-        expect(subscriptionBox.prices[0].region).toBe(payload.prices[0].price);
+        expect(subscriptionBox.prices[0].region).toBe(payload.prices[0].region);
         expect(subscriptionBox.prices[0].currency).toBe(payload.prices[0].currency);
         expect(subscriptionBox.prices[0].price).toBe(payload.prices[0].price);
         expect(subscriptionBox.prices[0].vat).toBe('3.46');
@@ -76,7 +76,7 @@ describe('Make subscriptionBox object', () => {
         expect(subscriptionBox.boxType).toBe(payload.boxType);
         expect(subscriptionBox.boxTypeCode).toBe(payload.boxTypeCode);
 
-        expect(subscriptionBox.prices[0].region).toBe(payload.prices[0].price);
+        expect(subscriptionBox.prices[0].region).toBe(payload.prices[0].region);
         expect(subscriptionBox.prices[0].currency).toBe(payload.prices[0].currency);
         expect(subscriptionBox.prices[0].price).toBe(payload.prices[0].price);
         expect(subscriptionBox.prices[0].vat).toBe('3.46');
@@ -100,7 +100,7 @@ describe('Make subscriptionBox object', () => {
         expect(subscriptionBox.boxType).toBe(payload.boxType);
         expect(subscriptionBox.boxTypeCode).toBe(payload.boxTypeCode);
 
-        expect(subscriptionBox.prices[0].region).toBe(payload.prices[0].price);
+        expect(subscriptionBox.prices[0].region).toBe(payload.prices[0].region);
         expect(subscriptionBox.prices[0].currency).toBe(payload.prices[0].currency);
         expect(subscriptionBox.prices[0].price).toBe(payload.prices[0].price);
         expect(subscriptionBox.prices[0].vat).toBe('3.46');
