@@ -30,6 +30,177 @@ function copyObj(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
+describe('Make subscriptionBox object', () => {
+
+    test('object is created: without id, creationDate, lastModified', () => {
+        
+        let payload = copyObj(dummyData);
+
+        const originalCreationDate = payload.creationDate;
+        const originalLastModified = payload.lastModified;
+
+        delete payload.creationDate;
+        delete payload.lastModified;
+
+        const subscriptionBox = createSubscriptionBoxObj(payload);
+
+        expect(subscriptionBox.channel).toBe(payload.channel);
+        expect(subscriptionBox.name).toBe(payload.name);
+        expect(subscriptionBox.boxType).toBe(payload.boxType);
+        expect(subscriptionBox.boxTypeCode).toBe(payload.boxTypeCode);
+
+        expect(subscriptionBox.prices[0].region).toBe(payload.prices[0].price);
+        expect(subscriptionBox.prices[0].currency).toBe(payload.prices[0].currency);
+        expect(subscriptionBox.prices[0].price).toBe(payload.prices[0].price);
+        expect(subscriptionBox.prices[0].vat).toBe('3.46');
+        expect(subscriptionBox.prices[0].netPrice).toBe('16.49');
+
+        expect(subscriptionBox.items).toBe(payload.items);
+        
+        expect(subscriptionBox.creationDate).not.toBe(originalCreationDate);
+        expect(subscriptionBox.lastModified).not.toBe(originalLastModified);
+    });
+
+    test('object is created: without id, items', () => {
+
+        let payload = copyObj(dummyData);
+
+        const originalItems = payload.items;
+
+        delete payload.items;
+
+        const subscriptionBox = createSubscriptionBoxObj(payload);
+
+        expect(subscriptionBox.channel).toBe(payload.channel);
+        expect(subscriptionBox.name).toBe(payload.name);
+        expect(subscriptionBox.boxType).toBe(payload.boxType);
+        expect(subscriptionBox.boxTypeCode).toBe(payload.boxTypeCode);
+
+        expect(subscriptionBox.prices[0].region).toBe(payload.prices[0].price);
+        expect(subscriptionBox.prices[0].currency).toBe(payload.prices[0].currency);
+        expect(subscriptionBox.prices[0].price).toBe(payload.prices[0].price);
+        expect(subscriptionBox.prices[0].vat).toBe('3.46');
+        expect(subscriptionBox.prices[0].netPrice).toBe('16.49');
+
+        expect(subscriptionBox.items).not.toBe(originalItems);
+        
+        expect(subscriptionBox.creationDate).toBe(payload.creationDate);
+        expect(subscriptionBox.lastModified).toBe(payload.lastModified);
+        
+    });
+
+    test('object is created: with all fields', () => {
+
+        let payload = copyObj(dummyData);
+
+        const subscriptionBox = createSubscriptionBoxObj(payload);
+
+        expect(subscriptionBox.channel).toBe(payload.channel);
+        expect(subscriptionBox.name).toBe(payload.name);
+        expect(subscriptionBox.boxType).toBe(payload.boxType);
+        expect(subscriptionBox.boxTypeCode).toBe(payload.boxTypeCode);
+
+        expect(subscriptionBox.prices[0].region).toBe(payload.prices[0].price);
+        expect(subscriptionBox.prices[0].currency).toBe(payload.prices[0].currency);
+        expect(subscriptionBox.prices[0].price).toBe(payload.prices[0].price);
+        expect(subscriptionBox.prices[0].vat).toBe('3.46');
+        expect(subscriptionBox.prices[0].netPrice).toBe('16.49');
+
+        expect(subscriptionBox.items).toBe(payload.items);
+        
+        expect(subscriptionBox.creationDate).toBe(payload.creationDate);
+        expect(subscriptionBox.lastModified).toBe(payload.lastModified);
+
+    });
+
+    test('invalid channel', () => {
+        let payload = copyObj(dummyData);
+        payload.channel = "APAC"
+
+        const subscriptionBox = createSubscriptionBoxObj(payload);
+
+        expect(subscriptionBox instanceof Error).toBe(true);
+        expect(subscriptionBox.message).toBe(errors.genericErrors.invalid_channel.message);
+    });
+
+    test('price cannot be zero', () => {
+        let payload = copyObj(dummyData);
+        payload.prices[0].price = "0.00";
+
+        const subscriptionBox = createSubscriptionBoxObj(payload);
+
+        expect(subscriptionBox instanceof Error).toBe(true);
+        expect(subscriptionBox.message).toBe(errors.genericErrors.zero_price.message); 
+    });
+
+    test('set vat & netPrice - price is 14.55 euro', () => {
+        let payload = copyObj(dummyData);
+        payload.prices[0].price = "14.55";
+
+        const subscriptionBox = createSubscriptionBoxObj(payload);
+
+        expect(subscriptionBox.prices[0].price).toBe(payload.prices[0].price);
+        expect(subscriptionBox.prices[0].vat).toBe("2.53");
+        expect(subscriptionBox.prices[0].netPrice).toBe("12.02");
+    });
+
+    test('set vat & netPrice - price is 99 euro', () => {
+        let payload = copyObj(dummyData);
+        payload.prices[0].price = "99";
+
+        const subscriptionBox = createSubscriptionBoxObj(payload);
+
+        expect(subscriptionBox.prices[0].price).toBe(payload.prices[0].price);
+        expect(subscriptionBox.prices[0].vat).toBe("17.18");
+        expect(subscriptionBox.prices[0].netPrice).toBe("81.82");
+    });
+
+    test('invalid region in price', () => {
+        let payload = copyObj(dummyData);
+        payload.prices[0].region = "some odd region";
+
+        const subscriptionBox = createSubscriptionBoxObj(payload);
+
+        expect(subscriptionBox instanceof Error).toBe(true);
+        expect(subscriptionBox.message).toBe(errors.genericErrors.invalid_region_in_price.message);
+    });
+
+    test('invalid currency in price', () => {
+        let payload = copyObj(dummyData);
+        payload.prices[0].currency = "some odd currency";
+
+        const subscriptionBox = createSubscriptionBoxObj(payload);
+
+        expect(subscriptionBox instanceof Error).toBe(true);
+        expect(subscriptionBox.message).toBe(errors.genericErrors.invalid_currency_in_price.message);
+    });
+
+    test('id must have length of 9', () => {
+        let payload = dummyData;
+
+        const subscriptionBox = createSubscriptionBoxObj(payload);
+
+        expect(subscriptionBox.id).toHaveLength(9);
+    });
+
+    test('prefix of id must be PK + boxTypeCode', () => {
+        let payload = dummyData;
+
+        const subscriptionBox = createSubscriptionBoxObj(payload);
+
+        expect(subscriptionBox.id.slice(0, 2)).toBe("PK");
+        expect(subscriptionBox.id.slice(2, 4)).toBe(payload.boxTypeCode);
+    });
+
+    test('when id already exist, do not create new one', () => {
+        let payload = copyObj(dummyData);
+        payload.id = "PKNM10505";
+
+        const subscriptionBox = createSubscriptionBoxObj(payload);
+
+        expect(subscriptionBox.id).toBe(payload.id);
+    });
+});
 
 describe('Type checking: subscriptionBox object', () => {
 
