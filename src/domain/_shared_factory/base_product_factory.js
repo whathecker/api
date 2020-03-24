@@ -12,9 +12,6 @@ const enum_vat_rate = Object.freeze({
 });
 
 class ProductBaseFactory {
-    constructor() {
-
-    }
 
     static validateChannel (channel) {
         let result = false;
