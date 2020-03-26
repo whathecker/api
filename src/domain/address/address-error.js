@@ -14,6 +14,13 @@ const typeErrors = Object.freeze({
     lastModified: new Error('Address object has invalid type at property: lastModified')
 });
 
+const genericErrors = Object.freeze({
+    invalid_mobile_num: new Error('Address object contain invalid mobile number: please check your input'),
+    invalid_postal_code: new Error('Address object contain invalid postal code: please check your input'),
+    invalid_house_number: new Error('Address object contain invalid house number: please check your input')
+});
+
 module.exports = {
-    typeErrors: typeErrors
-}
+    typeErrors: typeErrors,
+    genericErrors: genericErrors
+};

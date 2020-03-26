@@ -24,6 +24,163 @@ function copyObj(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
+describe('Make Address object', () => {
+
+    test('object is created - without mobileNumber, houseNumberAdd, province, creationDate, lastModified', () => {
+        
+        let payload = copyObj(dummyData);
+
+        const originalMobileNumber = payload.mobileNumber;
+        const originalHouseNumberAdd = payload.houseNumberAdd;
+        const originalProvince = payload.province;
+        const originalCreationDate = payload.creationDate;
+        const originalLastModified = payload.lastModified;
+
+        delete payload.mobileNumber;
+        delete payload.houseNumberAdd;
+        delete payload.province;
+        delete payload.creationDate;
+        delete payload.lastModified;
+
+        const address = createAddressObj(payload);
+
+        expect(address.user).toBe(payload.user);
+        expect(address.firstName).toBe(payload.firstName);
+        expect(address.lastName).toBe(payload.lastName);
+        expect(address.postalCode).toBe(payload.postalCode);
+        expect(address.houseNumber).toBe(payload.houseNumber);
+        expect(address.streetName).toBe(payload.streetName);
+        expect(address.city).toBe(payload.city);
+        expect(address.country).toBe(payload.country);
+
+        expect(address.mobileNumber).not.toBe(originalMobileNumber);
+        expect(address.houseNumberAdd).not.toBe(originalHouseNumberAdd);
+        expect(address.province).not.toBe(originalProvince);
+        expect(address.creationDate).not.toBe(originalCreationDate);
+        expect(address.lastModified).not.toBe(originalLastModified);
+    });
+
+    test('object is created - without mobileNumber', () => {
+        let payload = copyObj(dummyData);
+
+        const originalMobileNumber = payload.mobileNumber;
+
+        delete payload.mobileNumber;
+
+        const address = createAddressObj(payload);
+
+        expect(address.user).toBe(payload.user);
+        expect(address.firstName).toBe(payload.firstName);
+        expect(address.lastName).toBe(payload.lastName);
+        expect(address.postalCode).toBe(payload.postalCode);
+        expect(address.houseNumber).toBe(payload.houseNumber);
+        expect(address.streetName).toBe(payload.streetName);
+        expect(address.city).toBe(payload.city);
+        expect(address.province).toBe(payload.province);
+        expect(address.country).toBe(payload.country);
+        expect(address.creationDate).toBe(payload.creationDate);
+        expect(address.lastModified).toBe(payload.lastModified);
+
+        expect(address.mobileNumber).not.toBe(originalMobileNumber);
+    });
+
+    test('object is created - without houseNumberAdd', () => {
+        let payload = copyObj(dummyData);
+
+        delete payload.houseNumberAdd;
+
+        const address = createAddressObj(payload);
+
+        expect(address.user).toBe(payload.user);
+        expect(address.firstName).toBe(payload.firstName);
+        expect(address.lastName).toBe(payload.lastName);
+        expect(address.postalCode).toBe(payload.postalCode);
+        expect(address.houseNumber).toBe(payload.houseNumber);
+        expect(address.streetName).toBe(payload.streetName);
+        expect(address.city).toBe(payload.city);
+        expect(address.province).toBe(payload.province);
+        expect(address.country).toBe(payload.country);
+        expect(address.creationDate).toBe(payload.creationDate);
+        expect(address.lastModified).toBe(payload.lastModified);
+        expect(address.mobileNumber).toBe(payload.mobileNumber);
+
+        expect(address.houseNumberAdd).not.toBe("100");
+    });
+
+    test('object is created - without province', () => {
+        let payload = copyObj(dummyData);
+
+        const originalProvince = payload.province;
+
+        delete payload.province;
+
+        const address = createAddressObj(payload);
+
+        expect(address.user).toBe(payload.user);
+        expect(address.firstName).toBe(payload.firstName);
+        expect(address.lastName).toBe(payload.lastName);
+        expect(address.postalCode).toBe(payload.postalCode);
+        expect(address.houseNumber).toBe(payload.houseNumber);
+        expect(address.streetName).toBe(payload.streetName);
+        expect(address.city).toBe(payload.city);
+        expect(address.country).toBe(payload.country);
+        expect(address.creationDate).toBe(payload.creationDate);
+        expect(address.lastModified).toBe(payload.lastModified);
+        expect(address.mobileNumber).toBe(payload.mobileNumber);
+
+        expect(address.province).not.toBe(originalProvince);
+    });
+
+    test('object is created - with all fields', () => {
+        let payload = copyObj(dummyData);
+
+        const address = createAddressObj(payload);
+
+        expect(address.user).toBe(payload.user);
+        expect(address.firstName).toBe(payload.firstName);
+        expect(address.lastName).toBe(payload.lastName);
+        expect(address.postalCode).toBe(payload.postalCode);
+        expect(address.houseNumber).toBe(payload.houseNumber);
+        expect(address.streetName).toBe(payload.streetName);
+        expect(address.city).toBe(payload.city);
+        expect(address.province).not.toBe(payload.province);
+        expect(address.country).toBe(payload.country);
+        expect(address.creationDate).toBe(payload.creationDate);
+        expect(address.lastModified).toBe(payload.lastModified);
+        expect(address.mobileNumber).toBe(payload.mobileNumber);
+    });
+
+    test('invalid mobileNumber', () => {
+        let payload = copyObj(dummyData);
+        payload.mobileNumber = "+13120230432";
+
+        const address = createAddressObj(payload);
+
+        expect(address instanceof Error).toBe(true);
+        expect(address.message).toBe(errors.genericErrors.invalid_mobile_num.message);
+    });
+
+    test('invalid postalCode', () => {
+        let payload = copyObj(dummyData);
+        payload.postalCode = "1231SS";
+
+        const address = createAddressObj(payload);
+
+        expect(address instanceof Error).toBe(true);
+        expect(address.message).toBe(errors.genericErrors.invalid_postal_code.message);
+    });
+
+    test('invalid houseNumber', () => {
+        let payload = copyObj(dummyData);
+        payload.houseNumber = "1e133r32r";
+
+        const address = createAddressObj(payload);
+
+        expect(address instanceof Error).toBe(true);
+        expect(address.message).toBe(errors.genericErrors.invalid_house_number.message);
+    });
+});
+
 describe('Type checking: address object', () => {
 
     test('address object must have a user property', () => {
