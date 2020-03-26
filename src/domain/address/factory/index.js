@@ -17,7 +17,41 @@ class DutchAddressFactory extends AddressBaseFactory {
         creationDate,
         lastModified
     } = {}) {
+        
+        const result_postal_code = DutchAddressFactory.validatePostalCode(postalCode);
+        if (!result_postal_code) {
+            return errors.genericErrors.invalid_postal_code;
+        }
 
+        const result_house_num = DutchAddressFactory.validateHouseNumber(houseNumber);
+        if (!result_house_num) {
+            return errors.genericErrors.invalid_house_number;
+        }
+
+        if (mobileNumber) {
+            const result_mobile_num = DutchAddressFactory.validateMobileNumber(mobileNumber);
+            if (!result_mobile_num) {
+                return errors.genericErrors.invalid_mobile_num;
+            }
+        }
+
+        const payload = {
+            user,
+            firstName,
+            lastName,
+            mobileNumber,
+            postalCode,
+            houseNumber,
+            houseNumberAdd,
+            streetName,
+            city,
+            province,
+            country,
+            creationDate,
+            lastModified
+        };
+
+        return new Address(payload);
     }
 
     static validateMobileNumber (mobileNumber) {

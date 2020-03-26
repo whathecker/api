@@ -31,7 +31,6 @@ describe('Make Address object', () => {
         let payload = copyObj(dummyData);
 
         const originalMobileNumber = payload.mobileNumber;
-        const originalHouseNumberAdd = payload.houseNumberAdd;
         const originalProvince = payload.province;
         const originalCreationDate = payload.creationDate;
         const originalLastModified = payload.lastModified;
@@ -54,7 +53,6 @@ describe('Make Address object', () => {
         expect(address.country).toBe(payload.country);
 
         expect(address.mobileNumber).not.toBe(originalMobileNumber);
-        expect(address.houseNumberAdd).not.toBe(originalHouseNumberAdd);
         expect(address.province).not.toBe(originalProvince);
         expect(address.creationDate).not.toBe(originalCreationDate);
         expect(address.lastModified).not.toBe(originalLastModified);
@@ -143,7 +141,7 @@ describe('Make Address object', () => {
         expect(address.houseNumber).toBe(payload.houseNumber);
         expect(address.streetName).toBe(payload.streetName);
         expect(address.city).toBe(payload.city);
-        expect(address.province).not.toBe(payload.province);
+        expect(address.province).toBe(payload.province);
         expect(address.country).toBe(payload.country);
         expect(address.creationDate).toBe(payload.creationDate);
         expect(address.lastModified).toBe(payload.lastModified);
