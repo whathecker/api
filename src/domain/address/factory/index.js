@@ -38,5 +38,39 @@ class DutchAddressFactory extends AddressBaseFactory {
     }
 }
 
+class Address {
+    constructor({
+        user,
+        firstName,
+        lastName,
+        mobileNumber,
+        postalCode,
+        houseNumber,
+        houseNumberAdd,
+        streetName,
+        city,
+        province,
+        country,
+        creationDate,
+        lastModified
+    } = {}) {
+
+        this.user = user;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.postalCode = postalCode;
+        this.houseNumber = houseNumber;
+        this.streetName = streetName;
+        this.city = city;
+        this.country = country;
+
+        (mobileNumber)? this.mobileNumber = mobileNumber : null;
+        (houseNumberAdd)? this.houseNumberAdd = houseNumberAdd : null;
+        (province)? this.province = province : null;
+        (creationDate)? this.creationDate = creationDate : null;
+        (lastModified)? this.lastModified = lastModified : null;
+    }
+}
+
 
 module.exports = DutchAddressFactory;
