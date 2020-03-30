@@ -8,6 +8,11 @@ const typeErrors = Object.freeze({
     lastModified: new Error('Billing object has invalid type at property: lastModified')
 });
 
+const genericErrors = Object.freeze({
+    invalid_token_refund_status: new Error('Billing object contain invalid token refund status: please check your input')
+})
+
 module.exports = {
-    typeErrors: typeErrors
+    typeErrors: typeErrors,
+    genericErrors: genericErrors
 };

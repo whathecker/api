@@ -17,6 +17,17 @@ class BillingFactory {
         lastModified
     } = {}) {
 
+        if (tokenRefundStatus) {
+
+            const result = BillingFactory.validateTokenRefundStatus(tokenRefundStatus);
+
+            if (!result) {
+                return errors.genericErrors.invalid_token_refund_status;
+            }
+            
+        }
+        
+
         const payload = {
             user,
             type,

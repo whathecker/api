@@ -1,3 +1,5 @@
+const BillingFactory = require('./factory');
+
 let buildCreateBillingObj = function(billingValidator) {
     return ({
         user,
@@ -24,7 +26,7 @@ let buildCreateBillingObj = function(billingValidator) {
         if (result instanceof Error) {
             return result;
         }
-        return "return object here";
+        return new BillingFactory(payload);
     }
 }
 

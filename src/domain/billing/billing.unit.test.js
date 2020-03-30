@@ -18,6 +18,76 @@ function copyObj(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
+describe('Make Billing object', () => {
+
+    test('object is created - without recurringDetail, tokenRefundStatus, creationDate, lastModified', () => {
+        let payload = copyObj(dummyData);
+
+        const originaltokenRefundStatus = payload.tokenRefundStatus;
+        const originalCreationDate = payload.creationDate;
+        const originalLastModified = payload.lastModified;
+
+        delete payload.tokenRefundStatus;
+        delete payload.creationDate;
+        delete payload.lastModified;
+
+        const billing = createBillingObj(payload);
+
+        expect(billing.user).toBe(payload.user);
+        expect(billing.type).toBe(payload.type);
+        expect(billing.billingId).toBe(payload.billingId);
+
+        expect(billing.tokenRefundStatus).not.toBe(originaltokenRefundStatus);
+        expect(billing.creationDate).not.toBe(originalCreationDate);
+        expect(billing.lastModified).not.toBe(originalLastModified);
+    });
+
+    test('object is created - without tokenRefundStatus', () => {
+        let payload = copyObj(dummyData);
+
+        const originaltokenRefundStatus = payload.tokenRefundStatus;
+
+        delete payload.tokenRefundStatus;
+
+        const billing = createBillingObj(payload);
+
+        expect(billing.user).toBe(payload.user);
+        expect(billing.type).toBe(payload.type);
+        expect(billing.billingId).toBe(payload.billingId);
+        expect(billing.creationDate).toBe(payload.creationDate);
+        expect(billing.lastModified).toBe(payload.lastModified);
+
+        expect(billing.tokenRefundStatus).not.toBe(originaltokenRefundStatus);
+    });
+
+    test('object is created - with all fields', () => {
+        let payload = copyObj(dummyData);
+
+        payload.recurringDetail = "01313";
+
+        const billing = createBillingObj(payload);
+
+        expect(billing.user).toBe(payload.user);
+        expect(billing.type).toBe(payload.type);
+        expect(billing.billingId).toBe(payload.billingId);
+        expect(billing.creationDate).toBe(payload.creationDate);
+        expect(billing.lastModified).toBe(payload.lastModified);
+        expect(billing.tokenRefundStatus).toBe(payload.tokenRefundStatus);
+        expect(billing.recurringDetail).toBe(payload.recurringDetail);
+    });
+
+    test('invalid tokenRefundStatus', () => {
+        let payload = copyObj(dummyData);
+
+        payload.tokenRefundStatus = "invalid_status";
+
+        const billing = createBillingObj(payload);
+
+        expect(billing instanceof Error).toBe(true);
+        expect(billing.message).toBe(errors.genericErrors.invalid_token_refund_status.message);
+    });
+});
+
 describe('Type checking: billing object', () => {
 
     test('billing object must have a user property', () => {
