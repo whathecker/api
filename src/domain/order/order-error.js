@@ -31,7 +31,7 @@ const typeErrors = Object.freeze({
     status_in_orderStatusHistory: new Error('Order object must have status property in orderStatusHistory array as string'),
     timestamp_in_orderStatusHistory: new Error('Order object has invalid type at property: timestamp in item of orderStatusHistory prop'),
 
-    pamymentMethod: new Error('Order object must have paymentMethod property as object'),
+    paymentMethod: new Error('Order object must have paymentMethod property as object'),
     type_in_paymentMethod: new Error('Order object must have type property in paymentMethod as string'),
     recurringDetail_in_paymentMethod: new Error('Order object must have recurringDetail property in paymentMethod as string'),
 
