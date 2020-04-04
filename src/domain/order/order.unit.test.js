@@ -155,6 +155,45 @@ function copyObj(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
+/*
+describe('Make order object', () => {
+
+    test('object is created - without optional fields', () => {
+
+    });
+
+    test('object is created - with all fields', () => {
+
+    });
+
+    test('invalid orderNumber format', () => {
+
+    });
+
+    test('invalid invoiceNumber format', () => {
+
+    });
+
+    test('invalid orderStatus', () => {
+
+    });
+
+    test('invalid orderStatus in orderStatusHistory', () => {
+
+    });
+
+    test('invalid paymentStatus', () => {
+
+    });
+
+    test('invalid paymentStatus in paymentHistory', () => {
+
+    });
+
+}); */
+
+
+
 describe('Type checking: order object', () => {
 
     test('orderNumber property must be string if exist', () => {

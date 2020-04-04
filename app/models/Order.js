@@ -13,6 +13,7 @@ let addressSchema = new Schema({
     streetName: { type: String },
     country: { type: String }
 }, { _id: false });
+// address schema is redundant: delete it after refacotring
 
 let paymentMethodSchema = new Schema({
     type: { type: String },
