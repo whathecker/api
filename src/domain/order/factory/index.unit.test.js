@@ -204,7 +204,7 @@ describe('Test OrderFactory', () => {
         expect(result6).toBe(true);
     });
 
-    test('validateOrderStatus must return true', () => {
+    test('validateOrderStatus must return false', () => {
         const orderStatus = {
             status: 'TOBEPAID',
             timestamp: new Date('December 17, 1995 03:24:00')
@@ -212,6 +212,138 @@ describe('Test OrderFactory', () => {
         
         const result = OrderFactory.validateOrderStatus(orderStatus);
         
+        expect(result).toBe(false);
+    });
+
+    test('validateOrderStatusHistory must return true', () => {
+        const orderStatusHistory = [
+            {
+                status: 'RECEIVED',
+                timestamp: new Date('December 17, 1995 03:24:00')
+            },
+            {
+                status: 'PAID',
+                timestamp: new Date('December 19, 1995 03:24:00')
+            }
+        ];
+
+        const result = OrderFactory.validateOrderStatusHistory(orderStatusHistory);
+
+        expect(result).toBe(true);
+    });
+
+    test('validateOrderStatusHistory must return false', () => {
+        const orderStatusHistory = [
+            {
+                status: 'RECEIVED',
+                timestamp: new Date('December 17, 1995 03:24:00')
+            },
+            {
+                status: 'PAID',
+                timestamp: new Date('December 19, 1995 03:24:00')
+            },
+            {
+                status: '__',
+                timestamp: new Date('December 20, 1995 03:24:00')
+            }
+        ];
+
+        const result = OrderFactory.validateOrderStatusHistory(orderStatusHistory);
+
+        expect(result).toBe(false);
+    });
+
+    test('validatePaymentStatus must return true', () => {
+        const paymentStatus = {
+            status: "OPEN",
+            timestamp: new Date('December 17, 1995 03:24:00')
+        };
+        const paymentStatus2 = {
+            status: "AUTHORIZED",
+            timestamp: new Date('December 18, 1995 03:24:00')
+        };
+        const paymentStatus3 = {
+            status: "PENDING",
+            timestamp: new Date('December 19, 1995 03:24:00')
+        };
+        const paymentStatus4 = {
+            status: "REFUSED",
+            timestamp: new Date('December 20, 1995 03:24:00')
+        };
+        const paymentStatus5 = {
+            status: "CANCELLED",
+            timestamp: new Date('December 20, 1995 03:24:00')
+        };
+        const paymentStatus6 = {
+            status: "REFUNDED",
+            timestamp: new Date('December 20, 1995 03:24:00')
+        };
+
+        const result = OrderFactory.validatePaymentStatus(paymentStatus);
+        const result2 = OrderFactory.validatePaymentStatus(paymentStatus2);
+        const result3 = OrderFactory.validatePaymentStatus(paymentStatus3);
+        const result4 = OrderFactory.validatePaymentStatus(paymentStatus4);
+        const result5 = OrderFactory.validatePaymentStatus(paymentStatus5);
+        const result6 = OrderFactory.validatePaymentStatus(paymentStatus6);
+
+        expect(result).toBe(true);
+        expect(result2).toBe(true);
+        expect(result3).toBe(true);
+        expect(result4).toBe(true);
+        expect(result5).toBe(true);
+        expect(result6).toBe(true);
+    });
+
+    test('validatePaymentStatus must return false', () => {
+        const paymentStatus = {
+            status: "NOT_PAID",
+            timestamp: new Date('December 17, 1995 03:24:00')
+        };
+
+        const result = OrderFactory.validatePaymentStatus(paymentStatus);
+
+        expect(result).toBe(false);
+    });
+
+    test('validatePaymentHistory must return true', () => {
+        const paymentHistory = [
+            {
+                status: "OPEN",
+                timestamp: new Date('December 17, 1995 03:24:00')
+            },
+            {
+                status: "AUTHORIZED",
+                timestamp: new Date('December 18, 1995 03:24:00')
+            },
+            {
+                status: "CANCELLED",
+                timestamp: new Date('December 19, 1995 03:24:00')
+            },
+        ];
+
+        const result = OrderFactory.validatePaymentHistory(paymentHistory);
+
+        expect(result).toBe(true);
+    });
+
+    test('validatePaymentHistory must return false', () => {
+        const paymentHistory = [
+            {
+                status: "OPEN",
+                timestamp: new Date('December 17, 1995 03:24:00')
+            },
+            {
+                status: "AUTHORIZED",
+                timestamp: new Date('December 18, 1995 03:24:00')
+            },
+            {
+                status: "__",
+                timestamp: new Date('December 19, 1995 03:24:00')
+            },
+        ];
+
+        const result = OrderFactory.validatePaymentHistory(paymentHistory);
+
         expect(result).toBe(false);
     });
 });

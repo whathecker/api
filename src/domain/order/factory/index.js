@@ -19,6 +19,15 @@ const enum_order_status = Object.freeze({
     5: "OVERDUE"
 });
 
+const enum_payment_status = Object.freeze({
+    0: "OPEN",
+    1: "AUTHORIZED",
+    2: "PENDING",
+    3: "REFUSED",
+    4: "CANCELLED",
+    5: "REFUNDED"
+})
+
 class OrderFacotry {
     constructor({
 
@@ -158,15 +167,46 @@ class OrderFacotry {
     }
 
     static validateOrderStatusHistory (orderStatusHistory) {
+        let result = true;
 
+        for (let orderStatus of orderStatusHistory) {
+            const validation_result = this.validateOrderStatus(orderStatus);
+            if (!validation_result) {
+                result = false;
+                break;
+            }
+        }
+
+        return result;
     }
 
-    static validatePaymentStatus () {
+    static validatePaymentStatus ({
+        status,
+        timestamp
+    } = {}) {
+        let result = false;
 
+        for (let prop of Object.keys(enum_payment_status)) {
+            if (status === enum_payment_status[prop]) {
+                result = true;
+                break;
+            }
+        }
+        return result;
     }
 
-    static validatePaymentHistory () {
+    static validatePaymentHistory (paymentHistory) {
+        let result = true;
 
+        for (let paymentStatus of paymentHistory) {
+            const validation_result = this.validatePaymentStatus(paymentStatus);
+            if (!validation_result) {
+                result = false;
+                break;
+            }
+        }
+
+        return result;
     }
 }
 
