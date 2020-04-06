@@ -104,6 +104,8 @@ const genericErrors = Object.freeze({
     invalid_order_status_in_history: new Error('Order object contain invalid status in orderStatusHistory field: double check status from your input'),
     invalid_payment_status: new Error('Order object contain invalid status in paymentStatus field: double check status from your input'),
     invalid_payment_status_in_history: new Error('Order object contain invalid status in paymentHistory field: double check status from your input'),
+    invalid_currency_in_orderAmountPerItem: new Error('Order object contain invalid currency in item of orderAmountPerItem field: double check currency from your input'),
+    invalid_quantity_in_orderAmountPerItem: new Error('Order object contain invalid quantity in item of orderAmountPerItem field: double check quantity from your input'),
 });
 
 module.exports = {

@@ -28,7 +28,11 @@ const enum_payment_status = Object.freeze({
     3: "REFUSED",
     4: "CANCELLED",
     5: "REFUNDED"
-})
+});
+
+const enum_currency = Object.freeze({
+    0: "euro"
+});
 
 class OrderFacotry {
     constructor({
@@ -93,25 +97,26 @@ class OrderFacotry {
             return errors.genericErrors.invalid_payment_status_in_history;
         }
 
+        // only check the format of objects in OrderFactory
+
+        // the construct of amountPerItem and totalAmount, create a separate object and delete gate it
+        // therefore calculation of sumOfPrices of each item and setting Total amount is not required
+
+        // however we do need to re-compute if given ammounts are correct and return error if not
+
+
+        // validateOrderAmountPerItem of orderItem
+        const result_orderAmountPerItem = OrderFacotry.validateOrderAmountPerItem(orderAmountPerItem);
+
+        if (!result_orderAmountPerItem.status) {
+            return OrderFacotry.returnValidationErrorFromOrderAmountPerItem(result_orderAmountPerItem.error);
+        }
+        // validateShippedAmountPerItem 
+        // validate orderAmount
+        // validate shippedAmount
+
         
 
-        // validatePriceFormat of orderItem
-
-        // validate orderAmountPerItem
-        // check if grossPrice is correct
-        // check if VAT is correct
-        // check if netPrice is correct
-        // check if sumOfDiscount is correct
-        // check if sumOfVat is correct
-        // check if sumOfGrossPrice is correct
-        // check if sumOfNetPrice is correct
-
-        // if orderAmount exist, validateOrderAmount with orderAmountPerItem
-        // if orderAmount not exist, setOrderAmount
-
-
-        // if shippedAmountPerItem exist, validateShippedAmount
-        // if shippedAmount exist, validateShippedAmount against shippedAmountPerItem
         // if courier exist validateCourier
     }
 
@@ -269,8 +274,67 @@ class OrderFacotry {
     }
 
     static validateOrderAmountPerItem (orderAmountPerItem) {
+        let result = {
+            success: true,
+            error: null
+        };
 
+        for (let item of orderAmountPerItem) {
+            
+            const result_currency = this.validate_currency_of_item(item.currency);
+
+            if (!result_currency) {
+                result = {
+                    success: false,
+                    error: 'currency'
+                };
+                break;
+            }
+
+            const result_qty = this.validate_qty_of_item(item.quantity);
+
+            if (!result_qty) {
+                result = {
+                    success: false,
+                    error: 'quantity'
+                };
+                break;
+            }
+        }
+
+        return result;
     }
+
+    static validate_currency_of_item (currency) {
+        let result = false;
+
+        for (let prop of Object.keys(enum_currency)) {
+            if (currency === enum_currency[prop]) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
+    static validate_qty_of_item (qty) {
+        let result = false;
+        (qty > 0)? result = true : null;
+        return result;
+    }
+
+    static returnValidationErrorFromOrderAmountPerItem (errorType) {
+        switch (errorType) {
+            case 'currency':
+                return errors.genericErrors.invalid_currency_in_orderAmountPerItem;
+            case 'quantity':
+                return errors.genericErrors.invalid_quantity_in_orderAmountPerItem;
+            default: 
+                throw new Error('unknown errorType: can your input');
+        }
+    }
+
+    
 }
 
 class Order {

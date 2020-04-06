@@ -342,4 +342,83 @@ describe('Test OrderFactory', () => {
 
         expect(result).toBe(false);
     });
+
+
+    test('validate_currency_of_item must return true', () => {
+        const result = OrderFactory.validate_currency_of_item('euro');
+
+        expect(result).toBe(true);
+    });
+
+    test('validate_currency_of_item must return false', () => {
+        const result = OrderFactory.validate_currency_of_item('usd');
+
+        expect(result).toBe(false);
+    });
+
+    test('validateOrderAmountPerItem must indicate currency is invalid', () => {
+        const orderAmountPerItem = [
+            {
+                itemId: "PKOL90585",
+                name: "chokchok 'normal' skin type package",
+                currency: "usd",
+                quantity: 1,
+                originalPrice: "24.95",
+                discount: "0.00",
+                vat: "4.33",
+                grossPrice: "24.95",
+                netPrice: "20.62",
+                sumOfGrossPrice: "24.95",
+                sumOfNetPrice: "20.62",
+                sumOfVat: "4.33",
+                sumOfDiscount: "0.00"
+    
+            }
+        ];
+
+        const result = OrderFactory.validateOrderAmountPerItem(orderAmountPerItem);
+        expect(result.success).toBe(false);
+        expect(result.error).toBe('currency');
+    });
+
+    test('validate_qty_of_item must return true', () => {
+        const result = OrderFactory.validate_qty_of_item(1);
+        const result2 = OrderFactory.validate_qty_of_item(10001);
+
+        expect(result).toBe(true);
+        expect(result2).toBe(true);
+    });
+
+    test('validate_qty_of_item must return false', () => {
+        const result = OrderFactory.validate_qty_of_item(0);
+        const result2 = OrderFactory.validate_qty_of_item(-1);
+
+        expect(result).toBe(false);
+        expect(result2).toBe(false);
+    });
+
+    test('validateOrderAmountPerItem must indicate currency is invalid', () => {
+        const orderAmountPerItem = [
+            {
+                itemId: "PKOL90585",
+                name: "chokchok 'normal' skin type package",
+                currency: "euro",
+                quantity: 0,
+                originalPrice: "24.95",
+                discount: "0.00",
+                vat: "4.33",
+                grossPrice: "24.95",
+                netPrice: "20.62",
+                sumOfGrossPrice: "24.95",
+                sumOfNetPrice: "20.62",
+                sumOfVat: "4.33",
+                sumOfDiscount: "0.00"
+    
+            }
+        ];
+
+        const result = OrderFactory.validateOrderAmountPerItem(orderAmountPerItem);
+        expect(result.success).toBe(false);
+        expect(result.error).toBe('quantity');
+    });
 });

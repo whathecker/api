@@ -206,6 +206,55 @@ describe('Make order object', () => {
         expect(order.message).toBe(errors.genericErrors.invalid_payment_status_in_history.message);
     });
 
+    
+    test('invalid currency in item of orderAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.orderAmountPerItem[0].currency = 'usd';
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_currency_in_orderAmountPerItem.message);
+    }); 
+
+    test('invalid quantity in item of orderAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.orderAmountPerItem[0].quantity = 0;
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_quantity_in_orderAmountPerItem.message);
+    });
+
+    test('invalid grossPrice in item of orderAmountPerItem', () => {
+
+    });
+
+    test('invalid vat in item of orderAmountPerItem', () => {
+
+    });
+
+    test('invalid netPrice in item of orderAmountPerItem', () => {
+
+    });
+
+    test('invalid sumOfGrossPrice in item of orderAmountPerItem', () => {
+
+    });
+
+    test('invalid sumOfNetPrice in item of orderAmountPerItem', () => {
+
+    });
+
+    test('invalid sumOfVat in item of orderAmountPerItem', () => {
+
+    });
+
+    test('invalid sumOfDiscount in item of orderAmountPerItem', () => {
+
+    });
+
 }); 
 
 
