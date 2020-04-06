@@ -3,9 +3,9 @@ const OrderFactory = require('./index');
 describe('Test OrderFactory', () => {
 
     test('validateOrderNumberFormat must return true', () => {
-        const orderNumber = "DVNL10101";
-        const orderNumber2 = "STNL12315";
-        const orderNumber3 = "ECNL49201";
+        const orderNumber = "DVNL1010111111";
+        const orderNumber2 = "STNL1231511111";
+        const orderNumber3 = "ECNL4920111111";
 
         const result = OrderFactory.validateOrderNumberFormat(orderNumber);
         const result2 = OrderFactory.validateOrderNumberFormat(orderNumber2);
@@ -17,9 +17,9 @@ describe('Test OrderFactory', () => {
     });
 
     test('validateOrderNumberFormat must return false', () => {
-        const orderNumber = "XXDE12301";
-        const orderNumber2 = "DVNL101011";
-        const orderNumber3 = "ECUS12020";
+        const orderNumber = "XXDE1230111111";
+        const orderNumber2 = "DVNL10101111111";
+        const orderNumber3 = "ECUS1202011111";
 
         const result = OrderFactory.validateOrderNumberFormat(orderNumber);
         const result2 = OrderFactory.validateOrderNumberFormat(orderNumber2);
@@ -113,36 +113,32 @@ describe('Test OrderFactory', () => {
     });
 
     test('createOrderNumber must return valid orderNumber', () => {
-        const envPrefix = OrderFactory.get_env_prefix('production');
-        const countryPrefix = OrderFactory.get_country_prefix('netherlands');
+        
+       
         const orderNumber = OrderFactory.createOrderNumber({
-            envPrefix: envPrefix,
-            countryPrefix: countryPrefix
+            envVar: 'production',
+            country: 'netherlands'
         });
 
-        const envPrefix2 = OrderFactory.get_env_prefix('staging');
-        const countryPrefix2 = OrderFactory.get_country_prefix('netherlands');
         const orderNumber2 = OrderFactory.createOrderNumber({
-            envPrefix: envPrefix2,
-            countryPrefix: countryPrefix2
+            envVar: 'staging',
+            country: 'netherlands'
         });
 
-        const envPrefix3 = OrderFactory.get_env_prefix('new');
-        const countryPrefix3 = OrderFactory.get_country_prefix('new');
         const orderNumber3 = OrderFactory.createOrderNumber({
-            envPrefix: envPrefix3,
-            countryPrefix: countryPrefix3
+            envVar: 'new',
+            country: 'new'
         });
 
-        expect(orderNumber).toHaveLength(9);
+        expect(orderNumber).toHaveLength(14);
         expect(orderNumber.slice(0,2)).toBe('EC');
         expect(orderNumber.slice(2,4)).toBe('NL');
 
-        expect(orderNumber2).toHaveLength(9);
+        expect(orderNumber2).toHaveLength(14);
         expect(orderNumber2.slice(0,2)).toBe('ST');
         expect(orderNumber2.slice(2,4)).toBe('NL');
 
-        expect(orderNumber3).toHaveLength(9);
+        expect(orderNumber3).toHaveLength(14);
         expect(orderNumber3.slice(0,2)).toBe('DV');
         expect(orderNumber3.slice(2,4)).toBe('NL');
     });

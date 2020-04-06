@@ -1,3 +1,5 @@
+const errors = require('../order-error');
+
 const enum_env_prefixes = Object.freeze({
     test: "DV",
     local: "DV",
@@ -30,23 +32,79 @@ const enum_payment_status = Object.freeze({
 
 class OrderFacotry {
     constructor({
-
+        orderNumber,
+        user,
+        invoiceNumber,
+        isSubscription,
+        orderStatus,
+        orderStatusHistory,
+        paymentMethod,
+        paymentStatus,
+        paymentHistory,
+        creationDate,
+        deliverySchedule,
+        isShipped,
+        shippedDate,
+        courier,
+        trackingNumber,
+        isConfEmailDelivered,
+        lastModified,
+        orderAmountPerItem,
+        orderAmount,
+        shippedAmountPerItem,
+        shippedAmount
     } = {}) {
 
-        // if orderNumber exist validateOrderNumberFormat
+
+        /*
+        if (!orderNumber) {
+            const country = "netherlands"; // technical debt: make it dynamic
+
+            orderNumber = OrderFacotry.createOrderNumber({
+                envVar: process.env.NODE_ENV,
+                country: country
+            });
+
+            console.log(orderNumber);
+        } */
+
         // if no orderNumber create order number
-
-        // if invoiceNumber exist validateInvoiceNumber
-
-        // validateOrderStatus
-        // validateOrderStatus in orderStatusHistory
-
-        // validatePaymentStatus
-        // validatePaymentStatus in paymentHistory
 
         
 
+        
+        const result_order_status = OrderFacotry.validateOrderStatus(orderStatus);
+        if (!result_order_status) {
+            return errors.genericErrors.invalid_order_status;
+        }
+        
+        const result_order_status_history = OrderFacotry.validateOrderStatusHistory(orderStatusHistory);
+        if (!result_order_status_history) {
+            return errors.genericErrors.invalid_order_status_in_history;
+        }
+
+        const result_payment_status = OrderFacotry.validatePaymentStatus(paymentStatus);
+        if (!result_payment_status) {
+            return errors.genericErrors.invalid_payment_status;
+        }
+
+        const result_payment_status_history = OrderFacotry.validatePaymentHistory(paymentHistory);
+        if (!result_payment_status_history) {
+            return errors.genericErrors.invalid_payment_status_in_history;
+        }
+
+        
+
+        // validatePriceFormat of orderItem
+
         // validate orderAmountPerItem
+        // check if grossPrice is correct
+        // check if VAT is correct
+        // check if netPrice is correct
+        // check if sumOfDiscount is correct
+        // check if sumOfVat is correct
+        // check if sumOfGrossPrice is correct
+        // check if sumOfNetPrice is correct
 
         // if orderAmount exist, validateOrderAmount with orderAmountPerItem
         // if orderAmount not exist, setOrderAmount
@@ -59,7 +117,7 @@ class OrderFacotry {
 
     static validateOrderNumberFormat (orderNumber) {
 
-        if (orderNumber.length !== 9) {
+        if (orderNumber.length !== 14) {
             return false;
         }
 
@@ -105,16 +163,19 @@ class OrderFacotry {
     }
 
     static createOrderNumber ({
-        envPrefix,
-        countryPrefix
+        envVar,
+        country
     } = {}) {
+        let envPrefix  = this.get_env_prefix(envVar);
+        let countryPrefix = this.get_country_prefix(country);
 
         (envPrefix === null)? envPrefix = "DV" : null;
         (countryPrefix === null)? countryPrefix =  "NL" : null;
 
         const fiveDigitsNum = this.create_five_digits_integer();
+        const fiveDigitsNum2 = this.create_five_digits_integer();
 
-        return ''.concat(envPrefix, countryPrefix,fiveDigitsNum);
+        return ''.concat(envPrefix, countryPrefix,fiveDigitsNum, fiveDigitsNum2);
     }
 
     static create_five_digits_integer () {
@@ -176,7 +237,6 @@ class OrderFacotry {
                 break;
             }
         }
-
         return result;
     }
 
@@ -205,8 +265,11 @@ class OrderFacotry {
                 break;
             }
         }
-
         return result;
+    }
+
+    static validateOrderAmountPerItem (orderAmountPerItem) {
+
     }
 }
 

@@ -1,3 +1,5 @@
+const OrderFactory = require('./factory');
+
 let buildCreateOrderObj = function(orderValidator) {
     return ({
         orderNumber,
@@ -56,7 +58,7 @@ let buildCreateOrderObj = function(orderValidator) {
         if (result instanceof Error) {
             return result;
         }
-        return "return order object";
+        return new OrderFactory(payload);
     }
 }
 

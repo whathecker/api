@@ -100,7 +100,10 @@ const typeErrors = Object.freeze({
 });
 
 const genericErrors = Object.freeze({
-    
+    invalid_order_status: new Error('Order object contain invalid status in orderStatus field: double check status from your input'),
+    invalid_order_status_in_history: new Error('Order object contain invalid status in orderStatusHistory field: double check status from your input'),
+    invalid_payment_status: new Error('Order object contain invalid status in paymentStatus field: double check status from your input'),
+    invalid_payment_status_in_history: new Error('Order object contain invalid status in paymentHistory field: double check status from your input'),
 });
 
 module.exports = {

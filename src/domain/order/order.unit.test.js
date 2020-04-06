@@ -28,7 +28,7 @@ const dummyData = {
     },
     isSubscription: true,
     orderStatus: {
-        status: "AUTHORIZED",
+        status: "PAID",
         timestamp: new Date('December 17, 1995 03:24:00')
     },
     orderStatusHistory: [
@@ -155,7 +155,7 @@ function copyObj(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
-/*
+
 describe('Make order object', () => {
 
     test('object is created - without optional fields', () => {
@@ -166,32 +166,47 @@ describe('Make order object', () => {
 
     });
 
-    test('invalid orderNumber format', () => {
-
-    });
-
-    test('invalid invoiceNumber format', () => {
-
-    });
-
     test('invalid orderStatus', () => {
+        let payload = copyObj(dummyData);
+        payload.orderStatus.status = "invalid";
 
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_order_status.message);
     });
 
     test('invalid orderStatus in orderStatusHistory', () => {
+        let payload = copyObj(dummyData);
+        payload.orderStatusHistory[0].status = "invalid";
 
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_order_status_in_history.message);
     });
 
     test('invalid paymentStatus', () => {
+        let payload = copyObj(dummyData);
+        payload.paymentStatus.status = "invalid";
 
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_payment_status.message);
     });
 
     test('invalid paymentStatus in paymentHistory', () => {
+        let payload = copyObj(dummyData);
+        payload.paymentHistory[0].status = "invalid";
 
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_payment_status_in_history.message);
     });
 
-}); */
-
+}); 
 
 
 describe('Type checking: order object', () => {
