@@ -72,10 +72,10 @@ module.exports = Joi.object({
             vat: Joi.string().required().error(errors.typeErrors.vat_in_orderAmountPerItem),
             grossPrice: Joi.string().required().error(errors.typeErrors.grossPrice_in_orderAmountPerItem),
             netPrice: Joi.string().required().error(errors.typeErrors.netPrice_in_orderAmountPerItem),
-            sumOfDiscount: Joi.string().error(errors.typeErrors.sumOfDiscount_in_orderAmountPerItem),
-            sumOfVat: Joi.string().error(errors.typeErrors.sumOfVat_in_orderAmountPerItem),
-            sumOfGrossPrice: Joi.string().error(errors.typeErrors.sumOfGrossPrice_in_orderAmountPerItem),
-            sumOfNetPrice: Joi.string().error(errors.typeErrors.sumOfNetPrice_in_orderAmountPerItem)
+            sumOfDiscount: Joi.string().required().error(errors.typeErrors.sumOfDiscount_in_orderAmountPerItem),
+            sumOfVat: Joi.string().required().error(errors.typeErrors.sumOfVat_in_orderAmountPerItem),
+            sumOfGrossPrice: Joi.string().required().error(errors.typeErrors.sumOfGrossPrice_in_orderAmountPerItem),
+            sumOfNetPrice: Joi.string().required().error(errors.typeErrors.sumOfNetPrice_in_orderAmountPerItem)
         })
     ),
     shippedDate: Joi.date().error(errors.typeErrors.shippedDate),
@@ -104,10 +104,10 @@ module.exports = Joi.object({
             vat: Joi.string().required().error(errors.typeErrors.vat_in_shippedAmountPerItem),
             grossPrice: Joi.string().required().error(errors.typeErrors.grossPrice_in_shippedAmountPerItem),
             netPrice: Joi.string().required().error(errors.typeErrors.netPrice_in_shippedAmountPerItem),
-            sumOfVat: Joi.string().error(errors.typeErrors.sumOfVat_in_shippedAmountPerItem),
-            sumOfDiscount: Joi.string().error(errors.typeErrors.sumOfDiscount_in_shippedAmountPerItem),
-            sumOfGrossPrice: Joi.string().error(errors.typeErrors.sumOfGrossPrice_in_shippedAmountPerItem),
-            sumOfNetPrice: Joi.string().error(errors.typeErrors.sumOfNetPrice_in_shippedAmountPerItem)
+            sumOfVat: Joi.string().required().error(errors.typeErrors.sumOfVat_in_shippedAmountPerItem),
+            sumOfDiscount: Joi.string().required().error(errors.typeErrors.sumOfDiscount_in_shippedAmountPerItem),
+            sumOfGrossPrice: Joi.string().required().error(errors.typeErrors.sumOfGrossPrice_in_shippedAmountPerItem),
+            sumOfNetPrice: Joi.string().required().error(errors.typeErrors.sumOfNetPrice_in_shippedAmountPerItem)
         })
     ),
     invoiceNumber: Joi.string().error(errors.typeErrors.invoiceNumber)

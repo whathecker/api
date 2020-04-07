@@ -376,7 +376,7 @@ describe('Test OrderFactory', () => {
             }
         ];
 
-        const result = OrderFactory.validateOrderAmountPerItem(orderAmountPerItem);
+        const result = OrderFactory.validateAmountPerItem(orderAmountPerItem);
         expect(result.success).toBe(false);
         expect(result.error).toBe('currency');
     });
@@ -397,7 +397,7 @@ describe('Test OrderFactory', () => {
         expect(result2).toBe(false);
     });
 
-    test('validateOrderAmountPerItem must indicate currency is invalid', () => {
+    test('validateAmountPerItem must indicate currency is invalid', () => {
         const orderAmountPerItem = [
             {
                 itemId: "PKOL90585",
@@ -417,8 +417,35 @@ describe('Test OrderFactory', () => {
             }
         ];
 
-        const result = OrderFactory.validateOrderAmountPerItem(orderAmountPerItem);
+        const result = OrderFactory.validateAmountPerItem(orderAmountPerItem);
         expect(result.success).toBe(false);
         expect(result.error).toBe('quantity');
     });
+
+    test('calculate_price_delta must return correct value', () => {
+        const deltaPrice = OrderFactory.calculate_price_delta("100.00", "20.00");
+        const deltaPrice2 = OrderFactory.calculate_price_delta("101.01", "90.00");
+        const deltaPrice3 = OrderFactory.calculate_price_delta("101.01", "88.15");
+        const deltaPrice4 = OrderFactory.calculate_price_delta("1560.00", "20.00");
+        const deltaPrice5 = OrderFactory.calculate_price_delta("111.11", "90.00");
+
+        expect(deltaPrice).toBe("80.00");
+        expect(deltaPrice2).toBe("11.01");
+        expect(deltaPrice3).toBe("12.86");
+        expect(deltaPrice4).toBe("1540.00");
+        expect(deltaPrice5).toBe("21.11");
+    });
+
+    test('calculate_price_multiply_qty must return correct value', () => {
+        const multipliedPrice = OrderFactory.calculate_price_multiply_qty("10.00", 2);
+        const multipliedPrice2 = OrderFactory.calculate_price_multiply_qty("10.00", 100123);
+        const multipliedPrice3 = OrderFactory.calculate_price_multiply_qty("151.01", 4);
+        const multipliedPrice4 = OrderFactory.calculate_price_multiply_qty('1600.05', 5);
+
+        expect(multipliedPrice).toBe("20.00");
+        expect(multipliedPrice2).toBe("1001230.00");
+        expect(multipliedPrice3).toBe('604.04');
+        expect(multipliedPrice4).toBe('8000.25');
+    });
+
 });

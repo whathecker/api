@@ -5,6 +5,7 @@ const validator = require('../_shared_validator')(orderSchema);
 const createOrderObj = buildCreateOrderObj(validator);
 
 const dummyData = {
+    country: "NL",
     orderNumber: "ECNL8092517600",
     user: "user_id",
     invoiceNumber: "0805081926636",
@@ -228,31 +229,165 @@ describe('Make order object', () => {
     });
 
     test('invalid grossPrice in item of orderAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.orderAmountPerItem[0].grossPrice = "12.00";
 
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_gross_price_in_orderAmountPerItem.message);
     });
-
+    
     test('invalid vat in item of orderAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.orderAmountPerItem[0].vat = "100.00";
 
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_vat_in_orderAmountPerItem.message);
     });
 
     test('invalid netPrice in item of orderAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.orderAmountPerItem[0].netPrice = "100.00";
 
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_netPrice_in_orderAmountPerItem.message);
     });
 
     test('invalid sumOfGrossPrice in item of orderAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.orderAmountPerItem[0].sumOfGrossPrice = "10000.00";
 
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_sumOfGrossPrice_in_orderAmountPerItem.message);
     });
 
     test('invalid sumOfNetPrice in item of orderAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.orderAmountPerItem[0].sumOfNetPrice = "10000.00";
 
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_sumOfNetPrice_in_orderAmountPerItem.message);
     });
 
     test('invalid sumOfVat in item of orderAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.orderAmountPerItem[0].sumOfVat = "10000.00";
 
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_sumOfVat_in_orderAmountPerItem.message);
     });
 
     test('invalid sumOfDiscount in item of orderAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.orderAmountPerItem[0].sumOfDiscount = "10000.00";
 
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_sumOfDiscount_in_orderAmountPerItem.message);
+    });
+
+    // test shippedAmountPerItem
+
+    test('invalid currency in item of shippedAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.shippedAmountPerItem[0].currency = 'usd';
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_currency_in_shippedAmountPerItem.message);
+    }); 
+
+    test('invalid quantity in item of shippedAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.shippedAmountPerItem[0].quantity = 0;
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_quantity_in_shippedAmountPerItem.message);
+    });
+
+    test('invalid grossPrice in item of shippedAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.shippedAmountPerItem[0].grossPrice = "12.00";
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_gross_price_in_shippedAmountPerItem.message);
+    });
+    
+    test('invalid vat in item of shippedAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.shippedAmountPerItem[0].vat = "100.00";
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_vat_in_shippedAmountPerItem.message);
+    });
+
+    test('invalid netPrice in item of shippedAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.shippedAmountPerItem[0].netPrice = "100.00";
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_netPrice_in_shippedAmountPerItem.message);
+    });
+
+    test('invalid sumOfGrossPrice in item of shippedAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.shippedAmountPerItem[0].sumOfGrossPrice = "10000.00";
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_sumOfGrossPrice_in_shippedAmountPerItem.message);
+    });
+
+    test('invalid sumOfNetPrice in item of shippedAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.shippedAmountPerItem[0].sumOfNetPrice = "10000.00";
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_sumOfNetPrice_in_shippedAmountPerItem.message);
+    });
+
+    test('invalid sumOfVat in item of shippedAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.shippedAmountPerItem[0].sumOfVat = "10000.00";
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_sumOfVat_in_shippedAmountPerItem.message);
+    });
+
+    test('invalid sumOfDiscount in item of shippedAmountPerItem', () => {
+        let payload = copyObj(dummyData);
+        payload.shippedAmountPerItem[0].sumOfDiscount = "10000.00";
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_sumOfDiscount_in_shippedAmountPerItem.message);
     });
 
 }); 

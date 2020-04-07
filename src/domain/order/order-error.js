@@ -106,6 +106,23 @@ const genericErrors = Object.freeze({
     invalid_payment_status_in_history: new Error('Order object contain invalid status in paymentHistory field: double check status from your input'),
     invalid_currency_in_orderAmountPerItem: new Error('Order object contain invalid currency in item of orderAmountPerItem field: double check currency from your input'),
     invalid_quantity_in_orderAmountPerItem: new Error('Order object contain invalid quantity in item of orderAmountPerItem field: double check quantity from your input'),
+    invalid_gross_price_in_orderAmountPerItem: new Error('Order object contain invalid grossPrice in item of orderAmountPerItem field: double check grossPrice from your input'),
+    invalid_vat_in_orderAmountPerItem: new Error('Order object contain invalid vat in item of orderAmountPerItem field: double check grossPrice from your input'),
+    invalid_netPrice_in_orderAmountPerItem: new Error('Order object contain invalid netPrice in item of orderAmountPerItem field: double check netPrice from your input'),
+    invalid_sumOfGrossPrice_in_orderAmountPerItem: new Error('Order object contain invalid sumOfGrossPrice in item of orderAmountPerItem field: double check sumOfGrossPrice from your input'),
+    invalid_sumOfNetPrice_in_orderAmountPerItem: new Error('Order object contain invalid sumOfNetPrice in item of orderAmountPerItem field: double check sumOfNetPrice from your input'),
+    invalid_sumOfVat_in_orderAmountPerItem: new Error('Order object contain invalid sumOfVat in item of orderAmountPerItem field: double check sumOfVat from your input'),
+    invalid_sumOfDiscount_in_orderAmountPerItem: new Error('Order object contain invalid sumOfDiscount in item of orderAmountPerItem field: double check sumOfDiscount from your input'),
+    
+    invalid_currency_in_shippedAmountPerItem: new Error('Order object contain invalid currency in item of shippedAmountPerItem field: double check currency from your input'),
+    invalid_quantity_in_shippedAmountPerItem: new Error('Order object contain invalid quantity in item of shippedAmountPerItem field: double check quantity from your input'),
+    invalid_gross_price_in_shippedAmountPerItem: new Error('Order object contain invalid grossPrice in item of shippedAmountPerItem field: double check grossPrice from your input'),
+    invalid_vat_in_shippedAmountPerItem: new Error('Order object contain invalid vat in item of shippedAmountPerItem field: double check grossPrice from your input'),
+    invalid_netPrice_in_shippedAmountPerItem: new Error('Order object contain invalid netPrice in item of shippedAmountPerItem field: double check netPrice from your input'),
+    invalid_sumOfGrossPrice_in_shippedAmountPerItem: new Error('Order object contain invalid sumOfGrossPrice in item of shippedAmountPerItem field: double check sumOfGrossPrice from your input'),
+    invalid_sumOfNetPrice_in_shippedAmountPerItem: new Error('Order object contain invalid sumOfNetPrice in item of shippedAmountPerItem field: double check sumOfNetPrice from your input'),
+    invalid_sumOfVat_in_shippedAmountPerItem: new Error('Order object contain invalid sumOfVat in item of shippedAmountPerItem field: double check sumOfVat from your input'),
+    invalid_sumOfDiscount_in_shippedAmountPerItem: new Error('Order object contain invalid sumOfDiscount in item of shippedAmountPerItem field: double check sumOfDiscount from your input')
 });
 
 module.exports = {

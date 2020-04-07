@@ -34,7 +34,7 @@ const enum_currency = Object.freeze({
     0: "euro"
 });
 
-class OrderFacotry {
+class OrderFactory {
     constructor({
         orderNumber,
         user,
@@ -77,22 +77,22 @@ class OrderFacotry {
         
 
         
-        const result_order_status = OrderFacotry.validateOrderStatus(orderStatus);
+        const result_order_status = OrderFactory.validateOrderStatus(orderStatus);
         if (!result_order_status) {
             return errors.genericErrors.invalid_order_status;
         }
         
-        const result_order_status_history = OrderFacotry.validateOrderStatusHistory(orderStatusHistory);
+        const result_order_status_history = OrderFactory.validateOrderStatusHistory(orderStatusHistory);
         if (!result_order_status_history) {
             return errors.genericErrors.invalid_order_status_in_history;
         }
 
-        const result_payment_status = OrderFacotry.validatePaymentStatus(paymentStatus);
+        const result_payment_status = OrderFactory.validatePaymentStatus(paymentStatus);
         if (!result_payment_status) {
             return errors.genericErrors.invalid_payment_status;
         }
 
-        const result_payment_status_history = OrderFacotry.validatePaymentHistory(paymentHistory);
+        const result_payment_status_history = OrderFactory.validatePaymentHistory(paymentHistory);
         if (!result_payment_status_history) {
             return errors.genericErrors.invalid_payment_status_in_history;
         }
@@ -105,13 +105,20 @@ class OrderFacotry {
         // however we do need to re-compute if given ammounts are correct and return error if not
 
 
-        // validateOrderAmountPerItem of orderItem
-        const result_orderAmountPerItem = OrderFacotry.validateOrderAmountPerItem(orderAmountPerItem);
+        
+        const result_orderAmountPerItem = OrderFactory.validateAmountPerItem(orderAmountPerItem);
 
-        if (!result_orderAmountPerItem.status) {
-            return OrderFacotry.returnValidationErrorFromOrderAmountPerItem(result_orderAmountPerItem.error);
+        if (!result_orderAmountPerItem.success) {
+            return OrderFactory.returnValidationErrorFromOrderAmountPerItem(result_orderAmountPerItem.error);
         }
-        // validateShippedAmountPerItem 
+
+        const result_shippedAmountPerItem = OrderFactory.validateAmountPerItem(shippedAmountPerItem);
+
+        if (!result_shippedAmountPerItem.success) {
+            return OrderFactory.returnValidationErrorFromShippedAmountPerItem(result_shippedAmountPerItem.error);
+        }
+
+    
         // validate orderAmount
         // validate shippedAmount
 
@@ -273,13 +280,13 @@ class OrderFacotry {
         return result;
     }
 
-    static validateOrderAmountPerItem (orderAmountPerItem) {
+    static validateAmountPerItem (amountPerItem) {
         let result = {
             success: true,
             error: null
         };
 
-        for (let item of orderAmountPerItem) {
+        for (let item of amountPerItem) {
             
             const result_currency = this.validate_currency_of_item(item.currency);
 
@@ -300,6 +307,68 @@ class OrderFacotry {
                 };
                 break;
             }
+            const computed_grossPrice = this.calculate_price_delta(item.originalPrice, item.discount);
+
+            if (computed_grossPrice !== item.grossPrice) {
+                result = {
+                    success: false,
+                    error: 'grossPrice'
+                };
+                break;
+            }
+
+            // vat checking is missing
+
+            const computed_netPrice = this.calculate_price_delta(item.grossPrice, item.vat);
+
+            if (computed_netPrice !== item.netPrice) {
+                result = {
+                    success: false,
+                    error: 'netPrice'
+                }
+                break;
+            }
+
+            const computed_sumOfGrossPrice = this.calculate_price_multiply_qty(item.grossPrice, item.quantity);
+
+            if (computed_sumOfGrossPrice !== item.sumOfGrossPrice) {
+                result = {
+                    success: false,
+                    error: 'sumOfGrossPrice'
+                }
+                break;
+            }
+
+            const computed_sumOfNetPrice = this.calculate_price_multiply_qty(item.netPrice, item.quantity);
+
+            if (computed_sumOfNetPrice !== item.sumOfNetPrice) {
+                result = {
+                    success: false,
+                    error: 'sumOfNetPrice'
+                }
+                break;
+            }
+
+            const computed_sumOfVat = this.calculate_price_multiply_qty(item.vat, item.quantity);
+
+            if (computed_sumOfVat !== item.sumOfVat) {
+                result = {
+                    success: false,
+                    error: 'sumOfVat'
+                }
+                break;
+            }
+
+            const computed_sumOfDiscount = this.calculate_price_multiply_qty(item.discount, item.quantity);
+
+            if (computed_sumOfDiscount !== item.sumOfDiscount) {
+                result = {
+                    success: false,
+                    error: 'sumOfDiscount'
+                }
+                break;
+            }
+
         }
 
         return result;
@@ -323,18 +392,68 @@ class OrderFacotry {
         return result;
     }
 
+    static calculate_price_delta (priceA, priceB) {
+        priceA = Number(priceA).toFixed(2);
+        priceB = Number(priceB).toFixed(2);
+
+        let computedDeltaPrice = priceA - priceB;
+
+        return computedDeltaPrice.toFixed(2);
+    }
+
+    static calculate_price_multiply_qty (price, quantity) {
+        price = Number(price);
+
+        let computedPrice = price * quantity;
+
+        return computedPrice.toFixed(2);
+    }
+
     static returnValidationErrorFromOrderAmountPerItem (errorType) {
         switch (errorType) {
             case 'currency':
                 return errors.genericErrors.invalid_currency_in_orderAmountPerItem;
             case 'quantity':
                 return errors.genericErrors.invalid_quantity_in_orderAmountPerItem;
+            case 'grossPrice':
+                return errors.genericErrors.invalid_gross_price_in_orderAmountPerItem;
+            case 'netPrice':
+                return errors.genericErrors.invalid_netPrice_in_orderAmountPerItem;
+            case 'sumOfGrossPrice':
+                return errors.genericErrors.invalid_sumOfGrossPrice_in_orderAmountPerItem;
+            case 'sumOfNetPrice':
+                return errors.genericErrors.invalid_sumOfNetPrice_in_orderAmountPerItem;
+            case'sumOfVat':
+                return errors.genericErrors.invalid_sumOfVat_in_orderAmountPerItem;
+            case 'sumOfDiscount':
+                return errors.genericErrors.invalid_sumOfDiscount_in_orderAmountPerItem;
             default: 
-                throw new Error('unknown errorType: can your input');
+                throw new Error('unknown errorType: check your input');
         }
     }
 
-    
+    static returnValidationErrorFromShippedAmountPerItem (errorType) {
+        switch (errorType) {
+            case 'currency':
+                return errors.genericErrors.invalid_currency_in_shippedAmountPerItem;
+            case 'quantity':
+                return errors.genericErrors.invalid_quantity_in_shippedAmountPerItem;
+            case 'grossPrice':
+                return errors.genericErrors.invalid_gross_price_in_shippedAmountPerItem;
+            case 'netPrice':
+                return errors.genericErrors.invalid_netPrice_in_shippedAmountPerItem;
+            case 'sumOfGrossPrice':
+                return errors.genericErrors.invalid_sumOfGrossPrice_in_shippedAmountPerItem;
+            case 'sumOfNetPrice':
+                return errors.genericErrors.invalid_sumOfNetPrice_in_shippedAmountPerItem;
+            case'sumOfVat':
+                return errors.genericErrors.invalid_sumOfVat_in_shippedAmountPerItem;
+            case 'sumOfDiscount':
+                return errors.genericErrors.invalid_sumOfDiscount_in_shippedAmountPerItem;
+            default: 
+                throw new Error('unknown errorType: check your input');
+        }
+    }
 }
 
 class Order {
@@ -349,4 +468,4 @@ class Order {
     // set order to shipped state (calls downsteam functions)
 }
 
-module.exports = OrderFacotry;
+module.exports = OrderFactory;
