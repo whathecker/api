@@ -9,7 +9,7 @@ const enum_env_prefixes = Object.freeze({
 });
 
 const enum_country_prefixes = Object.freeze({
-    netherlands: "NL",
+    NL: "NL",
 });
 
 const enum_order_status = Object.freeze({
@@ -60,23 +60,6 @@ class OrderFactory {
     } = {}) {
 
 
-        /*
-        if (!orderNumber) {
-            const country = "netherlands"; // technical debt: make it dynamic
-
-            orderNumber = OrderFacotry.createOrderNumber({
-                envVar: process.env.NODE_ENV,
-                country: country
-            });
-
-            console.log(orderNumber);
-        } */
-
-        // if no orderNumber create order number
-
-        
-
-        
         const result_order_status = OrderFactory.validateOrderStatus(orderStatus);
         if (!result_order_status) {
             return errors.genericErrors.invalid_order_status;
@@ -118,60 +101,26 @@ class OrderFactory {
             return OrderFactory.returnValidationErrorFromShippedAmountPerItem(result_shippedAmountPerItem.error);
         }
 
-    
-        // validate orderAmount
-        // validate shippedAmount
+        const result_orderAmount = OrderFactory.validateTotalAmount(orderAmount);
 
-        
-
-        // if courier exist validateCourier
-    }
-
-    static validateOrderNumberFormat (orderNumber) {
-
-        if (orderNumber.length !== 14) {
-            return false;
+        if (!result_orderAmount.success) {
+            return OrderFactory.returnValidationErrorFromOrderAmount(result_orderAmount.error);
         }
 
-        const envPrefix = orderNumber.slice(0, 2);
-        const resultEnvPrefix = this.validate_env_prefix(envPrefix);
+        const result_shippedAmount = OrderFactory.validateTotalAmount(shippedAmount);
 
-        if (!resultEnvPrefix) {
-            return false;
+        if (!result_shippedAmount.success) {
+            return OrderFactory.returnValidationErrorFromShippedAmount(result_shippedAmount.error);
         }
 
-        const countryPrefix = orderNumber.slice(2, 4);
-        const resultCountryPrefix = this.validate_country_prefix(countryPrefix);
-        
-        if (!resultCountryPrefix) {
-            return false;
-        }
-
-        return true;
-    }
-
-    static validate_env_prefix (envPrefix) {
-        let result = false;
-
-        for (let prop of Object.keys(enum_env_prefixes)) {
-            if (envPrefix === enum_env_prefixes[prop]) {
-                result = true;
-                break;
+        if (!orderNumber) {
+            const payload = {
+                envVar: process.env.NODE_ENV,
+                country: country
             }
+            orderNumber = OrderFacotry.createOrderNumber(payload);
         }
-        return result;
-    }
 
-    static validate_country_prefix (countryPrefix) {
-        let result = false;
-
-        for (let prop of Object.keys(enum_country_prefixes)) {
-            if (countryPrefix === enum_country_prefixes[prop]) {
-                result = true;
-                break;
-            }
-        }
-        return result;
     }
 
     static createOrderNumber ({
@@ -189,6 +138,7 @@ class OrderFactory {
 
         return ''.concat(envPrefix, countryPrefix,fiveDigitsNum, fiveDigitsNum2);
     }
+    
 
     static create_five_digits_integer () {
         const num = Math.floor(Math.random() * 90000) + 10000;
@@ -215,13 +165,6 @@ class OrderFactory {
         if (countryPrefix) {
             return countryPrefix;
         }
-    }
-
-    static validateInvoiceNumber (invoiceNumber) {
-        if (invoiceNumber.length === 13) {
-            return true;
-        }
-        return false;
     }
 
     static validateOrderStatus ({
@@ -288,7 +231,7 @@ class OrderFactory {
 
         for (let item of amountPerItem) {
             
-            const result_currency = this.validate_currency_of_item(item.currency);
+            const result_currency = this.validate_currency(item.currency);
 
             if (!result_currency) {
                 result = {
@@ -374,7 +317,7 @@ class OrderFactory {
         return result;
     }
 
-    static validate_currency_of_item (currency) {
+    static validate_currency(currency) {
         let result = false;
 
         for (let prop of Object.keys(enum_currency)) {
@@ -450,6 +393,60 @@ class OrderFactory {
                 return errors.genericErrors.invalid_sumOfVat_in_shippedAmountPerItem;
             case 'sumOfDiscount':
                 return errors.genericErrors.invalid_sumOfDiscount_in_shippedAmountPerItem;
+            default: 
+                throw new Error('unknown errorType: check your input');
+        }
+    }
+
+    static validateTotalAmount ({
+        currency,
+        totalAmount,
+        totalDiscount,
+        totalVat,
+        totalNetPrice
+    } = {}) {
+
+        let result = {
+            success: true,
+            error: null
+        };
+
+        const result_currency = this.validate_currency(currency);
+
+        if (!result_currency) {
+            result.success = false;
+            result.error = "currency";
+            return result;
+        }
+
+        const computed_vat = this.calculate_price_delta(totalAmount, totalNetPrice);
+
+        if (computed_vat !== totalVat) {
+            result.success = false;
+            result.error = "price";
+            return result;
+        }
+
+        return result;
+    }
+
+    static returnValidationErrorFromOrderAmount (errorType) {
+        switch (errorType) {
+            case 'currency':
+                return errors.genericErrors.invalid_currency_in_orderAmount;
+            case 'price':
+                return errors.genericErrors.invalid_price_in_orderAmount;
+            default: 
+                throw new Error('unknown errorType: check your input');
+        }
+    }
+
+    static returnValidationErrorFromShippedAmount (errorType) {
+        switch (errorType) {
+            case 'currency':
+                return errors.genericErrors.invalid_currency_in_shippedAmount;
+            case 'price':
+                return errors.genericErrors.invalid_price_in_shippedAmount;
             default: 
                 throw new Error('unknown errorType: check your input');
         }

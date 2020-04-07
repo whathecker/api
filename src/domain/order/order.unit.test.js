@@ -390,10 +390,72 @@ describe('Make order object', () => {
         expect(order.message).toBe(errors.genericErrors.invalid_sumOfDiscount_in_shippedAmountPerItem.message);
     });
 
+    // test orderAmount
+    test('invalid currency in orderAmount field', () => {
+        let payload = copyObj(dummyData);
+        payload.orderAmount.currency = "usd";
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_currency_in_orderAmount.message);
+    });
+
+    test('invalid price in orderAmount field', () => {
+        let payload = copyObj(dummyData);
+        payload.orderAmount.totalAmount = "100.00";
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_price_in_orderAmount.message);
+    });
+
+    // test shippedAmount
+    test('invalid currency in shippedAmount field', () => {
+        let payload = copyObj(dummyData);
+        payload.shippedAmount.currency = "usd";
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_currency_in_shippedAmount.message);
+    });
+
+    test('invalid price in shippedAmount field', () => {
+        let payload = copyObj(dummyData);
+        payload.shippedAmount.totalAmount = "100.00";
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.genericErrors.invalid_price_in_shippedAmount.message);
+    });
+
 }); 
 
 
 describe('Type checking: order object', () => {
+
+    test('Order object must have a country property', () => {
+        let payload = copyObj(dummyData);
+        delete payload.country;
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.typeErrors.country.message);
+    });
+
+    test('country property must be string', () => {
+        let payload = copyObj(dummyData);
+        payload.country = true;
+
+        const order = createOrderObj(payload);
+
+        expect(order instanceof Error).toBe(true);
+        expect(order.message).toBe(errors.typeErrors.country.message);
+    });
 
     test('orderNumber property must be string if exist', () => {
         let payload = copyObj(dummyData);

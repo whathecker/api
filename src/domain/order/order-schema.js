@@ -2,6 +2,7 @@ const Joi = require('@hapi/joi');
 const errors = require('./order-error');
 
 module.exports = Joi.object({
+    country: Joi.string().required().error(errors.typeErrors.country),
     orderNumber: Joi.string().error(errors.typeErrors.orderNumber),
     user: Joi.string().required().error(errors.typeErrors.user),
     billingAddress: Joi.object({

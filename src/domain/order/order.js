@@ -2,6 +2,7 @@ const OrderFactory = require('./factory');
 
 let buildCreateOrderObj = function(orderValidator) {
     return ({
+        country,
         orderNumber,
         user,
         invoiceNumber,
@@ -28,6 +29,7 @@ let buildCreateOrderObj = function(orderValidator) {
     } = {}) => {
 
         const payload = {
+            country,
             orderNumber,
             user,
             invoiceNumber,

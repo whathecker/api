@@ -1,4 +1,5 @@
 const typeErrors = Object.freeze({
+    country: new Error('Order object must have country as string'),
     orderNumber: new Error('Order object has invalid type at property: orderNumber'),
     user: new Error('Order object must have user property as string'),
     isSubscription: new Error('Order object has invalid type at property: isSubscription'),
@@ -122,7 +123,13 @@ const genericErrors = Object.freeze({
     invalid_sumOfGrossPrice_in_shippedAmountPerItem: new Error('Order object contain invalid sumOfGrossPrice in item of shippedAmountPerItem field: double check sumOfGrossPrice from your input'),
     invalid_sumOfNetPrice_in_shippedAmountPerItem: new Error('Order object contain invalid sumOfNetPrice in item of shippedAmountPerItem field: double check sumOfNetPrice from your input'),
     invalid_sumOfVat_in_shippedAmountPerItem: new Error('Order object contain invalid sumOfVat in item of shippedAmountPerItem field: double check sumOfVat from your input'),
-    invalid_sumOfDiscount_in_shippedAmountPerItem: new Error('Order object contain invalid sumOfDiscount in item of shippedAmountPerItem field: double check sumOfDiscount from your input')
+    invalid_sumOfDiscount_in_shippedAmountPerItem: new Error('Order object contain invalid sumOfDiscount in item of shippedAmountPerItem field: double check sumOfDiscount from your input'),
+
+    invalid_currency_in_orderAmount: new Error('Order object contain invalid currency in orderAmount field: double check currency from your input'),
+    invalid_price_in_orderAmount: new Error('Order object contain invalid prices in orderAmount field: sum of vat and netPrice must be equal to totalAmount'),
+
+    invalid_currency_in_shippedAmount: new Error('Order object contain invalid currency in shippedAmount field: double check currency from your input'),
+    invalid_price_in_shippedAmount: new Error('Order object contain invalid prices in shippedAmount field: sum of vat and netPrice must be equal to totalAmount'),
 });
 
 module.exports = {
