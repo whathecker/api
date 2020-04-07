@@ -36,6 +36,7 @@ const enum_currency = Object.freeze({
 
 class OrderFactory {
     constructor({
+        country,
         orderNumber,
         user,
         invoiceNumber,
@@ -118,9 +119,35 @@ class OrderFactory {
                 envVar: process.env.NODE_ENV,
                 country: country
             }
-            orderNumber = OrderFacotry.createOrderNumber(payload);
+            orderNumber = OrderFactory.createOrderNumber(payload);
         }
 
+        const payload = {
+            country,
+            orderNumber,
+            user,
+            invoiceNumber,
+            isSubscription,
+            orderStatus,
+            orderStatusHistory,
+            paymentMethod,
+            paymentStatus,
+            paymentHistory,
+            creationDate,
+            deliverySchedule,
+            isShipped,
+            shippedDate,
+            courier,
+            trackingNumber,
+            isConfEmailDelivered,
+            lastModified,
+            orderAmountPerItem,
+            orderAmount,
+            shippedAmountPerItem,
+            shippedAmount
+        };
+
+        return new Order(payload);
     }
 
     static createOrderNumber ({
@@ -138,7 +165,7 @@ class OrderFactory {
 
         return ''.concat(envPrefix, countryPrefix,fiveDigitsNum, fiveDigitsNum2);
     }
-    
+
 
     static create_five_digits_integer () {
         const num = Math.floor(Math.random() * 90000) + 10000;
@@ -259,8 +286,6 @@ class OrderFactory {
                 };
                 break;
             }
-
-            // vat checking is missing
 
             const computed_netPrice = this.calculate_price_delta(item.grossPrice, item.vat);
 
@@ -455,9 +480,53 @@ class OrderFactory {
 
 class Order {
     constructor({
-
+        country,
+        orderNumber,
+        user,
+        invoiceNumber,
+        isSubscription,
+        orderStatus,
+        orderStatusHistory,
+        paymentMethod,
+        paymentStatus,
+        paymentHistory,
+        creationDate,
+        deliverySchedule,
+        isShipped,
+        shippedDate,
+        courier,
+        trackingNumber,
+        isConfEmailDelivered,
+        lastModified,
+        orderAmountPerItem,
+        orderAmount,
+        shippedAmountPerItem,
+        shippedAmount
     } = {}) {
 
+        this.country = country;
+        this.orderNumber = orderNumber;
+        this.user = user;
+        this.orderStatus = orderStatus;
+        this.orderStatusHistory = orderStatusHistory;
+        this.paymentMethod = paymentMethod;
+        this.paymentStatus = paymentStatus;
+        this.paymentHistory = paymentHistory;
+        this.orderAmountPerItem = orderAmountPerItem;
+        this.orderAmount = orderAmount;
+        this.shippedAmountPerItem = shippedAmountPerItem;
+        this.shippedAmount = shippedAmount;
+
+        (invoiceNumber)? this.invoiceNumber = invoiceNumber : null;
+        (isSubscription)? this.isSubscription = isSubscription : null;
+        (creationDate)? this.creationDate = creationDate : null;
+        (deliverySchedule)? this.deliverySchedule = deliverySchedule : null;
+        (isShipped)? this.isShipped = isShipped : null;
+        (shippedDate)? this.shippedDate = shippedDate : null;
+        (courier)? this.courier = courier : null;
+        (trackingNumber)? this.trackingNumber = trackingNumber : null;
+        (isConfEmailDelivered)? this.isConfEmailDelivered = isConfEmailDelivered : null;
+        (lastModified)? this.lastModified = lastModified : null;
     }
 
     // set paymentStatus

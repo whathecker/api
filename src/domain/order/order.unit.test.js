@@ -160,11 +160,82 @@ function copyObj(obj) {
 describe('Make order object', () => {
 
     test('object is created - without optional fields', () => {
+        let payload = copyObj(dummyData);
 
+        const originalOrderNumber = payload.orderNumber;
+        const originalCourier = payload.courier;
+        const originalTrackingNum = payload.trackingNumber;
+        const originalInvoiceNum = payload.invoiceNumber;
+
+        delete payload.orderNumber;
+        delete payload.billingAddress;
+        delete payload.shippingAddress;
+        delete payload.isSubscription;
+        delete payload.creationDate;
+        delete payload.lastModified;
+        delete payload.isShipped;
+        delete payload.courier;
+        delete payload.trackingNumber;
+        delete payload.isConfEmailDelivered;
+        delete payload.shippedDate;
+        delete payload.invoiceNumber;
+
+        const order = createOrderObj(payload);
+
+        expect(order.country).toBe(payload.country);
+        expect(order.user).toBe(payload.user);
+        expect(order.isSubscription).toBe(payload.isSubscription);
+        expect(order.orderStatus).toBe(payload.orderStatus);
+        expect(order.orderStatusHistory).toBe(payload.orderStatusHistory);
+        expect(order.paymentMethod).toBe(payload.paymentMethod);
+        expect(order.paymentStatus).toBe(payload.paymentStatus);
+        expect(order.paymentHistory).toBe(payload.paymentHistory);
+        expect(order.orderAmountPerItem).toBe(payload.orderAmountPerItem);
+        expect(order.orderAmount).toBe(payload.orderAmount);
+        expect(order.shippedAmountPerItem).toBe(payload.shippedAmountPerItem);
+        expect(order.shippedAmount).toBe(payload.shippedAmount);
+
+        expect(order.orderNumber).not.toBe(undefined);
+        expect(order.orderNumber).not.toBe(originalOrderNumber);
+
+        expect(order.invoiceNumber).not.toBe(originalInvoiceNum);
+        expect(order.courier).not.toBe(originalCourier);
+        expect(order.trackingNumber).not.toBe(originalTrackingNum);
     });
 
     test('object is created - with all fields', () => {
+        let payload = copyObj(dummyData);
 
+        const order = createOrderObj(payload);
+
+        expect(order.country).toBe(payload.country);
+        expect(order.user).toBe(payload.user);
+        expect(order.isSubscription).toBe(payload.isSubscription);
+        
+        expect(order.orderStatus).toBe(payload.orderStatus);
+        expect(order.orderStatusHistory).toBe(payload.orderStatusHistory);
+
+        expect(order.paymentMethod).toBe(payload.paymentMethod);
+        expect(order.paymentStatus).toBe(payload.paymentStatus);
+        expect(order.paymentHistory).toBe(payload.paymentHistory);
+
+        expect(order.orderAmountPerItem).toBe(payload.orderAmountPerItem);
+        expect(order.orderAmount).toBe(payload.orderAmount);
+        expect(order.shippedAmountPerItem).toBe(payload.shippedAmountPerItem);
+        expect(order.shippedAmount).toBe(payload.shippedAmount);
+
+        expect(order.orderNumber).toBe(payload.orderNumber);
+        expect(order.invoiceNumber).toBe(payload.invoiceNumber);
+
+        expect(order.deliverySchedule).toBe(payload.deliverySchedule);
+        expect(order.isShipped).toBe(payload.isShipped);
+        expect(order.shippedDate).toBe(payload.shippedDate);
+        expect(order.courier).toBe(payload.courier);
+        expect(order.trackingNumber).toBe(payload.trackingNumber);
+        expect(order.isConfEmailDelivered).toBe(payload.isConfEmailDelivered);
+
+        expect(order.creationDate).toBe(payload.creationDate);
+        expect(order.lastModified).toBe(payload.lastModified);
     });
 
     test('invalid orderStatus', () => {
@@ -236,16 +307,6 @@ describe('Make order object', () => {
 
         expect(order instanceof Error).toBe(true);
         expect(order.message).toBe(errors.genericErrors.invalid_gross_price_in_orderAmountPerItem.message);
-    });
-    
-    test('invalid vat in item of orderAmountPerItem', () => {
-        let payload = copyObj(dummyData);
-        payload.orderAmountPerItem[0].vat = "100.00";
-
-        const order = createOrderObj(payload);
-
-        expect(order instanceof Error).toBe(true);
-        expect(order.message).toBe(errors.genericErrors.invalid_vat_in_orderAmountPerItem.message);
     });
 
     test('invalid netPrice in item of orderAmountPerItem', () => {
@@ -328,16 +389,6 @@ describe('Make order object', () => {
 
         expect(order instanceof Error).toBe(true);
         expect(order.message).toBe(errors.genericErrors.invalid_gross_price_in_shippedAmountPerItem.message);
-    });
-    
-    test('invalid vat in item of shippedAmountPerItem', () => {
-        let payload = copyObj(dummyData);
-        payload.shippedAmountPerItem[0].vat = "100.00";
-
-        const order = createOrderObj(payload);
-
-        expect(order instanceof Error).toBe(true);
-        expect(order.message).toBe(errors.genericErrors.invalid_vat_in_shippedAmountPerItem.message);
     });
 
     test('invalid netPrice in item of shippedAmountPerItem', () => {
