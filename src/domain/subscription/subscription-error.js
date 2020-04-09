@@ -24,7 +24,10 @@ const typeErrors = Object.freeze({
 });
 
 const genericErrors = Object.freeze({
-    
+    invalid_channel: new Error('Subscription object contain invalid channel: check your input'),
+    invalid_deliveryFrequency: new Error('Subscription object contain invalid deliveryFrequency: deliveryFrequency cannot be lower than 0'),
+    invalid_deliveryDay: new Error('Subscription object contain invalid deliveryDay: deliveryDay be within range of 0 and 6'),
+    invalid_deliverySchedule: new Error('Subscription object contain invalid deliverySchedule: compare year, month, date, date against nextDeliveryDate property'),
 });
 
 module.exports = {

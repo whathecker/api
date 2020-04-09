@@ -30,7 +30,6 @@ let subscriptionSchema = new Schema({
     lastModified: { type: Date, default: Date.now },
     deliveryFrequency: { 
         type: Number,
-        enum: [ 7, 14, 28 ],
         default: 28
      },
     deliveryDay: {

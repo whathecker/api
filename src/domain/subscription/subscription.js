@@ -1,3 +1,5 @@
+const SubscriptionFactory = require('./factory');
+
 let buildCreateSubscriptionObj = function(subscriptionValidator) {
     return ({
         channel,
@@ -38,7 +40,7 @@ let buildCreateSubscriptionObj = function(subscriptionValidator) {
         if (result instanceof Error) {
             return result;
         }
-        return 'create subscription object';
+        return new SubscriptionFactory(payload);
     }
 }
 

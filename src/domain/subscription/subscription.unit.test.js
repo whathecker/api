@@ -37,6 +37,49 @@ function copyObj(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
+describe('Make Subscription object', () => {
+
+    test('invalid channel', () => {
+        let payload = copyObj(dummyData);
+        payload.channel = "EMEA";
+
+        const subscription = createSubscriptionObj(payload);
+        
+        expect(subscription instanceof Error).toBe(true);
+        expect(subscription.message).toBe(errors.genericErrors.invalid_channel.message);
+    });
+
+    test('deliveryFrequency cannot be less than 1', () => {
+        let payload = copyObj(dummyData);
+        payload.deliveryFrequency = 0;
+
+        const subscription = createSubscriptionObj(payload);
+
+        expect(subscription instanceof Error).toBe(true);
+        expect(subscription.message).toBe(errors.genericErrors.invalid_deliveryFrequency.message);
+    });
+
+    test('deliveryDay must be within range of 0 and 6', () => {
+        let payload = copyObj(dummyData);
+        payload.deliveryDay = 7;
+
+        const subscription = createSubscriptionObj(payload);
+
+        expect(subscription instanceof Error).toBe(true);
+        expect(subscription.message).toBe(errors.genericErrors.invalid_deliveryDay.message);
+    });
+
+    test('deliverySchedule object in deliverySchedules array contain invalid date', () => {
+        let payload = copyObj(dummyData);
+        payload.deliverySchedules[0].year = 3000;
+
+        const subscription = createSubscriptionObj(payload);
+
+        expect(subscription instanceof Error).toBe(true);
+        expect(subscription.message).toBe(errors.genericErrors.invalid_deliverySchedule.message);
+    });
+});
+
 describe('Type checking: subscription object', () => {
 
     test('Subscription object must have a channel property', () => {
