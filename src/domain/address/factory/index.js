@@ -1,5 +1,5 @@
 const errors = require('../address-error');
-const AddressBaseFactory = require('../../_shared_factory').address_base_factory;
+const AddressBaseFactory = require('../../_shared/factory').address_base_factory;
 
 class DutchAddressFactory extends AddressBaseFactory {
     constructor({

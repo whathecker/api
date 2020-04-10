@@ -1,7 +1,7 @@
 const errors = require('./order-error');
 const buildCreateOrderObj = require('./order');
 const orderSchema = require('./order-schema');
-const validator = require('../_shared_validator')(orderSchema);
+const validator = require('../_shared/validator')(orderSchema);
 const createOrderObj = buildCreateOrderObj(validator);
 
 const dummyData = {

@@ -1,5 +1,5 @@
 const errors = require('../product-error');
-const ProductBaseFactory = require('../../_shared_factory').product_base_factory;
+const ProductBaseFactory = require('../../_shared/factory').product_base_factory;
 
 class ProductFactory extends ProductBaseFactory {
     constructor({

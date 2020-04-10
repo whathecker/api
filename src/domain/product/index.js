@@ -1,6 +1,6 @@
 const buildCreateProductObj = require('./product');
 const productSchema = require('./product-schema');
-const validator = require('../_shared_validator')(productSchema);
+const validator = require('../_shared/validator')(productSchema);
 
 const createProductObj = buildCreateProductObj(validator);
 
