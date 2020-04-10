@@ -1,4 +1,5 @@
 const typeErrors = Object.freeze({
+    country: new Error('Subscription object must have country as string'),
     channel: new Error('Subscription object must have channel as string'),
     subscriptionId: new Error('Subscription object has invalid type at property: subscriptionId'),
     creationDate: new Error('Subscription object has invalid type at property: creationDate'),

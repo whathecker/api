@@ -2,6 +2,7 @@ const Joi = require('@hapi/joi');
 const errors = require('./subscription-error');
 
 module.exports = Joi.object({
+    country: Joi.string().required().error(errors.typeErrors.country),
     channel: Joi.string().required().error(errors.typeErrors.channel),
     subscriptionId: Joi.string().error(errors.typeErrors.subscriptionId),
     creationDate: Joi.date().error(errors.typeErrors.creationDate),

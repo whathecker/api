@@ -128,4 +128,38 @@ describe('Test SubscriptionFactory', () => {
         expect(result).toBe(false);
     });
 
+    test('createSubscriptionId must return valid subscriptionId', () => {
+        
+       
+        const subscriptionId = SubscriptionFactory.createSubscriptionId({
+            envVar: 'production',
+            country: 'NL'
+        });
+
+        const subscriptionId2 = SubscriptionFactory.createSubscriptionId({
+            envVar: 'staging',
+            country: 'NL'
+        });
+
+        const subscriptionId3 = SubscriptionFactory.createSubscriptionId({
+            envVar: 'new',
+            country: 'new'
+        });
+
+        expect(subscriptionId).toHaveLength(16);
+        expect(subscriptionId.slice(0,2)).toBe('EC');
+        expect(subscriptionId.slice(2,4)).toBe('SB');
+        expect(subscriptionId.slice(4,6)).toBe('NL');
+
+        expect(subscriptionId2).toHaveLength(16);
+        expect(subscriptionId2.slice(0,2)).toBe('ST');
+        expect(subscriptionId2.slice(2,4)).toBe('SB');
+        expect(subscriptionId2.slice(4,6)).toBe('NL');
+
+        expect(subscriptionId3).toHaveLength(16);
+        expect(subscriptionId3.slice(0,2)).toBe('DV');
+        expect(subscriptionId2.slice(2,4)).toBe('SB');
+        expect(subscriptionId3.slice(4,6)).toBe('NL');
+    });
+
 });

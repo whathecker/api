@@ -4,12 +4,35 @@ const enum_channel = Object.freeze({
     0: 'EU'
 });
 
+const enum_env_prefixes = Object.freeze({
+    test: "DV",
+    local: "DV",
+    development: "DV",
+    staging: "ST",
+    production: "EC",
+});
+
+const enum_country_prefixes = Object.freeze({
+    NL: "NL",
+});
+
 class SubscriptionFactory {
     constructor({
+        country,
         channel,
         deliveryFrequency,
         deliveryDay,
-        deliverySchedules
+        isWelcomeEmailSent,
+        orders,
+        isActive,
+        deliverySchedules,
+        subscribedItems,
+        subscriptionId,
+        user,
+        paymentMethod,
+        endDate,
+        creationDate,
+        lastModified
     } = {}) {
 
         const result_channel = SubscriptionFactory.validateChannel(channel);
@@ -41,7 +64,33 @@ class SubscriptionFactory {
 
         }
 
-        // create subscription id if not exist
+        if (!subscriptionId) {
+            const payload = {
+                envVar: process.env.NODE_ENV,
+                country: country
+            }
+            subscriptionId = SubscriptionFactory.createSubscriptionId(payload);
+        }
+
+        const payload = {
+            country,
+            channel,
+            deliveryFrequency,
+            deliveryDay,
+            isWelcomeEmailSent,
+            orders,
+            isActive,
+            deliverySchedules,
+            subscribedItems,
+            subscriptionId,
+            user,
+            paymentMethod,
+            endDate,
+            creationDate,
+            lastModified
+        };
+
+        return new Subscription(payload);
     }
 
     static validateChannel (channel) {
@@ -100,14 +149,87 @@ class SubscriptionFactory {
 
         return true;
     }
+
+    static createSubscriptionId ({
+        envVar,
+        country
+    } = {}) {
+        let envPrefix  = this.get_env_prefix(envVar);
+        let countryPrefix = this.get_country_prefix(country);
+        let middlePrefix = 'SB';
+
+        (envPrefix === null)? envPrefix = "DV" : null;
+        (countryPrefix === null)? countryPrefix =  "NL" : null;
+
+        const fiveDigitsNum = this.create_five_digits_integer();
+        const fiveDigitsNum2 = this.create_five_digits_integer();
+
+        return ''.concat(envPrefix, middlePrefix, countryPrefix, fiveDigitsNum, fiveDigitsNum2);
+    }
+
+    static create_five_digits_integer () {
+        const num = Math.floor(Math.random() * 90000) + 10000;
+        return num.toString();
+    }
+
+    static get_env_prefix (envVar) {
+        const envPrefix = enum_env_prefixes[envVar];
+        
+        if (!envPrefix) {
+            return null;
+        }
+        if (envPrefix) {
+            return envPrefix;
+        }
+    }
+
+    static get_country_prefix (country) {
+        const countryPrefix = enum_country_prefixes[country];
+
+        if (!countryPrefix) {
+            return null;
+        }
+        if (countryPrefix) {
+            return countryPrefix;
+        }
+    }
 }
 
 
 class Subscription {
     constructor({
-        
+        country,
+        channel,
+        deliveryFrequency,
+        deliveryDay,
+        isWelcomeEmailSent,
+        orders,
+        isActive,
+        deliverySchedules,
+        subscribedItems,
+        subscriptionId,
+        user,
+        paymentMethod,
+        endDate,
+        creationDate,
+        lastModified
     } ={}) {
+        this.country = country;
+        this.channel = channel;
+        this.deliveryFrequency = deliveryFrequency;
+        this.deliveryDay = deliveryDay;
+        this.isWelcomeEmailSent = isWelcomeEmailSent;
+        this.isActive = isActive;
+        this.user = user;
+        this.paymentMethod = paymentMethod;
+        this.subscriptionId = subscriptionId;
+        this.subscribedItems = subscribedItems;
+        this.deliverySchedules = deliverySchedules;
+        this.orders = orders;
 
+        (endDate)? this.endDate = endDate : null;
+        (creationDate)? this.creationDate = creationDate : null;
+        (lastModified)? this.lastModified = lastModified : null;
     }
 }
 

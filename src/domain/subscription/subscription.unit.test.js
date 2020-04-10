@@ -5,6 +5,7 @@ const validator = require('../_shared_validator')(subscriptionSchema);
 const createSubscriptionObj = buildCreateSubscriptionObj(validator);
 
 const dummyData = {
+    country: "NL",
     channel: "EU",
     deliveryFrequency: 28,
     deliveryDay: 4,
@@ -38,6 +39,54 @@ function copyObj(obj) {
 }
 
 describe('Make Subscription object', () => {
+
+    test('object is created - without optional fields', () => {
+        let payload = copyObj(dummyData);
+
+        const originalSubscriptionId = payload.subscriptionId;
+        const originalEndDate = payload.endDate;
+
+        delete payload.subscriptionId;
+        delete payload.endDate;
+
+        const subscription = createSubscriptionObj(payload);
+
+        expect(subscription.channel).toBe(payload.channel);
+        expect(subscription.deliveryFrequency).toBe(payload.deliveryFrequency);
+        expect(subscription.deliveryDay).toBe(payload.deliveryDay);
+        expect(subscription.isWelcomeEmailSent).toBe(payload.isWelcomeEmailSent);
+        expect(subscription.orders).toBe(payload.orders);
+        expect(subscription.isActive).toBe(payload.isActive);
+        expect(subscription.deliverySchedules).toBe(payload.deliverySchedules);
+        expect(subscription.subscribedItems).toBe(payload.subscribedItems);
+        expect(subscription.user).toBe(payload.user);
+        expect(subscription.paymentMethod).toBe(payload.paymentMethod);
+
+        expect(subscription.subscriptionId).not.toBe(originalSubscriptionId);
+        expect(subscription.endDate).not.toBe(originalEndDate);
+    });
+
+    test('object is created with all fields', () => {
+        let payload = copyObj(dummyData);
+
+        const subscription = createSubscriptionObj(payload);
+
+        expect(subscription.channel).toBe(payload.channel);
+        expect(subscription.deliveryFrequency).toBe(payload.deliveryFrequency);
+        expect(subscription.deliveryDay).toBe(payload.deliveryDay);
+        expect(subscription.isWelcomeEmailSent).toBe(payload.isWelcomeEmailSent);
+        expect(subscription.orders).toBe(payload.orders);
+        expect(subscription.isActive).toBe(payload.isActive);
+        expect(subscription.deliverySchedules).toBe(payload.deliverySchedules);
+        expect(subscription.subscribedItems).toBe(payload.subscribedItems);
+        expect(subscription.user).toBe(payload.user);
+        expect(subscription.paymentMethod).toBe(payload.paymentMethod);
+
+        expect(subscription.subscriptionId).toBe(payload.subscriptionId);
+        expect(subscription.endDate).toBe(payload.endDate);
+        expect(subscription.creationDate).toBe(payload.creationDate);
+        expect(subscription.lastModified).toBe(payload.lastModified);
+    });
 
     test('invalid channel', () => {
         let payload = copyObj(dummyData);
@@ -82,14 +131,24 @@ describe('Make Subscription object', () => {
 
 describe('Type checking: subscription object', () => {
 
-    test('Subscription object must have a channel property', () => {
+    test('Subscription object must have a country property', () => {
         let payload = copyObj(dummyData);
-        delete payload.channel;
+        delete payload.country;
 
         const subscription = createSubscriptionObj(payload);
 
         expect(subscription instanceof Error).toBe(true);
-        expect(subscription.message).toBe(errors.typeErrors.channel.message);
+        expect(subscription.message).toBe(errors.typeErrors.country.message);
+    });
+
+    test('country property must be string', () => {
+        let payload = copyObj(dummyData);
+        delete payload.country;
+
+        const subscription = createSubscriptionObj(payload);
+
+        expect(subscription instanceof Error).toBe(true);
+        expect(subscription.message).toBe(errors.typeErrors.country.message);
     });
 
     test('channel property must be string', () => {

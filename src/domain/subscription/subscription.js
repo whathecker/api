@@ -2,6 +2,7 @@ const SubscriptionFactory = require('./factory');
 
 let buildCreateSubscriptionObj = function(subscriptionValidator) {
     return ({
+        country,
         channel,
         subscriptionId,
         creationDate,
@@ -19,6 +20,7 @@ let buildCreateSubscriptionObj = function(subscriptionValidator) {
     } ={}) => {
 
         const payload = {
+            country,
             channel,
             subscriptionId,
             creationDate,

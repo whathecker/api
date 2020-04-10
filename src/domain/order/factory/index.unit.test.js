@@ -45,12 +45,12 @@ describe('Test OrderFactory', () => {
        
         const orderNumber = OrderFactory.createOrderNumber({
             envVar: 'production',
-            country: 'netherlands'
+            country: 'NL'
         });
 
         const orderNumber2 = OrderFactory.createOrderNumber({
             envVar: 'staging',
-            country: 'netherlands'
+            country: 'NL'
         });
 
         const orderNumber3 = OrderFactory.createOrderNumber({
