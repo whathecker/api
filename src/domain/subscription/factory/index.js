@@ -1,22 +1,11 @@
 const errors = require('../subscription-error');
+const OrderBaseFactory = require('../../_shared/factory').order_base_factory;
 
 const enum_channel = Object.freeze({
     0: 'EU'
 });
 
-const enum_env_prefixes = Object.freeze({
-    test: "DV",
-    local: "DV",
-    development: "DV",
-    staging: "ST",
-    production: "EC",
-});
-
-const enum_country_prefixes = Object.freeze({
-    NL: "NL",
-});
-
-class SubscriptionFactory {
+class SubscriptionFactory extends OrderBaseFactory {
     constructor({
         country,
         channel,
@@ -165,33 +154,6 @@ class SubscriptionFactory {
         const fiveDigitsNum2 = this.create_five_digits_integer();
 
         return ''.concat(envPrefix, middlePrefix, countryPrefix, fiveDigitsNum, fiveDigitsNum2);
-    }
-
-    static create_five_digits_integer () {
-        const num = Math.floor(Math.random() * 90000) + 10000;
-        return num.toString();
-    }
-
-    static get_env_prefix (envVar) {
-        const envPrefix = enum_env_prefixes[envVar];
-        
-        if (!envPrefix) {
-            return null;
-        }
-        if (envPrefix) {
-            return envPrefix;
-        }
-    }
-
-    static get_country_prefix (country) {
-        const countryPrefix = enum_country_prefixes[country];
-
-        if (!countryPrefix) {
-            return null;
-        }
-        if (countryPrefix) {
-            return countryPrefix;
-        }
     }
 }
 

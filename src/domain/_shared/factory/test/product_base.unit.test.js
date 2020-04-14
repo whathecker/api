@@ -1,4 +1,4 @@
-const ProductBaseFactory = require('../base_product_factory');
+const ProductBaseFactory = require('../product_base');
 
 describe('Test ProductBaseFactory', () => {
 

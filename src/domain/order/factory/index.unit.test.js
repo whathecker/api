@@ -2,47 +2,8 @@ const OrderFactory = require('./index');
 
 describe('Test OrderFactory', () => {
 
-    test('get_env_prefix must return null', () => {
-        const envVar = "new";
-
-        const envPrefix = OrderFactory.get_env_prefix(envVar);
-
-        expect(envPrefix).toBe(null);
-    });
-
-    test('get_env_prefix must return correct prefix', () => {
-        const envPrefix = OrderFactory.get_env_prefix("test");
-        const envPrefix2 = OrderFactory.get_env_prefix("local");
-        const envPrefix3 = OrderFactory.get_env_prefix("development");
-        const envPrefix4 = OrderFactory.get_env_prefix("staging");
-        const envPrefix5 = OrderFactory.get_env_prefix("production");
-        
-        expect(envPrefix).toBe("DV");
-        expect(envPrefix2).toBe("DV");
-        expect(envPrefix3).toBe("DV");
-        expect(envPrefix4).toBe("ST");
-        expect(envPrefix5).toBe("EC");
-    });
-
-    test('get_country_prefix must return undefined', () => {
-        const country = "new";
-
-        const countryPrefix = OrderFactory.get_country_prefix(country);
-
-        expect(countryPrefix).toBe(null);
-    });
-
-    test('get_country_prefix must return correct prefix', () => {
-        const country = "NL";
-
-        const countryPrefix = OrderFactory.get_country_prefix(country);
-
-        expect(countryPrefix).toBe("NL");
-    });
-
     test('createOrderNumber must return valid orderNumber', () => {
         
-       
         const orderNumber = OrderFactory.createOrderNumber({
             envVar: 'production',
             country: 'NL'
@@ -256,18 +217,6 @@ describe('Test OrderFactory', () => {
     });
 
 
-    test('validate_currency_of_item must return true', () => {
-        const result = OrderFactory.validate_currency('euro');
-
-        expect(result).toBe(true);
-    });
-
-    test('validate_currency_of_item must return false', () => {
-        const result = OrderFactory.validate_currency('usd');
-
-        expect(result).toBe(false);
-    });
-
     test('validateOrderAmountPerItem must indicate currency is invalid', () => {
         const orderAmountPerItem = [
             {
@@ -291,22 +240,6 @@ describe('Test OrderFactory', () => {
         const result = OrderFactory.validateAmountPerItem(orderAmountPerItem);
         expect(result.success).toBe(false);
         expect(result.error).toBe('currency');
-    });
-
-    test('validate_qty_of_item must return true', () => {
-        const result = OrderFactory.validate_qty_of_item(1);
-        const result2 = OrderFactory.validate_qty_of_item(10001);
-
-        expect(result).toBe(true);
-        expect(result2).toBe(true);
-    });
-
-    test('validate_qty_of_item must return false', () => {
-        const result = OrderFactory.validate_qty_of_item(0);
-        const result2 = OrderFactory.validate_qty_of_item(-1);
-
-        expect(result).toBe(false);
-        expect(result2).toBe(false);
     });
 
     test('validateAmountPerItem must indicate quantity is invalid', () => {
@@ -482,32 +415,6 @@ describe('Test OrderFactory', () => {
         const result = OrderFactory.validateAmountPerItem(orderAmountPerItem);
         expect(result.success).toBe(false);
         expect(result.error).toBe('sumOfDiscount');
-    });
-
-    test('calculate_price_delta must return correct value', () => {
-        const deltaPrice = OrderFactory.calculate_price_delta("100.00", "20.00");
-        const deltaPrice2 = OrderFactory.calculate_price_delta("101.01", "90.00");
-        const deltaPrice3 = OrderFactory.calculate_price_delta("101.01", "88.15");
-        const deltaPrice4 = OrderFactory.calculate_price_delta("1560.00", "20.00");
-        const deltaPrice5 = OrderFactory.calculate_price_delta("111.11", "90.00");
-
-        expect(deltaPrice).toBe("80.00");
-        expect(deltaPrice2).toBe("11.01");
-        expect(deltaPrice3).toBe("12.86");
-        expect(deltaPrice4).toBe("1540.00");
-        expect(deltaPrice5).toBe("21.11");
-    });
-
-    test('calculate_price_multiply_qty must return correct value', () => {
-        const multipliedPrice = OrderFactory.calculate_price_multiply_qty("10.00", 2);
-        const multipliedPrice2 = OrderFactory.calculate_price_multiply_qty("10.00", 100123);
-        const multipliedPrice3 = OrderFactory.calculate_price_multiply_qty("151.01", 4);
-        const multipliedPrice4 = OrderFactory.calculate_price_multiply_qty('1600.05', 5);
-
-        expect(multipliedPrice).toBe("20.00");
-        expect(multipliedPrice2).toBe("1001230.00");
-        expect(multipliedPrice3).toBe('604.04');
-        expect(multipliedPrice4).toBe('8000.25');
     });
 
     test('validateTotalAmount must indicate currency is invalid', () => {
