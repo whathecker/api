@@ -39,8 +39,8 @@ let userSchema = new Schema({
     lastLogin: { type: Date },
     isEmailVerified: { type: Boolean, default: false },
     newsletterOptin: { type: Boolean, default: false },
-    adminApprovalRequired: { type: Boolean, default: false },
-    isAdmin: { type: Boolean, default: false }
+    adminApprovalRequired: { type: Boolean, default: false }, /* delete this prop */
+    isAdmin: { type: Boolean, default: false } /* delete this prop */
 });
 
 userSchema.plugin(uniqueValidator);
