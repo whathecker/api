@@ -1,6 +1,7 @@
 const errors = require('../user-error');
+const UserBaseFactory = require('../../_shared/factory').user_base_factory;
 
-class UserFactory {
+class UserFactory extends UserBaseFactory {
     constructor({
         email,
         userId,
@@ -55,9 +56,6 @@ class UserFactory {
         // if no password what to do?
     }
 
-    static validateEmailAddress (email) {
-        return /\S+@\S+\.\S+/.test(email);
-    }
 }
 
 class User {

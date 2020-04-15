@@ -1,15 +1,15 @@
-const UserFactory = require('./index');
+const UserBaseFactory = require('../user_base');
 
-describe('Test UserFactory', ()=> {
+describe('Test UserBaseFactory', ()=> {
 
     test('validateEmailAddress must return true', () => {
         const email = 'test@gmail.com';
         const email2 = 'test@naver.co.kr';
         const email3 = 'test@gmail.nl';
 
-        const result = UserFactory.validateEmailAddress(email);
-        const result2 = UserFactory.validateEmailAddress(email2);
-        const result3 = UserFactory.validateEmailAddress(email3);
+        const result = UserBaseFactory.validateEmailAddress(email);
+        const result2 = UserBaseFactory.validateEmailAddress(email2);
+        const result3 = UserBaseFactory.validateEmailAddress(email3);
 
         expect(result).toBe(true);
         expect(result2).toBe(true);
@@ -21,9 +21,9 @@ describe('Test UserFactory', ()=> {
         const email2 = 'test@naver';
         const email3 = 'testgmail';
 
-        const result = UserFactory.validateEmailAddress(email);
-        const result2 = UserFactory.validateEmailAddress(email2);
-        const result3 = UserFactory.validateEmailAddress(email3);
+        const result = UserBaseFactory.validateEmailAddress(email);
+        const result2 = UserBaseFactory.validateEmailAddress(email2);
+        const result3 = UserBaseFactory.validateEmailAddress(email3);
 
         expect(result).toBe(false);
         expect(result2).toBe(false);
