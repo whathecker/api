@@ -1,3 +1,5 @@
+const UserFactory = require('./factory');
+
 let buildCreateUserObj = function (userValidator) {
     return ({
         email,
@@ -49,7 +51,7 @@ let buildCreateUserObj = function (userValidator) {
             return result;
         }
 
-        return 'create user object';
+        return new UserFactory(payload);
     };
 }
 

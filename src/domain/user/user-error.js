@@ -21,7 +21,7 @@ const typeErrors = Object.freeze({
 });
 
 const genericErrors = Object.freeze({
-
+    invalid_email: new Error('User object contain invalid email in email field: double check format of email'),
 });
 
 module.exports = {
