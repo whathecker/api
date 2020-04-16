@@ -25,6 +25,84 @@ function copyObj(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
+describe('Make AdminUser object', () => {
+
+    test('AdminUser object is created - without optional fields', () => {
+        let payload = copyObj(dummyData);
+
+        const userId = payload.userId;
+        const hash = payload.hash;
+        const salt = payload.salt;
+        
+        const creationDate = payload.creationDate;
+        const lastModified = payload.lastModified;
+        const lastLogin = payload.lastLogin;
+        const isEmailVerified = payload.isEmailVerified;
+        const adminApprovalRequired = payload.adminApprovalRequired;
+        const isActive = payload.isActive;
+
+        delete payload.userId;
+        delete payload.hash;
+        delete payload.salt;
+        delete payload.pwdResetToken;
+        delete payload.mobileNumber;
+        delete payload.creationDate;
+        delete payload.lastModified;
+        delete payload.lastLogin;
+        delete payload.isEmailVerified;
+        delete payload.adminApprovalRequired;
+        delete payload.isActive;
+
+        const adminUser = createAdminUserObj(payload);
+
+        expect(adminUser.email).toBe(payload.email);
+        expect(adminUser.firstName).toBe(payload.firstName);
+        expect(adminUser.lastName).toBe(payload.lastName);
+
+        expect(adminUser.userId).not.toBe(userId);
+        expect(adminUser.hash).not.toBe(hash);
+        expect(adminUser.salt).not.toBe(salt);
+        expect(adminUser.creationDate).not.toBe(creationDate);
+        expect(adminUser.lastModified).not.toBe(lastModified);
+        expect(adminUser.lastLogin).not.toBe(lastLogin);
+        expect(adminUser.isEmailVerified).not.toBe(isEmailVerified);
+        expect(adminUser.adminApprovalRequired).not.toBe(adminApprovalRequired);
+        expect(adminUser.isActive).not.toBe(isActive);
+    });
+
+    test('AdminUser object is created - with all fields', () => {
+        let payload = copyObj(dummyData);
+        payload.pwdResetToken = "token"
+
+        const adminUser = createAdminUserObj(payload);
+
+        expect(adminUser.email).toBe(payload.email);
+        expect(adminUser.firstName).toBe(payload.firstName);
+        expect(adminUser.lastName).toBe(payload.lastName);
+        expect(adminUser.userId).toBe(payload.userId);
+        expect(adminUser.hash).toBe(payload.hash);
+        expect(adminUser.salt).toBe(payload.salt);
+        expect(adminUser.pwdResetToken).toBe(payload.pwdResetToken);
+        expect(adminUser.creationDate).toBe(payload.creationDate);
+        expect(adminUser.lastModified).toBe(payload.lastModified);
+        expect(adminUser.lastLogin).toBe(payload.lastLogin);
+        expect(adminUser.isEmailVerified).toBe(payload.isEmailVerified);
+        expect(adminUser.adminApprovalRequired).toBe(payload.adminApprovalRequired);
+        expect(adminUser.isActive).toBe(payload.isActive);
+    });
+
+    test('invalid email', () => {
+        let payload = copyObj(dummyData);
+        payload.email = "invalidemail.com";
+
+        const adminUser = createAdminUserObj(payload);
+
+        expect(adminUser instanceof Error).toBe(true);
+        expect(adminUser.message).toBe(errors.genericErrors.invalid_email.message);
+    });
+
+});
+
 describe('Type checking: adminUser object', () => {
 
     test('adminUser object must have a email property', () => {

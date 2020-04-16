@@ -1,3 +1,5 @@
+const AdminUserFactory = require('./factory');
+
 let buildCreateAdminUser = function (adminUserValidator) {
     return ({
         email,
@@ -39,7 +41,7 @@ let buildCreateAdminUser = function (adminUserValidator) {
             return result;
         }
 
-        return 'new adminUser'
+        return new AdminUserFactory(payload);
     }
 }
 
