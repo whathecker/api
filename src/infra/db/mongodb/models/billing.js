@@ -4,7 +4,11 @@ const uniqueValidator = require('mongoose-unique-validator');
 const Schema = mongoose.Schema;
 
 let billingSchema =  new Schema({
-    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    user: { 
+        type: Schema.Types.ObjectId, 
+        ref: 'User', 
+        required: true 
+    },
     type: { type: String, required: true },
     recurringDetail: { type: String, default: '' },
     billingId: { type: String, unique: true },
