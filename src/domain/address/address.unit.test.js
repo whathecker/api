@@ -293,7 +293,7 @@ describe('Type checking: address object', () => {
 
     test('houseNumberAdd property must be string if exist', () => {
         let payload = copyObj(dummyData);
-        payload.houseNumberAdd = true;
+        payload.houseNumberAdd = "";
 
         const address = createAddressObj(payload);
 
