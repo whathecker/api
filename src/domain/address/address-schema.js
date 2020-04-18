@@ -2,7 +2,7 @@ const Joi = require('@hapi/joi');
 const errors = require('./address-error');
 
 module.exports = Joi.object({
-    user: Joi.string().required().error(errors.typeErrors.user),
+    user_id: Joi.string().required().error(errors.typeErrors.user_id),
     firstName: Joi.string().required().error(errors.typeErrors.firstName),
     lastName: Joi.string().required().error(errors.typeErrors.lastName),
     mobileNumber: Joi.string().error(errors.typeErrors.mobileNumber),

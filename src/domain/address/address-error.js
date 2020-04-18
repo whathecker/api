@@ -1,5 +1,5 @@
 const typeErrors = Object.freeze({
-    user: new Error('Address object must have user property as string'),
+    user_id: new Error('Address object must have user_id property as string'),
     firstName: new Error('Address object must have firstName property as string'),
     lastName: new Error('Address object must have lastName property as string'),
     mobileNumber: new Error('Address object has invalid type at property: mobileNumber'),

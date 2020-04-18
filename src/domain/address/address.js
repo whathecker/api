@@ -2,7 +2,7 @@ const DutchAddressFactory = require('./factory');
 
 let buildCreateAddressObj = function(addressValidator) {
     return({
-        user,
+        user_id,
         firstName,
         lastName,
         mobileNumber,
@@ -18,7 +18,7 @@ let buildCreateAddressObj = function(addressValidator) {
     } = {}) => {
 
         const payload = {
-            user,
+            user_id,
             firstName,
             lastName,
             mobileNumber,

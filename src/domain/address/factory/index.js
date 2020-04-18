@@ -3,7 +3,7 @@ const AddressBaseFactory = require('../../_shared/factory').address_base_factory
 
 class DutchAddressFactory extends AddressBaseFactory {
     constructor({
-        user,
+        user_id,
         firstName,
         lastName,
         mobileNumber,
@@ -36,7 +36,7 @@ class DutchAddressFactory extends AddressBaseFactory {
         }
 
         const payload = {
-            user,
+            user_id,
             firstName,
             lastName,
             mobileNumber,
@@ -74,7 +74,7 @@ class DutchAddressFactory extends AddressBaseFactory {
 
 class Address {
     constructor({
-        user,
+        user_id,
         firstName,
         lastName,
         mobileNumber,
@@ -89,7 +89,7 @@ class Address {
         lastModified
     } = {}) {
 
-        this.user = user;
+        this.user_id = user_id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.postalCode = postalCode;

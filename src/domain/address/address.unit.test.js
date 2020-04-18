@@ -5,7 +5,7 @@ const validator = require('../_shared/validator')(addressSchema);
 const createAddressObj = buildCreateAddressObj(validator);
 
 const dummyData = {
-    user: "some key",
+    user_id: "some key",
     firstName: "Yunjae",
     lastName: "Oh",
     mobileNumber: "0612345678",
@@ -43,7 +43,7 @@ describe('Make Address object', () => {
 
         const address = createAddressObj(payload);
 
-        expect(address.user).toBe(payload.user);
+        expect(address.user_id).toBe(payload.user_id);
         expect(address.firstName).toBe(payload.firstName);
         expect(address.lastName).toBe(payload.lastName);
         expect(address.postalCode).toBe(payload.postalCode);
@@ -67,7 +67,7 @@ describe('Make Address object', () => {
 
         const address = createAddressObj(payload);
 
-        expect(address.user).toBe(payload.user);
+        expect(address.user_id).toBe(payload.user_id);
         expect(address.firstName).toBe(payload.firstName);
         expect(address.lastName).toBe(payload.lastName);
         expect(address.postalCode).toBe(payload.postalCode);
@@ -89,7 +89,7 @@ describe('Make Address object', () => {
 
         const address = createAddressObj(payload);
 
-        expect(address.user).toBe(payload.user);
+        expect(address.user_id).toBe(payload.user_id);
         expect(address.firstName).toBe(payload.firstName);
         expect(address.lastName).toBe(payload.lastName);
         expect(address.postalCode).toBe(payload.postalCode);
@@ -114,7 +114,7 @@ describe('Make Address object', () => {
 
         const address = createAddressObj(payload);
 
-        expect(address.user).toBe(payload.user);
+        expect(address.user_id).toBe(payload.user_id);
         expect(address.firstName).toBe(payload.firstName);
         expect(address.lastName).toBe(payload.lastName);
         expect(address.postalCode).toBe(payload.postalCode);
@@ -134,7 +134,7 @@ describe('Make Address object', () => {
 
         const address = createAddressObj(payload);
 
-        expect(address.user).toBe(payload.user);
+        expect(address.user_id).toBe(payload.user_id);
         expect(address.firstName).toBe(payload.firstName);
         expect(address.lastName).toBe(payload.lastName);
         expect(address.postalCode).toBe(payload.postalCode);
@@ -183,22 +183,22 @@ describe('Type checking: address object', () => {
 
     test('address object must have a user property', () => {
         let payload = copyObj(dummyData);
-        delete payload.user;
+        delete payload.user_id;
         
         const address = createAddressObj(payload);
 
         expect(address instanceof Error).toBe(true);
-        expect(address.message).toBe(errors.typeErrors.user.message);
+        expect(address.message).toBe(errors.typeErrors.user_id.message);
     });
 
     test('user property must be string', () => {
         let payload = copyObj(dummyData);
-        payload.user = 0;
+        payload.user_id = 0;
 
         const address = createAddressObj(payload);
 
         expect(address instanceof Error).toBe(true);
-        expect(address.message).toBe(errors.typeErrors.user.message);
+        expect(address.message).toBe(errors.typeErrors.user_id.message);
     });
 
     test('address object must have a firstName property', () => {
