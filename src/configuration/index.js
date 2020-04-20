@@ -5,16 +5,16 @@ module.exports = {
     PORT: process.env.PORT,
     mongo: {
         test: {
-            USER: process.env.MONGO_USER_TEST,
-            PWD: process.env.MONGO_PWD_TEST
+            MONGO_USER: process.env.MONGO_USER_TEST,
+            MONGO_PWD: process.env.MONGO_PWD_TEST
         },
         dev: {
-            USER: process.env.MONGO_USER_DEV,
-            PWD: process.env.MONGO_PWD_DEV
+            MONGO_USER: process.env.MONGO_USER_DEV,
+            MONGO_PWD: process.env.MONGO_PWD_DEV
         },
         prod: {
-            USER: process.env.MONGO_USER_PROD,
-            PWD: process.env.MONGO_PWD_PROD
+            MONGO_USER: process.env.MONGO_USER_PROD,
+            MONGO_PWD: process.env.MONGO_PWD_PROD
         }
     }
 };
