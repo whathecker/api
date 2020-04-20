@@ -3,7 +3,6 @@ let addressDB = require('./index');
 describe('Test database access layer of address object', () => {
     
     beforeEach(async () => {
-        
         await addressDB.dropAll();
 
         let mockAddresses = [
@@ -38,8 +37,24 @@ describe('Test database access layer of address object', () => {
         await addressDB.addAddress(mockAddresses[1]);
     });
 
-    test('find a address by id', () => {
-        expect(1).toEqual(2);
+    test('find a address by id', async () => {
+        const address = await addressDB.findAddressById("2");
+
+        const expected = {
+            _id: "2",
+            user_id: "1",
+            firstName: "Junseok",
+            lastName: "Oh",
+            mobileNumber: "0615141415",
+            postalCode: "1044AA",
+            houseNumber: "5",
+            streetName: "Anotherstraat",
+            city: "Amsterdam",
+            province: "Noord-Holland",
+            country: "Netherlands"
+        };
+
+        expect(address).toEqual(expected);
     });
 
     test('add a address', async () => {
@@ -75,12 +90,13 @@ describe('Test database access layer of address object', () => {
         const user_id = "1";
 
         const result = await addressDB.deleteAddressById(address_id);
-        const addresses =  await addressDB.listAddressesByUserId(user_id);
+        const addresses = await addressDB.listAddressesByUserId(user_id);
 
-        let { _id, status } = result;
+        console.log(result);
+        
 
-        expect(status).toBe('success');
-        expect(_id).toEqual(address_id);
+        expect(result.status).toBe('success');
+        expect(result._id).toEqual(address_id);
         expect(addresses).toHaveLength(1);
     });
 

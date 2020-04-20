@@ -4,7 +4,7 @@
   "description": "apis of chokchok",
   "main": "index.js",
   "scripts": {
-    "test:unit": "NODE_ENV='local' PORT=8081 jest '(unit).(test)'",
+    "test:unit": "NODE_ENV='test' PORT=8081 jest '(unit).(test)'",
     "localtest": "NODE_ENV='local' PORT=8081 jest --runInBand --forceExit",
     "test": "NODE_ENV='test' PORT=8081 jest --silent --runInBand --forceExit",
     "localstart": "NODE_ENV='local' PORT=8081 nodemon server.js",

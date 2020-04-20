@@ -1,5 +1,6 @@
 let {
     listAddressesByUserId,
+    findAddressById,
     addAddress,
     updateAddress,
     deleteAddressById,
@@ -8,6 +9,7 @@ let {
 
 module.exports = {
     listAddressesByUserId,
+    findAddressById,
     addAddress,
     updateAddress,
     deleteAddressById,

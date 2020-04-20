@@ -6,12 +6,31 @@ const listAddressesByUserId = (user_id) => {
     return Promise.resolve(result);
 };
 
+const findAddressById = (address_id) => {
+    const address = ADDRESSES.find(address => {
+        return address._id === address_id;
+    });
+
+    if (!address) {
+        return Promise.reject({
+            status: "fail",
+            reason: "address not found",
+        });
+    }
+
+    return Promise.resolve(address);
+}
+
 const addAddress = (input) => {
 
     const address = createAddressObj(input);
 
     if (address instanceof Error) {
-        return Promise.reject(address);
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: address
+        });
     }
 
     const new_id = ADDRESSES.length + 1;
@@ -39,27 +58,21 @@ const updateAddress = (address_id) => {
 
 };
 
-const deleteAddressById = (address_id) => {
-    let result = {};
+const deleteAddressById = async (address_id) => {
 
-    const address = ADDRESSES.find(address => address._id === address_id);
+    return findAddressById(address_id).then(address => {
 
-    if (!address) {
-        result = { 
-            status: "fail",
-            reason: "unknown_id" 
-        };
-    }
-
-    if (address._id === address_id) {
         ADDRESSES = ADDRESSES.filter(address => address._id === address_id);
-        result = {
-            _id: address_id,
+        
+        return Promise.resolve({
+            _id: address._id,
             status: "success"
-        }
-    }
+        });
 
-    return Promise.resolve(result);
+    }).catch(err => {
+        return Promise.reject(err);
+    });
+
 };
 
 const dropAll = () => {
@@ -69,6 +82,7 @@ const dropAll = () => {
 
 module.exports = {
     listAddressesByUserId,
+    findAddressById,
     addAddress,
     updateAddress,
     deleteAddressById,
