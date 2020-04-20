@@ -26,6 +26,7 @@ describe('Test database access layer of address object', () => {
                 mobileNumber: "0615141415",
                 postalCode: "1044AA",
                 houseNumber: "5",
+                houseNumberAdd: " ",
                 streetName: "Anotherstraat",
                 city: "Amsterdam",
                 province: "Noord-Holland",
@@ -48,6 +49,7 @@ describe('Test database access layer of address object', () => {
             mobileNumber: "0615141415",
             postalCode: "1044AA",
             houseNumber: "5",
+            houseNumberAdd: " ",
             streetName: "Anotherstraat",
             city: "Amsterdam",
             province: "Noord-Holland",
@@ -65,6 +67,7 @@ describe('Test database access layer of address object', () => {
             mobileNumber: "0615161615",
             postalCode: "1054AA",
             houseNumber: "5",
+            houseNumberAdd: " ",
             streetName: "Otherstraat",
             city: "Amsterdam",
             province: "Noord-Holland",
@@ -75,6 +78,27 @@ describe('Test database access layer of address object', () => {
         const {_id, ...result} = newAddress;
 
         expect(result).toEqual(payload);
+    });
+
+    test('update a address', async () => {
+        const payload = {
+            user_id: "1",
+            firstName: "Junseok",
+            lastName: "Oh",
+            mobileNumber: "0615161620",
+            postalCode: "1056AA",
+            houseNumber: "5",
+            houseNumberAdd: " ",
+            streetName: "Anotherstraat",
+            city: "Rotterdam",
+            province: "South-Holland",
+            country: "Netherlands"
+        };
+        
+        const updatedAddress = await addressDB.updateAddress("2", payload);
+        delete updatedAddress._id;
+
+        expect(updatedAddress).toEqual(payload);
     });
 
     test('list addresses by user_id', async () => {
@@ -91,10 +115,7 @@ describe('Test database access layer of address object', () => {
 
         const result = await addressDB.deleteAddressById(address_id);
         const addresses = await addressDB.listAddressesByUserId(user_id);
-
-        console.log(result);
         
-
         expect(result.status).toBe('success');
         expect(result._id).toEqual(address_id);
         expect(addresses).toHaveLength(1);

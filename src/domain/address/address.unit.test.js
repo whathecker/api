@@ -11,7 +11,7 @@ const dummyData = {
     mobileNumber: "0612345678",
     postalCode: "1093TV",
     houseNumber: "100",
-    houseNumberAdd: undefined,
+    houseNumberAdd: " ",
     streetName: "Randomstraat",
     city: "Amsterdam",
     province: "North-Holland",
@@ -26,7 +26,7 @@ function copyObj(obj) {
 
 describe('Make Address object', () => {
 
-    test('object is created - without mobileNumber, houseNumberAdd, province, creationDate, lastModified', () => {
+    test('object is created - without mobileNumber, province, creationDate, lastModified', () => {
         
         let payload = copyObj(dummyData);
 
@@ -36,7 +36,6 @@ describe('Make Address object', () => {
         const originalLastModified = payload.lastModified;
 
         delete payload.mobileNumber;
-        delete payload.houseNumberAdd;
         delete payload.province;
         delete payload.creationDate;
         delete payload.lastModified;
@@ -48,6 +47,7 @@ describe('Make Address object', () => {
         expect(address.lastName).toBe(payload.lastName);
         expect(address.postalCode).toBe(payload.postalCode);
         expect(address.houseNumber).toBe(payload.houseNumber);
+        expect(address.houseNumberAdd).toBe(payload.houseNumberAdd);
         expect(address.streetName).toBe(payload.streetName);
         expect(address.city).toBe(payload.city);
         expect(address.country).toBe(payload.country);
@@ -72,6 +72,7 @@ describe('Make Address object', () => {
         expect(address.lastName).toBe(payload.lastName);
         expect(address.postalCode).toBe(payload.postalCode);
         expect(address.houseNumber).toBe(payload.houseNumber);
+        expect(address.houseNumberAdd).toBe(payload.houseNumberAdd);
         expect(address.streetName).toBe(payload.streetName);
         expect(address.city).toBe(payload.city);
         expect(address.province).toBe(payload.province);
@@ -82,28 +83,6 @@ describe('Make Address object', () => {
         expect(address.mobileNumber).not.toBe(originalMobileNumber);
     });
 
-    test('object is created - without houseNumberAdd', () => {
-        let payload = copyObj(dummyData);
-
-        delete payload.houseNumberAdd;
-
-        const address = createAddressObj(payload);
-
-        expect(address.user_id).toBe(payload.user_id);
-        expect(address.firstName).toBe(payload.firstName);
-        expect(address.lastName).toBe(payload.lastName);
-        expect(address.postalCode).toBe(payload.postalCode);
-        expect(address.houseNumber).toBe(payload.houseNumber);
-        expect(address.streetName).toBe(payload.streetName);
-        expect(address.city).toBe(payload.city);
-        expect(address.province).toBe(payload.province);
-        expect(address.country).toBe(payload.country);
-        expect(address.creationDate).toBe(payload.creationDate);
-        expect(address.lastModified).toBe(payload.lastModified);
-        expect(address.mobileNumber).toBe(payload.mobileNumber);
-
-        expect(address.houseNumberAdd).not.toBe("100");
-    });
 
     test('object is created - without province', () => {
         let payload = copyObj(dummyData);
@@ -119,6 +98,7 @@ describe('Make Address object', () => {
         expect(address.lastName).toBe(payload.lastName);
         expect(address.postalCode).toBe(payload.postalCode);
         expect(address.houseNumber).toBe(payload.houseNumber);
+        expect(address.houseNumberAdd).toBe(payload.houseNumberAdd);
         expect(address.streetName).toBe(payload.streetName);
         expect(address.city).toBe(payload.city);
         expect(address.country).toBe(payload.country);
@@ -139,6 +119,7 @@ describe('Make Address object', () => {
         expect(address.lastName).toBe(payload.lastName);
         expect(address.postalCode).toBe(payload.postalCode);
         expect(address.houseNumber).toBe(payload.houseNumber);
+        expect(address.houseNumberAdd).toBe(payload.houseNumberAdd);
         expect(address.streetName).toBe(payload.streetName);
         expect(address.city).toBe(payload.city);
         expect(address.province).toBe(payload.province);

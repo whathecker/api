@@ -54,8 +54,41 @@ const addAddress = (input) => {
     return Promise.resolve(newAddress);
 };
 
-const updateAddress = (address_id) => {
+const updateAddress = (address_id, payload) => {
 
+    return findAddressById(address_id).then(address => {
+
+        const updatedAddress = createAddressObj(payload);
+
+        if (updatedAddress instanceof Error) {
+            return Promise.reject({
+                status: "fail",
+                reason: "error",
+                error: updatedAddress
+            });
+        }
+
+        const updated = {
+            _id: address._id,
+            user_id: updatedAddress.user_id,
+            firstName: updatedAddress.firstName,
+            lastName: updatedAddress.lastName,
+            mobileNumber: updatedAddress.mobileNumber,
+            postalCode: updatedAddress.postalCode,
+            houseNumber: updatedAddress.houseNumber,
+            houseNumberAdd : updatedAddress.houseNumberAdd,
+            streetName: updatedAddress.streetName,
+            city: updatedAddress.city,
+            province: updatedAddress.province,
+            country: updatedAddress.country
+        };
+        ADDRESSES[address._id] = updated;
+
+        return Promise.resolve(updated);
+
+    }).catch(err => {
+        return Promise.reject(err);
+    });
 };
 
 const deleteAddressById = async (address_id) => {
@@ -63,7 +96,7 @@ const deleteAddressById = async (address_id) => {
     return findAddressById(address_id).then(address => {
 
         ADDRESSES = ADDRESSES.filter(address => address._id === address_id);
-        
+
         return Promise.resolve({
             _id: address._id,
             status: "success"
@@ -72,7 +105,6 @@ const deleteAddressById = async (address_id) => {
     }).catch(err => {
         return Promise.reject(err);
     });
-
 };
 
 const dropAll = () => {
