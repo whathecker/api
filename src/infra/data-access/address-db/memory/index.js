@@ -21,9 +21,9 @@ const findAddressById = (address_id) => {
     return Promise.resolve(address);
 }
 
-const addAddress = (input) => {
+const addAddress = (payload) => {
 
-    const address = createAddressObj(input);
+    const address = createAddressObj(payload);
 
     if (address instanceof Error) {
         return Promise.reject({
@@ -91,7 +91,7 @@ const updateAddress = (address_id, payload) => {
     });
 };
 
-const deleteAddressById = async (address_id) => {
+const deleteAddressById = (address_id) => {
 
     return findAddressById(address_id).then(address => {
 
