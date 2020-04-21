@@ -2,6 +2,11 @@ let addressDB = require('./index');
 
 describe('Test database access layer of address object', () => {
     
+    let _address_id_holder = {
+        0: null,
+        1: null
+    }
+
     beforeEach(async () => {
         await addressDB.dropAll();
 
@@ -34,15 +39,19 @@ describe('Test database access layer of address object', () => {
             }
         ];
 
-        await addressDB.addAddress(mockAddresses[0]);
-        await addressDB.addAddress(mockAddresses[1]);
+        const address = await addressDB.addAddress(mockAddresses[0]);
+        const address2 = await addressDB.addAddress(mockAddresses[1]);
+
+        _address_id_holder[0] = address._id;
+        _address_id_holder[1] = address2._id;
     });
 
     test('find a address by id', async () => {
-        const address = await addressDB.findAddressById("2");
+        const address_id = _address_id_holder[1];
+        const address = await addressDB.findAddressById(address_id);
 
         const expected = {
-            _id: "2",
+            _id: address_id,
             user_id: "1",
             firstName: "Junseok",
             lastName: "Oh",
@@ -75,13 +84,13 @@ describe('Test database access layer of address object', () => {
         };
 
         const newAddress = await addressDB.addAddress(payload);
-        console.log(newAddress);
         const {_id, ...result} = newAddress;
 
         expect(result).toEqual(payload);
     });
 
     test('update a address', async () => {
+        const address_id = _address_id_holder[1];
         const payload = {
             user_id: "1",
             firstName: "Junseok",
@@ -96,7 +105,7 @@ describe('Test database access layer of address object', () => {
             country: "Netherlands"
         };
         
-        const updatedAddress = await addressDB.updateAddress("2", payload);
+        const updatedAddress = await addressDB.updateAddress(address_id, payload);
         delete updatedAddress._id;
 
         expect(updatedAddress).toEqual(payload);
@@ -111,7 +120,7 @@ describe('Test database access layer of address object', () => {
     });
 
     test('delete address by id', async () => {
-        const address_id = "2";
+        const address_id = _address_id_holder[1];
         const user_id = "1";
 
         const result = await addressDB.deleteAddressById(address_id);

@@ -5,8 +5,8 @@ let {
     updateAddress,
     deleteAddressById,
     dropAll
-} = require('./memory');
-//require('./mongodb');
+} = //require('./memory');
+require('./mongodb');
 
 module.exports = {
     listAddressesByUserId,

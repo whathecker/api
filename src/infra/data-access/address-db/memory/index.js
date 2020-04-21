@@ -95,15 +95,20 @@ const deleteAddressById = (address_id) => {
 
     return findAddressById(address_id).then(address => {
 
-        ADDRESSES = ADDRESSES.filter(address => address._id === address_id);
+        if (!address) {
+            return Promise.reject({
+                status: "failed",
+                reason: "address not found"
+            });
+        }
 
-        return Promise.resolve({
-            _id: address._id,
-            status: "success"
-        });
-
-    }).catch(err => {
-        return Promise.reject(err);
+        if (address) {
+            ADDRESSES = ADDRESSES.filter(address => address._id === address_id);
+            return Promise.resolve({
+                _id: address._id,
+                status: "success"
+            });
+        }
     });
 };
 
