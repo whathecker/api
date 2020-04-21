@@ -28,7 +28,7 @@ const _getDbConnectionString = (env) => {
     if (env === "production") {
         const username = config.mongo.prod.MONGO_USER;
         const pwd = config.mongo.prod.MONGO_PWD;
-        return `mongodb://${username}:${password}@prod-shard-00-00-iltlw.mongodb.net:27017,prod-shard-00-01-iltlw.mongodb.net:27017,prod-shard-00-02-iltlw.mongodb.net:27017/chokchok?ssl=true&replicaSet=Prod-shard-0&authSource=admin&retryWrites=true&w=majority`;
+        return `mongodb://${username}:${pwd}@prod-shard-00-00-iltlw.mongodb.net:27017,prod-shard-00-01-iltlw.mongodb.net:27017,prod-shard-00-02-iltlw.mongodb.net:27017/chokchok?ssl=true&replicaSet=Prod-shard-0&authSource=admin&retryWrites=true&w=majority`;
     }
 }
 

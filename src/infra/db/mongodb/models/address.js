@@ -4,17 +4,13 @@ const uniqueValidator = require('mongoose-unique-validator');
 const Schema = mongoose.Schema;
 
 let addressSchema = new Schema({
-    user: { 
-        type: Schema.Types.ObjectId, 
-        ref: 'User',
-        required: true
-    },
+    user_id: { type: String, required: true },
     firstName: { type: String, require: true },
     lastName: { type: String, required: true },
     mobileNumber: { type: String }, 
     postalCode: { type: String, required: true },
     houseNumber: { type: String, required: true },
-    houseNumberAdd: { type: String },
+    houseNumberAdd: { type: String, required: true },
     streetName: { type: String, required: true },
     city: { type: String, required: true },
     province: { type: String },
