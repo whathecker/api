@@ -75,6 +75,7 @@ describe('Test database access layer of address object', () => {
         };
 
         const newAddress = await addressDB.addAddress(payload);
+        console.log(newAddress);
         const {_id, ...result} = newAddress;
 
         expect(result).toEqual(payload);

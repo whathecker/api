@@ -2,8 +2,8 @@ let ADDRESSES = require('../../../db/memory/address');
 const createAddressObj = require('../../../../domain/address');
 
 const listAddressesByUserId = (user_id) => {
-    const result = ADDRESSES.filter(address => address.user_id === user_id );
-    return Promise.resolve(result);
+    const addresses = ADDRESSES.filter(address => address.user_id === user_id );
+    return Promise.resolve(addresses);
 };
 
 const findAddressById = (address_id) => {
@@ -51,7 +51,7 @@ const addAddress = (payload) => {
     };
     ADDRESSES.push(newAddress);
 
-    return Promise.resolve(newAddress);
+    return Promise.resolve(ADDRESSES[ADDRESSES.length - 1]);
 };
 
 const updateAddress = (address_id, payload) => {
@@ -84,7 +84,7 @@ const updateAddress = (address_id, payload) => {
         };
         ADDRESSES[address._id] = updated;
 
-        return Promise.resolve(updated);
+        return Promise.resolve(ADDRESSES[address._id]);
 
     }).catch(err => {
         return Promise.reject(err);
