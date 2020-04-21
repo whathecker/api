@@ -11,7 +11,9 @@ const addresses = [
         streetName: "Randomstraat",
         city: "Amsterdam",
         province: "Noord-Holland",
-        country: "Netherlands"
+        country: "Netherlands",
+        creationDate: new Date('December 17, 1995 03:24:00'),
+        lastModified: new Date('December 17, 1999 03:24:00')
     },
     {
         _id: "2",
@@ -25,7 +27,9 @@ const addresses = [
         streetName: "Anotherstraat",
         city: "Amsterdam",
         province: "Noord-Holland",
-        country: "Netherlands"
+        country: "Netherlands",
+        creationDate: new Date('December 17, 1998 03:24:00'),
+        lastModified: new Date('December 17, 1999 03:24:00')
     },
     {
         _id: "3",
@@ -39,7 +43,9 @@ const addresses = [
         streetName: "Otherstraat",
         city: "Rotterdam",
         province: "South-Holland",
-        country: "Netherlands"
+        country: "Netherlands",
+        creationDate: new Date('December 17, 1997 03:24:00'),
+        lastModified: new Date('December 17, 1999 03:24:00')
     }
 ];
 
