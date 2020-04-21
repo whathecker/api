@@ -1,3 +1,5 @@
+const buildSerializer = require('../../_shared/serializerBuilder');
+
 const _serializeSingleObjEntry = (address) => {
     return {
         _id: address._id,
@@ -17,15 +19,4 @@ const _serializeSingleObjEntry = (address) => {
     }
 }
 
-const serializer = (data) => {
-    if (!data) {
-        return null;
-    }
-
-    if (Array.isArray(data)) {
-        return data.map(_serializeSingleObjEntry)
-    }
-    return _serializeSingleObjEntry(data);
-}
-
-module.exports = serializer;
+module.exports = buildSerializer(_serializeSingleObjEntry);
