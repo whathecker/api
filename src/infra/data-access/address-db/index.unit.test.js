@@ -48,7 +48,11 @@ describe('Test database access layer of address object', () => {
 
     test('find a address by id', async () => {
         const address_id = _address_id_holder[1];
+
         const address = await addressDB.findAddressById(address_id);
+
+        delete address.creationDate;
+        delete address.lastModified;
 
         const expected = {
             _id: address_id,
@@ -84,13 +88,14 @@ describe('Test database access layer of address object', () => {
         };
 
         const newAddress = await addressDB.addAddress(payload);
-        const {_id, ...result} = newAddress;
+        const {_id, creationDate, lastModified, ...result} = newAddress;
 
         expect(result).toEqual(payload);
     });
 
     test('update a address', async () => {
         const address_id = _address_id_holder[1];
+
         const payload = {
             user_id: "1",
             firstName: "Junseok",
@@ -104,11 +109,11 @@ describe('Test database access layer of address object', () => {
             province: "South-Holland",
             country: "Netherlands"
         };
-        
-        const updatedAddress = await addressDB.updateAddress(address_id, payload);
-        delete updatedAddress._id;
 
-        expect(updatedAddress).toEqual(payload);
+        const updatedAddress = await addressDB.updateAddress(address_id, payload);
+        const {_id, creationDate, lastModified, ...result} = updatedAddress; 
+
+        expect(result).toEqual(payload);
     });
 
     test('list addresses by user_id', async () => {

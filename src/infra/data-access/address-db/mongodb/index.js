@@ -1,9 +1,10 @@
-let Address = require('../../../db/mongodb/models/address');
-let createAddressObj = require('../../../../domain/address');
+const Address = require('../../../db/mongodb/models/address');
+const serializer = require('../mongodb/serializer');
+const createAddressObj = require('../../../../domain/address');
 
 const listAddressesByUserId = async (user_id) => {
     const addresses = await Address.find({ user_id: user_id });
-    return Promise.resolve(addresses);
+    return Promise.resolve(serializer(addresses));
 };
 
 const findAddressById = async (address_id) => {
@@ -15,7 +16,7 @@ const findAddressById = async (address_id) => {
             reason: "address not found"
         });
     }
-    return Promise.resolve(address);
+    return Promise.resolve(serializer(address));
 };
 
 const addAddress = async (payload) => {
@@ -31,25 +32,27 @@ const addAddress = async (payload) => {
     }
 
     const newAddress = await Address.create(address);
-    
-    return Promise.resolve(newAddress);
+
+    return Promise.resolve(serializer(newAddress));
 };
 
 const updateAddress = async (address_id, payload) => {
 
-    const updatedAddressObj = createAddressObj(payload);
+    const update = createAddressObj(payload);
 
-    if (updatedAddress instanceof Error) {
+    if (update instanceof Error) {
         return Promise.reject({
             status: "fail",
             reason: "error",
-            error: updatedAddressObj
+            error: update
         });
     }
 
-    const updatedAddress = await Address.findByIdAndUpdate(address_id, updatedAddressObj);
-    
-    return Promise.resolve(updateAddress);
+    const updatedAddress = await Address.findByIdAndUpdate(address_id, update, {
+        new: true
+    });
+
+    return Promise.resolve(serializer(updatedAddress));
 };
 
 const deleteAddressById = async (address_id) => {
