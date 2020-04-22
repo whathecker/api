@@ -35,13 +35,13 @@ describe('Test database access layer of brand object', () => {
         _brand_id_holder[2] = brand3._id;
     });
 
-    test('list all brands', () => {
+    test('list all brands', async () => {
         const brands = await brandDB.listBrands();
 
         expect(brands).toHaveLength(3);
     });
 
-    test('find brand by name', () => {
+    test('find brand by name', async () => {
         const brand_name = "Leegeeham";
 
         const brand = await brandDB.findBrandByName(brand_name);
@@ -55,7 +55,7 @@ describe('Test database access layer of brand object', () => {
         expect(rest).toEqual(expected);
     });
 
-    test('add a new brand', () => {
+    test('add a new brand', async () => {
         const payload = {
             brandCode: "AR",
             brandName: "Aromatica"
@@ -67,13 +67,14 @@ describe('Test database access layer of brand object', () => {
         expect(rest).toEqual(payload);
     });
 
-    test('delete a brand by name', () => {
+    test('delete a brand by name', async () => {
         const brand_name = "Leegeeham";
         const brand_id = _brand_id_holder[0];
 
         const result = await brandDB.deleteBrandByName(brand_name);
         const brands = await brandDB.listBrands();
 
+        console.log(brands);
         expect(result.status).toBe('success');
         expect(result._id).toEqual(brand_id);
         expect(brands).toHaveLength(2);
