@@ -1,11 +1,12 @@
+const dbChoice = require('../_shared/dbAccessModuleSelector')();
 let {
     listBrands,
     findBrandByName,
     addBrand,
     deleteBrandByName,
     dropAll
-} = require('./memory');
-//require('./mongodb')
+} = require(`./${dbChoice}`);
+
 
 module.exports = {
     listBrands,

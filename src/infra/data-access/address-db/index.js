@@ -1,3 +1,4 @@
+const dbChoice = require('../_shared/dbAccessModuleSelector')();
 let {
     listAddressesByUserId,
     findAddressById,
@@ -5,8 +6,7 @@ let {
     updateAddress,
     deleteAddressById,
     dropAll
-} = require('./memory');
-//require('./mongodb');
+} = require(`./${dbChoice}`);
 
 module.exports = {
     listAddressesByUserId,

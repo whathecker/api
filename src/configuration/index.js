@@ -3,6 +3,7 @@ require('dotenv').config();
 module.exports = {
     NODE_ENV: process.env.NODE_ENV,
     PORT: process.env.PORT,
+    DB_SELECTION: process.env.DB_SELECTION,
     mongo: {
         test: {
             MONGO_USER: process.env.MONGO_USER_TEST,
