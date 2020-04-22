@@ -18,7 +18,7 @@ const findBrandByName = (brandName) => {
     }
 
     return Promise.resolve(brand);
-}
+};
 
 const addBrand = (payload) => {
 
@@ -50,7 +50,7 @@ const addBrand = (payload) => {
         _id: new_id.toString(),
         brandName: brand.brandName,
         brandCode: brand.brandCode
-    }
+    };
     BRANDS.push(newBrand);
 
     return Promise.resolve(BRANDS[BRANDS.length - 1]);

@@ -16,7 +16,7 @@ const _serializeSingleObjEntry = (address) => {
         country: address.country,
         creationDate: address.creationDate,
         lastModified: address.lastModified
-    }
+    };
 }
 
 module.exports = buildSerializer(_serializeSingleObjEntry);
