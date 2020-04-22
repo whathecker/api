@@ -73,7 +73,7 @@ describe('Test database access layer of address object', () => {
     });
 
     test('add a address', async () => {
-        let payload = {
+        const payload = {
             user_id: "1",
             firstName: "Yunsoo",
             lastName: "Oh",
