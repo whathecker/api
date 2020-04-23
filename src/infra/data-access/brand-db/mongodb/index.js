@@ -42,7 +42,7 @@ const deleteBrandByName = async (brandName) => {
 
     if (!removedBrand) {
         return Promise.reject({
-            status: "failed",
+            status: "fail",
             reason: "brand not found"
         });
     }
