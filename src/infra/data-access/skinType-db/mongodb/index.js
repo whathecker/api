@@ -1,0 +1,71 @@
+const SkinType = require('../../../db/mongodb/models/skinType');
+const serializer = require('../mongodb/serializer');
+const createSkinTypeObj = require('../../../../domain/skinType');
+
+const listSkinTypes = async () => {
+    const skinTypes = await SkinType.find();
+    return Promise.resolve(serializer(skinTypes));
+};
+
+const findSkinTypeByName = async (skinTypeName) => {
+    const skinType = await SkinType.findOne({ skinType: skinTypeName });
+
+    if (!skinType) {
+        return Promise.reject({
+            status: "fail",
+            reason: "skinType not found"
+        });
+    }
+
+    return Promise.resolve(serializer(skinType));
+};
+
+const addSkinType = async (payload) => {
+
+    const skinTypeObj = createSkinTypeObj(payload);
+
+    if (skinTypeObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: skinTypeObj
+        });
+    }
+
+    const newSkinType = await SkinType.create(skinTypeObj);
+
+    return Promise.resolve(serializer(newSkinType));
+};
+
+const deleteSkinTypeByName = async (skinTypeName) => {
+    const removedSkinType = await SkinType.findOneAndRemove({
+        skinType: skinTypeName
+    });
+
+    if (!removedSkinType) {
+        return Promise.reject({
+            status: "fail",
+            reason: "skinType not found"
+        });
+    }
+
+    if (removedSkinType) {
+        return Promise.resolve({
+            _id: removedSkinType._id,
+            status: "success"
+        });
+    }
+};
+
+const dropAll = async () => {
+    return SkinType.remove();
+};
+
+module.exports = {
+    listSkinTypes,
+    findSkinTypeByName,
+    addSkinType,
+    deleteSkinTypeByName,
+    dropAll
+};
+
