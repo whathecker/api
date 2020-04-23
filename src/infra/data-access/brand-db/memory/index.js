@@ -77,37 +77,36 @@ function _isBrandCodeUnique (brandCode) {
 }
 
 
-const deleteBrandByName = (brandName) => {
+const deleteBrandByName = async (brandName) => {
 
-    return findBrandByName(brandName).then(brand => {
+    const brand = await findBrandByName(brandName);
 
-        if (!brand) {
-            return Promise.reject({
-                status: "failed",
-                reason: "brand not found"
-            });
+    const { status } = brand;
+
+    if (status === "fail") {
+        return Promise.reject({
+            status: "failed",
+            reason: "brand not found"
+        });
+    }
+
+    let deletedBrand;
+    BRANDS = BRANDS.filter(brand => {
+
+        if (brand.brandName !== brandName) {
+            return true;
         }
 
-        if (brand) {
-            let deletedBrand;
-            BRANDS = BRANDS.filter(brand => {
-
-                if (brand.brandName !== brandName) {
-                    return true;
-                }
-
-                if (brand.brandName === brandName) {
-                    deletedBrand = brand;
-                    return false;
-                }
-
-            });
-            
-            return Promise.resolve({
-                _id: deletedBrand._id,
-                status: "success"
-            });
+        if (brand.brandName === brandName) {
+            deletedBrand = brand;
+            return false;
         }
+
+    });
+    
+    return Promise.resolve({
+        _id: deletedBrand._id,
+        status: "success"
     });
 };
 
