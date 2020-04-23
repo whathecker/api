@@ -74,7 +74,6 @@ describe('Test database access layer of brand object', () => {
         const result = await brandDB.deleteBrandByName(brand_name);
         const brands = await brandDB.listBrands();
 
-        console.log(brands);
         expect(result.status).toBe('success');
         expect(result._id).toEqual(brand_id);
         expect(brands).toHaveLength(2);

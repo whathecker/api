@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('../connection');
 const uniqueValidator = require('mongoose-unique-validator');
 
 const Schema = mongoose.Schema;
