@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('../connection');
 
 const Schema = mongoose.Schema;
 
@@ -8,12 +8,12 @@ let skinTypeSchema = new Schema({
         required: true, 
         lowercase: true, 
         unique: true,
-        enum: ['dry', 'normal', 'oily'] 
+        enum: ['dry', 'normal', 'oily'] // remove it?
     },
     skinTypeCode: { 
         type: String, 
-        required: true , 
-        uppercase: true ,
+        required: true, 
+        uppercase: true,
         unique: true 
     }
 });

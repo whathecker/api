@@ -9,7 +9,7 @@ describe('Test database access layer of category object', () => {
     beforeEach(async () => {
         await categoryDB.dropAll();
 
-        let mockCategory = [
+        const mockCategory = [
             {
                 categoryName: "Sheetmask",
                 categoryCode: "ST"
