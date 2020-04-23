@@ -91,24 +91,23 @@ const updateAddress = (address_id, payload) => {
     });
 };
 
-const deleteAddressById = (address_id) => {
+const deleteAddressById = async (address_id) => {
 
-    return findAddressById(address_id).then(address => {
+    const address = await findAddressById(address_id);
 
-        if (!address) {
-            return Promise.reject({
-                status: "failed",
-                reason: "address not found"
-            });
-        }
+    const { status } = address;
 
-        if (address) {
-            ADDRESSES = ADDRESSES.filter(address => address._id === address_id);
-            return Promise.resolve({
-                _id: address._id,
-                status: "success"
-            });
-        }
+    if (status === "fail") {
+        return Promise.reject({
+            status: "fail",
+            reason: "address not found"
+        });
+    }
+
+    ADDRESSES = ADDRESSES.filter(address => address._id === address_id);
+    return Promise.resolve({
+        _id: address._id,
+        status: "success"
     });
 };
 

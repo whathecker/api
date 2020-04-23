@@ -85,7 +85,7 @@ const deleteBrandByName = async (brandName) => {
 
     if (status === "fail") {
         return Promise.reject({
-            status: "failed",
+            status: "fail",
             reason: "brand not found"
         });
     }
