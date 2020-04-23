@@ -68,7 +68,7 @@ describe('Test database access layer of category object', () => {
 
         expect(result.status).toBe('success');
         expect(result._id).toEqual(category_id);
-        expect(categories).tohaveLength(1);
+        expect(categories).toHaveLength(1);
     });
 
     test('drop all categories in db', async () => {
