@@ -37,7 +37,7 @@ describe('Test database layer of product object', () => {
     });
 
     test('add a new product', async () => {
-        
+
         const payload = {
             channel: "EU",
             name: "Other Pure Essence Mask Sheet-Avocado",
@@ -93,12 +93,11 @@ describe('Test database layer of product object', () => {
     test('delete a product by productId', async () => {
         const productId = mockProducts[1].productId;
 
-        const result = await productDB.deleteProductByProductId();
+        const result = await productDB.deleteProductByProductId(productId);
         const products = await productDB.listProducts();
-        const {status, productId} = result;
 
-        expect(status).toBe('success');
-        expect(productId).toEqual(productId);
+        expect(result.status).toBe('success');
+        expect(result.productId).toEqual(productId);
         expect(products).toHaveLength(2);
     });
 

@@ -40,7 +40,7 @@ const mockProducts = [
     },
     {
         channel: "EU",
-        productId: "LGST50100",
+        productId: "LGST50200",
         name: "Another Skim Supplement Sheetmask",
         description: "This sheetmask is good for something",
         category: "Sheetmask",
