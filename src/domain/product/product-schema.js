@@ -3,7 +3,7 @@ const errors = require('./product-error');
 
 module.exports = Joi.object({
     channel: Joi.string().required().error(errors.typeErrors.channel),
-    id: Joi.string().error(errors.typeErrors.id),
+    productId: Joi.string().error(errors.typeErrors.productId),
     name: Joi.string().required().error(errors.typeErrors.name),
     description: Joi.string().required().error(errors.typeErrors.description),
     category: Joi.string().required().error(errors.typeErrors.category),

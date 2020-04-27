@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('../connection');
 const uniqueValidator = require('mongoose-unique-validator');
 
 const Schema = mongoose.Schema;
@@ -11,7 +11,7 @@ let productSchema = new Schema({
         enum: ['EU'], 
         default: 'EU' 
     },
-    id: { 
+    productId: { 
         type: String, 
         required: true, 
         unique: true, 

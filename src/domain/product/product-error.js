@@ -1,6 +1,6 @@
 const typeErrors = Object.freeze({
     channel: new Error('Product object has invalid type at property: channel'),
-    id: new Error('Product object must have id property as string'),
+    productId: new Error('Product object must have productId property as string'),
     name: new Error('Product object must have name property as string'),
     description: new Error('Product object must have description property as string'),
     category: new Error('Product object must have category property as string'),

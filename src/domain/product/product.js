@@ -3,7 +3,7 @@ const ProductFactory = require('./factory');
 let buildCreateProductObj = function (productValidator) {
     return ({
         channel,
-        id,
+        productId,
         name,
         description,
         category,
@@ -22,7 +22,7 @@ let buildCreateProductObj = function (productValidator) {
 
         const payload = {
             channel,
-            id,
+            productId,
             name,
             description,
             category,

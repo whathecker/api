@@ -4,7 +4,7 @@ const ProductBaseFactory = require('../../_shared/factory').product_base_factory
 class ProductFactory extends ProductBaseFactory {
     constructor({
         channel,
-        id,
+        productId,
         name,
         description,
         category,
@@ -79,15 +79,15 @@ class ProductFactory extends ProductBaseFactory {
         }
         
 
-        const result_is_product_id_exist = ProductFactory.isIdExist(id);
+        const result_is_product_id_exist = ProductFactory.isIdExist(productId);
         if (!result_is_product_id_exist) {
-            id = ProductFactory.createProductId(brandCode, categoryCode);
+            productId = ProductFactory.createProductId(brandCode, categoryCode);
         }
 
 
         const payload = {
             channel,
-            id,
+            productId,
             name,
             description,
             category,
@@ -118,7 +118,7 @@ class ProductFactory extends ProductBaseFactory {
 class Product {
     constructor({
         channel,
-        id,
+        productId,
         name,
         description,
         category,
@@ -136,7 +136,7 @@ class Product {
     } = {}) {
 
         this.channel = channel;
-        this.id = id;
+        this.productId = productId;
         this.name = name;
         this.description = description;
 

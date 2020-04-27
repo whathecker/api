@@ -248,7 +248,7 @@ describe('Make product object', () => {
 
         const product = createProductObj(payload);
 
-        expect(product.id).toHaveLength(9);
+        expect(product.productId).toHaveLength(9);
     });
 
     test('first 2 chars of product id must be same as brandCode', () => {
@@ -256,7 +256,7 @@ describe('Make product object', () => {
 
         const product = createProductObj(payload);
 
-        expect(product.id.slice(0, 2)).toBe(payload.brandCode);
+        expect(product.productId.slice(0, 2)).toBe(payload.brandCode);
     });
 
     test('third and forth chars of product id must be same as categoryCode', () => {
@@ -264,16 +264,16 @@ describe('Make product object', () => {
 
         const product = createProductObj(payload);
 
-        expect(product.id.slice(2, 4)).toBe(payload.categoryCode);
+        expect(product.productId.slice(2, 4)).toBe(payload.categoryCode);
     });
 
     test('when product id already exist, do not create new one', () => {
         let payload = copyObj(dummyData);
-        payload.id = "MSST10523";
+        payload.productId = "MSST10523";
 
         const product = createProductObj(payload);
 
-        expect(product.id).toBe(payload.id);
+        expect(product.productId).toBe(payload.productId);
     });
 
 });
