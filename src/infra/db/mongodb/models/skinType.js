@@ -7,14 +7,14 @@ let skinTypeSchema = new Schema({
         type: String, 
         required: true, 
         lowercase: true, 
-        unique: true,
+        //unique: true,
         enum: ['dry', 'normal', 'oily'] // remove it?
     },
     skinTypeCode: { 
         type: String, 
         required: true, 
         uppercase: true,
-        unique: true 
+        //unique: true 
     }
 });
 

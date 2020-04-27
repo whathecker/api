@@ -57,7 +57,7 @@ const deleteCategoryByName = async (categoryName) => {
     }
 };
 
-const dropAll = () => {
+const dropAll = async () => {
     return Category.remove();
 };
 

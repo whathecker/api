@@ -28,7 +28,7 @@ describe('Test database access layer of brand object', () => {
 
         const brand = await brandDB.addBrand(mockBrands[0]);
         const brand2 = await brandDB.addBrand(mockBrands[1]);
-        const brand3 =await brandDB.addBrand(mockBrands[2]);
+        const brand3 = await brandDB.addBrand(mockBrands[2]);
 
         _brand_id_holder[0] = brand._id;
         _brand_id_holder[1] = brand2._id;

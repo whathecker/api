@@ -55,7 +55,7 @@ const deleteBrandByName = async (brandName) => {
     }
 };
 
-const dropAll = () => {
+const dropAll = async () => {
     return Brand.remove();
 };
 

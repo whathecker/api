@@ -15,7 +15,7 @@ describe('Test database layer of product object', () => {
         const product = await productDB.addProduct(mockProducts[0]);
         const product2 = await productDB.addProduct(mockProducts[1]);
         const product3 = await productDB.addProduct(mockProducts[2]);
-
+       
         _productId_holder[0] = product.productId;
         _productId_holder[1] = product2.productId;
         _productId_holder[2] = product3.productId;
@@ -23,15 +23,14 @@ describe('Test database layer of product object', () => {
 
     test('list all products', async () => {
         const products = await productDB.listProducts();
-
         expect(products).toHaveLength(3);
     });
 
     test('find product by productId', async () => {
-        const productId = mockProducts[0].productId;
+        const id = _productId_holder[0];
 
-        const product = await productDB.findProductByProductId(productId);
-        const {_id, ...rest} = product;
+        const product = await productDB.findProductByProductId(id);
+        const {_id, productId, ...rest} = product;
 
         expect(rest).toEqual(mockProducts[0]);
     });
@@ -91,7 +90,7 @@ describe('Test database layer of product object', () => {
     }); */
 
     test('delete a product by productId', async () => {
-        const productId = mockProducts[1].productId;
+        const productId = _productId_holder[2];
 
         const result = await productDB.deleteProductByProductId(productId);
         const products = await productDB.listProducts();

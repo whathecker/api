@@ -1,6 +1,6 @@
 const buildSerializer = require('../../_shared/serializerBuilder');
 
-const __serializeSingleObjEnty = (skinType) => {
+const __serializeSingleObjEntry = (skinType) => {
     return {
         _id: skinType._id,
         skinType: skinType.skinType,
@@ -8,5 +8,5 @@ const __serializeSingleObjEnty = (skinType) => {
     };
 };
 
-module.exports = buildSerializer(__serializeSingleObjEnty);
+module.exports = buildSerializer(__serializeSingleObjEntry);
 

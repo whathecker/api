@@ -3,36 +3,6 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 const Schema = mongoose.Schema;
 
-let productSchema = new Schema({
-    channel: { 
-        type: String, 
-        required: true,
-        uppercase: true, 
-        enum: ['EU'], 
-        default: 'EU' 
-    },
-    productId: { 
-        type: String, 
-        required: true, 
-        unique: true, 
-        index: true 
-    },
-    name: { type: String, required: true },
-    description: { type: String, required: true },
-    category: { type: String, required: true },
-    categoryCode: { type: String, required: true },
-    brand: { type: String, required: true },
-    brandCode: { type: String, required: true },
-    volume: { type: String },
-    skinType: { type: String, required: true },
-    prices : [pricesSchema],
-    inventory: inventorySchema,
-    inventoryHistory: [inventorySchema],
-    creationDate: { type: Date, default: Date.now },
-    lastModified: { type: Date, default: Date.now },
-    eanCode: { type: String }
-});
-
 let inventorySchema = new Schema({
     quantityOnHand: { type: Number, default: 0 },
     quarantaine: { type: Number, default: 0 },
@@ -73,6 +43,37 @@ let pricesSchema = new Schema({
         default: "0.00"
     }
 }, { _id: false });
+
+
+let productSchema = new Schema({
+    channel: { 
+        type: String, 
+        required: true,
+        uppercase: true, 
+        enum: ['EU'], 
+        default: 'EU' 
+    },
+    productId: { 
+        type: String, 
+        required: true, 
+        //unique: true, 
+        //index: true 
+    },
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    category: { type: String, required: true },
+    categoryCode: { type: String, required: true },
+    brand: { type: String, required: true },
+    brandCode: { type: String, required: true },
+    volume: { type: String },
+    skinType: { type: String, required: true },
+    prices : [pricesSchema],
+    inventory: inventorySchema,
+    inventoryHistory: [inventorySchema],
+    creationDate: { type: Date, default: Date.now },
+    lastModified: { type: Date, default: Date.now },
+    eanCode: { type: String }
+});
 
 productSchema.plugin(uniqueValidator);
 

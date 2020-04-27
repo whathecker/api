@@ -1,7 +1,6 @@
 const mockProducts = [
     {
         channel: "EU",
-        productId: "LGST50001",
         name: "Skim Supplement Sheetmask",
         description: "This sheetmask is good for something",
         category: "Sheetmask",
@@ -40,7 +39,6 @@ const mockProducts = [
     },
     {
         channel: "EU",
-        productId: "LGST50200",
         name: "Another Skim Supplement Sheetmask",
         description: "This sheetmask is good for something",
         category: "Sheetmask",
@@ -79,7 +77,6 @@ const mockProducts = [
     },
     {
         channel: "EU",
-        productId: "LGST50100",
         name: "Pure Essence Mask Sheet-Avocado",
         description: "This sheetmask is good for something",
         category: "Sheetmask",
