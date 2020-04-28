@@ -1,5 +1,4 @@
 const mongoose = require('../connection');
-const uniqueValidator = require('mongoose-unique-validator');
 
 const Schema = mongoose.Schema;
 
@@ -56,8 +55,6 @@ let productSchema = new Schema({
     productId: { 
         type: String, 
         required: true, 
-        //unique: true, 
-        //index: true 
     },
     name: { type: String, required: true },
     description: { type: String, required: true },
@@ -74,8 +71,6 @@ let productSchema = new Schema({
     lastModified: { type: Date, default: Date.now },
     eanCode: { type: String }
 });
-
-productSchema.plugin(uniqueValidator);
 
 const Product = mongoose.model('Product', productSchema);
 

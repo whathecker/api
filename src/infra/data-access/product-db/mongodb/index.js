@@ -11,7 +11,7 @@ const findProductByProductId = async (productId) => {
     const product = await Product.findOne({ productId: productId });
 
     if (!product) {
-        return Promise.reject({
+        return Promise.resolve({
             status: "fail",
             reason: "product not found"
         });
@@ -55,7 +55,7 @@ const deleteProductByProductId = async (productId) => {
     });
 
     if (!removedProduct) {
-        return Promise.reject({
+        return Promise.resolve({
             status: "fail",
             reason: "product not found"
         });
