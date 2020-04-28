@@ -20,7 +20,7 @@ const findProductByProductId = (productId) => {
     return Promise.resolve(product);
 };
 
-const addProduct = (payload) => {
+const addProduct = async (payload) => {
 
     const productObj = createProductObj(payload);
 
@@ -33,7 +33,7 @@ const addProduct = (payload) => {
     }
 
     try {
-        _isProductIdUnique(productObj.productId);
+        await _isProductIdUnique(productObj.productId);
     }
     catch (err) {
         return Promise.reject({

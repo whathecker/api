@@ -33,10 +33,14 @@ const addProduct = async (payload) => {
     }
 
     try {
-
+        await _isProductIdUnique(productObj.productId);
     }
     catch (err) {
-
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: err
+        });
     }
     
 
@@ -44,6 +48,16 @@ const addProduct = async (payload) => {
 
     return Promise.resolve(serializer(newProduct));
 };
+
+async function _isProductIdUnique (productId) {
+    const product = await findProductByProductId(productId);
+
+    const { status } = product;
+
+    if (status === "fail") return;
+
+    throw new Error('db access for product object failed: productId must be unique');
+}
 
 const updateProduct = () => {
 
