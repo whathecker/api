@@ -8,10 +8,12 @@ const listCategories = async () => {
 };
 
 const findCategoryByName = async (categoryName) => {
-    const category = await Category.findOne({ categoryName: categoryName });
+    const category = await Category.findOne({ 
+        categoryName: categoryName 
+    });
 
     if (!category) {
-        return Promise.reject({
+        return Promise.resolve({
             status: "fail",
             reason: "category not found"
         });
@@ -33,16 +35,41 @@ const addCategory = async (payload) => {
     }
 
     try {
-
+        await _isCategoryNameUnique(category.categoryName);
+        await _isCategoryCodeUnique(category.categoryCode);
     }
 
     catch (err) {
-        
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: err
+        });
     }
 
     const newCategory = await Category.create(category);
 
     return Promise.resolve(serializer(newCategory));
+};
+
+async function _isCategoryNameUnique (categoryName) {
+    const category = await findCategoryByName(categoryName);
+
+    const { status } = category;
+
+    if (status === "fail") return;
+
+    throw new Error("db access for category object failed: categoryName must be unique");
+};
+
+async function _isCategoryCodeUnique (categoryCode) {
+    const category = await Category.findOne({
+        categoryCode: categoryCode
+    });
+
+    if (!category) return;
+
+    throw new Error("db access for skinType object failed: skinTypeCode must be unique");
 };
 
 const deleteCategoryByName = async (categoryName) => {
@@ -51,7 +78,7 @@ const deleteCategoryByName = async (categoryName) => {
     });
 
     if (!removedCategory) {
-        return Promise.reject({
+        return Promise.resolve({
             status: "fail",
             reason: "category not found"
         });

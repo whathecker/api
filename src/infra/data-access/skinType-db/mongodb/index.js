@@ -59,7 +59,7 @@ async function _isSkinTypeUnique (skinType) {
     
 
     throw new Error("db access for skinType object failed: skinType must be unique");
-}
+};
 
 async function _isSkinTypeCodeUnique (skinTypeCode) {
     const skinType = await SkinType.findOne({ 
@@ -69,7 +69,7 @@ async function _isSkinTypeCodeUnique (skinTypeCode) {
     if (!skinType) return;
     
     throw new Error("db access for skinType object failed: skinTypeCode must be unique");
-}
+};
 
 const deleteSkinTypeByName = async (skinTypeName) => {
     const removedSkinType = await SkinType.findOneAndRemove({

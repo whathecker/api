@@ -5,13 +5,13 @@ const listCategories = () => {
     return Promise.resolve(CATEGORIES);
 };
 
-const findCategoryByName = (categoryName) => {
+const findCategoryByName = async (categoryName) => {
     const category = CATEGORIES.find(category => {
         return category.categoryName === categoryName;
     });
 
-    if (!categoryName) {
-        return Promise.reject({
+    if (!category) {
+        return Promise.resolve({
             status: "fail",
             reason: "category not found"
         });
@@ -20,7 +20,7 @@ const findCategoryByName = (categoryName) => {
     return Promise.resolve(category);
 };
 
-const addCategory = (payload) => {
+const addCategory = async (payload) => {
 
     const category = createCategoryObj(payload);
 
@@ -33,8 +33,8 @@ const addCategory = (payload) => {
     }
 
     try {
-        _isCategoryNameUnique(category.categoryName);
-        _isCategoryCodeUnique(category.categoryCode);
+        await _isCategoryNameUnique(category.categoryName);
+        await _isCategoryCodeUnique(category.categoryCode);
     }
     catch (err) {
         return Promise.reject({
@@ -58,7 +58,7 @@ const addCategory = (payload) => {
 
 async function _isCategoryNameUnique (categoryName) {
     const category = await findCategoryByName(categoryName);
-
+    
     const { status } = category;
 
     if (status === "fail") return;
@@ -66,7 +66,7 @@ async function _isCategoryNameUnique (categoryName) {
     throw new Error("db access for category object failed: categoryName must be unique");
 }
 
-function _isCategoryCodeUnique (categoryCode) {
+async function _isCategoryCodeUnique (categoryCode) {
     const category = CATEGORIES.find(category => {
         return category.categoryCode === categoryCode;
     });
@@ -83,7 +83,7 @@ const deleteCategoryByName = async (categoryName) => {
     const { status } = category;
 
     if (status === "fail") {
-        return Promise.reject({
+        return Promise.resolve({
             status: "fail",
             reason: "category not found"
         });
