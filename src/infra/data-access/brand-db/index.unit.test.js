@@ -20,25 +20,19 @@ describe('Test database access layer of brand object', () => {
                 brandCode: "MS",
                 brandName: "Missha"
             },
-            {
-                brandCode: "KL",
-                brandName: "Klaris"
-            },
         ];
 
         const brand = await brandDB.addBrand(mockBrands[0]);
         const brand2 = await brandDB.addBrand(mockBrands[1]);
-        const brand3 = await brandDB.addBrand(mockBrands[2]);
 
         _brand_id_holder[0] = brand._id;
         _brand_id_holder[1] = brand2._id;
-        _brand_id_holder[2] = brand3._id;
     });
 
     test('list all brands', async () => {
         const brands = await brandDB.listBrands();
 
-        expect(brands).toHaveLength(3);
+        expect(brands).toHaveLength(2);
     });
 
     test('find brand by name', async () => {
@@ -76,7 +70,7 @@ describe('Test database access layer of brand object', () => {
 
         expect(result.status).toBe('success');
         expect(result._id).toEqual(brand_id);
-        expect(brands).toHaveLength(2);
+        expect(brands).toHaveLength(1);
     });
 
     test('drop all brands in db', async () => {

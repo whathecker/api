@@ -11,7 +11,7 @@ const findBrandByName = async (brandName) => {
     const brand = await Brand.findOne({ brandName: brandName });
 
     if (!brand) {
-        return Promise.reject({
+        return Promise.resolve({
             status: "fail",
             reason: "brand not found"
         });
@@ -33,10 +33,15 @@ const addBrand = async (payload) => {
     }
 
     try {
-
+        await _isBrandNameUnique(brand.brandName);
+        await _isBrandCodeUnique(brand.brandCode);
     }
     catch (err) {
-
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: err
+        });
     }
 
     const newBrand = await Brand.create(brand);
@@ -44,11 +49,29 @@ const addBrand = async (payload) => {
     return Promise.resolve(serializer(newBrand));
 };
 
+async function _isBrandNameUnique (brandName) {
+    const brand = await findBrandByName(brandName);
+    
+    const { status } = brand;
+
+    if (status === "fail") return;
+    
+    throw new Error('db access for brand object failed: brandName must be unique');
+}
+
+async function _isBrandCodeUnique (brandCode) {
+    const brand = await Brand.findOne({ brandCode: brandCode });
+
+    if (!brand) return;
+    
+    throw new Error('db access for brand object failed: brandCode must be unique');
+}
+
 const deleteBrandByName = async (brandName) => {
     const removedBrand = await Brand.findOneAndRemove({ brandName: brandName });
 
     if (!removedBrand) {
-        return Promise.reject({
+        return Promise.resolve({
             status: "fail",
             reason: "brand not found"
         });
@@ -63,7 +86,7 @@ const deleteBrandByName = async (brandName) => {
 };
 
 const dropAll = async () => {
-    return Brand.remove();
+    return await Brand.remove();
 };
 
 module.exports = {

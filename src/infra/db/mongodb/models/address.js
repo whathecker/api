@@ -1,5 +1,4 @@
 const mongoose = require('../connection');
-const uniqueValidator = require('mongoose-unique-validator');
 
 const Schema = mongoose.Schema;
 
@@ -18,8 +17,6 @@ let addressSchema = new Schema({
     creationDate: { type: Date, default: Date.now },
     lastModified: { type: Date, default: Date.now }
 });
-
-addressSchema.plugin(uniqueValidator);
 
 const Address = mongoose.model('Address', addressSchema);
 

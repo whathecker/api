@@ -1,5 +1,4 @@
 const mongoose = require('../connection');
-const uniqueValidator = require('mongoose-unique-validator');
 
 const Schema = mongoose.Schema;
 
@@ -14,8 +13,6 @@ let categorySchema = new Schema({
         uppercase: true 
     }
 });
-
-categorySchema.plugin(uniqueValidator);
 
 const Category = mongoose.model('Category', categorySchema);
 
