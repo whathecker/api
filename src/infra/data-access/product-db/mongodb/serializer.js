@@ -1,14 +1,18 @@
 const buildSerializer = require('../../_shared/serializerBuilder');
 
+function _serializeInventoryObj (inventory) {
+    return {
+        quantityOnHand: inventory.quantityOnHand,
+        quarantaine: inventory.quarantaine,
+        lastModified: inventory.lastModified
+    };
+}
+
 function _mapInventoryHistory (inventoryHistory) {
     let mappedInventoryHistory = [];
 
     inventoryHistory.forEach(history => {
-        mappedInventoryHistory.push({
-            lastModified: history.lastModified,
-            quantityOnHand: history.quantityOnHand,
-            quarantaine: history.quarantaine
-        });
+        mappedInventoryHistory.push(_serializeInventoryObj(history));
     });
 
     return mappedInventoryHistory;
@@ -42,17 +46,13 @@ const _serializeSingleObjEntry = (product) => {
         brand: product.brand,
         brandCode: product.brandCode,
         skinType: product.skinType,
-        inventory: {
-            lastModified: product.inventory.lastModified,
-            quantityOnHand: product.inventory.quantityOnHand,
-            quarantaine: product.inventory.quarantaine
-        },
+        inventory: _serializeInventoryObj(product.inventory),
         inventoryHistory: _mapInventoryHistory(product.inventoryHistory),
-        prices: _mapPrices(product.price),
-        //volume: product.volume,
+        prices: _mapPrices(product.prices),
+        volume: (product.volume)? product.volume: null,
         creationDate: product.creationDate,
         lastModified: product.lastModified,
-        //eanCode: product.eanCode
+        eanCode: (product.eanCode)? product.eanCode: null
     }
 };
 

@@ -4,7 +4,6 @@ const createProductObj = require('../../../../domain/product');
 
 const listProducts = async () => {
     const products = await Product.find();
-    console.log(products);
     return Promise.resolve(serializer(products));
 };
 
@@ -31,6 +30,13 @@ const addProduct = async (payload) => {
             reason: "error",
             error: productObj
         });
+    }
+
+    try {
+
+    }
+    catch (err) {
+
     }
     
 

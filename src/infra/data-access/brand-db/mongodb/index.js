@@ -32,6 +32,13 @@ const addBrand = async (payload) => {
         });
     }
 
+    try {
+
+    }
+    catch (err) {
+
+    }
+
     const newBrand = await Brand.create(brand);
 
     return Promise.resolve(serializer(newBrand));

@@ -30,7 +30,7 @@ describe('Test database layer of product object', () => {
         const id = _productId_holder[0];
 
         const product = await productDB.findProductByProductId(id);
-        const {_id, productId, ...rest} = product;
+        const {_id, productId, eanCode, volume, ...rest} = product;
 
         expect(rest).toEqual(mockProducts[0]);
     });
@@ -77,7 +77,7 @@ describe('Test database layer of product object', () => {
         };
 
         const newProduct = await productDB.addProduct(payload);
-        const {_id, productId, ...rest } = newProduct;
+        const {_id, productId, eanCode, volume, ...rest } = newProduct;
 
         expect(rest).toEqual(payload);
     });

@@ -13,7 +13,7 @@ const findSkinTypeByName = (skinTypeName) => {
     });
 
     if (!skinType) {
-        return Promise.reject({
+        return Promise.resolve({
             status: "fail",
             reason: "skinType not found"
         });
@@ -22,21 +22,21 @@ const findSkinTypeByName = (skinTypeName) => {
     return Promise.resolve(skinType);
 };
 
-const addSkinType = (payload) => {
+const addSkinType = async (payload) => {
 
-    const skinType = createSkinTypeObj(payload);
+    const skinTypeObj = createSkinTypeObj(payload);
 
-    if (skinType instanceof Error) {
+    if (skinTypeObj instanceof Error) {
         return Promise.reject({
             status: "fail",
             reason: "error",
-            error: skinType
+            error: skinTypeObj
         });
     }
 
     try {
-        _isSkinTypeNameUnique(skinType.skinType);
-        _isSkinTypeCodeUnique(skinType.skinTypeCode);
+        await _isSkinTypeUnique(skinTypeObj.skinType);
+        await _isSkinTypeCodeUnique(skinTypeObj.skinTypeCode);
     }
     catch (err) {
         return Promise.reject({
@@ -50,18 +50,18 @@ const addSkinType = (payload) => {
 
     const newSkinType = {
         _id: new_id.toString(),
-        skinType: skinType.skinType,
-        skinTypeCode: skinType.skinTypeCode
+        skinType: skinTypeObj.skinType,
+        skinTypeCode: skinTypeObj.skinTypeCode
     };
     SKINTYPES.push(newSkinType);
 
     return Promise.resolve(SKINTYPES[SKINTYPES.length - 1]);
 };
 
-async function _isSkinTypeNameUnique (skinTypeName) {
-    const skinType = await findSkinTypeByName(skinTypeName);
+async function _isSkinTypeUnique (skinType) {
+    const quriedSkinType = await findSkinTypeByName(skinType);
 
-    const { status } = skinType;
+    const { status } = quriedSkinType;
 
     if (status === "fail") return;
 
@@ -85,7 +85,7 @@ const deleteSkinTypeByName = async (skinTypeName) => {
     const { status } = skinType;
 
     if (status === "fail") {
-        return Promise.reject({
+        return Promise.resolve({
             status: "fail",
             reason: "skinType not found"
         });

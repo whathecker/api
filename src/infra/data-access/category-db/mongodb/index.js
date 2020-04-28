@@ -32,6 +32,14 @@ const addCategory = async (payload) => {
         });
     }
 
+    try {
+
+    }
+
+    catch (err) {
+        
+    }
+
     const newCategory = await Category.create(category);
 
     return Promise.resolve(serializer(newCategory));
