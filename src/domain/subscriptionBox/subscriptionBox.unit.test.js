@@ -180,7 +180,7 @@ describe('Make subscriptionBox object', () => {
 
         const subscriptionBox = createSubscriptionBoxObj(payload);
 
-        expect(subscriptionBox.id).toHaveLength(9);
+        expect(subscriptionBox.packageId).toHaveLength(9);
     });
 
     test('prefix of id must be PK + boxTypeCode', () => {
@@ -188,17 +188,17 @@ describe('Make subscriptionBox object', () => {
 
         const subscriptionBox = createSubscriptionBoxObj(payload);
 
-        expect(subscriptionBox.id.slice(0, 2)).toBe("PK");
-        expect(subscriptionBox.id.slice(2, 4)).toBe(payload.boxTypeCode);
+        expect(subscriptionBox.packageId.slice(0, 2)).toBe("PK");
+        expect(subscriptionBox.packageId.slice(2, 4)).toBe(payload.boxTypeCode);
     });
 
     test('when id already exist, do not create new one', () => {
         let payload = copyObj(dummyData);
-        payload.id = "PKNM10505";
+        payload.packageId = "PKNM10505";
 
         const subscriptionBox = createSubscriptionBoxObj(payload);
 
-        expect(subscriptionBox.id).toBe(payload.id);
+        expect(subscriptionBox.packageId).toBe(payload.packageId);
     });
 });
 

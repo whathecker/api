@@ -4,7 +4,7 @@ const ProductBaseFactory = require('../../_shared/factory').product_base_factory
 class SubscriptionBoxFactory extends ProductBaseFactory {
     constructor({
         channel,
-        id,
+        packageId,
         name,
         boxType,
         boxTypeCode,
@@ -67,15 +67,15 @@ class SubscriptionBoxFactory extends ProductBaseFactory {
         }
         
 
-        const result_is_product_id_exist = SubscriptionBoxFactory.isIdExist(id);
-        if (!result_is_product_id_exist) {
-            id = SubscriptionBoxFactory.createSubscriptionBoxId(boxTypeCode);
+        const result_is_package_id_exist = SubscriptionBoxFactory.isIdExist(packageId);
+        if (!result_is_package_id_exist) {
+            packageId = SubscriptionBoxFactory.createSubscriptionBoxId(boxTypeCode);
         }
 
 
         const payload = {
             channel,
-            id,
+            packageId,
             name,
             boxType,
             boxTypeCode,
@@ -98,7 +98,7 @@ class SubscriptionBoxFactory extends ProductBaseFactory {
 class SubscriptionBox {
     constructor({
         channel,
-        id,
+        packageId,
         name,
         boxType,
         boxTypeCode,
@@ -109,7 +109,7 @@ class SubscriptionBox {
     } = {}) {
 
         this.channel = channel;
-        this.id = id;
+        this.packageId = packageId;
         this.name = name;
         this.boxType = boxType;
         this.boxTypeCode = boxTypeCode;

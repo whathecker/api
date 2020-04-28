@@ -3,7 +3,7 @@ const Joi = require('@hapi/joi');
 
 module.exports = Joi.object({
     channel: Joi.string().required().error(errors.typeErrors.channel),
-    id: Joi.string().error(errors.typeErrors.id),
+    packageId: Joi.string().error(errors.typeErrors.packageId),
     name: Joi.string().required().error(errors.typeErrors.name),
     boxType: Joi.string().required().error(errors.typeErrors.boxType),
     boxTypeCode: Joi.string().required().error(errors.typeErrors.boxTypeCode),

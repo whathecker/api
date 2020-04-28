@@ -3,7 +3,7 @@ const SubscriptionBoxFactory = require('./factory');
 let buildCreateSubscriptionBoxObj = function (subscriptionBoxValidator) {
     return ({
         channel,
-        id,
+        packageId,
         name,
         boxType,
         boxTypeCode,
@@ -15,7 +15,7 @@ let buildCreateSubscriptionBoxObj = function (subscriptionBoxValidator) {
 
         const payload = {
             channel,
-            id,
+            packageId,
             name,
             boxType,
             boxTypeCode,

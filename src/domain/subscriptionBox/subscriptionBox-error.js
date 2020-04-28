@@ -1,6 +1,6 @@
 const typeErrors = Object.freeze({
     channel: new Error('SubscriptionBox object must have channel property as string'),
-    id: new Error('SubscriptionBox object has invalid type at property: id'),
+    packageId: new Error('SubscriptionBox object has invalid type at property: packageId'),
     name: new Error('SubscriptionBox object must have name property as string'),
     boxType: new Error('SubscriptionBox object must have boxType property as string'),
     boxTypeCode: new Error('SubscriptionBox object must have boxTypeCode property as string'),
