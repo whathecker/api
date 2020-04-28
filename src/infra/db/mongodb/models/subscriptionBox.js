@@ -1,29 +1,6 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
+const mongoose = require('../connection');
 
 const Schema = mongoose.Schema;
-
-let subscriptionBoxSchema = new Schema({
-    channel: { 
-        type: String, 
-        uppercase: true, 
-        enum: ['EU'], 
-        default: 'EU' 
-    },
-    id: { 
-        type: String, 
-        required: true, 
-        unique: true, 
-        index: true 
-    },
-    name: { type: String, required: true },
-    boxType: { type: String, required: true },
-    boxTypeCode: { type: String, required: true },
-    items: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
-    prices: [pricesSchema],
-    creationDate: { type: Date, default: Date.now },
-    lastModified: { type: Date, default: Date.now }
-});
 
 let pricesSchema = new Schema({
     region: { 
@@ -43,7 +20,22 @@ let pricesSchema = new Schema({
     netPrice: { type: String, default: "0.00" }
 }, { _id: false });
 
-subscriptionBoxSchema.plugin(uniqueValidator);
+let subscriptionBoxSchema = new Schema({
+    channel: { 
+        type: String, 
+        uppercase: true, 
+        enum: ['EU'], 
+        default: 'EU' 
+    },
+    packageId: { type: String, required: true },
+    name: { type: String, required: true },
+    boxType: { type: String, required: true },
+    boxTypeCode: { type: String, required: true },
+    items: [String],
+    prices: [pricesSchema],
+    creationDate: { type: Date, default: Date.now },
+    lastModified: { type: Date, default: Date.now }
+});
 
 const SubscriptionBox = mongoose.model('SubscriptionBox', subscriptionBoxSchema);
 
