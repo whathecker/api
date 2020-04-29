@@ -46,6 +46,10 @@ describe('Test database access layer of address object', () => {
         _address_id_holder[1] = address2._id;
     });
 
+    afterAll(async () => {
+        await addressDB.dropAll();
+    });
+
     test('find a address by id', async () => {
         const address_id = _address_id_holder[1];
 

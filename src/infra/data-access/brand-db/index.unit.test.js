@@ -29,6 +29,10 @@ describe('Test database access layer of brand object', () => {
         _brand_id_holder[1] = brand2._id;
     });
 
+    afterAll(async () => {
+        await brandDB.dropAll();
+    });
+
     test('list all brands', async () => {
         const brands = await brandDB.listBrands();
 

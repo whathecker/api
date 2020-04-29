@@ -29,6 +29,10 @@ describe('Test database access layer of skinType object', () => {
         _skinType_id_holder[1] = skinType2._id;
     });
 
+    afterAll(async () => {
+        await skinTypeDB.dropAll();
+    });
+
     test('list all skin types', async () => {
         const skinTypes = await skinTypeDB.listSkinTypes();
 

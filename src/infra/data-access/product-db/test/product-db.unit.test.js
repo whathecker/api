@@ -21,6 +21,10 @@ describe('Test database layer of product object', () => {
         _productId_holder[2] = product3.productId;
     });
 
+    afterAll(async () => {
+        await productDB.dropAll();
+    });
+
     test('list all products', async () => {
         const products = await productDB.listProducts();
         expect(products).toHaveLength(3);

@@ -27,6 +27,10 @@ describe('Test database access layer of category object', () => {
         _category_id_holder[1] = category2._id;
     });
 
+    afterAll(async () => {
+        await categoryDB.dropAll();
+    });
+
     test('list all categories', async () => {
         const categories = await categoryDB.listCategories();
 
