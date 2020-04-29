@@ -6,6 +6,10 @@ const listSubscriptionBoxes = () => {
 
 };
 
+const addSubscriptionBox = () => {
+
+};
+
 const findSubscriptionBoxByPackageId = () => {
 
 };
@@ -20,6 +24,7 @@ const dropAll = () => {
 
 module.exports = {
     listSubscriptionBoxes,
+    addSubscriptionBox,
     findSubscriptionBoxByPackageId,
     deleteSubscriptionBoxByPackageId,
     dropAll
