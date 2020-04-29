@@ -2,7 +2,7 @@ const BillingFactory = require('./factory');
 
 let buildCreateBillingObj = function(billingValidator) {
     return ({
-        user,
+        user_id,
         type,
         recurringDetail,
         billingId,
@@ -12,7 +12,7 @@ let buildCreateBillingObj = function(billingValidator) {
     } = {}) => {
 
         const payload = {
-            user,
+            user_id,
             type,
             recurringDetail,
             billingId,

@@ -1,5 +1,5 @@
 const typeErrors = Object.freeze({
-    user: new Error('Billing object must have user property as string'),
+    user_id: new Error('Billing object must have user_id property as string'),
     type: new Error('Billing object must have type property as string'),
     recurringDetail: new Error('Billing object has invalid type at property: recurringDetail'),
     billingId: new Error('Billing object must have billingId property as string'),

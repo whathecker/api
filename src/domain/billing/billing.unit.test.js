@@ -5,7 +5,7 @@ const validator = require('../_shared/validator')(billingSchema);
 const createBillingObj = buildCreateBillingObj(validator);
 
 const dummyData = {
-    user: "some key",
+    user_id: "some key",
     type: "mastercard",
     recurringDetail: undefined,
     billingId: "pm_1FFGmfAwZopNuXPMgSYvNPDs",
@@ -33,7 +33,7 @@ describe('Make Billing object', () => {
 
         const billing = createBillingObj(payload);
 
-        expect(billing.user).toBe(payload.user);
+        expect(billing.user_id).toBe(payload.user_id);
         expect(billing.type).toBe(payload.type);
         expect(billing.billingId).toBe(payload.billingId);
 
@@ -51,7 +51,7 @@ describe('Make Billing object', () => {
 
         const billing = createBillingObj(payload);
 
-        expect(billing.user).toBe(payload.user);
+        expect(billing.user_id).toBe(payload.user_id);
         expect(billing.type).toBe(payload.type);
         expect(billing.billingId).toBe(payload.billingId);
         expect(billing.creationDate).toBe(payload.creationDate);
@@ -67,7 +67,7 @@ describe('Make Billing object', () => {
 
         const billing = createBillingObj(payload);
 
-        expect(billing.user).toBe(payload.user);
+        expect(billing.user_id).toBe(payload.user_id);
         expect(billing.type).toBe(payload.type);
         expect(billing.billingId).toBe(payload.billingId);
         expect(billing.creationDate).toBe(payload.creationDate);
@@ -92,22 +92,22 @@ describe('Type checking: billing object', () => {
 
     test('billing object must have a user property', () => {
         let payload = copyObj(dummyData);
-        delete payload.user;
+        delete payload.user_id;
         
         const billing = createBillingObj(payload);
 
         expect(billing instanceof Error).toBe(true);
-        expect(billing.message).toBe(errors.typeErrors.user.message);
+        expect(billing.message).toBe(errors.typeErrors.user_id.message);
     });
 
     test('user property must be string', () => {
         let payload = copyObj(dummyData);
-        payload.user = 0;
+        payload.user_id = 0;
 
         const billing = createBillingObj(payload);
 
         expect(billing instanceof Error).toBe(true);
-        expect(billing.message).toBe(errors.typeErrors.user.message);
+        expect(billing.message).toBe(errors.typeErrors.user_id.message);
     });
 
     test('billing object must have a type property', () => {

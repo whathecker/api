@@ -8,7 +8,7 @@ const enum_token_refund_status = Object.freeze({
 
 class BillingFactory {
     constructor({
-        user,
+        user_id,
         type,
         recurringDetail,
         billingId,
@@ -29,7 +29,7 @@ class BillingFactory {
         
 
         const payload = {
-            user,
+            user_id,
             type,
             recurringDetail,
             billingId,
@@ -56,7 +56,7 @@ class BillingFactory {
 
 class Billing {
     constructor({
-        user,
+        user_id,
         type,
         recurringDetail,
         billingId,
@@ -64,7 +64,7 @@ class Billing {
         creationDate,
         lastModified
     } = {}) {
-        this.user = user;
+        this.user_id = user_id;
         this.type = type;
         this.billingId = billingId;
 

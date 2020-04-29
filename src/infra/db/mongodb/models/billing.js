@@ -1,17 +1,12 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
+const mongoose = require('../connection');
 
 const Schema = mongoose.Schema;
 
 let billingSchema =  new Schema({
-    user: { 
-        type: Schema.Types.ObjectId, 
-        ref: 'User', 
-        required: true 
-    },
+    user_id: { type: String, required: true },
     type: { type: String, required: true },
     recurringDetail: { type: String, default: '' },
-    billingId: { type: String, unique: true },
+    billingId: { type: String },
     /** 
      * tokenRefundStatus is status to represent
      * if amount being processed to create payment token has refunded or not.
@@ -25,8 +20,6 @@ let billingSchema =  new Schema({
     creationDate: { type: Date, default: Date.now },
     lastModified: { type: Date, default: Date.now }
 });
-
-billingSchema.plugin(uniqueValidator);
 
 const Billing = mongoose.model('Billing', billingSchema);
 
