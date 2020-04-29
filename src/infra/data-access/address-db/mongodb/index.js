@@ -1,5 +1,5 @@
 const Address = require('../../../db/mongodb/models/address');
-const serializer = require('../mongodb/serializer');
+const serializer = require('./serializer');
 const createAddressObj = require('../../../../domain/address');
 
 const listAddressesByUserId = async (user_id) => {

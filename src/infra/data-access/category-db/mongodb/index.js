@@ -1,5 +1,5 @@
 const Category = require('../../../db/mongodb/models/category');
-const serializer = require('../mongodb/serializer');
+const serializer = require('./serializer');
 const createCategoryObj = require('../../../../domain/category');
 
 const listCategories = async () => {

@@ -6,12 +6,12 @@ let brandSchema = new Schema({
     brandName: { 
         type: String, 
         required: true, 
-        unique: true 
+        //unique: true 
     },
     brandCode: { 
         type: String, 
         require: true, 
-        unique: true, 
+        //unique: true, 
         uppercase: true 
     }
 });

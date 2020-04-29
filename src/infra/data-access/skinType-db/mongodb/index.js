@@ -1,5 +1,5 @@
 const SkinType = require('../../../db/mongodb/models/skinType');
-const serializer = require('../mongodb/serializer');
+const serializer = require('./serializer');
 const createSkinTypeObj = require('../../../../domain/skinType');
 
 const listSkinTypes = async () => {

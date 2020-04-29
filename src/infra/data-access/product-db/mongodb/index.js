@@ -1,5 +1,5 @@
 const Product = require('../../../db/mongodb/models/product');
-const serializer = require('../mongodb/serializer');
+const serializer = require('./serializer');
 const createProductObj = require('../../../../domain/product');
 
 const listProducts = async () => {

@@ -21,7 +21,12 @@ let inventorySchema = new Schema({
 
 let productSchema = new Schema({
     channel: { type: String, uppercase: true, enum: ['EU'], default: 'EU' },
-    id: { type: String, required: true, unique: true, index: true },
+    id: { 
+        type: String, 
+        required: true, 
+        //unique: true, 
+        //index: true 
+    },
     name: { type: String, required: true },
     description: { type: String, required: true },
     category: { type: String, required: true },

@@ -17,7 +17,12 @@ let pricesSchema = new Schema({
 
 let subscriptionBoxSchema = new Schema({
     channel: { type: String, uppercase: true, enum: ['EU'], default: 'EU' },
-    id: { type: String, required: true, unique: true, index: true },
+    id: { 
+        type: String, 
+        required: true, 
+        //unique: true, 
+        index: true 
+    },
     name: { type: String, required: true },
     boxType: { type: String, required: true },
     boxTypeCode: { type: String, required: true },

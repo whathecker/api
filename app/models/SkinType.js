@@ -6,10 +6,15 @@ let skinTypeSchema = new Schema({
         type: String, 
         required: true, 
         lowercase: true, 
-        unique: true,
+        //unique: true,
         enum: ['dry', 'normal', 'oily'] 
     },
-    skinTypeCode: { type: String, required: true , uppercase: true ,unique: true }
+    skinTypeCode: { 
+        type: String, 
+        required: true , 
+        uppercase: true ,
+        //unique: true 
+    }
 });
 
 const SkinType = mongoose.model('SkinType', skinTypeSchema);

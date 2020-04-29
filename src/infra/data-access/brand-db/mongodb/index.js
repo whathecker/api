@@ -1,5 +1,5 @@
 const Brand = require('../../../db/mongodb/models/brand');
-const serializer = require('../mongodb/serializer');
+const serializer = require('./serializer');
 const createBrandObj = require('../../../../domain/brand');
 
 const listBrands = async () => {

@@ -1,5 +1,5 @@
 const productDB = require('../index');
-let mockProducts = require('./mock_products');
+let mockProducts = require('./_mock_products');
 
 describe('Test database layer of product object', () => {
 
