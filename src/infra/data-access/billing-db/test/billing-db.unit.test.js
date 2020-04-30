@@ -34,7 +34,7 @@ describe('Test database access layer of billing object', () => {
         const id = _billingId_holder[0];
 
         const billing = await billingDB.findBillingByBillingId(id);
-        const {_id, ...rest} = billing;
+        const {_id, recurringDetail, ...rest} = billing;
 
         expect(rest).toEqual(mockBillings[0]);
     });
@@ -50,7 +50,7 @@ describe('Test database access layer of billing object', () => {
         };
 
         const newBilling = await billingDB.addBilling(payload);
-        const {_id, ...rest} = newBilling;
+        const {_id, recurringDetail, ...rest} = newBilling;
 
         expect(rest).toEqual(payload);
     });
