@@ -1,7 +1,7 @@
 const productDB = require('../index');
 let mockProducts = require('./_mock');
 
-describe('Test database layer of product object', () => {
+describe('Test database access layer of product object', () => {
 
     const _productId_holder = {
         0: null,
