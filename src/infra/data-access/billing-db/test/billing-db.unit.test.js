@@ -44,7 +44,6 @@ describe('Test database access layer of billing object', () => {
             user_id: "2",
             type: "visa",
             billingId: "pm_12378",
-            recurringDetail: "",
             tokenRefundStatus: "NOT_REQUIRED",
             creationDate: new Date('December 17, 1997 03:24:00'),
             lastModified: new Date('December 17, 1999 03:24:00')

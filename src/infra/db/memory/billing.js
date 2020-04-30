@@ -4,7 +4,7 @@ const billings = [
         user_id: "1",
         type: "visa",
         billingId: "pm_12345",
-        recurringDetail: "",
+        recurringDetail: "0",
         tokenRefundStatus: "NOT_REQUIRED",
         creationDate: new Date('December 17, 1998 03:24:00'),
         lastModified: new Date('December 17, 1999 03:24:00')
@@ -14,7 +14,7 @@ const billings = [
         user_id: "1",
         type: "visa",
         billingId: "pm_12350",
-        recurringDetail: "",
+        recurringDetail: "1",
         tokenRefundStatus: "NOT_REQUIRED",
         creationDate: new Date('December 17, 1998 03:24:00'),
         lastModified: new Date('December 17, 1999 03:24:00')
@@ -24,7 +24,7 @@ const billings = [
         user_id: "2",
         type: "visa",
         billingId: "pm_12355",
-        recurringDetail: "",
+        recurringDetail: "1",
         tokenRefundStatus: "NOT_REQUIRED",
         creationDate: new Date('December 17, 1997 03:24:00'),
         lastModified: new Date('December 17, 1999 03:24:00')
