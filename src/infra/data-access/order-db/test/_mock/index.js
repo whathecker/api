@@ -2,6 +2,7 @@ const mockOrders = [
     {
         country: "NL",
         user_id: "1",
+        /*
         billingAddress: {
             firstName: "Yunsoo",
             lastName: "Oh",
@@ -19,7 +20,7 @@ const mockOrders = [
             houseNumber: "100",
             streetName: "Randomstraat",
             country: "The Netherlands"
-        },
+        }, */
         isSubscription: true,
         orderStatus: {
             status: "RECEIVED",
@@ -185,8 +186,9 @@ const mockOrders = [
                 sumOfNetPrice: "20.62",
                 sumOfVat: "4.33",
                 sumOfDiscount: "0.00"
-    
             }
         ]
     },
 ];
+
+module.exports = mockOrders;

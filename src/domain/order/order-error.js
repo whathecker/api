@@ -46,7 +46,7 @@ const typeErrors = Object.freeze({
 
     creationDate: new Error('Order object has invalid type at property: creationDate'),
     deliverySchedule: new Error('Order object has invalid type at property: deliverySchedule'),
-    isShipped: new Error('Order object has invalid type at property: isShipped'),
+    isShipped: new Error('Order object must have isShipped property as Boolean'),
     shippedDate: new Error('Order object has invalid type at property: shippedDate'),
     courier: new Error('Order object has invalid type at property: courier'),
     trackingNumber: new Error('Order object has invalid type at property: trackingNumber'),

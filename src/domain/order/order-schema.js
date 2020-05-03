@@ -56,7 +56,7 @@ module.exports = Joi.object({
     creationDate: Joi.date().error(errors.typeErrors.creationDate),
     lastModified: Joi.date().error(errors.typeErrors.lastModified),
     deliverySchedule: Joi.date().error(errors.typeErrors.deliverySchedule),
-    isShipped: Joi.boolean().error(errors.typeErrors.isShipped),
+    isShipped: Joi.boolean().required().error(errors.typeErrors.isShipped),
     courier: Joi.string().error(errors.typeErrors.courier),
     trackingNumber: Joi.array().items(
         Joi.string().error(errors.typeErrors.item_in_trackingNumber)

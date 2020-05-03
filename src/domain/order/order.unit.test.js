@@ -173,7 +173,6 @@ describe('Make order object', () => {
         delete payload.isSubscription;
         delete payload.creationDate;
         delete payload.lastModified;
-        delete payload.isShipped;
         delete payload.courier;
         delete payload.trackingNumber;
         delete payload.isConfEmailDelivered;

@@ -1,6 +1,7 @@
 const orderDB = require('../index');
 let mockOrders = require('./_mock');
 
+
 describe('Test database access layer of order object', () => {
 
     const _orderNumber_holder = {
@@ -10,7 +11,7 @@ describe('Test database access layer of order object', () => {
 
     beforeEach(async () => {
         await orderDB.dropAll();
-
+        
         const order = await orderDB.addOrder(mockOrders[0]);
         const order2 = await orderDB.addOrder(mockOrders[1]);
 
@@ -28,10 +29,11 @@ describe('Test database access layer of order object', () => {
     });
 
     test('find order by orderNumber', async () => {
-        const orderNumber = _orderNumber_holder[0];
+        const orderNum = _orderNumber_holder[0];
 
-        const order = await orderDB.findOrderByOrderNumber(orderNumber);
-        const {_id, ...rest} = order;
+        const order = await orderDB.findOrderByOrderNumber(orderNum);
+        console.log(order);
+        const {_id, orderNumber, ...rest} = order;
 
         expect(rest).toEqual(mockOrders[0]);
     });
@@ -40,6 +42,7 @@ describe('Test database access layer of order object', () => {
         const payload = {
             country: "NL",
             user_id: "2",
+            /*
             billingAddress: {
                 firstName: "Yunjung",
                 lastName: "Oh",
@@ -57,7 +60,7 @@ describe('Test database access layer of order object', () => {
                 houseNumber: "100",
                 streetName: "Randomstraat",
                 country: "The Netherlands"
-            },
+            }, */
             isSubscription: true,
             orderStatus: {
                 status: "RECEIVED",
@@ -134,19 +137,19 @@ describe('Test database access layer of order object', () => {
         };
 
         const newOrder = await orderDB.addOrder(payload);
-        const {_id, ...rest} = newOrder;
+        const {_id, orderNumber, ...rest} = newOrder;
 
         expect(rest).toEqual(payload);
     });
 
     test('delete a order by orderNumber', async () => {
-        const orderNumber = _orderNumber_holder[1];
+        const orderNum = _orderNumber_holder[1];
 
-        const result = await orderDB.deleteOrderByOrderNumber(orderNumber);
+        const result = await orderDB.deleteOrderByOrderNumber(orderNum);
         const orders = await orderDB.listOrders();
 
         expect(result.status).toBe('success');
-        expect(result.orderNumber).toEqual(orderNumber);
+        expect(result.orderNumber).toEqual(orderNum);
         expect(orders).toHaveLength(1);
     });
 

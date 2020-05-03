@@ -82,29 +82,35 @@ class OrderFactory extends OrderBaseFactory{
             return OrderFactory.returnValidationErrorFromOrderAmountPerItem(result_orderAmountPerItem.error);
         }
 
-        const result_shippedAmountPerItem = OrderFactory.validateAmountPerItem(shippedAmountPerItem);
-
-        if (!result_shippedAmountPerItem.success) {
-            return OrderFactory.returnValidationErrorFromShippedAmountPerItem(result_shippedAmountPerItem.error);
-        }
-
         const result_orderAmount = OrderFactory.validateTotalAmount(orderAmount);
 
         if (!result_orderAmount.success) {
             return OrderFactory.returnValidationErrorFromOrderAmount(result_orderAmount.error);
         }
 
-        const result_shippedAmount = OrderFactory.validateTotalAmount(shippedAmount);
 
-        if (!result_shippedAmount.success) {
-            return OrderFactory.returnValidationErrorFromShippedAmount(result_shippedAmount.error);
+
+        if (shippedAmountPerItem) {
+            const result_shippedAmountPerItem = OrderFactory.validateAmountPerItem(shippedAmountPerItem);
+
+            if (!result_shippedAmountPerItem.success) {
+                return OrderFactory.returnValidationErrorFromShippedAmountPerItem(result_shippedAmountPerItem.error);
+            }
         }
 
+        if (shippedAmount) {
+            const result_shippedAmount = OrderFactory.validateTotalAmount(shippedAmount);
+
+            if (!result_shippedAmount.success) {
+                return OrderFactory.returnValidationErrorFromShippedAmount(result_shippedAmount.error);
+            }
+        }
+        
         if (!orderNumber) {
             const payload = {
                 envVar: process.env.NODE_ENV,
                 country: country
-            }
+            };
             orderNumber = OrderFactory.createOrderNumber(payload);
         }
 
@@ -439,14 +445,14 @@ class Order {
         this.paymentHistory = paymentHistory;
         this.orderAmountPerItem = orderAmountPerItem;
         this.orderAmount = orderAmount;
-        this.shippedAmountPerItem = shippedAmountPerItem;
-        this.shippedAmount = shippedAmount;
+        this.isShipped = isShipped;
 
+        (shippedAmountPerItem)? this.shippedAmountPerItem = shippedAmountPerItem : null;
+        (shippedAmount)? this.shippedAmount = shippedAmount : null;
         (invoiceNumber)? this.invoiceNumber = invoiceNumber : null;
         (isSubscription)? this.isSubscription = isSubscription : null;
         (creationDate)? this.creationDate = creationDate : null;
         (deliverySchedule)? this.deliverySchedule = deliverySchedule : null;
-        (isShipped)? this.isShipped = isShipped : null;
         (shippedDate)? this.shippedDate = shippedDate : null;
         (courier)? this.courier = courier : null;
         (trackingNumber)? this.trackingNumber = trackingNumber : null;
