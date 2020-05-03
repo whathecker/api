@@ -2,7 +2,6 @@ const mockOrders = [
     {
         country: "NL",
         user_id: "1",
-        /*
         billingAddress: {
             firstName: "Yunsoo",
             lastName: "Oh",
@@ -20,7 +19,7 @@ const mockOrders = [
             houseNumber: "100",
             streetName: "Randomstraat",
             country: "The Netherlands"
-        }, */
+        }, 
         isSubscription: true,
         orderStatus: {
             status: "RECEIVED",
@@ -98,24 +97,6 @@ const mockOrders = [
     {
         country: "NL",
         user_id: "1",
-        billingAddress: {
-            firstName: "Yunjae",
-            lastName: "Oh",
-            mobileNumber: "06151515",
-            postalCode: "1093TV",
-            houseNumber: "100",
-            streetName: "Randomstraat",
-            country: "The Netherlands"
-        },
-        shippingAddress: {
-            firstName: "Yunjae",
-            lastName: "Oh",
-            mobileNumber: "06151515",
-            postalCode: "1093TV",
-            houseNumber: "100",
-            streetName: "Randomstraat",
-            country: "The Netherlands"
-        },
         isSubscription: true,
         orderStatus: {
             status: "RECEIVED",

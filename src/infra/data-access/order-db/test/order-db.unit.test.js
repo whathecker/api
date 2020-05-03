@@ -42,7 +42,7 @@ describe('Test database access layer of order object', () => {
         const payload = {
             country: "NL",
             user_id: "2",
-            /*
+            
             billingAddress: {
                 firstName: "Yunjung",
                 lastName: "Oh",
@@ -60,7 +60,7 @@ describe('Test database access layer of order object', () => {
                 houseNumber: "100",
                 streetName: "Randomstraat",
                 country: "The Netherlands"
-            }, */
+            }, 
             isSubscription: true,
             orderStatus: {
                 status: "RECEIVED",
