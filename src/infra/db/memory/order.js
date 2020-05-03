@@ -11,6 +11,7 @@ const orders = [
             mobileNumber: "06151515",
             postalCode: "1093TV",
             houseNumber: "100",
+            houseNumberAdd: " ",
             streetName: "Randomstraat",
             country: "The Netherlands"
         },
@@ -20,6 +21,7 @@ const orders = [
             mobileNumber: "06151515",
             postalCode: "1093TV",
             houseNumber: "100",
+            houseNumberAdd: " ",
             streetName: "Randomstraat",
             country: "The Netherlands"
         },
@@ -159,6 +161,7 @@ const orders = [
             mobileNumber: "06151515",
             postalCode: "1093TV",
             houseNumber: "100",
+            houseNumberAdd: " ",
             streetName: "Randomstraat",
             country: "The Netherlands"
         },
@@ -168,6 +171,7 @@ const orders = [
             mobileNumber: "06151515",
             postalCode: "1093TV",
             houseNumber: "100",
+            houseNumberAdd: " ",
             streetName: "Randomstraat",
             country: "The Netherlands"
         },

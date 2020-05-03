@@ -32,8 +32,23 @@ describe('Test database access layer of order object', () => {
         const orderNum = _orderNumber_holder[0];
 
         const order = await orderDB.findOrderByOrderNumber(orderNum);
-        console.log(order);
-        const {_id, orderNumber, ...rest} = order;
+        
+        delete mockOrders[0].creationDate;
+        delete mockOrders[0].lastModified;
+
+        const { 
+            _id, 
+            orderNumber, 
+            shippedDate,
+            trackingNumber,
+            shippedAmount,
+            courier,
+            deliveredDate,
+            invoiceNumber, 
+            creationDate,
+            lastModified,
+            ...rest
+        } = order;
 
         expect(rest).toEqual(mockOrders[0]);
     });
@@ -49,6 +64,7 @@ describe('Test database access layer of order object', () => {
                 mobileNumber: "06151515",
                 postalCode: "1093TV",
                 houseNumber: "100",
+                houseNumberAdd: " ",
                 streetName: "Randomstraat",
                 country: "The Netherlands"
             },
@@ -58,6 +74,7 @@ describe('Test database access layer of order object', () => {
                 mobileNumber: "06151515",
                 postalCode: "1093TV",
                 houseNumber: "100",
+                houseNumberAdd: " ",
                 streetName: "Randomstraat",
                 country: "The Netherlands"
             }, 
@@ -137,7 +154,23 @@ describe('Test database access layer of order object', () => {
         };
 
         const newOrder = await orderDB.addOrder(payload);
-        const {_id, orderNumber, ...rest} = newOrder;
+
+        delete payload.creationDate;
+        delete payload.lastModified;
+
+        const { 
+            _id, 
+            orderNumber, 
+            shippedDate,
+            trackingNumber,
+            shippedAmount,
+            courier,
+            deliveredDate,
+            invoiceNumber, 
+            creationDate,
+            lastModified,
+            ...rest
+        } = newOrder;
 
         expect(rest).toEqual(payload);
     });

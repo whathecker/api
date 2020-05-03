@@ -70,8 +70,8 @@ let orderSchema = new Schema({
     orderNumber: { 
         type: String, 
         required: [ true, "order number can't be blank" ], 
-        unique: true, 
-        index: true 
+        //unique: true, 
+        //index: true 
     },
     user: { 
         type: Schema.Types.ObjectId, 
@@ -101,7 +101,7 @@ let orderSchema = new Schema({
     shippedAmount: orderAmountSchema,
     invoiceNumber: { 
         type: String, 
-        unique: true
+        //unique: true
     }
 });
 
