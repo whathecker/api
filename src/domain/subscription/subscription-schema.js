@@ -10,8 +10,8 @@ module.exports = Joi.object({
     deliveryFrequency: Joi.number().required().error(errors.typeErrors.deliveryFrequency),
     deliveryDay: Joi.number().required().error(errors.typeErrors.deliveryDay),
     isWelcomeEmailSent: Joi.boolean().required().error(errors.typeErrors.isWelcomeEmailSent),
-    user: Joi.string().required().error(errors.typeErrors.user),
-    paymentMethod: Joi.string().required().error(errors.typeErrors.paymentMethod),
+    user_id: Joi.string().required().error(errors.typeErrors.user_id),
+    paymentMethod_id: Joi.string().required().error(errors.typeErrors.paymentMethod_id),
     isActive: Joi.boolean().required().error(errors.typeErrors.isActive),
     orders: Joi.array().error(errors.typeErrors.orders),
     subscribedItems: Joi.array().items(

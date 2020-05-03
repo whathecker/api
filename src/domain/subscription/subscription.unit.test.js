@@ -27,8 +27,8 @@ const dummyData = {
         },
     ],
     subscriptionId: "ECSBNL1272839153",
-    user: "user_id",
-    paymentMethod: "billing_id",
+    user_id: "user_id",
+    paymentMethod_id: "billing_id",
     endDate: new Date('December 17, 1996 03:24:00'),
     creationDate: new Date('December 14, 1995 03:24:00'),
     lastModified: new Date('December 24, 1995 03:24:00'),
@@ -59,8 +59,8 @@ describe('Make Subscription object', () => {
         expect(subscription.isActive).toBe(payload.isActive);
         expect(subscription.deliverySchedules).toBe(payload.deliverySchedules);
         expect(subscription.subscribedItems).toBe(payload.subscribedItems);
-        expect(subscription.user).toBe(payload.user);
-        expect(subscription.paymentMethod).toBe(payload.paymentMethod);
+        expect(subscription.user_id).toBe(payload.user_id);
+        expect(subscription.paymentMethod_id).toBe(payload.paymentMethod_id);
 
         expect(subscription.subscriptionId).not.toBe(originalSubscriptionId);
         expect(subscription.endDate).not.toBe(originalEndDate);
@@ -79,8 +79,8 @@ describe('Make Subscription object', () => {
         expect(subscription.isActive).toBe(payload.isActive);
         expect(subscription.deliverySchedules).toBe(payload.deliverySchedules);
         expect(subscription.subscribedItems).toBe(payload.subscribedItems);
-        expect(subscription.user).toBe(payload.user);
-        expect(subscription.paymentMethod).toBe(payload.paymentMethod);
+        expect(subscription.user_id).toBe(payload.user_id);
+        expect(subscription.paymentMethod_id).toBe(payload.paymentMethod_id);
 
         expect(subscription.subscriptionId).toBe(payload.subscriptionId);
         expect(subscription.endDate).toBe(payload.endDate);
@@ -261,44 +261,44 @@ describe('Type checking: subscription object', () => {
         expect(subscription.message).toBe(errors.typeErrors.isWelcomeEmailSent.message);
     });
 
-    test('Subscription object must have a user property', () => {
+    test('Subscription object must have a user_id property', () => {
         let payload = copyObj(dummyData);
-        delete payload.user;
+        delete payload.user_id;
 
         const subscription = createSubscriptionObj(payload);
 
         expect(subscription instanceof Error).toBe(true);
-        expect(subscription.message).toBe(errors.typeErrors.user.message);
+        expect(subscription.message).toBe(errors.typeErrors.user_id.message);
     });
 
-    test('user property must be string', () => {
+    test('user_id property must be string', () => {
         let payload = copyObj(dummyData);
-        payload.user = true;
+        payload.user_id = true;
 
         const subscription = createSubscriptionObj(payload);
 
         expect(subscription instanceof Error).toBe(true);
-        expect(subscription.message).toBe(errors.typeErrors.user.message);
+        expect(subscription.message).toBe(errors.typeErrors.user_id.message);
     });
 
-    test('Subscription object must have a paymentMethod property', () => {
+    test('Subscription object must have a paymentMethod_id property', () => {
         let payload = copyObj(dummyData);
-        delete payload.paymentMethod;
+        delete payload.paymentMethod_id;
 
         const subscription = createSubscriptionObj(payload);
 
         expect(subscription instanceof Error).toBe(true);
-        expect(subscription.message).toBe(errors.typeErrors.paymentMethod.message);
+        expect(subscription.message).toBe(errors.typeErrors.paymentMethod_id.message);
     });
 
-    test('paymentMethod property must be string', () => {
+    test('paymentMethod_id property must be string', () => {
         let payload = copyObj(dummyData);
-        payload.paymentMethod = true;
+        payload.paymentMethod_id = true;
 
         const subscription = createSubscriptionObj(payload);
 
         expect(subscription instanceof Error).toBe(true);
-        expect(subscription.message).toBe(errors.typeErrors.paymentMethod.message);
+        expect(subscription.message).toBe(errors.typeErrors.paymentMethod_id.message);
     });
 
     test('Subscription object must have a isActive property', () => {

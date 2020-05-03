@@ -17,8 +17,8 @@ class SubscriptionFactory extends OrderBaseFactory {
         deliverySchedules,
         subscribedItems,
         subscriptionId,
-        user,
-        paymentMethod,
+        user_id,
+        paymentMethod_id,
         endDate,
         creationDate,
         lastModified
@@ -72,8 +72,8 @@ class SubscriptionFactory extends OrderBaseFactory {
             deliverySchedules,
             subscribedItems,
             subscriptionId,
-            user,
-            paymentMethod,
+            user_id,
+            paymentMethod_id,
             endDate,
             creationDate,
             lastModified
@@ -170,8 +170,8 @@ class Subscription {
         deliverySchedules,
         subscribedItems,
         subscriptionId,
-        user,
-        paymentMethod,
+        user_id,
+        paymentMethod_id,
         endDate,
         creationDate,
         lastModified
@@ -182,8 +182,8 @@ class Subscription {
         this.deliveryDay = deliveryDay;
         this.isWelcomeEmailSent = isWelcomeEmailSent;
         this.isActive = isActive;
-        this.user = user;
-        this.paymentMethod = paymentMethod;
+        this.user_id = user_id;
+        this.paymentMethod_id = paymentMethod_id;
         this.subscriptionId = subscriptionId;
         this.subscribedItems = subscribedItems;
         this.deliverySchedules = deliverySchedules;
