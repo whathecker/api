@@ -1,7 +1,7 @@
 const typeErrors = Object.freeze({
     country: new Error('Order object must have country as string'),
     orderNumber: new Error('Order object has invalid type at property: orderNumber'),
-    user: new Error('Order object must have user property as string'),
+    user_id: new Error('Order object must have user_id property as string'),
     isSubscription: new Error('Order object has invalid type at property: isSubscription'),
     
     billingAddress: new Error('Order object must have billingAddress property as object'),

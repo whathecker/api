@@ -4,7 +4,7 @@ const errors = require('./order-error');
 module.exports = Joi.object({
     country: Joi.string().required().error(errors.typeErrors.country),
     orderNumber: Joi.string().error(errors.typeErrors.orderNumber),
-    user: Joi.string().required().error(errors.typeErrors.user),
+    user_id: Joi.string().required().error(errors.typeErrors.user_id),
     billingAddress: Joi.object({
         firstName: Joi.string().required().error(errors.typeErrors.firstName_in_billing_address),
         lastName: Joi.string().required().error(errors.typeErrors.lastName_in_billing_address),

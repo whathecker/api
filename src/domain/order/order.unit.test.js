@@ -7,7 +7,7 @@ const createOrderObj = buildCreateOrderObj(validator);
 const dummyData = {
     country: "NL",
     orderNumber: "ECNL8092517600",
-    user: "user_id",
+    user_id: "user_id",
     invoiceNumber: "0805081926636",
     billingAddress: {
         firstName: "Yunjae",
@@ -183,7 +183,7 @@ describe('Make order object', () => {
         const order = createOrderObj(payload);
 
         expect(order.country).toBe(payload.country);
-        expect(order.user).toBe(payload.user);
+        expect(order.user_id).toBe(payload.user_id);
         expect(order.isSubscription).toBe(payload.isSubscription);
         expect(order.orderStatus).toBe(payload.orderStatus);
         expect(order.orderStatusHistory).toBe(payload.orderStatusHistory);
@@ -209,7 +209,7 @@ describe('Make order object', () => {
         const order = createOrderObj(payload);
 
         expect(order.country).toBe(payload.country);
-        expect(order.user).toBe(payload.user);
+        expect(order.user_id).toBe(payload.user_id);
         expect(order.isSubscription).toBe(payload.isSubscription);
         
         expect(order.orderStatus).toBe(payload.orderStatus);
@@ -520,22 +520,22 @@ describe('Type checking: order object', () => {
 
     test('order object must have a user property', () => {
         let payload = copyObj(dummyData);
-        delete payload.user;
+        delete payload.user_id;
 
         const order = createOrderObj(payload);
 
         expect(order instanceof Error).toBe(true);
-        expect(order.message).toBe(errors.typeErrors.user.message);
+        expect(order.message).toBe(errors.typeErrors.user_id.message);
     });
 
     test('user property must be string', () => {
         let payload = copyObj(dummyData);
-        payload.user = 0;
+        payload.user_id = 0;
 
         const order = createOrderObj(payload);
 
         expect(order instanceof Error).toBe(true);
-        expect(order.message).toBe(errors.typeErrors.user.message);
+        expect(order.message).toBe(errors.typeErrors.user_id.message);
     });
 
     // type checking for billingAddress object

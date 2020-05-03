@@ -4,7 +4,7 @@ let buildCreateOrderObj = function(orderValidator) {
     return ({
         country,
         orderNumber,
-        user,
+        user_id,
         invoiceNumber,
         billingAddress,
         shippingAddress,
@@ -31,7 +31,7 @@ let buildCreateOrderObj = function(orderValidator) {
         const payload = {
             country,
             orderNumber,
-            user,
+            user_id,
             invoiceNumber,
             billingAddress,
             shippingAddress,

@@ -24,7 +24,7 @@ class OrderFactory extends OrderBaseFactory{
     constructor({
         country,
         orderNumber,
-        user,
+        user_id,
         invoiceNumber,
         isSubscription,
         orderStatus,
@@ -111,7 +111,7 @@ class OrderFactory extends OrderBaseFactory{
         const payload = {
             country,
             orderNumber,
-            user,
+            user_id,
             invoiceNumber,
             isSubscription,
             orderStatus,
@@ -407,7 +407,7 @@ class Order {
     constructor({
         country,
         orderNumber,
-        user,
+        user_id,
         invoiceNumber,
         isSubscription,
         orderStatus,
@@ -431,7 +431,7 @@ class Order {
 
         this.country = country;
         this.orderNumber = orderNumber;
-        this.user = user;
+        this.user_id = user_id;
         this.orderStatus = orderStatus;
         this.orderStatusHistory = orderStatusHistory;
         this.paymentMethod = paymentMethod;
