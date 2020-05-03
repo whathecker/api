@@ -23,6 +23,8 @@ const enum_payment_status = Object.freeze({
 class OrderFactory extends OrderBaseFactory{
     constructor({
         country,
+        billingAddress,
+        shippingAddress,
         orderNumber,
         user_id,
         invoiceNumber,
@@ -116,6 +118,8 @@ class OrderFactory extends OrderBaseFactory{
 
         const payload = {
             country,
+            billingAddress,
+            shippingAddress,
             orderNumber,
             user_id,
             invoiceNumber,
@@ -412,6 +416,8 @@ class OrderFactory extends OrderBaseFactory{
 class Order {
     constructor({
         country,
+        billingAddress,
+        shippingAddress,
         orderNumber,
         user_id,
         invoiceNumber,
@@ -447,6 +453,8 @@ class Order {
         this.orderAmount = orderAmount;
         this.isShipped = isShipped;
 
+        (billingAddress)? this.billingAddress = billingAddress : null;
+        (shippingAddress)? this.shippingAddress = shippingAddress : null;
         (shippedAmountPerItem)? this.shippedAmountPerItem = shippedAmountPerItem : null;
         (shippedAmount)? this.shippedAmount = shippedAmount : null;
         (invoiceNumber)? this.invoiceNumber = invoiceNumber : null;

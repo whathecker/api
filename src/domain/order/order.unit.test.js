@@ -209,6 +209,8 @@ describe('Make order object', () => {
 
         expect(order.country).toBe(payload.country);
         expect(order.user_id).toBe(payload.user_id);
+        expect(order.shippingAddress).toEqual(payload.shippingAddress);
+        expect(order.billingAddress).toEqual(payload.billingAddress);
         expect(order.isSubscription).toBe(payload.isSubscription);
         
         expect(order.orderStatus).toBe(payload.orderStatus);
