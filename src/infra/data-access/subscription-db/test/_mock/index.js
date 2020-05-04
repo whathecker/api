@@ -1,11 +1,11 @@
-const subscriptions = [
+const mockSubscriptions = [
     {
         country: "NL",
         channel: "EU",
         deliveryFrequency: 28,
         deliveryDay: 4,
         isWelcomeEmailSent: true,
-        orders: ["order_id_1", "order_id_2"],
+        orders: ["order_num_1", "order_num_2"],
         isActive: true,
         deliverySchedules: [{
             orderNumber: "ECNL8092517600",
@@ -21,10 +21,8 @@ const subscriptions = [
                 quantity: 1
             },
         ],
-        subscriptionId: "ECSBNL1272839153",
         user_id: "2",
         paymentMethod_id: "2",
-        endDate: new Date('December 17, 1996 03:24:00'),
         creationDate: new Date('December 14, 1995 03:24:00'),
         lastModified: new Date('December 24, 1995 03:24:00'),
     },
@@ -34,7 +32,7 @@ const subscriptions = [
         deliveryFrequency: 14,
         deliveryDay: 4,
         isWelcomeEmailSent: true,
-        orders: ["order_id_1", "order_id_2"],
+        orders: ["order_num_1", "order_num_2"],
         isActive: true,
         deliverySchedules: [{
             orderNumber: "ECNL8092517700",
@@ -50,7 +48,6 @@ const subscriptions = [
                 quantity: 1
             },
         ],
-        subscriptionId: "ECSBNL1272839150",
         user_id: "1",
         paymentMethod_id: "1",
         endDate: new Date('December 17, 1996 03:24:00'),
@@ -59,4 +56,4 @@ const subscriptions = [
     }
 ];
 
-module.exports = subscriptions;
+module.exports = mockSubscriptions;
