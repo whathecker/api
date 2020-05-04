@@ -31,7 +31,7 @@ describe('Test database access layer of subscription object', () => {
         const id = _subscriptionId_holder[0];
 
         const subscription = await subscriptionDB.findSubscriptionBySubscriptionId(id);
-        const {_id, subscriptionId, ...rest} = subscription;
+        const {_id, subscriptionId, endDate, ...rest} = subscription;
 
         expect(rest).toEqual(mockSubscriptions[0]);
     });
@@ -40,7 +40,7 @@ describe('Test database access layer of subscription object', () => {
         const user_id = "2";
 
         const subscriptions = await subscriptionDB.findSubscriptionByUserId(user_id);
-        const {_id, subscriptionId, ...rest} = subscriptions[0];
+        const {_id, subscriptionId, endDate, ...rest} = subscriptions[0];
 
         expect(subscriptions).toHaveLength(1);
         expect(rest).toEqual(mockSubscriptions[0]);
@@ -76,7 +76,7 @@ describe('Test database access layer of subscription object', () => {
         };
 
         const newSubscription = await subscriptionDB.addSubscription(payload);
-        const {_id, subscriptionId, ...rest} = newSubscription;
+        const {_id, subscriptionId, endDate, ...rest} = newSubscription;
 
         expect(rest).toEqual(payload);
     });
