@@ -10,6 +10,7 @@ const typeErrors = Object.freeze({
     item_in_addresses: new Error('User object has invalid type at property: item in addresses array'),
     defaultShippingAddress: new Error('User object has invalid type at property: defaultShippingAddress'),
     defaultBillingAddress: new Error('User object has invalid type at property: defaultBillingAddress'),
+    defaultBillingOption: new Error('User object has invalid type at property: defaultBillingOption'),
     item_in_billingOptions: new Error('User object has invalid type at property: item in billingOptions array'),
     item_in_subscriptions: new Error('User object has invalid type at property: item in subscriptions array'),
     item_in_orders: new Error('User object has invalid type at property: item in orders array'),

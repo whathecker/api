@@ -54,6 +54,7 @@ describe('Make User object', () => {
         const addresses = payload.addresses;
         const defaultBillingAddress = payload.defaultBillingAddress;
         const defaultShippingAddress = payload.defaultShippingAddress;
+        const defaultBillingOption = payload.defaultBillingOption;
         const billingOptions = payload.billingOptions;
         const subscriptions = payload.subscriptions;
         const orders = payload.orders;
@@ -69,6 +70,7 @@ describe('Make User object', () => {
         delete payload.addresses;
         delete payload.defaultBillingAddress;
         delete payload.defaultShippingAddress;
+        delete payload.defaultBillingOption;
         delete payload.billingOptions;
         delete payload.subscriptions;
         delete payload.orders;
@@ -91,6 +93,7 @@ describe('Make User object', () => {
         expect(user.addresses).not.toBe(addresses);
         expect(user.defaultBillingAddress).not.toBe(defaultBillingAddress);
         expect(user.defaultShippingAddress).not.toBe(defaultShippingAddress);
+        expect(user.defaultBillingOption).not.toBe(defaultBillingOption);
         expect(user.billingOptions).not.toBe(billingOptions);
         expect(user.subscriptions).not.toBe(subscriptions);
         expect(user.orders).not.toBe(orders);
@@ -117,6 +120,7 @@ describe('Make User object', () => {
         expect(user.addresses).toBe(payload.addresses);
         expect(user.defaultBillingAddress).toBe(payload.defaultBillingAddress);
         expect(user.defaultShippingAddress).toBe(payload.defaultShippingAddress);
+        expect(user.defaultBillingOption).toBe(payload.defaultBillingOption);
         expect(user.billingOptions).toBe(payload.billingOptions);
         expect(user.subscriptions).toBe(payload.subscriptions);
         expect(user.orders).toBe(payload.orders);
@@ -291,6 +295,16 @@ describe('Type checking: user object', () => {
         expect(user.message).toBe(errors.typeErrors.defaultBillingAddress.message);
     });
 
+    test('defaultBillingOption must be string if exist', () => {
+        let payload = copyObj(dummyData);
+        payload.defaultBillingOption = 0;
+
+        const user = createUserObj(payload);
+
+        expect(user instanceof Error).toBe(true);
+        expect(user.message).toBe(errors.typeErrors.defaultBillingOption.message);
+    });
+
     test('item in billingOptions array must be string if exist', () => {
         let payload = copyObj(dummyData);
         payload.billingOptions[0] = 0;
@@ -321,9 +335,9 @@ describe('Type checking: user object', () => {
         expect(user.message).toBe(errors.typeErrors.item_in_orders.message);
     });
 
-    test('creationDate must be string if exist', () => {
+    test('creationDate must be date if exist', () => {
         let payload = copyObj(dummyData);
-        payload.creationDate = 0;
+        payload.creationDate = "some date";
 
         const user = createUserObj(payload);
 
@@ -331,9 +345,9 @@ describe('Type checking: user object', () => {
         expect(user.message).toBe(errors.typeErrors.creationDate.message);
     });
 
-    test('lastModified must be string if exist', () => {
+    test('lastModified must be date if exist', () => {
         let payload = copyObj(dummyData);
-        payload.lastModified = 0;
+        payload.lastModified = "some date";
 
         const user = createUserObj(payload);
 

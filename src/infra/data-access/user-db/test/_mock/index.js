@@ -17,7 +17,7 @@ const mockUsers = [
         creationDate: new Date('December 14, 1995 03:24:00'),
         lastModified: new Date('December 24, 1995 03:24:00'),
         isEmailVerified: false,
-        isEmailVerified: false
+        newsletterOptin: false
     },
     {
         email: "yunsoo.oh.nl@gmail.com",
@@ -37,7 +37,7 @@ const mockUsers = [
         creationDate: new Date('December 14, 1995 03:24:00'),
         lastModified: new Date('December 24, 1995 03:24:00'),
         isEmailVerified: false,
-        isEmailVerified: false
+        newsletterOptin: false
     }
 ];
 

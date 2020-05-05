@@ -15,6 +15,7 @@ module.exports = Joi.object({
     ),
     defaultShippingAddress: Joi.string().error(errors.typeErrors.defaultShippingAddress),
     defaultBillingAddress: Joi.string().error(errors.typeErrors.defaultBillingAddress),
+    defaultBillingOption: Joi.string().error(errors.typeErrors.defaultBillingOption),
     billingOptions: Joi.array().items(
         Joi.string().error(errors.typeErrors.item_in_billingOptions)
     ),
@@ -24,8 +25,8 @@ module.exports = Joi.object({
     orders: Joi.array().items(
         Joi.string().error(errors.typeErrors.item_in_orders)
     ),
-    creationDate: Joi.string().error(errors.typeErrors.creationDate),
-    lastModified: Joi.string().error(errors.typeErrors.lastModified),
+    creationDate: Joi.date().error(errors.typeErrors.creationDate),
+    lastModified: Joi.date().error(errors.typeErrors.lastModified),
     lastLogin: Joi.string().error(errors.typeErrors.lastLogin),
     isEmailVerified: Joi.boolean().error(errors.typeErrors.isEmailVerified),
     newsletterOptin: Joi.boolean().error(errors.typeErrors.newsletterOptin)

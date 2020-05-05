@@ -14,6 +14,7 @@ class UserFactory extends UserBaseFactory {
         addresses,
         defaultShippingAddress,
         defaultBillingAddress,
+        defaultBillingOption,
         billingOptions,
         subscriptions,
         orders,
@@ -42,6 +43,7 @@ class UserFactory extends UserBaseFactory {
             addresses,
             defaultShippingAddress,
             defaultBillingAddress,
+            defaultBillingOption,
             billingOptions,
             subscriptions,
             orders,
@@ -71,6 +73,7 @@ class User {
         addresses,
         defaultShippingAddress,
         defaultBillingAddress,
+        defaultBillingOption,
         billingOptions,
         subscriptions,
         orders,
@@ -93,14 +96,16 @@ class User {
         (addresses)? this.addresses = addresses : null;
         (defaultShippingAddress)? this.defaultShippingAddress = defaultShippingAddress : null;
         (defaultBillingAddress)? this.defaultBillingAddress = defaultBillingAddress : null;
+        (defaultBillingOption)? this.defaultBillingOption = defaultBillingOption: null;
         (billingOptions)? this.billingOptions = billingOptions : null;
         (subscriptions)? this.subscriptions = subscriptions : null;
         (orders)? this.orders = orders : null;
         (creationDate)? this.creationDate = creationDate : null;
         (lastModified)? this.lastModified = lastModified : null;
         (lastLogin)? this.lastLogin = lastLogin : null;
-        (isEmailVerified)? this.isEmailVerified = isEmailVerified : null;
-        (newsletterOptin)? this.newsletterOptin = newsletterOptin : null;
+
+        (isEmailVerified)? this.isEmailVerified = isEmailVerified : this.isEmailVerified = false;
+        (newsletterOptin)? this.newsletterOptin = newsletterOptin : this.newsletterOptin = false;
     }
 }
 

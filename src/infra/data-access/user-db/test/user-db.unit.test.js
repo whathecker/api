@@ -58,7 +58,7 @@ describe('Test database access layer of user object', () => {
             creationDate: new Date('December 14, 1996 03:24:00'),
             lastModified: new Date('December 24, 1996 03:24:00'),
             isEmailVerified: false,
-            isEmailVerified: false
+            newsletterOptin: false
         };
 
         const newUser = await userDB.addUser(payload);
