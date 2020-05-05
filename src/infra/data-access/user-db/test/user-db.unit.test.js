@@ -24,7 +24,7 @@ describe('Test database access layer of user object', () => {
 
         const user = await userDB.findUserByEmail(email);
 
-        const {_id, ...rest} = user;
+        const {_id, lastLogin, pwdResetToken, ...rest} = user;
 
         expect(rest).toEqual(mockUsers[0]);
     });
@@ -34,7 +34,7 @@ describe('Test database access layer of user object', () => {
 
         const user = await userDB.findUserByUserId(userId);
 
-        const {_id, ...rest} = user;
+        const {_id, lastLogin, pwdResetToken, ...rest} = user;
 
         expect(rest).toEqual(mockUsers[1]);
     });
@@ -63,7 +63,7 @@ describe('Test database access layer of user object', () => {
 
         const newUser = await userDB.addUser(payload);
 
-        const {_id, ...rest} = newUser;
+        const {_id, lastLogin, pwdResetToken, ...rest} = newUser;
 
         expect(rest).toEqual(payload);
     });
