@@ -1,11 +1,12 @@
 const subscriptions = [
     {
+        _id: "1",
         country: "NL",
         channel: "EU",
         deliveryFrequency: 28,
         deliveryDay: 4,
         isWelcomeEmailSent: true,
-        orders: ["order_id_1", "order_id_2"],
+        orders: ["ECNL8092517600"],
         isActive: true,
         deliverySchedules: [{
             orderNumber: "ECNL8092517600",
@@ -29,12 +30,13 @@ const subscriptions = [
         lastModified: new Date('December 24, 1995 03:24:00'),
     },
     {
+        _id: "2",
         country: "NL",
         channel: "EU",
         deliveryFrequency: 14,
         deliveryDay: 4,
         isWelcomeEmailSent: true,
-        orders: ["order_id_1", "order_id_2"],
+        orders: ["ECNL8092517700"],
         isActive: true,
         deliverySchedules: [{
             orderNumber: "ECNL8092517700",

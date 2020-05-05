@@ -3,7 +3,7 @@ const mongoose = require('../connection');
 const Schema = mongoose.Schema;
 
 let addressSchema = new Schema({
-    user_id: { type: String, required: true },
+    user_id: { type: String, required: true }, 
     firstName: { type: String, require: true },
     lastName: { type: String, required: true },
     mobileNumber: { type: String }, 
