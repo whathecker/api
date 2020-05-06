@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
+const mongoose = require('../connection');
 
 const Schema = mongoose.Schema;
 
@@ -7,20 +6,13 @@ let adminUserSchema = new Schema({
     email: {
         type: String,
         lowercase: true,
-        require: [ true, "email can't be blank"],
-        unique: true,
-        match: [ /\S+@\S+\.\S+/, 'invalid email format' ], 
-        index: true 
+        require: true,
     },
-    userId: {
-        type: String,
-        unique: true,
-        index: true
-    },
+    userId: { type: String, required: true },
     hash: { 
         type: String, 
         lowercase: false, 
-        required: [ true, "password can't be blank" ] 
+        required: true
     },
     salt: { type: String },
     pwdResetToken: { type: String },
@@ -34,8 +26,6 @@ let adminUserSchema = new Schema({
     adminApprovalRequired: { type: Boolean, default: true },
     isActive: { type: Boolean, default: true }
 });
-
-adminUserSchema.plugin(uniqueValidator);
 
 const AdminUser = mongoose.model('AdminUser', adminUserSchema);
 

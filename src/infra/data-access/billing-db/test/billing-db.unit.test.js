@@ -25,7 +25,7 @@ describe('Test database access layer of billing object', () => {
         await billingDB.dropAll();
     });
 
-    test('list a billing options', async () => {
+    test('list all billing options', async () => {
         const billings = await billingDB.listBillings();
         expect(billings).toHaveLength(3);
     });

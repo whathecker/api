@@ -76,10 +76,10 @@ class AdminUser {
     } = {}) {
 
         this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.userId = userId;
 
-        (userId)? this.userId = userId : null;
+        (firstName)? this.firstName = firstName: null;
+        (lastName)? this.lastName = lastName: null;
         (hash)? this.hash = hash : null;
         (salt)? this.salt = salt : null;
         (pwdResetToken)? this.pwdResetToken = pwdResetToken : null;
