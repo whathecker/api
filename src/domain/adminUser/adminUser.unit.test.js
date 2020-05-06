@@ -34,6 +34,8 @@ describe('Make AdminUser object', () => {
         const hash = payload.hash;
         const salt = payload.salt;
         
+        const firstName = payload.firstName;
+        const lastName = payload.lastName;
         const creationDate = payload.creationDate;
         const lastModified = payload.lastModified;
         const lastLogin = payload.lastLogin;
@@ -41,6 +43,8 @@ describe('Make AdminUser object', () => {
         const adminApprovalRequired = payload.adminApprovalRequired;
         const isActive = payload.isActive;
 
+        delete payload.firstName;
+        delete payload.lastName;
         delete payload.userId;
         delete payload.hash;
         delete payload.salt;
@@ -56,9 +60,10 @@ describe('Make AdminUser object', () => {
         const adminUser = createAdminUserObj(payload);
 
         expect(adminUser.email).toBe(payload.email);
-        expect(adminUser.firstName).toBe(payload.firstName);
-        expect(adminUser.lastName).toBe(payload.lastName);
 
+
+        expect(adminUser.firstName).not.toBe(firstName);
+        expect(adminUser.lastName).not.toBe(lastName);
         expect(adminUser.userId).not.toBe(userId);
         expect(adminUser.hash).not.toBe(hash);
         expect(adminUser.salt).not.toBe(salt);
@@ -171,17 +176,6 @@ describe('Type checking: adminUser object', () => {
         expect(adminUser.message).toBe(errors.typeErrors.pwdResetToken.message);
     });
 
-    test('adminUser object must have a firstName property', () => {
-        let payload = copyObj(dummyData);
-
-        delete payload.firstName;
-
-        const adminUser = createAdminUserObj(payload);
-
-        expect(adminUser instanceof Error).toBe(true);
-        expect(adminUser.message).toBe(errors.typeErrors.firstName.message);
-    });
-
     test('firstName property must be string', () => {
         let payload = copyObj(dummyData);
 
@@ -191,17 +185,6 @@ describe('Type checking: adminUser object', () => {
 
         expect(adminUser instanceof Error).toBe(true);
         expect(adminUser.message).toBe(errors.typeErrors.firstName.message);
-    });
-
-    test('adminUser object must have a lastName property', () => {
-        let payload = copyObj(dummyData);
-
-        delete payload.lastName;
-
-        const adminUser = createAdminUserObj(payload);
-
-        expect(adminUser instanceof Error).toBe(true);
-        expect(adminUser.message).toBe(errors.typeErrors.lastName.message);
     });
 
     test('lastName property must be string', () => {
