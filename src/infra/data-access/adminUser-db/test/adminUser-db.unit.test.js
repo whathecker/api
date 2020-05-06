@@ -32,17 +32,17 @@ describe('Test database access layer of adminUser object', () => {
 
         const adminUser = await adminUserDB.findAdminUserByEmail(email);
 
-        const {_id, ...rest} = adminUser;
+        const {_id, userId, ...rest} = adminUser;
 
         expect(rest).toEqual(mockAdminUsers[0]);
     });
 
     test('find admin user by userId', async () => {
-        const userId = _userId_holder[1];
+        const id = _userId_holder[1];
 
-        const adminUser = await adminUserDB.findAdminUserByUserId(userId);
+        const adminUser = await adminUserDB.findAdminUserByUserId(id);
 
-        const {_id, ...rest} = adminUser;
+        const {_id, userId, ...rest} = adminUser;
 
         expect(rest).toEqual(mockAdminUsers[1]);
     });
@@ -61,7 +61,7 @@ describe('Test database access layer of adminUser object', () => {
 
         const newAdminUser = await adminUserDB.addAdminUser(payload);
 
-        const {_id, ...rest} = newAdminUser;
+        const {_id, userId, ...rest} = newAdminUser;
 
         expect(rest).toEqual(payload);
     });

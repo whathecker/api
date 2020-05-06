@@ -87,9 +87,9 @@ class AdminUser {
         (creationDate)? this.creationDate = creationDate : null;
         (lastModified)? this.lastModified = lastModified : null;
         (lastLogin)? this.lastLogin = lastLogin : null;
-        (isEmailVerified)? this.isEmailVerified = isEmailVerified : null;
-        (adminApprovalRequired)? this.adminApprovalRequired = adminApprovalRequired : null;
-        (isActive)? this.isActive = isActive : null;
+        (isEmailVerified)? this.isEmailVerified = isEmailVerified : this.isEmailVerified = false;
+        (adminApprovalRequired)? this.adminApprovalRequired = adminApprovalRequired : this.adminApprovalRequired = false;
+        (isActive)? this.isActive = isActive : this.isActive = false;
     }
 }
 
