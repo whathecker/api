@@ -2,28 +2,108 @@ const AdminUser = require('../../../db/mongodb/models/adminUser');
 const createAdminUser = require('../../../../domain/adminUser');
 const serializer = require('./serializer');
 
-const listAdminUsers = () => {
-
+const listAdminUsers = async () => {
+    const adminUsers = await AdminUser.find();
+    return Promise.resolve(serializer(adminUsers));
 };
 
-const findAdminUserByEmail = () => {
+const findAdminUserByEmail = async (email) => {
+    const adminUser = await AdminUser.findOne({ email: email });
 
+    if (!adminUser) {
+        return Promise.resolve({
+            status: "fail",
+            reason: "adminUser not found"
+        });
+    }
+
+    return Promise.resolve(serializer(adminUser));
 };
 
-const findAdminUserByUserId = () => {
+const findAdminUserByUserId = async (userId) => {
+    const adminUser = await AdminUser.findOne({ userId: userId });
 
+    if (!adminUser) {
+        return Promise.resolve({
+            status: "fail",
+            reason: "adminUser not found"
+        });
+    }
+
+    return Promise.resolve(serializer(adminUser));
 };
 
-const addAdminUser = () => {
+const addAdminUser = async (payload) => {
+    
+    const adminUserObj = createAdminUser(payload);
 
+    if (adminUserObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: adminUserObj
+        });
+    }
+
+    try {
+        await _isEmailUnique(adminUserObj.email);
+        await _isUserIdUnique(adminUserObj.userId);
+    }
+    catch (err) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: err
+        });
+    }
+
+    const newAdminUser = await AdminUser.create(adminUserObj);
+
+    return Promise.resolve(serializer(newAdminUser));
 };
 
-const deleteAdminUserByEmail = () => {
+async function _isEmailUnique (email) {
+    const adminUser = await findAdminUserByEmail(email);
 
+    const { status } = adminUser;
+
+    if (status === "fail") return;
+
+    throw new Error('db access for adminUser object failed: email must be unique');
 };
 
-const dropAll = () => {
+async function _isUserIdUnique (userId) {
+    const adminUser = await findAdminUserByUserId(userId);
 
+    const { status } = adminUser;
+
+    if (status === "fail") return;
+
+    throw new Error('db access for adminUser object failed: userId must be unique');
+};
+
+const deleteAdminUserByEmail = async (email) => {
+    const removedAdminUser = await AdminUser.findOneAndRemove({
+        email: email
+    });
+
+    if (!removedAdminUser) {
+        return Promise.resolve({
+            status: "fail",
+            reason: "adminUser not found"
+        });
+    }
+
+    if (removedAdminUser) {
+        return Promise.resolve({
+            email: removedAdminUser.email,
+            status: "success"
+        });
+    }
+};
+
+const dropAll = async () => {
+    return AdminUser.remove();
 };
 
 module.exports = {
