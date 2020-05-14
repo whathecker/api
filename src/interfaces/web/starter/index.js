@@ -1,68 +1,94 @@
 const dependencies = {
     serverFramework: require('express'),
-    bodyParserLoader: require('./bodyparser-loader'),
+    bodyParser: require('body-parser'),
     cookieParser: require('cookie-parser'),
-    crossOriginHandler: require('./cors-handler'),
+    crossOriginHandler: require('cors'),
     httpLogger: require('morgan'),
-    securityEnhancer: require('helmet')
+    securityEnhancer: require('helmet'),
+    apiRoutesLoader: require('./routes')
 };
 
 class ServerStarter {
     constructor ({
         serverFramework,
-        bodyParserLoader,
+        bodyParser,
         cookieParser,
         crossOriginHandler,
         httpLogger,
-        securityEnhancer
+        securityEnhancer,
+        apiRoutesLoader
     } = {}) {
         this.app = serverFramework();
-        this.bodyParserLoader = bodyParserLoader;
+        this.apiRoutes = new apiRoutesLoader(serverFramework.Router());
+        this.bodyParser = bodyParser;
         this.cookieParser = cookieParser,
         this.crossOriginHandler = crossOriginHandler;
         this.httpLogger = httpLogger;
-        this.securityEnhancer = securityEnhancer
+        this.securityEnhancer = securityEnhancer;
     }
-
+    
     runAppBehindProxy () {
         this.app.set('trust proxy', true);
-    }
+    } 
 
     loadMiddlewares () {
         this.loadSecurityEnhancer();
         this.loadHttpLogger();
         this.loadCors();
         this.loadCookieParser();
-        this.loadBodyParser();
-        //this.mountApiRoutes();
+        this.loadUrlEncodeReqBodyParser();
+        this.loadJsonReqBodyParser();
+        this.mountApiRoutes();
         this.load404Checker();
         this.loadErrorHandler();
-    }
+    } 
 
     mountApiRoutes () {
-
-    }
+        this.app.use(this.apiRoutes);
+    };
 
     loadSecurityEnhancer () {
         this.app.use(this.securityEnhancer());
-    }
-
+    };
+    
     loadHttpLogger () {
         this.app.use(this.httpLogger('dev'));
-    }
-
+    };
+    
     loadCors () {
-        this.app.use(this.crossOriginHandler.enableCors());
-    }
-
+        const corsOptions = {
+            origin: [
+                'http://localhost:3000', 
+                'http://localhost:9231',
+                'https://test.hellochokchok.com', 
+                'https://backoffice.hellochokchok.com',
+                'https://www.hellochokchok.com' 
+            ],
+            methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+            credentials: true,
+        };
+        
+        this.app.use(this.crossOriginHandler(corsOptions));
+    };
+    
     loadCookieParser () {
         this.app.use(this.cookieParser());
-    }
+    };
+    
+    loadUrlEncodeReqBodyParser () {
+        this.app.use(this.bodyParser.urlencoded({ extended: true }));  
+    };
 
-    loadBodyParser () {
-        this.app.use(this.bodyParserLoader.enableParseOfUrlEncodedReqBody());
-        this.app.use((req, res, buf) => this.bodyParserLoader.enableParseOfJsonReqBody(req, res, buf));
-    }
+    loadJsonReqBodyParser () {
+        this.app.use(this.bodyParser.json({
+            verify: (req, res, buf) =>{
+                const url = req.originalUrl;
+                if (url.startsWith('/checkout/payment/hook')) {
+                    req.rawBody = buf.toString();
+                }
+            }
+        }));
+    };
 
     load404Checker () {
         this.app.use((req, res, next) => {
@@ -70,7 +96,7 @@ class ServerStarter {
             err.status = 404;
             next(err);
         });
-    }
+    };
 
     loadErrorHandler () {
         const envVar = process.env.NODE_ENV;
@@ -80,7 +106,7 @@ class ServerStarter {
         } else {
             this.app.use(this.handleDevError)
         }
-    }
+    };
 
     handleDevError (err, req, res, next) {
         console.error(err.stack);
@@ -89,7 +115,7 @@ class ServerStarter {
             message: err.message,
             error: err
         }});
-    }
+    };
 
     handlerProdError (err, req, res, next) {
         res.status(err.status || 500);
@@ -97,7 +123,7 @@ class ServerStarter {
             message: err.message,
             error: err
         }});
-    }
+    };
 
     runServer () {
         this.app.listen(process.env.PORT, (err) => {

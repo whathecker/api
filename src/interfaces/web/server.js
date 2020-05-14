@@ -6,6 +6,6 @@ const env = process.env.NODE_ENV;
     serverStarter.runAppBehindProxy() : null;
 
 serverStarter.loadMiddlewares();
-serverStarter.runServer();
+serverStarter.runServer(); 
 
 
