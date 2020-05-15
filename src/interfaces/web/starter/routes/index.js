@@ -1,13 +1,13 @@
 const api = require('./api');
 const { mountCategoryRoutes } = api;
 
-class apiRoutesLoader {
-    constructor (router) {
-        this.router = router;
-        this.router.use('/admin/categories', mountCategoryRoutes(this.router))
+const apiRoutesLoader = (routerObj) => {
+    let router = routerObj;
 
-        return this.router;
-    }
+    router.use('/admin/categories', mountCategoryRoutes(router));
+
+    return router;
 }
 
 module.exports = apiRoutesLoader;
+

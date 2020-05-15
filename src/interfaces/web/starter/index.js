@@ -19,7 +19,7 @@ class ServerStarter {
         apiRoutesLoader
     } = {}) {
         this.app = serverFramework();
-        this.apiRoutes = new apiRoutesLoader(serverFramework.Router());
+        this.apiRoutes = apiRoutesLoader(serverFramework.Router());
         this.bodyParser = bodyParser;
         this.cookieParser = cookieParser,
         this.crossOriginHandler = crossOriginHandler;
