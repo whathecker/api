@@ -4,10 +4,8 @@ const logger = require('../../../../../_shared/logger');
 let category = {};
 
 category.listCategories = async (req, res, next) => {
-
     try {
         const categories = await categoryDB.listCategories();
-        
         logger.info(`list categories endpoint has processed and returned categories`);
         
         return res.status(200).json({
@@ -18,10 +16,9 @@ category.listCategories = async (req, res, next) => {
     catch (err) {
         next(err);
     }
-
 };
 
-category.create = (req, res, next) => {
+category.createCategory = (req, res, next) => {
     return res.status(200).end();
 };
 
