@@ -1,12 +1,20 @@
-const category =  require('./category');
+const category = require('./category');
+const brand = require('./brand');
 
-const mountCategoryRoutes = (router) => {
+let apiRoutesLoader = {}
+
+apiRoutesLoader.mountCategoryRoutes = (router) => {
     const route = router
-        .get('/', category.listCategories)
-        .post('/category', category.createCategory)
+        .get('/admin/categories/', category.listCategories)
+        .post('/admin/categories/category', category.createCategory)
     return route;
 }
 
-module.exports = {
-    mountCategoryRoutes
-}
+apiRoutesLoader.mountBrandRoutes = (router) => {
+    const route = router
+    .get('/admin/brands/', brand.listBrands)
+    .post('/admin/brands/brand', brand.createBrand)
+    return route;
+};
+
+module.exports = apiRoutesLoader;

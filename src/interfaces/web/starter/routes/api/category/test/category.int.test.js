@@ -1,11 +1,8 @@
-const serverStarter = require('../../../../../starter');
-serverStarter.loadMiddlewares();
-const app = serverStarter.app
-
-const session = require('supertest-session');
-let testSession =  session(app);
-
 const categoryDB = require('../../../../../../../infra/data-access/category-db');
+const serverStarter = require('../../../../../starter');
+const session = require('supertest-session');
+serverStarter.loadMiddlewares();
+let testSession = session(serverStarter.app);
 
 describe('Test admin category endpoints', () => {
 
