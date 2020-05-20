@@ -13,8 +13,8 @@ category.listCategories = async (req, res, next) => {
             categories: categories
         });
     }
-    catch (err) {
-        next(err);
+    catch (exception) {
+        next(exception);
     }
 };
 
@@ -25,7 +25,7 @@ category.createCategory = async (req, res, next) => {
     if (!categoryName || ! categoryCode) {
         logger.error(`createCategory request has failed | missing parameter`);
         return res.status(400).json({
-            status: 'failed',
+            status: 'fail',
             message: 'bad request'
         });
     }
@@ -35,7 +35,6 @@ category.createCategory = async (req, res, next) => {
             categoryName: req.body.categoryName,
             categoryCode: req.body.categoryCode
         };
-
         const category = await categoryDB.addCategory(payload);
         logger.info(`createCategory request has created new category | name: ${category.categoryName} code: ${category.categoryCode}`);
         return res.status(201).json({
@@ -43,8 +42,16 @@ category.createCategory = async (req, res, next) => {
             message: 'new category created'
         });
 
-    } catch (err) {
-        next(err);
+    } catch (exception) {
+        if (exception.status === "fail") {
+            logger.error(`createCategory request has failed | error: ${exception.error.message}`);
+            return res.status(422).json({
+                status: "fail",
+                message: exception.error.message
+            })
+        } else {
+            next(exception);
+        }
     }
 };
 
