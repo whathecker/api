@@ -32,8 +32,8 @@ category.createCategory = async (req, res, next) => {
 
     try {
         const payload = {
-            categoryName: req.body.categoryName,
-            categoryCode: req.body.categoryCode
+            categoryName: categoryName,
+            categoryCode: categoryCode
         };
         const category = await categoryDB.addCategory(payload);
         logger.info(`createCategory request has created new category | name: ${category.categoryName} code: ${category.categoryCode}`);
