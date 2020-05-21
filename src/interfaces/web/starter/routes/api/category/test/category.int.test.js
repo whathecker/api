@@ -10,7 +10,7 @@ describe('Test admin category endpoints', () => {
         await categoryDB.dropAll();
     });
 
-    test('getCategories success', () => {
+    test('listCategories success', () => {
         return testSession.get('/admin/categories')
         .then(response => {
             expect(response.status).toBe(200);
@@ -36,7 +36,7 @@ describe('Test admin category endpoints', () => {
         });
     });
 
-    test('createCategory fail - duplicated code', async () => {
+    test('createCategory fail - duplicated category', async () => {
         const payload = {
             categoryName: 'test2',
             categoryCode: "TD"

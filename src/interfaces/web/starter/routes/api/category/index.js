@@ -48,7 +48,7 @@ category.createCategory = async (req, res, next) => {
             return res.status(422).json({
                 status: "fail",
                 message: exception.error.message
-            })
+            });
         } else {
             next(exception);
         }

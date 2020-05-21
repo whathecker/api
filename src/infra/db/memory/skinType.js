@@ -9,11 +9,6 @@ const skinTypes = [
         skinType: "normal",
         skinTypeCode: "NM"
     },
-    {
-        _id: "3",
-        skinType: "oily",
-        skinTypeCode: "OL"
-    }
 ];
 
 module.exports = skinTypes;
