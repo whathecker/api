@@ -1,6 +1,7 @@
 const category = require('./category');
 const brand = require('./brand');
 const skinType = require('./skinType');
+const product = require('./product');
 
 let apiRoutesLoader = {}
 
@@ -23,6 +24,16 @@ apiRoutesLoader.mountSkinTypeRoutes = (router) => {
     .get('/admin/skinTypes/', skinType.listSkinTypes)
     .post('/admin/skinTypes/skinType', skinType.createSkinType)
     return route;
-}
+};
+
+apiRoutesLoader.mountProductRoutes = (router) => {
+    const route = router
+    .get('/products/', product.listProducts)
+    .get('/products/product/:id', product.getProductById)
+    .post('/products/product', product.createProduct)
+    .put('/products/product/:id', product.updateProduct)
+    .delete('/products/product/:id', product.deleteProductById)
+    return route;
+};
 
 module.exports = apiRoutesLoader;
