@@ -4,7 +4,17 @@ const logger = require('../../../../../_shared/logger');
 let product = {};
 
 product.listProducts = async (req, res, next) => {
-    return res.status(200).end();
+    try {
+        const products = await productDB.listProducts();
+        logger.info(`list products endpoint has processed and returned products`);
+        return res.status(200).json({
+            status: "success",
+            products: products
+        });
+    }
+    catch (exception) {
+        next(exception);
+    }
 };
 
 product.getProductById = async (req, res, next) => {
