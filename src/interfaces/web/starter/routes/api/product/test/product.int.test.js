@@ -60,7 +60,7 @@ describe('Test products endpoints', () => {
 
     test('getProductById success', async () => {
         const response = await testSession.post('/products/product').send(payload);
-        const productId = response.product.productId;
+        const productId = response.body.product.productId;
         return testSession.get(`/products/product/${productId}`)
         .then(response => {
             expect(response.status).toBe(200);

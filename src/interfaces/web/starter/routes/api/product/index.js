@@ -11,14 +11,29 @@ product.listProducts = async (req, res, next) => {
             status: "success",
             products: products
         });
-    }
-    catch (exception) {
+    } catch (exception) {
         next(exception);
     }
 };
 
 product.getProductById = async (req, res, next) => {
-    return res.status(200).end();
+    const productId = req.params.id;
+    try {
+        const product = await productDB.findProductByProductId(productId);
+        
+        if (product.status === "fail") {
+            logger.warn(`getProductById request is failed | unknown productId`);
+            return res.status(422).json({
+                status: "fail",
+                message: product.reason
+            });
+        }
+
+        logger.info(`getProductById request is processed | ${product.productId}`);
+        return res.status(200).json(product);
+    } catch (exception) {
+        next(exception);
+    }
 };
 
 product.createProduct = async (req, res, next) => {
@@ -66,7 +81,26 @@ product.updateProduct = async (req, res, next) => {
 };
 
 product.deleteProductById = async (req, res, next) => {
-    return res.status(200).end();
+    const productId = req.params.id;
+    try {
+        const product = await productDB.deleteProductByProductId(productId);
+
+        if (product.status === "fail") {
+            logger.warn('deleteProduct request has rejected as product is unknown');
+            return res.status(422).json({
+                status: "fail",
+                message: product.reason
+            });
+        }
+
+        logger.info(`deleteProduct request has processed: following product has removed: ${product.productId}`);
+        return res.status(200).json({
+            status: "success",
+            message: "product has removed"
+        });
+    } catch (exception) {
+        next(exception);
+    }
 };
 
 module.exports = product;
