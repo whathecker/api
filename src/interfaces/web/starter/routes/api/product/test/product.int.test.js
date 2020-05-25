@@ -4,7 +4,7 @@ const session = require('supertest-session');
 serverStarter.loadMiddlewares();
 let testSession = session(serverStarter.app);
 
-const payload = {
+let payload = {
     channel: "EU",
     name: "Skim Supplement Sheetmask",
     description: "This sheetmask is good for something",
@@ -95,8 +95,10 @@ describe('Test products endpoints', () => {
 
     test('createProduct fail - duplicated productId', async () => {
         const response = await testSession.post('/products/product').send(payload);
-        const productId = response.product.productId;
-        return testSession.get(`/products/product/${productId}`)
+        const productId = response.body.product.productId;
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.productId = productId;
+        return testSession.post(`/products/product`).send(deepCopiedPayload)
         .then(response => {
             expect(response.status).toBe(422);
         });
@@ -113,7 +115,7 @@ describe('Test products endpoints', () => {
 
     test('deleteProductById success', async () => {
         const response = await testSession.post('/products/product').send(payload);
-        const productId = response.product.productId;
+        const productId = response.body.product.productId;
         return testSession.delete(`/products/product/${productId}`)
         .then(response => {
             expect(response.status).toBe(200);
