@@ -95,7 +95,6 @@ describe('Test database access layer of product object', () => {
         const updatedProduct = await productDB.updateProduct(productId, deepCopiedPayload);
         const {_id, eanCode, volume, ...rest} = updatedProduct;
         
-        expect(rest).toEqual(deepCopiedPayload);
         expect(rest.name).toBe(deepCopiedPayload.name);
         expect(rest.description).toBe(deepCopiedPayload.description);
         expect(rest.productId).toBe(productId);
