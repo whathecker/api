@@ -60,7 +60,10 @@ async function _isProductIdUnique (productId) {
 }
 
 const updateProduct = () => {
-
+    // find product by product ID
+    // replace field to be updated
+    // create product object with updated payload
+    // insert the updated product object in the db
 };
 
 const deleteProductByProductId = async (productId) => {

@@ -86,12 +86,58 @@ describe('Test database access layer of product object', () => {
         expect(rest).toEqual(payload);
     });
 
-    /*
-    TODO: implement later
-    Need requirements on how to allow user to update the field
-    test('update a product', () => {
+    test('update a product - name and description', async () => {
+        const productId = _productId_holder[1];
+        let deepCopiedPayload = JSON.parse(JSON.stringify(mockProducts[1]));
+        deepCopiedPayload.name = "updated name";
+        deepCopiedPayload.description = "updated description";
 
-    }); */
+        const updatedProduct = await productDB.updateProduct(productId, deepCopiedPayload);
+        const {_id, eanCode, volume, ...rest} = updatedProduct;
+        
+        expect(rest).toEqual(deepCopiedPayload);
+        expect(rest.name).toBe(deepCopiedPayload.name);
+        expect(rest.description).toBe(deepCopiedPayload.description);
+        expect(rest.productId).toBe(productId);
+    });
+
+    test('update a product - inventory', async () => {
+        const productId = _productId_holder[2];
+        let deepCopiedPayload = JSON.parse(JSON.stringify(mockProducts[2]));
+        deepCopiedPayload.inventory = {
+            quantityOnHand: 20,
+            quarantaine: 0,
+            lastModified: new Date(Date.now())
+        };
+        
+        const updatedProduct = await productDB.updateProduct(productId, deepCopiedPayload);
+        const {_id, eanCode, volume, ...rest} = updatedProduct;
+
+        expect(rest.inventory).toEqual(deepCopiedPayload.inventory);
+        expect(rest.inventoryHistory).toHaveLength(3);
+        expect(rest.inventoryHistory[rest.inventoryHistory.length - 1]).toEqual(deepCopiedPayload.inventory);
+        expect(rest.productId).toBe(productId);
+    });
+
+    test('updatea a product - price', async () => {
+        const productId = _productId_holder[0];
+        let deepCopiedPayload = JSON.parse(JSON.stringify(mockProducts[0]));
+        deepCopiedPayload.prices[0] = {
+            region: "eu",
+            currency: "euro",
+            price: "10.00"
+        };
+
+        const updatedProduct = await productDB.updateProduct(productId, deepCopiedPayload);
+        const {_id, eanCode, volume, ...rest} = updatedProduct;
+
+        expect(rest.prices[0].region).toBe("eu");
+        expect(rest.prices[0].currency).toBe("euro");
+        expect(rest.prices[0].price).toBe("10.00");
+        expect(rest.prices[0].vat).toBe("1.74");
+        expect(rest.prices[0].netPrice).toBe("8.26");
+        expect(rest.productId).toBe(productId);
+    });
 
     test('delete a product by productId', async () => {
         const productId = _productId_holder[2];
