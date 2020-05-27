@@ -2,6 +2,7 @@ const category = require('./category');
 const brand = require('./brand');
 const skinType = require('./skinType');
 const product = require('./product');
+const subscriptionBox = require('./subscriptionBox');
 
 let apiRoutesLoader = {}
 
@@ -33,6 +34,16 @@ apiRoutesLoader.mountProductRoutes = (router) => {
     .post('/products/product', product.createProduct)
     .put('/products/product/:id', product.updateProduct)
     .delete('/products/product/:id', product.deleteProductById)
+    return route;
+};
+
+apiRoutesLoader.mountSubscriptionBoxRoutes = (router) => {
+    const route = router
+    .get('/subscriptionBoxes', subscriptionBox.listSubscriptionBoxes)
+    .get('/subscriptionBoxes/subscriptionBox/:id', subscriptionBox.getSubscriptionBoxById)
+    .post('/subscriptionBoxes/subscriptionBox', subscriptionBox.createSubscriptionBox)
+    .put('/subscriptionBoxes/subscriptionBox/:id', subscriptionBox.updateSubscriptionBox)
+    .delete('/subscriptionBoxes/subscriptionBox/:id', subscriptionBox.deleteSubscriptionBoxById)
     return route;
 };
 
