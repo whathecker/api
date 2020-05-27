@@ -38,7 +38,21 @@ describe('Test subscriptionBoxes endpoint', () => {
         });
     });
 
-    // test for getSubscriptionBoxById
+    test('getSubscriptionBoxById fail - unknown packageId', () => {
+        return testSession.get('/subscriptionBoxes/subscriptionBox/oddid')
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('getSubscriptionBoxById success', async () => {
+        const response = await testSession.post('/subscriptionBoxes/subscriptionBox').send(payload);
+        const packageId = response.body.subscriptionBox.packageId;
+        return testSession.get(`/subscriptionBoxes/subscriptionBox/${packageId}`)
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
 
     test('createSubscriptionBox fail - bad request', () => {
         return testSession.post('/subscriptionBoxes/subscriptionBox')

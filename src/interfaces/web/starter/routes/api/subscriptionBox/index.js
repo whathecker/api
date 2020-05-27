@@ -17,7 +17,23 @@ subscriptionBox.listSubscriptionBoxes = async (req, res, next) => {
 };
 
 subscriptionBox.getSubscriptionBoxById = async (req, res, next) => {
-    return res.status(200).end();
+    const packageId = req.params.id;
+    try {
+        const subscriptionBox = await packageDB.findSubscriptionBoxByPackageId(packageId);
+
+        if (subscriptionBox.status === "fail") {
+            logger.warn(`getSubscriptionBoxById request is failed | unknown packageId`);
+            return res.status(422).json({
+                status: "fail",
+                message: subscriptionBox.reason
+            });
+        }
+        
+        logger.info(`getSubscriptionBoxById request is processed | ${subscriptionBox.packageId}`);
+        return res.status(200).json(subscriptionBox);
+    } catch (exception) {
+        next(exception);
+    }
 };
 
 subscriptionBox.createSubscriptionBox = async (req, res, next) => {
