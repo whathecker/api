@@ -45,8 +45,11 @@ product.createProduct = async (req, res, next) => {
     const brand = req.body.brand;
     const brandCode = req.body.brandCode;
     const skinType = req.body.skinType;
+    const prices = req.body.prices;
+    const inventory = req.body.inventory;
+    const inventoryHistory = req.body.inventoryHistory;
 
-    if (!channel||!name||!description||!category||!categoryCode||!brand||!brandCode||!skinType) {
+    if (!channel||!name||!description||!category||!categoryCode||!brand||!brandCode||!skinType||!prices||!inventory||!inventoryHistory) {
         logger.warn(`createProduct request has rejected as param is missing`);
         return res.status(400).json({ 
             status: 'failed',
@@ -77,7 +80,58 @@ product.createProduct = async (req, res, next) => {
 };
 
 product.updateProduct = async (req, res, next) => {
-    return res.status(200).end();
+    const channel = req.body.channel;
+    const name = req.body.name;
+    const description = req.body.description;
+    const category = req.body.category;
+    const categoryCode = req.body.categoryCode;
+    const brand = req.body.brand;
+    const brandCode = req.body.brandCode;
+    const skinType = req.body.skinType;
+    const prices = req.body.prices;
+    const inventory = req.body.inventory;
+    const inventoryHistory = req.body.inventoryHistory;
+
+    if (!channel||!name||!description||!category||!categoryCode||!brand||!brandCode||!skinType||!prices||!inventory||!inventoryHistory) {
+        logger.warn(`updateProduct request has rejected as param is missing`);
+        return res.status(400).json({ 
+            status: 'failed',
+            message: 'bad request' 
+        });
+    }
+
+    try {
+        const productId = req.params.id;
+        const payload = req.body;
+
+        const updatedProduct = await productDB.updateProduct(productId, payload);
+        const { status, reason } = updatedProduct;
+
+        if (status === "fail") {
+            logger.warn(`updateProduct request has rejected: ${reason} | requested productId: ${productId}`);
+            return res.status(422).json({
+                status: "failed",
+                message: reason
+            });
+        }
+
+        logger.info(`updateProduct request has updated the product | name: ${updatedProduct.name} productId: ${updatedProduct.productId}`);
+        return res.status(200).json({
+            status: 'success',
+            message: 'product data has updated'
+        });
+        
+    } catch (exception) {
+        if (exception.status === "fail") {
+            logger.error(`updateProduct request has failed | error: ${exception.error.message}`);
+            return res.status(422).json({
+                status: "fail",
+                message: exception.error.message
+            });
+        } else {
+            next(exception);
+        }
+    }
 };
 
 product.deleteProductById = async (req, res, next) => {

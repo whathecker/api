@@ -104,7 +104,50 @@ describe('Test products endpoints', () => {
         });
     });
 
-    //TODO: add tests for update product endpoint
+    test('updateProduct fail - bad request', async () => {
+        const response = await testSession.post('/products/product').send(payload);
+        const productId = response.body.product.productId;
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        delete deepCopiedPayload.channel;
+        return testSession.put(`/products/product/${productId}`).send(deepCopiedPayload)
+        .then(response => {
+            expect(response.status).toBe(400);
+        });
+    });
+
+    test('updateProduct fail - unknown productId', async () => {
+        const response = await testSession.post('/products/product').send(payload);
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.name = "updated name";
+        return testSession.put('/products/product/oddid').send(deepCopiedPayload)
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('updateProduct fail - invalid payload', async () => {
+        const response = await testSession.post('/products/product').send(payload);
+        const productId = response.body.product.productId;
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.channel = "odd channel";
+        return testSession.put(`/products/product/${productId}`).send(deepCopiedPayload)
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('updateProduct success - name and description', async () => {
+        const response = await testSession.post('/products/product').send(payload);
+        const productId = response.body.product.productId;
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.name = "updated name";
+        deepCopiedPayload.description = "updated description";
+
+        return testSession.put(`/products/product/${productId}`).send(deepCopiedPayload)
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
 
     test('deleteProductById fail - unknown productId', () => {
         return testSession.delete('/products/product/oddid')
