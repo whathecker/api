@@ -28,7 +28,7 @@ subscriptionBox.getSubscriptionBoxById = async (req, res, next) => {
                 message: subscriptionBox.reason
             });
         }
-        
+
         logger.info(`getSubscriptionBoxById request is processed | ${subscriptionBox.packageId}`);
         return res.status(200).json(subscriptionBox);
     } catch (exception) {
@@ -80,7 +80,27 @@ subscriptionBox.updateSubscriptionBox = async (req, res, next) => {
 };
 
 subscriptionBox.deleteSubscriptionBoxById = async (req, res, next) => {
-    return res.status(200).end();
+    const packageId = req.params.id;
+    try {
+        const subscriptionBox = await packageDB.deleteSubscriptionBoxByPackageId(packageId);
+
+        if (subscriptionBox.status === "fail") {
+            logger.warn('deleteSubscriptionBoxById request has rejected as packageId is unknown');
+            return res.status(422).json({
+                status: "fail",
+                message: subscriptionBox.reason
+            });
+        }
+
+        logger.info(`deleteSubscriptionBoxById request has processed: following subscriptionBox has removed: ${subscriptionBox.packageId}`);
+        return res.status(200).json({
+            status: "success",
+            message: "subscriptionBox has removed"
+        });
+
+    } catch (exception) {
+        next(exception);
+    }
 };
 
 module.exports = subscriptionBox;

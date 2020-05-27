@@ -91,4 +91,22 @@ describe('Test subscriptionBoxes endpoint', () => {
             expect(response.status).toBe(422);
         }); 
     });
+
+    // test for updateSubscriptionBox
+
+    test('deleteSubscriptionBoxById - unknonw packageId', () => {
+        return testSession.delete('/subscriptionBoxes/subscriptionBox/oddid')
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('deleteSubscriptionBoxById success', async () => {
+        const response = await testSession.post('/subscriptionBoxes/subscriptionBox').send(payload);
+        const packageId = response.body.subscriptionBox.packageId;
+        return testSession.delete(`/subscriptionBoxes/subscriptionBox/${packageId}`)
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
 });
