@@ -61,8 +61,40 @@ async function _isPackageIdUnique (packageId) {
 }
 
 const updateSubscriptionBox = async (id, payload) => {
+    const subscriptionBox = await findSubscriptionBoxByPackageId(id);
+    const {status, _id, packageId, ...rest} = subscriptionBox;
 
+    if (status === "fail") {
+        return Promise.resolve({
+            status: "fail",
+            reason: "subscriptionBox not found"
+        });
+    }
+
+    let updatedPayload = _buildUpdatedPayload(payload, subscriptionBox);
+    const subscriptionBoxObj = createSubscriptionBoxObj(updatedPayload);
+
+    if (subscriptionBoxObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: subscriptionBoxObj
+        });
+    }
+
+    const updatedSubscriptionBox = await SubscriptionBox.findOneAndUpdate({
+        packageId: packageId
+    }, subscriptionBoxObj, { new : true });
+
+    return Promise.resolve(serializer(updatedSubscriptionBox));
 };
+
+function _buildUpdatedPayload (payload, subscriptionBox) {
+    let updatedPayload = payload;
+    updatedPayload.packageId = subscriptionBox.packageId;
+    updatedPayload.lastModified = new Date(Date.now());
+    return updatedPayload;
+}
 
 const deleteSubscriptionBoxByPackageId = async (packageId) => {
     const removedSubscriptionBox = await SubscriptionBox.findOneAndRemove({

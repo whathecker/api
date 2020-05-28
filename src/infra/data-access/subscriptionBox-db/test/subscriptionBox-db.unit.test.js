@@ -82,8 +82,9 @@ describe('Test database layer of subscriptionBox object', () => {
 
         const updatedSubscriptionBox = await packageDB.updateSubscriptionBox(packageId, deepCopiedPayload);
         const {_id, ...rest} = updatedSubscriptionBox;
+        console.log(updatedSubscriptionBox);
 
-        expect(rest.items).toBe(deepCopiedPayload.items);
+        expect(rest.items).toEqual(deepCopiedPayload.items);
         expect(rest.packageId).toBe(packageId);
     });
 
