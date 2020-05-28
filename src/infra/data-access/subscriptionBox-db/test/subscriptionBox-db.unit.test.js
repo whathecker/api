@@ -63,6 +63,50 @@ describe('Test database layer of subscriptionBox object', () => {
         expect(rest).toEqual(payload);
     });
 
+    test('update a package - name', async () => {
+        const packageId = _packageId_holder[1];
+        let deepCopiedPayload = JSON.parse(JSON.stringify(mockPackages[1]));
+        deepCopiedPayload.name = "updated name";
+
+        const updatedSubscriptionBox = await packageDB.updateSubscriptionBox(packageId, deepCopiedPayload);
+        const {_id, ...rest} = updatedSubscriptionBox;
+
+        expect(rest.name).toBe(deepCopiedPayload.name);
+        expect(rest.packageId).toBe(packageId);
+    });
+
+    test('update a package - items', async () => {
+        const packageId = _packageId_holder[2];
+        let deepCopiedPayload = JSON.parse(JSON.stringify(mockPackages[2]));
+        deepCopiedPayload.items = ["1"];
+
+        const updatedSubscriptionBox = await packageDB.updateSubscriptionBox(packageId, deepCopiedPayload);
+        const {_id, ...rest} = updatedSubscriptionBox;
+
+        expect(rest.items).toBe(deepCopiedPayload.items);
+        expect(rest.packageId).toBe(packageId);
+    });
+
+    test('update a package - price', async () => {
+        const packageId = _packageId_holder[0];
+        let deepCopiedPayload = JSON.parse(JSON.stringify(mockPackages[0]));
+        deepCopiedPayload.prices[0] = {
+            region: "eu",
+            currency: "euro",
+            price: "124.00"
+        };
+
+        const updatedSubscriptionBox = await packageDB.updateSubscriptionBox(packageId, deepCopiedPayload);
+        const {_id, ...rest} = updatedSubscriptionBox;
+
+        expect(rest.prices[0].region).toBe("eu");
+        expect(rest.prices[0].currency).toBe("euro");
+        expect(rest.prices[0].price).toBe("124.00");
+        expect(rest.prices[0].vat).toBe("21.52");
+        expect(rest.prices[0].netPrice).toBe("102.48");
+        expect(rest.packageId).toBe(packageId);
+    });
+
     test('delete a package by packageId', async () => {
         const packageId = _packageId_holder[1];
 

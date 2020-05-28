@@ -64,6 +64,10 @@ async function _isPackageIdUnique (packageId) {
     throw new Error('db access for package object failed: packageId must be unique');
 }
 
+const updateSubscriptionBox = async (id, payload) => {
+
+};
+
 const deleteSubscriptionBoxByPackageId = async (packageId) => {
     const subscriptionBox = await findSubscriptionBoxByPackageId(packageId);
 
@@ -103,6 +107,7 @@ const dropAll = () => {
 module.exports = {
     listSubscriptionBoxes,
     addSubscriptionBox,
+    updateSubscriptionBox,
     findSubscriptionBoxByPackageId,
     deleteSubscriptionBoxByPackageId,
     dropAll
