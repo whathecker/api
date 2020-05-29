@@ -76,7 +76,52 @@ subscriptionBox.createSubscriptionBox = async (req, res, next) => {
 };
 
 subscriptionBox.updateSubscriptionBox = async (req, res, next) => {
-    return res.status(200).end();
+    const channel = req.body.channel;
+    const name = req.body.name;
+    const boxType = req.body.boxType;
+    const boxTypeCode = req.body.boxTypeCode;
+    const prices = req.body.prices;
+
+    if (!channel||!name||!boxType||!boxTypeCode||!prices) {
+        logger.warn(`updateSubscriptionBox request has rejected as param is missing`);
+        return res.status(400).json({ 
+            status: 'failed',
+            message: 'bad request' 
+        });
+    }
+
+    try {
+        const packageId = req.params.id;
+        const payload = req.body;
+
+        const updatedSubscriptionBox = await packageDB.updateSubscriptionBox(packageId, payload);
+        const { status, reason } = updatedSubscriptionBox;
+
+        if (status === "fail") {
+            logger.warn(`updateSubscriptionBox request has rejected: ${reason} | requested packageId: ${packageId}`);
+            return res.status(422).json({
+                status: "failed",
+                message: reason
+            });
+        }
+
+        logger.info(`updateSubscriptionBox request has updated the subscriptionBox | name: ${updatedSubscriptionBox.name} productId: ${updatedSubscriptionBox.packageId}`);
+        return res.status(200).json({
+            status: 'success',
+            message: 'subscriptionBox data has updated'
+        });
+        
+    } catch (exception) {
+        if (exception.status === "fail") {
+            logger.error(`updateSubscriptionBox request has failed | error: ${exception.error.message}`);
+            return res.status(422).json({
+                status: "fail",
+                message: exception.error.message
+            });
+        } else {
+            next(exception);
+        }
+    }
 };
 
 subscriptionBox.deleteSubscriptionBoxById = async (req, res, next) => {

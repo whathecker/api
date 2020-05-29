@@ -92,7 +92,50 @@ describe('Test subscriptionBoxes endpoint', () => {
         }); 
     });
 
-    // test for updateSubscriptionBox
+    test('updateSubscriptionBox fail - bad request', async () => {
+        const response = await testSession.post('/subscriptionBoxes/subscriptionBox').send(payload);
+        const packageId = response.body.subscriptionBox.packageId;
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        delete deepCopiedPayload.name;
+        return testSession.put(`/subscriptionBoxes/subscriptionBox/${packageId}`).send(deepCopiedPayload)
+        .then(response => {
+            expect(response.status).toBe(400);
+        });
+    });
+
+    test('updateSubscriptionBox fail - unknown packageId', async () => {
+        await testSession.post('/subscriptionBoxes/subscriptionBox').send(payload);
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.name = 'updated name';
+        return testSession.put('/subscriptionBoxes/subscriptionBox/oddID').send(deepCopiedPayload)
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('updateSubscriptionBox fail - invalid payload', async () => {
+        const response = await testSession.post('/subscriptionBoxes/subscriptionBox').send(payload);
+        const packageId = response.body.subscriptionBox.packageId;
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.channel = "invalid channel";
+        return testSession.put(`/subscriptionBoxes/subscriptionBox/${packageId}`).send(deepCopiedPayload)
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('updateSubscriptionBox success - name', async () => {
+        const response = await testSession.post('/subscriptionBoxes/subscriptionBox').send(payload);
+        const packageId = response.body.subscriptionBox.packageId;
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.name = "updated name";
+        
+        const updateResult = await testSession.put(`/subscriptionBoxes/subscriptionBox/${packageId}`).send(deepCopiedPayload)
+        const updated = await testSession.get(`/subscriptionBoxes/subscriptionBox/${packageId}`);
+        
+        expect(updateResult.status).toBe(200);
+        expect(updated.body.name).toBe(deepCopiedPayload.name);
+    });
 
     test('deleteSubscriptionBoxById - unknonw packageId', () => {
         return testSession.delete('/subscriptionBoxes/subscriptionBox/oddid')

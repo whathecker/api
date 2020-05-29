@@ -116,7 +116,7 @@ describe('Test products endpoints', () => {
     });
 
     test('updateProduct fail - unknown productId', async () => {
-        const response = await testSession.post('/products/product').send(payload);
+        await testSession.post('/products/product').send(payload);
         let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
         deepCopiedPayload.name = "updated name";
         return testSession.put('/products/product/oddid').send(deepCopiedPayload)
@@ -143,11 +143,17 @@ describe('Test products endpoints', () => {
         deepCopiedPayload.name = "updated name";
         deepCopiedPayload.description = "updated description";
 
-        return testSession.put(`/products/product/${productId}`).send(deepCopiedPayload)
-        .then(response => {
-            expect(response.status).toBe(200);
-        });
+        const updatedResult = await testSession.put(`/products/product/${productId}`).send(deepCopiedPayload)
+        const updated = await testSession.get(`/products/product/${productId}`);
+
+        expect(updatedResult.status).toBe(200);
+        expect(updated.body.name).toBe(deepCopiedPayload.name);
+        expect(updated.body.description).toBe(deepCopiedPayload.description);
     });
+
+    //ADD test for updating inventory
+    //ADD test for updating price
+    
 
     test('deleteProductById fail - unknown productId', () => {
         return testSession.delete('/products/product/oddid')
