@@ -129,12 +129,47 @@ describe('Test subscriptionBoxes endpoint', () => {
         const packageId = response.body.subscriptionBox.packageId;
         let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
         deepCopiedPayload.name = "updated name";
-        
-        const updateResult = await testSession.put(`/subscriptionBoxes/subscriptionBox/${packageId}`).send(deepCopiedPayload)
+
+        const updateResult = await testSession.put(`/subscriptionBoxes/subscriptionBox/${packageId}`).send(deepCopiedPayload);
         const updated = await testSession.get(`/subscriptionBoxes/subscriptionBox/${packageId}`);
         
         expect(updateResult.status).toBe(200);
         expect(updated.body.name).toBe(deepCopiedPayload.name);
+    });
+
+    test('updateSubscriptionBox success - items', async () => {
+        const response = await testSession.post('/subscriptionBoxes/subscriptionBox').send(payload);
+        const packageId = response.body.subscriptionBox.packageId;
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.items = ["1", "2", "3"];
+
+        const updateResult = await testSession.put(`/subscriptionBoxes/subscriptionBox/${packageId}`).send(deepCopiedPayload);
+        const updated = await testSession.get(`/subscriptionBoxes/subscriptionBox/${packageId}`);
+
+        expect(updateResult.status).toBe(200);
+        expect(updated.body.items).toEqual(deepCopiedPayload.items);
+    });
+
+    test('updateSubscriptionBox success - prices', async () => {
+        const response = await testSession.post('/subscriptionBoxes/subscriptionBox').send(payload);
+        const packageId = response.body.subscriptionBox.packageId;
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.prices[0] = {
+            region: "eu",
+            currency: "euro",
+            price: "150.50"
+        };
+
+        const updateResult = await testSession.put(`/subscriptionBoxes/subscriptionBox/${packageId}`).send(deepCopiedPayload);
+        const updated = await testSession.get(`/subscriptionBoxes/subscriptionBox/${packageId}`);
+
+        expect(updateResult.status).toBe(200);
+        expect(updated.body.prices[0].region).toBe("eu");
+        expect(updated.body.prices[0].currency).toBe("euro");
+        expect(updated.body.prices[0].price).toBe("150.50");
+        expect(updated.body.prices[0].vat).toBe("26.12");
+        expect(updated.body.prices[0].netPrice).toBe("124.38");
+        expect(updated.body.packageId).toBe(packageId);
     });
 
     test('deleteSubscriptionBoxById - unknonw packageId', () => {
