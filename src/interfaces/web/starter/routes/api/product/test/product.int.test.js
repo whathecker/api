@@ -151,9 +151,30 @@ describe('Test products endpoints', () => {
         expect(updated.body.description).toBe(deepCopiedPayload.description);
     });
 
-    //ADD test for updating inventory
-    //ADD test for updating price
-    
+    test('updateProduct success - inventory', async () => {
+        const response = await testSession.post('/products/product').send(payload);
+        const productId = response.body.product.productId;
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.inventory = {
+            quantityOnHand: 20,
+            quarantaine: 0,
+            lastModified: new Date(Date.now())
+        };
+
+        const updateResult = await testSession.put(`/products/product/${productId}`).send(deepCopiedPayload);
+        const updated = await testSession.get(`/products/product/${productId}`);
+
+        expect(updateResult.status).toBe(200);
+        expect(updated.body.inventory.quantityOnHand).toBe(20);
+        expect(updated.body.inventory.quarantaine).toBe(0);
+        expect(updated.body.inventoryHistory).toHaveLength(2);
+        expect(updated.body.inventoryHistory[1].quantityOnHand).toBe(20);
+        expect(updated.body.inventoryHistory[1].quarantaine).toBe(0);
+    });
+
+    test('updateProduct success - price', async () => {
+
+    });
 
     test('deleteProductById fail - unknown productId', () => {
         return testSession.delete('/products/product/oddid')
