@@ -136,6 +136,30 @@ describe('Test products endpoints', () => {
         });
     });
 
+    test('updateProduct fail - cannot update category & categoryCode', async () => {
+        const response = await testSession.post('/products/product').send(payload);
+        const productId = response.body.product.productId;
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.category = "Updated";
+        deepCopiedPayload.categoryCode = "UT";
+        return testSession.put(`/products/product/${productId}`).send(deepCopiedPayload)
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('updateProduct fail - cannot update brand & brandCode', async () => {
+        const response = await testSession.post('/products/product').send(payload);
+        const productId = response.body.product.productId;
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.brand = "Updated";
+        deepCopiedPayload.brandCode = "UT";
+        return testSession.put(`/products/product/${productId}`).send(deepCopiedPayload)
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
     test('updateProduct success - name and description', async () => {
         const response = await testSession.post('/products/product').send(payload);
         const productId = response.body.product.productId;

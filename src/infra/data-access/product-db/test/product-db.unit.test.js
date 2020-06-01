@@ -118,7 +118,7 @@ describe('Test database access layer of product object', () => {
         expect(rest.productId).toBe(productId);
     });
 
-    test('updatea a product - price', async () => {
+    test('update a product - price', async () => {
         const productId = _productId_holder[0];
         let deepCopiedPayload = JSON.parse(JSON.stringify(mockProducts[0]));
         deepCopiedPayload.prices[0] = {

@@ -67,6 +67,7 @@ async function _isProductIdUnique (productId) {
 const updateProduct = async (id, payload) => {
     const product = await findProductByProductId(id);
     const { status, _id, productId, ...rest } = product;
+    let updatedPayload;
 
     if (status === "fail") {
         return Promise.resolve({
@@ -75,7 +76,16 @@ const updateProduct = async (id, payload) => {
         });
     }
 
-    let updatedPayload = _buildUpdatedPayload(payload, product);
+    try  {
+        updatedPayload = _buildUpdatedPayload(payload, product);
+    } catch (err) {
+        return Promise.reject({
+            status: "fail",
+            reason: "cannot update fixed fields",
+            error: err
+        });
+    }
+
     const productObj = createProductObj(updatedPayload);
 
     if (productObj instanceof Error) {
@@ -97,6 +107,28 @@ const updateProduct = async (id, payload) => {
 };
 
 function _buildUpdatedPayload (payload, product) {
+
+    const fieldsToCheckInPayload = {
+        category: payload.category,
+        categoryCode: payload.categoryCode,
+        brand: payload.brand,
+        brandCode: payload.brandCode
+    };
+
+    const fieldsToCheckInProduct = {
+        category: product.category,
+        categoryCode: product.categoryCode,
+        brand: product.brand,
+        brandCode: product.brandCode
+    };
+    
+   const result_fixedFields_update = _isFixedfieldsUpdate(fieldsToCheckInPayload, fieldsToCheckInProduct);
+   const { status, updatedField } = result_fixedFields_update;
+
+   if (status === true) {
+       throw new Error(`db access for product object failed: ${updatedField} cannot be updated after product has created`);
+   }
+
     let updatedPayload = payload;
     updatedPayload.productId = product.productId;
     updatedPayload.lastModified = new Date(Date.now());
@@ -108,8 +140,25 @@ function _buildUpdatedPayload (payload, product) {
         const newInventoryHistory = updatedPayload.inventory;
         updatedPayload.inventoryHistory.push(newInventoryHistory);
     }
+
     return updatedPayload;
 };
+
+function _isFixedfieldsUpdate (fields_in_payload, fields_in_product) {
+    let result = {
+        status: false,
+        updatedField: null
+    };
+
+    for (let prop of Object.keys(fields_in_payload)) {
+        if (fields_in_payload[prop] !== fields_in_product[prop]) {
+            result.status = true;
+            result.updatedField = prop;
+            break;
+        }
+    }
+    return result;
+}
 
 function _isInventoryUpdated (inventory_in_payload, inventory_in_product) {
      let result = false;
