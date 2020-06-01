@@ -170,10 +170,28 @@ describe('Test products endpoints', () => {
         expect(updated.body.inventoryHistory).toHaveLength(2);
         expect(updated.body.inventoryHistory[1].quantityOnHand).toBe(20);
         expect(updated.body.inventoryHistory[1].quarantaine).toBe(0);
+        expect(updated.body.productId).toBe(productId);
     });
 
     test('updateProduct success - price', async () => {
+        const response = await testSession.post('/products/product').send(payload);
+        const productId = response.body.product.productId;
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.prices[0] = {
+            region: "eu",
+            currency: "euro",
+            price: "111.30"
+        };
 
+        const updateResult = await testSession.put(`/products/product/${productId}`).send(deepCopiedPayload);
+        const updated = await testSession.get(`/products/product/${productId}`);
+
+        expect(updateResult.status).toBe(200);
+        expect(updated.body.prices[0].region).toBe("eu");
+        expect(updated.body.prices[0].currency).toBe("euro");
+        expect(updated.body.prices[0].price).toBe("111.30");
+        expect(updated.body.prices[0].vat).toBe("19.32");
+        expect(updated.body.prices[0].netPrice).toBe("91.98");
     });
 
     test('deleteProductById fail - unknown productId', () => {
