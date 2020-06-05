@@ -63,6 +63,7 @@ async function _isPackageIdUnique (packageId) {
 const updateSubscriptionBox = async (id, payload) => {
     const subscriptionBox = await findSubscriptionBoxByPackageId(id);
     const {status, _id, packageId, ...rest} = subscriptionBox;
+    let updatedPayload;
 
     if (status === "fail") {
         return Promise.resolve({
@@ -71,7 +72,16 @@ const updateSubscriptionBox = async (id, payload) => {
         });
     }
 
-    let updatedPayload = _buildUpdatedPayload(payload, subscriptionBox);
+    try {
+        updatedPayload = _buildUpdatedPayload(payload, subscriptionBox);
+    } catch (err) {
+        return Promise.reject({
+            status: "fail",
+            reason: "cannot update fixed fields",
+            error: err
+        });
+    }
+    
     const subscriptionBoxObj = createSubscriptionBoxObj(updatedPayload);
 
     if (subscriptionBoxObj instanceof Error) {
@@ -90,10 +100,44 @@ const updateSubscriptionBox = async (id, payload) => {
 };
 
 function _buildUpdatedPayload (payload, subscriptionBox) {
+
+    const fieldsToCheckInPayload = {
+        boxType: payload.boxType,
+        boxTypeCode: payload.boxTypeCode,
+    };
+
+    const fieldsToCheckInSubscriptionBox = {
+        boxType: subscriptionBox.boxType,
+        boxTypeCode: subscriptionBox.boxTypeCode,
+    };
+
+    const result_fixedFields_update = _isFixedfieldsUpdate(fieldsToCheckInPayload, fieldsToCheckInSubscriptionBox);
+    const { status, updatedField } = result_fixedFields_update;
+
+    if (status === true) {
+        throw new Error(`db access for subscriptionBox object failed: ${updatedField} cannot be updated after subscriptionBox has created`);
+    }
+
     let updatedPayload = payload;
     updatedPayload.packageId = subscriptionBox.packageId;
     updatedPayload.lastModified = new Date(Date.now());
     return updatedPayload;
+}
+
+function _isFixedfieldsUpdate (fields_in_payload, fields_in_product) {
+    let result = {
+        status: false,
+        updatedField: null
+    };
+
+    for (let prop of Object.keys(fields_in_payload)) {
+        if (fields_in_payload[prop] !== fields_in_product[prop]) {
+            result.status = true;
+            result.updatedField = prop;
+            break;
+        }
+    }
+    return result;
 }
 
 const deleteSubscriptionBoxByPackageId = async (packageId) => {

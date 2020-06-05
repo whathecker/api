@@ -124,6 +124,18 @@ describe('Test subscriptionBoxes endpoint', () => {
         });
     });
 
+    test('updateSubscriptionBoxs fail - cannot update boxType & boxTypeCode', async () => {
+        const response = await testSession.post('/subscriptionBoxes/subscriptionBox').send(payload);
+        const packageId = response.body.subscriptionBox.packageId;
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.boxType = "updated";
+        deepCopiedPayload.boxTypeCode = "UT";
+        return testSession.put(`/subscriptionBoxes/subscriptionBox/${packageId}`).send(deepCopiedPayload)
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
     test('updateSubscriptionBox success - name', async () => {
         const response = await testSession.post('/subscriptionBoxes/subscriptionBox').send(payload);
         const packageId = response.body.subscriptionBox.packageId;
