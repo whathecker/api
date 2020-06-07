@@ -76,7 +76,7 @@ const updateProduct = async (id, payload) => {
     } catch (err) {
         return Promise.reject({
             status: "fail",
-            reason: "cannot update fixed fields",
+            reason: "cannot update immutable fields",
             error: err
         });
     }

@@ -77,7 +77,7 @@ const updateSubscriptionBox = async (id, payload) => {
     } catch (err) {
         return Promise.reject({
             status: "fail",
-            reason: "cannot update fixed fields",
+            reason: "cannot update immutable fields",
             error: err
         });
     }
@@ -111,8 +111,8 @@ function _buildUpdatedPayload (payload, subscriptionBox) {
         boxTypeCode: subscriptionBox.boxTypeCode,
     };
 
-    const result_fixedFields_update = _isFixedfieldsUpdate(fieldsToCheckInPayload, fieldsToCheckInSubscriptionBox);
-    const { status, updatedField } = result_fixedFields_update;
+    const result_immutableFields_update = _isImmutableFieldsUpdated(fieldsToCheckInPayload, fieldsToCheckInSubscriptionBox);
+    const { status, updatedField } = result_immutableFields_update;
 
     if (status === true) {
         throw new Error(`db access for subscriptionBox object failed: ${updatedField} cannot be updated after subscriptionBox has created`);
@@ -124,7 +124,7 @@ function _buildUpdatedPayload (payload, subscriptionBox) {
     return updatedPayload;
 }
 
-function _isFixedfieldsUpdate (fields_in_payload, fields_in_product) {
+function _isImmutableFieldsUpdated (fields_in_payload, fields_in_product) {
     let result = {
         status: false,
         updatedField: null
