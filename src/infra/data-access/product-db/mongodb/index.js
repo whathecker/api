@@ -114,8 +114,8 @@ function _buildUpdatedPayload (payload, product) {
         brandCode: product.brandCode
     };
 
-    const result_fixedFields_update = _isFixedfieldsUpdate(fieldsToCheckInPayload, fieldsToCheckInProduct);
-    const { status, updatedField } = result_fixedFields_update;
+    const result_immutableFields_update = _isImmutableFieldsUpdated(fieldsToCheckInPayload, fieldsToCheckInProduct);
+    const { status, updatedField } = result_immutableFields_update;
 
     if (status === true) {
         throw new Error(`db access for product object failed: ${updatedField} cannot be updated after product has created`);
@@ -136,7 +136,7 @@ function _buildUpdatedPayload (payload, product) {
     return updatedPayload;
 };
 
-function _isFixedfieldsUpdate (fields_in_payload, fields_in_product) {
+function _isImmutableFieldsUpdated (fields_in_payload, fields_in_product) {
     let result = {
         status: false,
         updatedField: null
