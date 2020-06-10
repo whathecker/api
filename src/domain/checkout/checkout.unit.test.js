@@ -111,17 +111,7 @@ describe('Type checking: checkout object', () => {
         expect(checkout.message).toBe(errors.typeErrors.country.message);
     });
 
-    test('checkout object must have a checkoutState property', () => {
-        let payload = copyObj(dummyData);
-        delete payload.checkoutState;
-
-        const checkout = createCheckoutObj(payload);
-
-        expect(checkout instanceof Error).toBe(true);
-        expect(checkout.message).toBe(errors.typeErrors.checkoutState.message);
-    });
-
-    test('checkoutState must be string', () => {
+    test('checkoutState must be string if exist', () => {
         let payload = copyObj(dummyData);
         payload.checkoutState = true;
 

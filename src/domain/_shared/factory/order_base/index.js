@@ -43,7 +43,7 @@ class OrderBaseFactory {
         return num.toString();
     }
 
-    static validate_currency(currency) {
+    static validate_currency (currency) {
         let result = false;
 
         for (let prop of Object.keys(enum_currency)) {

@@ -1,6 +1,6 @@
 const typeErrors = Object.freeze({
     country: new Error("Checkout object must have country as string"),
-    checkoutState: new Error("Checkout object must have checkoutState as string"),
+    checkoutState: new Error("Checkout object has invalid type at property: checkoutState"),
     user_id: new Error("Checkout object has invalid type at property: user_id"),
     anonymous_id: new Error("Checkout object has invalid type at property: anonymous_id"),
     isSubscription: new Error("Checkout object has invalid type at property: isSubscription"),
@@ -52,7 +52,7 @@ const typeErrors = Object.freeze({
 });
 
 const genericErrors = Object.freeze({
-    invalid: new Error("")
+    invalid_checkout_status: new Error("Checkout object contain invalid value in checkoutState field: double check your payload")
 });
 
 module.exports = {
