@@ -77,6 +77,99 @@ class OrderBaseFactory {
 
         return computedPrice.toFixed(2);
     }
+
+    static validateAmountPerItem (amountPerItem) {
+        let result = {
+            success: true,
+            error: null
+        };
+
+        for (let item of amountPerItem) {
+            
+            const result_currency = this.validate_currency(item.currency);
+
+            if (!result_currency) {
+                result = {
+                    success: false,
+                    error: 'currency'
+                };
+                break;
+            }
+
+            const result_qty = this.validate_qty_of_item(item.quantity);
+
+            if (!result_qty) {
+                result = {
+                    success: false,
+                    error: 'quantity'
+                };
+                break;
+            }
+            const computed_grossPrice = this.calculate_price_delta(item.originalPrice, item.discount);
+
+            if (computed_grossPrice !== item.grossPrice) {
+                result = {
+                    success: false,
+                    error: 'grossPrice'
+                };
+                break;
+            }
+
+            const computed_netPrice = this.calculate_price_delta(item.grossPrice, item.vat);
+
+            if (computed_netPrice !== item.netPrice) {
+                result = {
+                    success: false,
+                    error: 'netPrice'
+                }
+                break;
+            }
+
+            const computed_sumOfGrossPrice = this.calculate_price_multiply_qty(item.grossPrice, item.quantity);
+
+            if (computed_sumOfGrossPrice !== item.sumOfGrossPrice) {
+                result = {
+                    success: false,
+                    error: 'sumOfGrossPrice'
+                }
+                break;
+            }
+
+            const computed_sumOfNetPrice = this.calculate_price_multiply_qty(item.netPrice, item.quantity);
+
+            if (computed_sumOfNetPrice !== item.sumOfNetPrice) {
+                result = {
+                    success: false,
+                    error: 'sumOfNetPrice'
+                }
+                break;
+            }
+
+            const computed_sumOfVat = this.calculate_price_multiply_qty(item.vat, item.quantity);
+
+            if (computed_sumOfVat !== item.sumOfVat) {
+                result = {
+                    success: false,
+                    error: 'sumOfVat'
+                }
+                break;
+            }
+
+            const computed_sumOfDiscount = this.calculate_price_multiply_qty(item.discount, item.quantity);
+
+            if (computed_sumOfDiscount !== item.sumOfDiscount) {
+                result = {
+                    success: false,
+                    error: 'sumOfDiscount'
+                }
+                break;
+            }
+
+        }
+
+        return result;
+    }
+
 }
 
 module.exports = OrderBaseFactory;

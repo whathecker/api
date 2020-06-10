@@ -36,7 +36,7 @@ describe('Test CheckoutFactory', () => {
 
     function fillAnnoymousIdsToTest () {
         let array = [];
-        for (let i = 0; i < 5000; i++) {
+        for (let i = 0; i < 200; i++) {
             array.push(CheckoutFactory.createAnnonymousId());
         }
         return array;
