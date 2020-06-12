@@ -90,6 +90,43 @@ function copyObj(obj) {
 
 describe('Make checkout object', () => {
 
+    test('checkout is created - without optional fields', () => {
+        let payload = {};
+        payload.country = "NL";
+        payload.checkoutState = "ORDERED";
+
+        const checkout = createCheckoutObj(payload);
+        
+        expect(checkout.country).toBe(payload.country);
+        expect(checkout.checkoutState).toBe(payload.checkoutState);
+    });
+
+    test('checkout is created - with all fields', () => {
+        const checkout = createCheckoutObj(dummyData);
+
+        expect(checkout.country).toBe(dummyData.country);
+        expect(checkout.checkoutState).toBe(dummyData.checkoutState);
+        expect(checkout.user_id).toBe(dummyData.user_id);
+        expect(checkout.isSubscription).toBe(dummyData.isSubscription);
+        expect(checkout.lineItems).toBe(dummyData.lineItems);
+        expect(checkout.totalPrice).toBe(dummyData.totalPrice);
+        expect(checkout.billingAddress).toBe(dummyData.billingAddress);
+        expect(checkout.shippingAddress).toBe(dummyData.shippingAddress);
+        expect(checkout.shippingInfo).toBe(dummyData.shippingInfo);
+        expect(checkout.paymentInfo).toBe(dummyData.paymentInfo);
+    });
+
+    test('checkout must have annoymous_id when both user_id and annoymous_id is not given', () => {
+        let payload = {};
+        payload.country = "NL";
+        payload.checkoutState = "ORDERED";
+
+        const checkout = createCheckoutObj(payload);
+        
+        expect(checkout.anonymous_id).not.toBe(null);
+        expect(checkout.anonymous_id).not.toBe(undefined);
+    });
+
     test('checkout must have default checkoutState when value is not given in payload', () => {
         let payload = copyObj(dummyData);
         delete payload.checkoutState;
