@@ -1,3 +1,5 @@
+const CheckoutFactory = require('./factory');
+
 let buildCreateCheckoutObj = function (checkoutValidator) {
     return ({
         country,
@@ -13,7 +15,7 @@ let buildCreateCheckoutObj = function (checkoutValidator) {
         paymentInfo
     } = {}) => {
 
-        const paylaod = {
+        const payload = {
             country,
             checkoutState,
             user_id,
@@ -27,13 +29,13 @@ let buildCreateCheckoutObj = function (checkoutValidator) {
             paymentInfo
         };
 
-        const result = checkoutValidator(paylaod);
+        const result = checkoutValidator(payload);
 
         if (result instanceof Error) {
             return result;
         }
 
-        return 'create checkout object here'
+        return new CheckoutFactory(payload);
     }
 }
 

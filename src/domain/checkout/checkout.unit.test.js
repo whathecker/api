@@ -8,7 +8,7 @@ const dummyData = {
     country: "NL",
     checkoutState: "ACTIVE",
     user_id: "user_id",
-    anonymous_id: "anonymous_id",
+    anonymous_id: null,
     isSubscription: true,
     lineItems: [
         {
@@ -88,6 +88,27 @@ const dummyData = {
 function copyObj(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
+
+describe('Make checkout object', () => {
+
+    test('checkout must have default checkoutState when value is not given in payload', () => {
+        let payload = copyObj(dummyData);
+        delete payload.checkoutState;
+
+        const checkout = createCheckoutObj(payload);
+        expect(checkout.checkoutState).toBe("ACTIVE");
+    });
+
+    test('invalid checkoutState', () => {
+        let payload = copyObj(dummyData);
+        payload.checkoutState = "invalid_state";
+
+        const checkout = createCheckoutObj(payload);
+
+        expect(checkout instanceof Error).toBe(true);
+        expect(checkout.message).toBe(errors.genericErrors.invalid_checkout_status.message);
+    });
+});
 
 describe('Type checking: checkout object', () => {
 

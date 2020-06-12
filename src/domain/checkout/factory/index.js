@@ -24,9 +24,9 @@ class CheckoutFactory extends OrderBaseFactory {
     } = {}) {
 
         if (!checkoutState) {
-            checkoutState = CheckoutFactory.set_default_checkoutState();
+            checkoutState = CheckoutFactory.setDefaultCheckoutState();
         } else {
-            const result_checkoutState = CheckoutFactory.validate_checkoutState(checkoutState);
+            const result_checkoutState = CheckoutFactory.validateCheckoutState(checkoutState);
             if (!result_checkoutState) {
                 return errors.genericErrors.invalid_checkout_status;
             }
