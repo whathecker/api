@@ -235,6 +235,16 @@ describe('Make checkout object', () => {
         expect(checkout.message).toBe(errors.genericErrors.invalid_sumOfDiscount_in_lineItems.message);
     });
 
+    test('invalid shippingMethod', () => {
+        let payload = copyObj(dummyData);
+        payload.shippingInfo.shippingMethod = "invalid value";
+
+        const checkout = createCheckoutObj(payload);
+
+        expect(checkout instanceof Error).toBe(true);
+        expect(checkout.message).toBe(errors.genericErrors.invalid_shippingMethod.message);
+    });
+
 
 });
 

@@ -53,7 +53,12 @@ class CheckoutFactory extends OrderBaseFactory {
         }
 
         if (shippingInfo) {
-            // validate shippingMethod?
+            
+            const result_shippingMethod = CheckoutFactory.validateShippingMethod(shippingInfo.shippingMethod);
+
+            if (!result_shippingMethod) {
+                return errors.genericErrors.invalid_shippingMethod;
+            }
             // validate currency and amount in price object?
         }
     
@@ -74,7 +79,7 @@ class CheckoutFactory extends OrderBaseFactory {
     }
 
     static setDefaultCheckoutState () {
-        return "ACTIVE"
+        return "ACTIVE";
     }
 
     static validateCheckoutState (state) {
