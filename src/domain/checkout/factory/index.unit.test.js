@@ -52,4 +52,16 @@ describe('Test CheckoutFactory', () => {
         }
         return true;
     }
+
+    test('validateShippingMethod must return true', () => {
+        const result = CheckoutFactory.validateShippingMethod("standard");
+        
+        expect(result).toBe(true);
+    });
+
+    test('validateShippingMethod must return false', () => {
+        const result = CheckoutFactory.validateShippingMethod("invalid");
+
+        expect(result).toBe(false);
+    });
 });

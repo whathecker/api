@@ -8,6 +8,10 @@ const enum_checkout_state = Object.freeze({
     2: "MERGED"
 });
 
+const enum_shipping_method = Object.freeze({
+    0: "standard"
+});
+
 class CheckoutFactory extends OrderBaseFactory {
     constructor({
         country,
@@ -114,6 +118,18 @@ class CheckoutFactory extends OrderBaseFactory {
             default: 
                 throw new Error('unknown errorType: check your input');
         }
+    }
+
+    static validateShippingMethod (shippingMethod) {
+        let result = false;
+
+        for (let prop of Object.keys(enum_shipping_method)) {
+            if (shippingMethod === enum_shipping_method[prop]) {
+                result = true;
+                break;
+            }
+        }
+        return result;
     }
 }
 
