@@ -55,6 +55,24 @@ class OrderBaseFactory {
         return result;
     }
 
+    static validatePriceFormat (price) {
+        let result =  false;
+
+        const splittedPrice = price.split('.');
+
+        if (splittedPrice.length !== 2) {
+            return result;
+        }
+
+        const primeNum = Number(splittedPrice[0]);
+        const floatingPoint = Number(splittedPrice[1]);
+
+        (!Number.isNaN(primeNum) && !Number.isNaN(floatingPoint))?
+            result = true : null;
+        
+        return result;
+    }
+
     static validate_qty_of_item (qty) {
         let result = false;
         (qty > 0)? result = true : null;

@@ -94,6 +94,26 @@ describe('Test OrderBaseFactory', () => {
         expect(multipliedPrice4).toBe('8000.25');
     });
 
+    test('validatePriceFormat must return false: invalid price format', () => {
+        const result = OrderBaseFactory.validatePriceFormat('0');
+        const result2 = OrderBaseFactory.validatePriceFormat('some weird text');
+
+        expect(result).toBe(false);
+        expect(result2).toBe(false);
+    }); 
+
+    test('validatePriceFormat must return true', () => {
+        const result = OrderBaseFactory.validatePriceFormat('0.00');
+        const result2 = OrderBaseFactory.validatePriceFormat('999.00');
+        const result3 = OrderBaseFactory.validatePriceFormat('12314.99');
+        const result4 = OrderBaseFactory.validatePriceFormat('13134913.1');
+
+        expect(result).toBe(true);
+        expect(result2).toBe(true);
+        expect(result3).toBe(true);
+        expect(result4).toBe(true);
+    });
+
     test('validateAmountPerItem must indicate quantity is invalid', () => {
         const orderAmountPerItem = [
             {
