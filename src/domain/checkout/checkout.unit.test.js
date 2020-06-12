@@ -117,6 +117,88 @@ describe('Make checkout object', () => {
         expect(checkout instanceof Error).toBe(true);
         expect(checkout.message).toBe(errors.genericErrors.conflict_ownership.message);
     });
+
+    test('invalid currency in item of lineItems', () => {
+        let payload = copyObj(dummyData);
+        payload.lineItems[0].currency = 'usd';
+        
+        const checkout = createCheckoutObj(payload);
+
+        expect(checkout instanceof Error).toBe(true);
+        expect(checkout.message).toBe(errors.genericErrors.invalid_currency_in_lineItems.message); 
+    });
+
+    test('invalid quantity in item of lineItems', () => {
+        let payload = copyObj(dummyData);
+        payload.lineItems[0].quantity = 0;
+
+        const checkout = createCheckoutObj(payload);
+
+        expect(checkout instanceof Error).toBe(true);
+        expect(checkout.message).toBe(errors.genericErrors.invalid_quantity_in_lineItems.message);
+    });
+
+    test('invalid grossPrice in item of lineItems', () => {
+        let payload = copyObj(dummyData);
+        payload.lineItems[0].originalPrice = "1.00";
+
+        const checkout = createCheckoutObj(payload);
+
+        expect(checkout instanceof Error).toBe(true);
+        expect(checkout.message).toBe(errors.genericErrors.invalid_grossPrice_in_lineItems.message);
+    });
+
+    test('invalid netPrice in item of lineItems', () => {
+        let payload = copyObj(dummyData);
+        payload.lineItems[0].netPrice = "1.00";
+
+        const checkout = createCheckoutObj(payload);
+
+        expect(checkout instanceof Error).toBe(true);
+        expect(checkout.message).toBe(errors.genericErrors.invalid_netPrice_in_lineItems.message);
+    });
+
+    test('invalid sumOfGrossPrice in item of lineItems', () => {
+        let payload = copyObj(dummyData);
+        payload.lineItems[0].sumOfGrossPrice = "1.00";
+
+        const checkout = createCheckoutObj(payload);
+
+        expect(checkout instanceof Error).toBe(true);
+        expect(checkout.message).toBe(errors.genericErrors.invalid_sumOfGrossPrice_in_lineItems.message);
+    });
+
+    test('invalid sumOfNetPrice in item of lineItems', () => {
+        let payload = copyObj(dummyData);
+        payload.lineItems[0].sumOfNetPrice = "1.00";
+
+        const checkout = createCheckoutObj(payload);
+
+        expect(checkout instanceof Error).toBe(true);
+        expect(checkout.message).toBe(errors.genericErrors.invalid_sumOfNetPrice_in_lineItems.message);
+    });
+
+    test('invalid sumOfVat in item of lineItems', () => {
+        let payload = copyObj(dummyData);
+        payload.lineItems[0].sumOfVat = "1.00";
+
+        const checkout = createCheckoutObj(payload);
+
+        expect(checkout instanceof Error).toBe(true);
+        expect(checkout.message).toBe(errors.genericErrors.invalid_sumOfVat_in_lineItems.message);
+    });
+
+    test('invalid sumOfDiscount in item of lineItems', () => {
+        let payload = copyObj(dummyData);
+        payload.lineItems[0].sumOfDiscount = "1.00";
+
+        const checkout = createCheckoutObj(payload);
+
+        expect(checkout instanceof Error).toBe(true);
+        expect(checkout.message).toBe(errors.genericErrors.invalid_sumOfDiscount_in_lineItems.message);
+    });
+
+
 });
 
 describe('Type checking: checkout object', () => {

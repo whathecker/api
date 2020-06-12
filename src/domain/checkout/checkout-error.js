@@ -54,6 +54,14 @@ const typeErrors = Object.freeze({
 const genericErrors = Object.freeze({
     invalid_checkout_status: new Error("Checkout object contain invalid value in checkoutState field: double check your payload"),
     conflict_ownership: new Error("Checkout object contain both user_id and anonymous_id"),
+    invalid_currency_in_lineItems: new Error("Checkout object contain invalid currency in item of lineItems field: double check currency from your input"),
+    invalid_quantity_in_lineItems: new Error("Checkout object contain invalid quantity in item of lineItems field: double check quantity from your input"),
+    invalid_grossPrice_in_lineItems: new Error("Checkout object contain invalid grossPrice in item of lineItems field: double check grossPrice from your input"),
+    invalid_netPrice_in_lineItems: new Error("Checkout object contain invalid netPrice in item of lineItems field: double check grossPrice from your input"),
+    invalid_sumOfGrossPrice_in_lineItems: new Error("Checkout object contain invalid sumOfGrossPrice in item of lineItems field: double check sumOfGrossPrice from your input"),
+    invalid_sumOfNetPrice_in_lineItems: new Error("Checkout object contain invalid sumOfNetPrice in item of lineItems field: double check sumOfNetPrice from your input"),
+    invalid_sumOfVat_in_lineItems: new Error("Checkout object contain invalid sumOfVat in item of lineItems field: double check sumOfVat from your input"),
+    invalid_sumOfDiscount_in_lineItems: new Error("Checkout object contain invalid sumOfDiscount in item of lineItems field: double check sumOfDiscount from your input"),
 });
 
 module.exports = {

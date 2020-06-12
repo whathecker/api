@@ -41,7 +41,11 @@ class CheckoutFactory extends OrderBaseFactory {
         }
 
         if (lineItems) {
-            // validate lineItems
+            const result_lineItems = CheckoutFactory.validateAmountPerItem(lineItems);
+
+            if (!result_lineItems.success) {
+                return CheckoutFactory.returnValidationErrorFromLineItems(result_lineItems.error);
+            }
         }
 
         if (shippingInfo) {
@@ -87,6 +91,29 @@ class CheckoutFactory extends OrderBaseFactory {
         const secret = date.concat(random_5_digit_num);
         const hash = crypto.createHmac('sha256', secret);
         return hash.digest('hex').slice(20);
+    }
+
+    static returnValidationErrorFromLineItems (errorType) {
+        switch (errorType) {
+            case 'currency':
+                return errors.genericErrors.invalid_currency_in_lineItems;
+            case 'quantity':
+                return errors.genericErrors.invalid_quantity_in_lineItems;
+            case 'grossPrice':
+                return errors.genericErrors.invalid_grossPrice_in_lineItems;
+            case 'netPrice':
+                return errors.genericErrors.invalid_netPrice_in_lineItems;
+            case 'sumOfGrossPrice':
+                return errors.genericErrors.invalid_sumOfGrossPrice_in_lineItems;
+            case 'sumOfNetPrice':
+                return errors.genericErrors.invalid_sumOfNetPrice_in_lineItems;
+            case'sumOfVat':
+                return errors.genericErrors.invalid_sumOfVat_in_lineItems;
+            case 'sumOfDiscount':
+                return errors.genericErrors.invalid_sumOfDiscount_in_lineItems;
+            default: 
+                throw new Error('unknown errorType: check your input');
+        }
     }
 }
 
