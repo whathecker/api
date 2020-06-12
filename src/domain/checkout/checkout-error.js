@@ -52,7 +52,8 @@ const typeErrors = Object.freeze({
 });
 
 const genericErrors = Object.freeze({
-    invalid_checkout_status: new Error("Checkout object contain invalid value in checkoutState field: double check your payload")
+    invalid_checkout_status: new Error("Checkout object contain invalid value in checkoutState field: double check your payload"),
+    conflict_ownership: new Error("Checkout object contain both user_id and anonymous_id"),
 });
 
 module.exports = {

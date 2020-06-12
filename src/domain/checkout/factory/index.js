@@ -33,8 +33,7 @@ class CheckoutFactory extends OrderBaseFactory {
         }
 
         if (user_id && anonymous_id) {
-            // nullify anonymous_id
-            // or throw error? 
+            return errors.genericErrors.conflict_ownership;
         }
 
         if (!user_id && !anonymous_id) {

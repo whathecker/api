@@ -8,7 +8,6 @@ const dummyData = {
     country: "NL",
     checkoutState: "ACTIVE",
     user_id: "user_id",
-    anonymous_id: null,
     isSubscription: true,
     lineItems: [
         {
@@ -107,6 +106,16 @@ describe('Make checkout object', () => {
 
         expect(checkout instanceof Error).toBe(true);
         expect(checkout.message).toBe(errors.genericErrors.invalid_checkout_status.message);
+    });
+
+    test('checkout cannot contain both user_id and anonymous_id', () => {
+        let payload = copyObj(dummyData);
+        payload.anonymous_id = "anonymous_id";
+
+        const checkout = createCheckoutObj(payload);
+
+        expect(checkout instanceof Error).toBe(true);
+        expect(checkout.message).toBe(errors.genericErrors.conflict_ownership.message);
     });
 });
 
