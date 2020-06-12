@@ -62,7 +62,9 @@ const genericErrors = Object.freeze({
     invalid_sumOfNetPrice_in_lineItems: new Error("Checkout object contain invalid sumOfNetPrice in item of lineItems field: double check sumOfNetPrice from your input"),
     invalid_sumOfVat_in_lineItems: new Error("Checkout object contain invalid sumOfVat in item of lineItems field: double check sumOfVat from your input"),
     invalid_sumOfDiscount_in_lineItems: new Error("Checkout object contain invalid sumOfDiscount in item of lineItems field: double check sumOfDiscount from your input"),
-    invalid_shippingMethod: new Error("Checkout object contain invalid value in shippingMethod field: double check your payload")
+    invalid_shippingMethod: new Error("Checkout object contain invalid value in shippingMethod field: double check your payload"),
+    invalid_currency_in_shippingPrice: new Error("Checkout object contain invalid currency in price field of shippingInfo: double check currency from your input"),
+    invalid_priceFormat_in_shippingPrice: new Error("Checkout object contain invalid priceFormat in amount field of shippingInfo: double check price format at amount field from your input")
 });
 
 module.exports = {

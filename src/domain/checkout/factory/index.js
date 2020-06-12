@@ -53,13 +53,24 @@ class CheckoutFactory extends OrderBaseFactory {
         }
 
         if (shippingInfo) {
-            
+
             const result_shippingMethod = CheckoutFactory.validateShippingMethod(shippingInfo.shippingMethod);
 
             if (!result_shippingMethod) {
                 return errors.genericErrors.invalid_shippingMethod;
             }
-            // validate currency and amount in price object?
+            
+            const result_currency_in_price = CheckoutFactory.validate_currency(shippingInfo.price.currency);
+
+            if (!result_currency_in_price) {
+                return errors.genericErrors.invalid_currency_in_shippingPrice;
+            }
+
+            const result_priceFormat_in_price = CheckoutFactory.validatePriceFormat(shippingInfo.price.amount);
+
+            if (!result_priceFormat_in_price) {
+                return errors.genericErrors.invalid_priceFormat_in_shippingPrice;
+            }
         }
     
         const payload = {

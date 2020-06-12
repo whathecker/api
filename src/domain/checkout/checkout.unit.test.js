@@ -245,7 +245,25 @@ describe('Make checkout object', () => {
         expect(checkout.message).toBe(errors.genericErrors.invalid_shippingMethod.message);
     });
 
+    test('invalid currency in price of shippingInfo', () => {
+        let payload = copyObj(dummyData);
+        payload.shippingInfo.price.currency = "usd";
 
+        const checkout = createCheckoutObj(payload);
+
+        expect(checkout instanceof Error).toBe(true);
+        expect(checkout.message).toBe(errors.genericErrors.invalid_currency_in_shippingPrice.message);
+    });
+
+    test('invalid price format in amount in price field of shippingInfo', () => {
+        let payload = copyObj(dummyData);
+        payload.shippingInfo.price.amount = "100";
+
+        const checkout = createCheckoutObj(payload);
+
+        expect(checkout instanceof Error).toBe(true);
+        expect(checkout.message).toBe(errors.genericErrors.invalid_priceFormat_in_shippingPrice.message);
+    });
 });
 
 describe('Type checking: checkout object', () => {
