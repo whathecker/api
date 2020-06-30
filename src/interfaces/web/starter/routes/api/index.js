@@ -3,6 +3,7 @@ const brand = require('./brand');
 const skinType = require('./skinType');
 const product = require('./product');
 const subscriptionBox = require('./subscriptionBox');
+const order = require('./order');
 
 let apiRoutesLoader = {}
 
@@ -46,5 +47,15 @@ apiRoutesLoader.mountSubscriptionBoxRoutes = (router) => {
     .delete('/subscriptionBoxes/subscriptionBox/:id', subscriptionBox.deleteSubscriptionBoxById)
     return route;
 };
+
+apiRoutesLoader.mountOrderRoutes = (router) => {
+    const route = router
+    .get('/orders', order.listOrders)
+    .get('/orders/order/:ordernumber', order.getOrderByOrdernumber)
+    .put('/orders/order/:ordernumber/shipping', order.updateShippingStatus)
+    .put('/orders/order/:ordernumber/shipping/items', order.updateShippingItems)
+    .delete('/order/:ordernumber/shipping/items/:itemId', order.removePackedItems)
+    return route;
+}
 
 module.exports = apiRoutesLoader;

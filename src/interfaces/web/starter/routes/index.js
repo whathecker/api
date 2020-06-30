@@ -4,7 +4,8 @@ const {
     mountBrandRoutes, 
     mountSkinTypeRoutes,
     mountProductRoutes,
-    mountSubscriptionBoxRoutes
+    mountSubscriptionBoxRoutes,
+    mountOrderRoutes
 } = api;
 
 const apiRoutesLoader = (routerObj) => {
@@ -14,6 +15,7 @@ const apiRoutesLoader = (routerObj) => {
     router.use('/admin/skinTypes',mountSkinTypeRoutes(router));
     router.use('/products', mountProductRoutes(router));
     router.use('/subscriptionBoxes', mountSubscriptionBoxRoutes(router));
+    router.use('/orders', mountOrderRoutes(router));
     return router;
 }
 
