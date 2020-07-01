@@ -28,8 +28,6 @@ let payload = {
         country: "The Netherlands"
     }, 
     isSubscription: true,
-    // should orderStatus be part of payload? if not shouldn't default status be applied?
-    // same goes for payment status
     orderStatus: {
         status: "RECEIVED",
         timestamp: new Date('December 14, 1995 03:24:00')
@@ -103,4 +101,21 @@ describe('Test order endpoints', () => {
         });
     });
 
+    test('getOrderByOrdernumber fail - unknown orderNumber', () => {
+        return testSession.get('/orders/order/oddnumber')
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('getOrderByOrdernumber success', async () => {
+        const order = await orderDB.addOrder(payload);
+        const orderNumber = order.orderNumber;
+        return testSession.get(`/orders/order/${orderNumber}`)
+        .then(response => {
+            console.log(response.body);
+            expect(response.status).toBe(200);
+            expect(response.body.orderNumber).toBe(orderNumber);
+        });
+    });
 });
