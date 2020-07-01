@@ -96,6 +96,11 @@ describe('Test order endpoints', () => {
         await orderDB.dropAll();
     });
 
-    
+    test('listOrders success', () => {
+        return testSession.get('/orders')
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
 
 });
