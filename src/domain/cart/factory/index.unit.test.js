@@ -1,16 +1,16 @@
-const CheckoutFactory = require('./index');
+const CartFactory = require('./index');
 
 describe('Test CheckoutFactory', () => {
 
     test('setDefaultCheckoutState must return ACTIVE', () => {
-        const defaultState = CheckoutFactory.setDefaultCheckoutState();
+        const defaultState = CartFactory.setDefaultCheckoutState();
         expect(defaultState).toBe("ACTIVE");
     });
 
     test('validateCheckoutState must return true', () => {
-        const result_active = CheckoutFactory.validateCheckoutState("ACTIVE");
-        const result_ordered = CheckoutFactory.validateCheckoutState("ORDERED");
-        const result_merged = CheckoutFactory.validateCheckoutState("MERGED");
+        const result_active = CartFactory.validateCheckoutState("ACTIVE");
+        const result_ordered = CartFactory.validateCheckoutState("ORDERED");
+        const result_merged = CartFactory.validateCheckoutState("MERGED");
 
         expect(result_active).toBe(true);
         expect(result_ordered).toBe(true);
@@ -18,9 +18,9 @@ describe('Test CheckoutFactory', () => {
     });
 
     test('validateCheckoutState must return false', () => {
-        const result = CheckoutFactory.validateCheckoutState("active");
-        const result2 = CheckoutFactory.validateCheckoutState("inactive");
-        const result3 = CheckoutFactory.validateCheckoutState("order");
+        const result = CartFactory.validateCheckoutState("active");
+        const result2 = CartFactory.validateCheckoutState("inactive");
+        const result3 = CartFactory.validateCheckoutState("order");
         
         expect(result).toBe(false);
         expect(result2).toBe(false);
@@ -37,7 +37,7 @@ describe('Test CheckoutFactory', () => {
     function fillAnnoymousIdsToTest () {
         let array = [];
         for (let i = 0; i < 200; i++) {
-            array.push(CheckoutFactory.createAnnonymousId());
+            array.push(CartFactory.createAnnonymousId());
         }
         return array;
     }
@@ -54,13 +54,13 @@ describe('Test CheckoutFactory', () => {
     }
 
     test('validateShippingMethod must return true', () => {
-        const result = CheckoutFactory.validateShippingMethod("standard");
+        const result = CartFactory.validateShippingMethod("standard");
         
         expect(result).toBe(true);
     });
 
     test('validateShippingMethod must return false', () => {
-        const result = CheckoutFactory.validateShippingMethod("invalid");
+        const result = CartFactory.validateShippingMethod("invalid");
 
         expect(result).toBe(false);
     });

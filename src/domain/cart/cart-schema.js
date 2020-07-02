@@ -1,5 +1,5 @@
 const Joi = require('@hapi/joi');
-const errors = require('./checkout-error');
+const errors = require('./cart-error');
 
 module.exports = Joi.object({
     country: Joi.string().required().error(errors.typeErrors.country),

@@ -1,4 +1,4 @@
-const errors = require('../checkout-error');
+const errors = require('../cart-error');
 const OrderBaseFactory = require('../../_shared/factory').order_base_factory;
 const crypto = require('crypto');
 
@@ -12,7 +12,7 @@ const enum_shipping_method = Object.freeze({
     0: "standard"
 });
 
-class CheckoutFactory extends OrderBaseFactory {
+class CartFactory extends OrderBaseFactory {
     constructor({
         country,
         checkoutState,
@@ -28,9 +28,9 @@ class CheckoutFactory extends OrderBaseFactory {
     } = {}) {
 
         if (!checkoutState) {
-            checkoutState = CheckoutFactory.setDefaultCheckoutState();
+            checkoutState = CartFactory.setDefaultCheckoutState();
         } else {
-            const result_checkoutState = CheckoutFactory.validateCheckoutState(checkoutState);
+            const result_checkoutState = CartFactory.validateCheckoutState(checkoutState);
             if (!result_checkoutState) {
                 return errors.genericErrors.invalid_checkout_status;
             }
@@ -41,32 +41,32 @@ class CheckoutFactory extends OrderBaseFactory {
         }
 
         if (!user_id && !anonymous_id) {
-            anonymous_id = CheckoutFactory.createAnnonymousId();
+            anonymous_id = CartFactory.createAnnonymousId();
         }
 
         if (lineItems) {
-            const result_lineItems = CheckoutFactory.validateAmountPerItem(lineItems);
+            const result_lineItems = CartFactory.validateAmountPerItem(lineItems);
 
             if (!result_lineItems.success) {
-                return CheckoutFactory.returnValidationErrorFromLineItems(result_lineItems.error);
+                return CartFactory.returnValidationErrorFromLineItems(result_lineItems.error);
             }
         }
 
         if (shippingInfo) {
 
-            const result_shippingMethod = CheckoutFactory.validateShippingMethod(shippingInfo.shippingMethod);
+            const result_shippingMethod = CartFactory.validateShippingMethod(shippingInfo.shippingMethod);
 
             if (!result_shippingMethod) {
                 return errors.genericErrors.invalid_shippingMethod;
             }
             
-            const result_currency_in_price = CheckoutFactory.validate_currency(shippingInfo.price.currency);
+            const result_currency_in_price = CartFactory.validate_currency(shippingInfo.price.currency);
 
             if (!result_currency_in_price) {
                 return errors.genericErrors.invalid_currency_in_shippingPrice;
             }
 
-            const result_priceFormat_in_price = CheckoutFactory.validatePriceFormat(shippingInfo.price.amount);
+            const result_priceFormat_in_price = CartFactory.validatePriceFormat(shippingInfo.price.amount);
 
             if (!result_priceFormat_in_price) {
                 return errors.genericErrors.invalid_priceFormat_in_shippingPrice;
@@ -86,7 +86,7 @@ class CheckoutFactory extends OrderBaseFactory {
             shippingInfo,
             paymentInfo
         };
-        return new Checkout(payload);
+        return new Cart(payload);
     }
 
     static setDefaultCheckoutState () {
@@ -149,7 +149,7 @@ class CheckoutFactory extends OrderBaseFactory {
     }
 }
 
-class Checkout {
+class Cart {
     constructor({
         country,
         checkoutState,
@@ -180,4 +180,4 @@ class Checkout {
 }
 
 
-module.exports = CheckoutFactory;
+module.exports = CartFactory;

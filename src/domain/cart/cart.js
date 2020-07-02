@@ -1,4 +1,4 @@
-const CheckoutFactory = require('./factory');
+const CartFactory = require('./factory');
 
 let buildCreateCheckoutObj = function (checkoutValidator) {
     return ({
@@ -35,7 +35,7 @@ let buildCreateCheckoutObj = function (checkoutValidator) {
             return result;
         }
 
-        return new CheckoutFactory(payload);
+        return new CartFactory(payload);
     }
 }
 
