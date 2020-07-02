@@ -37,11 +37,11 @@ order.getOrderByOrdernumber = async (req, res, next) => {
     }
 };
 
-order.updateShippingStatus = async (req, res, next) => {
+order.updateShippingItems = async (req, res, next) => {
     return res.status(200).end();
 };
 
-order.updateShippingItems = async (req, res, next) => {
+order.updateShippingStatus = async (req, res, next) => {
     return res.status(200).end();
 };
 
