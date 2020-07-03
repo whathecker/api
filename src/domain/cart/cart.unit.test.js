@@ -6,7 +6,7 @@ const createCartObj = buildCreateCartObj(validator);
 
 const dummyData = {
     country: "NL",
-    checkoutState: "ACTIVE",
+    cartState: "ACTIVE",
     user_id: "user_id",
     isSubscription: true,
     lineItems: [
@@ -93,19 +93,19 @@ describe('Make cart object', () => {
     test('cart is created - without optional fields', () => {
         let payload = {};
         payload.country = "NL";
-        payload.checkoutState = "ORDERED";
+        payload.cartState = "ORDERED";
 
         const cart = createCartObj(payload);
         
         expect(cart.country).toBe(payload.country);
-        expect(cart.checkoutState).toBe(payload.checkoutState);
+        expect(cart.cartState).toBe(payload.cartState);
     });
 
     test('cart is created - with all fields', () => {
         const cart = createCartObj(dummyData);
 
         expect(cart.country).toBe(dummyData.country);
-        expect(cart.checkoutState).toBe(dummyData.checkoutState);
+        expect(cart.cartState).toBe(dummyData.cartState);
         expect(cart.user_id).toBe(dummyData.user_id);
         expect(cart.isSubscription).toBe(dummyData.isSubscription);
         expect(cart.lineItems).toBe(dummyData.lineItems);
@@ -119,7 +119,7 @@ describe('Make cart object', () => {
     test('cart must have annoymous_id when both user_id and annoymous_id is not given', () => {
         let payload = {};
         payload.country = "NL";
-        payload.checkoutState = "ORDERED";
+        payload.cartState = "ORDERED";
 
         const cart = createCartObj(payload);
         
@@ -127,22 +127,22 @@ describe('Make cart object', () => {
         expect(cart.anonymous_id).not.toBe(undefined);
     });
 
-    test('cart must have default checkoutState when value is not given in payload', () => {
+    test('cart must have default cartState when value is not given in payload', () => {
         let payload = copyObj(dummyData);
-        delete payload.checkoutState;
+        delete payload.cartState;
 
         const cart = createCartObj(payload);
-        expect(cart.checkoutState).toBe("ACTIVE");
+        expect(cart.cartState).toBe("ACTIVE");
     });
 
-    test('invalid checkoutState', () => {
+    test('invalid cartState', () => {
         let payload = copyObj(dummyData);
-        payload.checkoutState = "invalid_state";
+        payload.cartState = "invalid_state";
 
         const cart = createCartObj(payload);
 
         expect(cart instanceof Error).toBe(true);
-        expect(cart.message).toBe(errors.genericErrors.invalid_checkout_status.message);
+        expect(cart.message).toBe(errors.genericErrors.invalid_cart_status.message);
     });
 
     test('cart cannot contain both user_id and anonymous_id', () => {
@@ -288,14 +288,14 @@ describe('Type checking: checkout object', () => {
         expect(cart.message).toBe(errors.typeErrors.country.message);
     });
 
-    test('checkoutState must be string if exist', () => {
+    test('cartState must be string if exist', () => {
         let payload = copyObj(dummyData);
-        payload.checkoutState = true;
+        payload.cartState = true;
 
         const cart = createCartObj(payload);
 
         expect(cart instanceof Error).toBe(true);
-        expect(cart.message).toBe(errors.typeErrors.checkoutState.message);
+        expect(cart.message).toBe(errors.typeErrors.cartState.message);
     });
 
     test('user_id property must be string if exist', () => {

@@ -3,7 +3,7 @@ const CartFactory = require('./factory');
 let buildCreateCheckoutObj = function (checkoutValidator) {
     return ({
         country,
-        checkoutState,
+        cartState,
         user_id,
         anonymous_id,
         isSubscription,
@@ -17,7 +17,7 @@ let buildCreateCheckoutObj = function (checkoutValidator) {
 
         const payload = {
             country,
-            checkoutState,
+            cartState,
             user_id,
             anonymous_id,
             isSubscription,

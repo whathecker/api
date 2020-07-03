@@ -1,6 +1,6 @@
 const typeErrors = Object.freeze({
     country: new Error("Cart object must have country as string"),
-    checkoutState: new Error("Cart object has invalid type at property: checkoutState"),
+    cartState: new Error("Cart object has invalid type at property: cartState"),
     user_id: new Error("Cart object has invalid type at property: user_id"),
     anonymous_id: new Error("Cart object has invalid type at property: anonymous_id"),
     isSubscription: new Error("Cart object has invalid type at property: isSubscription"),
@@ -52,7 +52,7 @@ const typeErrors = Object.freeze({
 });
 
 const genericErrors = Object.freeze({
-    invalid_checkout_status: new Error("Cart object contain invalid value in checkoutState field: double check your payload"),
+    invalid_cart_status: new Error("Cart object contain invalid value in cartState field: double check your payload"),
     conflict_ownership: new Error("Cart object contain both user_id and anonymous_id"),
     invalid_currency_in_lineItems: new Error("Cart object contain invalid currency in item of lineItems field: double check currency from your input"),
     invalid_quantity_in_lineItems: new Error("Cart object contain invalid quantity in item of lineItems field: double check quantity from your input"),

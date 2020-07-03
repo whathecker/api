@@ -3,7 +3,7 @@ const errors = require('./cart-error');
 
 module.exports = Joi.object({
     country: Joi.string().required().error(errors.typeErrors.country),
-    checkoutState: Joi.string().error(errors.typeErrors.checkoutState),
+    cartState: Joi.string().error(errors.typeErrors.cartState),
     user_id: Joi.string().error(errors.typeErrors.user_id),
     anonymous_id: Joi.string().error(errors.typeErrors.anonymous_id),
     isSubscription: Joi.boolean().error(errors.typeErrors.isSubscription),

@@ -1,26 +1,26 @@
 const CartFactory = require('./index');
 
-describe('Test CheckoutFactory', () => {
+describe('Test CartFactory', () => {
 
-    test('setDefaultCheckoutState must return ACTIVE', () => {
-        const defaultState = CartFactory.setDefaultCheckoutState();
+    test('setDefaultCartState must return ACTIVE', () => {
+        const defaultState = CartFactory.setDefaultCartState();
         expect(defaultState).toBe("ACTIVE");
     });
 
-    test('validateCheckoutState must return true', () => {
-        const result_active = CartFactory.validateCheckoutState("ACTIVE");
-        const result_ordered = CartFactory.validateCheckoutState("ORDERED");
-        const result_merged = CartFactory.validateCheckoutState("MERGED");
+    test('validateCartState must return true', () => {
+        const result_active = CartFactory.validateCartState("ACTIVE");
+        const result_ordered = CartFactory.validateCartState("ORDERED");
+        const result_merged = CartFactory.validateCartState("MERGED");
 
         expect(result_active).toBe(true);
         expect(result_ordered).toBe(true);
         expect(result_merged).toBe(true);
     });
 
-    test('validateCheckoutState must return false', () => {
-        const result = CartFactory.validateCheckoutState("active");
-        const result2 = CartFactory.validateCheckoutState("inactive");
-        const result3 = CartFactory.validateCheckoutState("order");
+    test('validateCartState must return false', () => {
+        const result = CartFactory.validateCartState("active");
+        const result2 = CartFactory.validateCartState("inactive");
+        const result3 = CartFactory.validateCartState("order");
         
         expect(result).toBe(false);
         expect(result2).toBe(false);

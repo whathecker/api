@@ -2,7 +2,7 @@ const errors = require('../cart-error');
 const OrderBaseFactory = require('../../_shared/factory').order_base_factory;
 const crypto = require('crypto');
 
-const enum_checkout_state = Object.freeze({
+const enum_cart_state = Object.freeze({
     0: "ACTIVE",
     1: "ORDERED",
     2: "MERGED"
@@ -15,7 +15,7 @@ const enum_shipping_method = Object.freeze({
 class CartFactory extends OrderBaseFactory {
     constructor({
         country,
-        checkoutState,
+        cartState,
         user_id,
         anonymous_id,
         isSubscription,
@@ -27,12 +27,12 @@ class CartFactory extends OrderBaseFactory {
         paymentInfo
     } = {}) {
 
-        if (!checkoutState) {
-            checkoutState = CartFactory.setDefaultCheckoutState();
+        if (!cartState) {
+            cartState = CartFactory.setDefaultCartState();
         } else {
-            const result_checkoutState = CartFactory.validateCheckoutState(checkoutState);
-            if (!result_checkoutState) {
-                return errors.genericErrors.invalid_checkout_status;
+            const result_cartState = CartFactory.validateCartState(cartState);
+            if (!result_cartState) {
+                return errors.genericErrors.invalid_cart_status;
             }
         }
 
@@ -75,7 +75,7 @@ class CartFactory extends OrderBaseFactory {
     
         const payload = {
             country,
-            checkoutState,
+            cartState,
             user_id,
             anonymous_id,
             isSubscription,
@@ -89,15 +89,15 @@ class CartFactory extends OrderBaseFactory {
         return new Cart(payload);
     }
 
-    static setDefaultCheckoutState () {
+    static setDefaultCartState () {
         return "ACTIVE";
     }
 
-    static validateCheckoutState (state) {
+    static validateCartState (state) {
         let result = false;
 
-        for (let prop of Object.keys(enum_checkout_state)) {
-            if (state === enum_checkout_state[prop]) {
+        for (let prop of Object.keys(enum_cart_state)) {
+            if (state === enum_cart_state[prop]) {
                 result = true;
                 break;
             }
@@ -152,7 +152,7 @@ class CartFactory extends OrderBaseFactory {
 class Cart {
     constructor({
         country,
-        checkoutState,
+        cartState,
         user_id,
         anonymous_id,
         isSubscription,
@@ -165,7 +165,7 @@ class Cart {
     } ={}) {
 
         this.country = country;
-        this.checkoutState = checkoutState;
+        this.cartState = cartState;
         
         (user_id)? this.user_id = user_id : null;
         (anonymous_id)? this.anonymous_id = anonymous_id : null;
