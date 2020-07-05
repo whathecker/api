@@ -68,7 +68,6 @@ const _serializePaymentInfo = (paymentInfo) => {
 };
 
 const _serializeSingleObjEntry = (cart) => {
-    console.log(cart.shippingInfo.price.amount);
     return {
         _id: cart._id,
         country: cart.country,
@@ -81,7 +80,9 @@ const _serializeSingleObjEntry = (cart) => {
         billingAddress: (cart.billingAddress)? _serializeAddressObj(cart.billingAddress) : null,
         shippingAddress: (cart.shippingAddress)? _serializeAddressObj(cart.shippingAddress) : null,
         shippingInfo: (cart.shippingInfo)? _serializeShippingInfo(cart.shippingInfo) : null,
-        paymentInfo: (cart.paymentInfo)? _serializePaymentInfo(cart.paymentInfo) : null
+        paymentInfo: (cart.paymentInfo)? _serializePaymentInfo(cart.paymentInfo) : null,
+        creationDate: cart.creationDate,
+        lastModified: cart.lastModified,
     };
 };
 
