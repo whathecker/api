@@ -30,12 +30,15 @@ describe('Test database access layer of cart object', () => {
     test('find cart by id', async () => {
         const id = _cart_id_holder[0];
 
-        const cart = await cartDB.findCartById(id)
+        const cart = await cartDB.findCartById(id);
 
         const {
             _id,
+            anonymous_id,
             ...rest
         } = cart;
+
+        console.log(rest);
 
         expect(rest).toEqual(mockCarts[0]);
     });
@@ -92,6 +95,7 @@ describe('Test database access layer of cart object', () => {
                 mobileNumber: "06151515",
                 postalCode: "1093TV",
                 houseNumber: "100",
+                houseNumberAdd: " ",
                 streetName: "Randomstraat",
                 country: "The Netherlands"
             },
@@ -101,6 +105,7 @@ describe('Test database access layer of cart object', () => {
                 mobileNumber: "06151515",
                 postalCode: "1093TV",
                 houseNumber: "100",
+                houseNumberAdd: " ",
                 streetName: "Randomstraat",
                 country: "The Netherlands"
             },
@@ -121,6 +126,7 @@ describe('Test database access layer of cart object', () => {
 
         const {
             _id,
+            user_id,
             ...rest
         } = newCart;
 

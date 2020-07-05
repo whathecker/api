@@ -39,7 +39,7 @@ let addressSchema = new Schema({
 
 let shippingPriceSchema = new Schema({
     currency: { type: String, required: true, lowercase: true },
-    price: { type: String, required: true, default: "0.00" },
+    amount: { type: String, required: true, default: "0.00" },
 }, { _id: false});
 
 let shippingInfoSchema = new Schema({

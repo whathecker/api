@@ -130,4 +130,5 @@ const _serializeSingleObjEntry = (order) => {
         invoiceNumber: (order.invoiceNumber)? order.invoiceNumber: null
     }
 }
+
 module.exports = buildSerializer(_serializeSingleObjEntry);
