@@ -80,6 +80,8 @@ const dummyData = {
         paymentMethodType: "visa",
         paymentId: "id"
     },
+    creationDate: new Date('December 14, 1995 03:24:00'),
+    lastModified: new Date('December 24, 1995 03:24:00'),
     //discountInfo: {},
     //taxInfo: {},
 };
@@ -114,6 +116,8 @@ describe('Make cart object', () => {
         expect(cart.shippingAddress).toBe(dummyData.shippingAddress);
         expect(cart.shippingInfo).toBe(dummyData.shippingInfo);
         expect(cart.paymentInfo).toBe(dummyData.paymentInfo);
+        expect(cart.creationDate).toBe(dummyData.creationDate);
+        expect(cart.lastModified).toBe(dummyData.lastModified);
     });
 
     test('cart must have annoymous_id when both user_id and annoymous_id is not given', () => {
@@ -326,6 +330,26 @@ describe('Type checking: checkout object', () => {
 
         expect(cart instanceof Error).toBe(true);
         expect(cart.message).toBe(errors.typeErrors.isSubscription.message);
+    });
+
+    test('creationDate must be date if exist', () => {
+        let payload = copyObj(dummyData);
+        payload.creationDate = true;
+
+        const cart = createCartObj(payload);
+
+        expect(cart instanceof Error).toBe(true);
+        expect(cart.message).toBe(errors.typeErrors.creationDate.message);
+    });
+
+    test('lastModified must be date if exist', () => {
+        let payload = copyObj(dummyData);
+        payload.lastModified = true;
+
+        const cart = createCartObj(payload);
+
+        expect(cart instanceof Error).toBe(true);
+        expect(cart.message).toBe(errors.typeErrors.lastModified.message);
     });
 
     // type checking for lineItems prop

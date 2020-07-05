@@ -12,7 +12,9 @@ let buildCreateCheckoutObj = function (checkoutValidator) {
         billingAddress,
         shippingAddress,
         shippingInfo,
-        paymentInfo
+        paymentInfo,
+        creationDate,
+        lastModified
     } = {}) => {
 
         const payload = {
@@ -26,7 +28,9 @@ let buildCreateCheckoutObj = function (checkoutValidator) {
             billingAddress,
             shippingAddress,
             shippingInfo,
-            paymentInfo
+            paymentInfo,
+            creationDate,
+            lastModified
         };
 
         const result = checkoutValidator(payload);

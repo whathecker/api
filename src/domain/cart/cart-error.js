@@ -4,6 +4,8 @@ const typeErrors = Object.freeze({
     user_id: new Error("Cart object has invalid type at property: user_id"),
     anonymous_id: new Error("Cart object has invalid type at property: anonymous_id"),
     isSubscription: new Error("Cart object has invalid type at property: isSubscription"),
+    creationDate: new Error("Cart object has invalid type at property: creationDate"),
+    lastModified: new Error("Cart object has invalid type at property: lastModified"),
     
     itemId_in_lineItems: new Error("Cart object must have itemId property in lineItems array as string"),
     name_in_lineItems: new Error("Cart object must have name property in lineItems array as string"),

@@ -62,4 +62,6 @@ module.exports = Joi.object({
         paymentMethodType: Joi.string().required().error(errors.typeErrors.paymentMethodType_in_paymentInfo),
         paymentId: Joi.string().required().error(errors.typeErrors.paymentId_in_paymentInfo)
     }),
+    creationDate: Joi.date().error(errors.typeErrors.creationDate),
+    lastModified: Joi.date().error(errors.typeErrors.lastModified)
 });

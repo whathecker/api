@@ -24,7 +24,9 @@ class CartFactory extends OrderBaseFactory {
         billingAddress,
         shippingAddress,
         shippingInfo,
-        paymentInfo
+        paymentInfo,
+        creationDate,
+        lastModified
     } = {}) {
 
         if (!cartState) {
@@ -84,7 +86,9 @@ class CartFactory extends OrderBaseFactory {
             billingAddress,
             shippingAddress,
             shippingInfo,
-            paymentInfo
+            paymentInfo,
+            creationDate,
+            lastModified
         };
         return new Cart(payload);
     }
@@ -161,8 +165,10 @@ class Cart {
         billingAddress,
         shippingAddress,
         shippingInfo,
-        paymentInfo
-    } ={}) {
+        paymentInfo,
+        creationDate,
+        lastModified
+    } = {}) {
 
         this.country = country;
         this.cartState = cartState;
@@ -176,6 +182,8 @@ class Cart {
         (shippingAddress)? this.shippingAddress = shippingAddress : null;
         (shippingInfo)? this.shippingInfo = shippingInfo : null;
         (paymentInfo)? this.paymentInfo = paymentInfo : null;
+        (creationDate)? this.creationDate = creationDate : null;
+        (lastModified)? this.lastModified = lastModified : null;
     }
 }
 

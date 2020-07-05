@@ -38,8 +38,6 @@ describe('Test database access layer of cart object', () => {
             ...rest
         } = cart;
 
-        console.log(rest);
-
         expect(rest).toEqual(mockCarts[0]);
     });
 
