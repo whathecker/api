@@ -4,6 +4,7 @@ const skinType = require('./skinType');
 const product = require('./product');
 const subscriptionBox = require('./subscriptionBox');
 const order = require('./order');
+const cart = require('./cart');
 
 let apiRoutesLoader = {}
 
@@ -55,6 +56,15 @@ apiRoutesLoader.mountOrderRoutes = (router) => {
     .put('/orders/order/:ordernumber/shipping', order.updateShippingStatus)
     .put('/orders/order/:ordernumber/shipping/items', order.updateShippingItems)
     .delete('/order/:ordernumber/shipping/items/:itemId', order.removePackedItems)
+    return route;
+}
+
+apiRoutesLoader.mountCartRoutes = (router) => {
+    const route = router
+    .get('/carts', cart.listCarts)
+    .get('/carts/cart/:id', cart.getCartById)
+    .post('/carts/cart', cart.createCart)
+    .delete('/carts/cart/:id', cart.deleteCartById)
     return route;
 }
 

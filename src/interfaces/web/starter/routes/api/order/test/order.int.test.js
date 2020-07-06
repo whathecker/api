@@ -113,7 +113,6 @@ describe('Test order endpoints', () => {
         const orderNumber = order.orderNumber;
         return testSession.get(`/orders/order/${orderNumber}`)
         .then(response => {
-            console.log(response.body);
             expect(response.status).toBe(200);
             expect(response.body.orderNumber).toBe(orderNumber);
         });

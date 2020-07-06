@@ -8,16 +8,23 @@ const listCarts = async () => {
 };
 
 const findCartById = async (id) => {
-    const cart = await Cart.findById(id);
+    try {
+        const cart = await Cart.findOne({ _id: id });
 
-    if (!cart) {
+        if (!cart) {
+            return Promise.resolve({
+                status: "fail",
+                reason: "cart not found"
+            });
+        }
+
+        return Promise.resolve(serializer(cart));
+    } catch (err) {
         return Promise.resolve({
             status: "fail",
-            reason: "cart not found"
+            reason: err
         });
     }
-
-    return Promise.resolve(serializer(cart));
 };
 
 const addCart = async (payload) => {
@@ -59,19 +66,25 @@ async function _isAnonymousIdUnique (anonymous_id) {
 };
 
 const deleteCartById = async (id) => {
-    const removedCart = await Cart.findByIdAndRemove(id);
-
-    if (!removedCart) {
+    try {
+        const removedCart = await Cart.findOneAndRemove({ _id: id });
+        if (!removedCart) {
+            return Promise.resolve({
+                status: "fail",
+                reason: "order not found"
+            });
+        }
+    
+        if (removedCart) {
+            return Promise.resolve({
+                id: removedCart._id,
+                status: "success"
+            });
+        }
+    } catch (err) {
         return Promise.resolve({
             status: "fail",
-            reason: "order not found"
-        });
-    }
-
-    if (removedCart) {
-        return Promise.resolve({
-            id: removedCart._id,
-            status: "success"
+            reason: err
         });
     }
 };
