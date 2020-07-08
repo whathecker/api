@@ -17,5 +17,9 @@ module.exports = {
             MONGO_USER: process.env.MONGO_USER_PROD,
             MONGO_PWD: process.env.MONGO_PWD_PROD
         }
+    },
+    rabbitMQ: {
+        username: process.env.RABBITMQ_USERNAME,
+        password: process.env.RABBITMQ_PASSWORD
     }
 };
