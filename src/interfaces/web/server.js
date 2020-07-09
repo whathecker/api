@@ -1,9 +1,9 @@
 const serverStarter = require('./starter');
-const mqConsumers = require('./mqConsumers');
+const consumers = require('./consumers');
 
 const env = process.env.NODE_ENV;
 
-mqConsumers.mountConsumers();
+consumers.mountConsumers();
 
 (env === "development" || env === "production")? 
     serverStarter.runAppBehindProxy() : null;

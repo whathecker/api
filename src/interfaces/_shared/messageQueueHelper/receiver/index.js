@@ -9,41 +9,41 @@ const connectReceiver = ({
     
     open.connect(mqConnection)
     .then(connection => {
-        return connection.createChannel();
-    })
-    .then(channel => {
+        connection.createChannel()
+        .then(channel => {
 
-        const workQueue = channel.assertQueue(queue, {
-            deadLetterExchange: retryQueue
-        });
-
-        const retryWorkQueue = channel.assertQueue(retryQueue, {
-            deadLetterExchange: queue,
-            messageTtl: 300000
-        });
-
-        Promise.all([
-            workQueue,
-            retryWorkQueue
-        ]).then(() => {
-            logger.info(`Message receiver has connected to queue: ${queue}`);
-
-            return Promise.resolve({
-                status: "success",
-                message: `successully connected to queue: ${queue}`,
-                channel: channel
+            const workQueue = channel.assertQueue(queue, {
+                deadLetterExchange: retryQueue
             });
-        });
-
-    }).catch(error => {
-        if (error) {
-            logger.error(`Message receiver has failed to connect queue: ${queue}`);
-
-            return Promise.reject({
-                status: "fail",
-                message: `failed to connect queue: ${queue}`
+    
+            const retryWorkQueue = channel.assertQueue(retryQueue, {
+                deadLetterExchange: queue,
+                messageTtl: 300000
             });
-        }
+    
+            Promise.all([
+                workQueue,
+                retryWorkQueue
+            ]).then(() => {
+                logger.info(`Message receiver has connected to queue: ${queue}`);
+
+                return Promise.resolve({
+                    status: "success",
+                    message: `consumer successully connected to queue: ${queue}`,
+                    channel: channel
+                });
+            });
+    
+        }).catch(error => {
+            if (error) {
+                logger.error(`Message receiver has failed to connect queue: ${queue}`);
+    
+                return Promise.reject({
+                    status: "fail",
+                    message: `consumer failed to connect queue: ${queue}`
+                });
+            }
+        });
     });
 };
 
