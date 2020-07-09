@@ -1,4 +1,4 @@
-const serverStarter = require('./starter');
+const serverStarter = require('./serverStarter');
 const consumers = require('./consumers');
 
 const env = process.env.NODE_ENV;
