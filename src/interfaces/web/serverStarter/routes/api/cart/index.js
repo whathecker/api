@@ -20,18 +20,18 @@ cart.getCartById = async (req, res, next) => {
     const id = req.params.id;
     try {
         const cart = await cartDB.findCartById(id);
-
-        if (cart.status === "fail") {
-            logger.warn(`getCartById request is failed | unknown id`);
-            return res.status(422).json({
-                status: "fail",
-                message: cart.reason
-            });
-        }
-
         logger.info(`getCartById request is processed | ${cart._id}`);
         return res.status(200).json(cart);
     } catch (exception) {
+
+        if (exception.status === "fail") {
+            logger.warn(`getCartById request is failed | unknown id`);
+            return res.status(422).json({
+                status: "fail",
+                message: exception.reason
+            });
+        }
+
         next(exception);
     }
 };
@@ -73,21 +73,19 @@ cart.deleteCartById = async (req, res, next) => {
     const id = req.params.id;
     try {
         const cart = await cartDB.deleteCartById(id);
-
-        if (cart.status === "fail") {
-            logger.warn(`deleteCartById request has rejected as cart is unknonw`);
-            return res.status(422).json({
-                status: "fail",
-                message: cart.reason
-            });
-        }
-
         logger.info(`deleteCartById request has processed: following cart has removed: ${cart._id}`);
         return res.status(200).json({
             status: "success",
             message: "cart has removed"
         });
     } catch (exception) {
+        if (exception.status === "fail") {
+            logger.warn(`deleteCartById request has rejected as cart is unknonw`);
+            return res.status(422).json({
+                status: "fail",
+                message: exception.reason
+            });
+        }    
         next(exception);
     }
 };
