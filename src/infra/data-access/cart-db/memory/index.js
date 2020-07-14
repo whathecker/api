@@ -133,8 +133,60 @@ function _recalculateTotalPrice (lineItems) {
 };
 
 const updateCartState = async (id, payload) => {
+    const cart = await findCartById(id);
+    const { status, _id, ...rest } = cart;
+
+    if (status === "fail") {
+        return Promise.resolve({
+            status: "fail",
+            reason: "cart not found"
+        });
+    }
+
+    const newCartState = payload;
+
+    try {
+        _verifyCartState(newCartState, cart.cartState);
+    } catch (err) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: err.message
+        });
+    };
+
+    let updatedPayload = rest;
+    updatedPayload.cartState = newCartState;
+
+    const cartObj = createCartObj(updatedPayload);
+
+    if (cartObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: cartObj.message
+        });
+    }
+
+    const updatedCart = {
+        _id: _id,
+        ...cartObj
+    };
+    const index_in_db_array = parseInt(_id) - 1;
+    CARTS[index_in_db_array] = updatedCart;
     
+    return Promise.resolve(CARTS[index_in_db_array]);
 };
+
+function _verifyCartState(newState, state) {
+    if (state === "ORDERED" || state === "MERGED") {
+        throw new Error('db access for updating cart object failed: cannot update cartState for ORDERED or MERGED cart');
+    } 
+    if (newState === "MERGED" && state === "ACTIVE") {
+        throw new Error('db access for updating cart object failed: cannot update cartState from ACTIVE to MERGE, use updateCartOwnership method');
+    }
+    return;
+}
 
 const updateCartOwnership = async (id, payload) => {
 
@@ -190,6 +242,7 @@ module.exports = {
     listCarts,
     findCartById,
     updateCartLineItems,
+    updateCartState,
     addCart,
     deleteCartById,
     dropAll

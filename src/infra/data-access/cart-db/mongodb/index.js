@@ -69,8 +69,6 @@ const updateCartLineItems = async (id, payload) => {
     const cart = await findCartById(id);
     const { status, _id, ...rest } = cart;
 
-    console.log(rest);
-
     if (status === "fail") {
         return Promise.resolve({
             status: "fail",
@@ -140,8 +138,57 @@ function _recalculateTotalPrice (lineItems) {
 };
 
 const updateCartState = async (id, payload) => {
+    const cart = await findCartById(id);
+    const { status, _id, ...rest } = cart;
 
+    if (status === "fail") {
+        return Promise.resolve({
+            status: "fail",
+            reason: "cart not found"
+        });
+    }
+
+    const newCartState = payload;
+
+    try {
+        _verifyCartState(newCartState, cart.cartState);
+    } catch (err) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: err.message
+        });
+    };
+
+    let updatedPayload = rest;
+    updatedPayload.cartState = newCartState;
+    updatedPayload = _removeNullFields(updatedPayload);
+    
+    const cartObj = createCartObj(updatedPayload);
+
+    if (cartObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: cartObj.message
+        });
+    }
+
+    const updatedCart = await Cart.findByIdAndUpdate(_id, cartObj, { new: true });
+
+    return Promise.resolve(serializer(updatedCart));
 };
+
+function _verifyCartState(newState, state) {
+    if (state === "ORDERED" || state === "MERGED") {
+        throw new Error('db access for updating cart object failed: cannot update cartState for ORDERED or MERGED cart');
+    } 
+    if (newState === "MERGED" && state === "ACTIVE") {
+        throw new Error('db access for updating cart object failed: cannot update cartState from ACTIVE to MERGE, use updateCartOwnership method');
+    }
+    return;
+}
+
 
 const updateCartOwnership = async (id, payload) => {
 
@@ -188,6 +235,7 @@ module.exports = {
     findCartById,
     addCart,
     updateCartLineItems,
+    updateCartState,
     deleteCartById,
     dropAll
 };

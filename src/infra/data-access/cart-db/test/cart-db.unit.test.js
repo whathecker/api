@@ -169,6 +169,36 @@ describe('Test database access layer of cart object', () => {
         });
     });
 
+    test('update cartState - from ACTIVE to ORDERD', async () => {
+        const cart_id = _cart_id_holder[0];
+        const newCartState = "ORDERED";
+
+        const updatedCart = await cartDB.updateCartState(cart_id, newCartState);
+
+        const { cartState } = updatedCart;
+        expect(cartState).toBe(newCartState);
+    });
+
+    test('update cartState fail - cannot update terminal state', async () => {
+        const cart_id = _cart_id_holder[1];
+        const newCartState = "ORDERED";
+
+        await expect(cartDB.updateCartState(cart_id, newCartState)).rejects.toMatchObject({
+            status: "fail",
+            reason: "error"
+        });
+    });
+
+    test('update cartState fail - from ACTIVE to MERGED', async () => {
+        const cart_id = _cart_id_holder[0];
+        const newCartState = "MERGED";
+
+        await expect(cartDB.updateCartState(cart_id, newCartState)).rejects.toMatchObject({
+            status: "fail",
+            reason: "error"
+        });
+    });
+
     test('update a cart - remove a line item', async () => {
         const cart_id = _cart_id_holder[0];
         let deepCopiedLineItems = JSON.parse(JSON.stringify(mockCarts[0].lineItems));
