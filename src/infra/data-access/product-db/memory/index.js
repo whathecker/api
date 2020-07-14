@@ -11,7 +11,7 @@ const findProductByProductId = (productId) => {
     });
 
     if (!product) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "product not found"
         });
@@ -55,11 +55,11 @@ const addProduct = async (payload) => {
 };
 
 async function _isProductIdUnique (productId) {
-    const product = await findProductByProductId(productId);
-
-    const { status } = product;
-
-    if (status === "fail") return;
+    try {
+        await findProductByProductId(productId);
+    } catch (err) {
+        return;
+    }
 
     throw new Error('db access for product object failed: productId must be unique');
 }
@@ -70,7 +70,7 @@ const updateProduct = async (id, payload) => {
     let updatedPayload;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "product not found"
         });
@@ -178,7 +178,7 @@ const deleteProductByProductId = async (productId) => {
     const { status } = product;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "product not found"
         });
