@@ -1,5 +1,5 @@
 const cartDB = require('../../../../../../../infra/data-access/cart-db');
-const serverStarter = require('../../../../../starter');
+const serverStarter = require('../../../../../serverStarter');
 const session = require('supertest-session');
 serverStarter.loadMiddlewares();
 let testSession = session(serverStarter.app);

@@ -1,5 +1,5 @@
 const packageDB = require('../../../../../../../infra/data-access/subscriptionBox-db');
-const serverStarter = require('../../../../../starter');
+const serverStarter = require('../../../../../serverStarter');
 const session = require('supertest-session');
 serverStarter.loadMiddlewares();
 let testSession = session(serverStarter.app);

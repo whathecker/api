@@ -151,7 +151,7 @@ const updateCartState = async (id, payload) => {
         return Promise.reject({
             status: "fail",
             reason: "error",
-            error: err.message
+            error: err
         });
     };
 
@@ -164,7 +164,7 @@ const updateCartState = async (id, payload) => {
         return Promise.reject({
             status: "fail",
             reason: "error",
-            error: cartObj.message
+            error: cartObj
         });
     }
 

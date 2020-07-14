@@ -11,7 +11,7 @@ const findAdminUserByEmail = (email) => {
     });
 
     if (!adminUser) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "adminUser not found"
         });
@@ -26,7 +26,7 @@ const findAdminUserByUserId = (userId) => {
     });
 
     if (!adminUser) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "adminUser not found"
         });
@@ -71,26 +71,22 @@ const addAdminUser = async (payload) => {
 };
 
 async function _isEmailUnique (email) {
-    const adminUser = await findAdminUserByEmail(email);
-
-    const { status } = adminUser;
-
-    if (status === "fail") return;
-
-    throw new Error('db access for adminUser object failed: email must be unique');
+    try {
+        await findAdminUserByEmail(email);
+    } catch (err) {
+        return;
+    }
+    throw new Error('db access for adminUser object failed: email must be unique');    
 };
 
 async function _isUserIdUnique (userId) {
-    const adminUser = await findAdminUserByUserId(userId);
-
-    const { status } = adminUser;
-
-    if (status === "fail") return;
-
+    try {
+        await findAdminUserByUserId(userId);
+    } catch (err) {
+        return;
+    }
     throw new Error('db access for adminUser object failed: userId must be unique');
 };
-
-
 
 const deleteAdminUserByEmail = async (email) => {
     const adminUser = await findAdminUserByEmail(email);
@@ -98,7 +94,7 @@ const deleteAdminUserByEmail = async (email) => {
     const { status } = adminUser;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "user not found"
         });
