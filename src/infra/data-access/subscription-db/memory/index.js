@@ -11,7 +11,7 @@ const findSubscriptionBySubscriptionId = (subscriptionId) => {
     });
 
     if (!subscription) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "subscription not found"
         });
@@ -62,11 +62,11 @@ const addSubscription = async (payload) => {
 };
 
 async function _isSubscriptionIdUnique (subscriptionId) {
-    const subscription = await findSubscriptionBySubscriptionId(subscriptionId);
-
-    const { status } = subscription;
-
-    if (status === "fail") return;
+    try {
+        await findSubscriptionBySubscriptionId(subscriptionId);
+    } catch (err) {
+        return;
+    }
 
     throw new Error('db access for subscription object failed: productId must be unique');
 }
@@ -77,7 +77,7 @@ const deleteSubscriptionBySubscriptionId = async (subscriptionId) => {
     const { status } = subscription;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "subscription not found"
         });
