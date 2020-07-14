@@ -13,7 +13,7 @@ const findSkinTypeByName = (skinTypeName) => {
     });
 
     if (!skinType) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "skinType not found"
         });
@@ -59,11 +59,11 @@ const addSkinType = async (payload) => {
 };
 
 async function _isSkinTypeUnique (skinType) {
-    const quriedSkinType = await findSkinTypeByName(skinType);
-
-    const { status } = quriedSkinType;
-
-    if (status === "fail") return;
+    try {
+        await findSkinTypeByName(skinType);
+    } catch (err) {
+        return;
+    }
 
     throw new Error("db access for skinType object failed: skinType must be unique");
 }
@@ -85,7 +85,7 @@ const deleteSkinTypeByName = async (skinTypeName) => {
     const { status } = skinType;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "skinType not found"
         });
