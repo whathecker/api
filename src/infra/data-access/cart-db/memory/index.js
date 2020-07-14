@@ -11,7 +11,7 @@ const findCartById = (id) => {
     });
 
     if (!cart) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "order not found"
         });
@@ -71,7 +71,7 @@ const updateCartLineItems = async (id, payload = []) => {
     const { status, _id, ...rest } = cart;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "cart not found"
         });
@@ -137,7 +137,7 @@ const updateCartState = async (id, payload) => {
     const { status, _id, ...rest } = cart;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "cart not found"
         });
@@ -208,7 +208,7 @@ const deleteCartById = async (id) => {
     const { status } = cart;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "cart not found"
         });

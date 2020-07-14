@@ -12,7 +12,7 @@ const findCartById = async (id) => {
         const cart = await Cart.findOne({ _id: id });
 
         if (!cart) {
-            return Promise.resolve({
+            return Promise.reject({
                 status: "fail",
                 reason: "cart not found"
             });
@@ -20,7 +20,7 @@ const findCartById = async (id) => {
 
         return Promise.resolve(serializer(cart));
     } catch (err) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: err
         });
@@ -70,7 +70,7 @@ const updateCartLineItems = async (id, payload) => {
     const { status, _id, ...rest } = cart;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "cart not found"
         });
@@ -142,7 +142,7 @@ const updateCartState = async (id, payload) => {
     const { status, _id, ...rest } = cart;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "cart not found"
         });
@@ -206,7 +206,7 @@ const deleteCartById = async (id) => {
     try {
         const removedCart = await Cart.findOneAndRemove({ _id: id });
         if (!removedCart) {
-            return Promise.resolve({
+            return Promise.reject({
                 status: "fail",
                 reason: "order not found"
             });
@@ -219,7 +219,7 @@ const deleteCartById = async (id) => {
             });
         }
     } catch (err) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: err
         });

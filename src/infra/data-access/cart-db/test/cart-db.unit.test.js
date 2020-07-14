@@ -41,6 +41,8 @@ describe('Test database access layer of cart object', () => {
         expect(rest).toEqual(mockCarts[0]);
     });
 
+    //TODO:add failed test case when cart is not found for findCartById
+
     test('add a new cart', async () => {
         const payload = {
             country: "NL",
