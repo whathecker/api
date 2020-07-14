@@ -50,7 +50,7 @@ let shippingInfoSchema = new Schema({
 let paymentInfoSchema = new Schema({
     paymentMethodType: { type: String, required: true },
     paymentId: { type: String, required: true }
-}, { _id: true });
+}, { _id: false });
 
 let cartSchema = new Schema({
     country: { type: String, required: true },

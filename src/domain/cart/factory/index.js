@@ -168,7 +168,7 @@ class Cart {
         paymentInfo,
         creationDate,
         lastModified
-    } = {}) {
+    } ={}) {
 
         this.country = country;
         this.cartState = cartState;

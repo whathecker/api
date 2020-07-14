@@ -131,6 +131,66 @@ describe('Test database access layer of cart object', () => {
         expect(rest).toEqual(payload);
     });
 
+    test('update a cart - add a line item', async () => {
+        const cart_id = _cart_id_holder[0];
+        let deepCopiedLineItems = JSON.parse(JSON.stringify(mockCarts[0].lineItems));
+        const newItem = {
+            itemId: "PKOL90588",
+            name: "chokchok 'dry' skin type package",
+            currency: "euro",
+            quantity: 1,
+            originalPrice: "24.95",
+            discount: "0.00",
+            vat: "4.33",
+            grossPrice: "24.95",
+            netPrice: "20.62",
+            sumOfGrossPrice: "24.95",
+            sumOfNetPrice: "20.62",
+            sumOfVat: "4.33",
+            sumOfDiscount: "0.00"
+
+        };
+        deepCopiedLineItems.push(newItem);
+
+        const updatedCart = await cartDB.updateCartLineItems(cart_id, deepCopiedLineItems);
+        
+        const {
+            lineItems,
+            totalPrice
+        } = updatedCart;
+
+        expect(lineItems).toEqual(deepCopiedLineItems);
+        expect(totalPrice).toEqual({
+            currency: "euro",
+            totalAmount: "74.85",
+            totalDiscount: "0.00",
+            totalVat: "12.99",
+            totalNetPrice: "61.86"
+        });
+    });
+
+    test('update a cart - remove a line item', async () => {
+        const cart_id = _cart_id_holder[0];
+        let deepCopiedLineItems = JSON.parse(JSON.stringify(mockCarts[0].lineItems));
+        deepCopiedLineItems.pop();
+
+        const updatedCart = await cartDB.updateCartLineItems(cart_id, deepCopiedLineItems);
+
+        const {
+            lineItems,
+            totalPrice
+        } = updatedCart;
+
+        expect(lineItems).toEqual(deepCopiedLineItems);
+        expect(totalPrice).toEqual({
+            currency: "euro",
+            totalAmount: "24.95",
+            totalDiscount: "0.00",
+            totalVat: "4.33",
+            totalNetPrice: "20.62"
+        });
+    });
+
     test('delete a cart by id', async () => {
         const cart_id = _cart_id_holder[1];
 
