@@ -13,7 +13,7 @@ const findCategoryByName = async (categoryName) => {
     });
 
     if (!category) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "category not found"
         });
@@ -53,11 +53,11 @@ const addCategory = async (payload) => {
 };
 
 async function _isCategoryNameUnique (categoryName) {
-    const category = await findCategoryByName(categoryName);
-
-    const { status } = category;
-
-    if (status === "fail") return;
+    try {
+        await findCategoryByName(categoryName);
+    } catch (err) {
+        return;
+    }
 
     throw new Error("db access for category object failed: categoryName must be unique");
 };
@@ -78,7 +78,7 @@ const deleteCategoryByName = async (categoryName) => {
     });
 
     if (!removedCategory) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "category not found"
         });
