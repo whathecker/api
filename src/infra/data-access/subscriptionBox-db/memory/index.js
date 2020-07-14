@@ -11,7 +11,7 @@ const findSubscriptionBoxByPackageId = (packageId) => {
     });
 
     if (!subscriptionBox) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "package not found"
         });
@@ -55,11 +55,11 @@ const addSubscriptionBox = async (payload) => {
 };
 
 async function _isPackageIdUnique (packageId) {
-    const subscriptionBox = await findSubscriptionBoxByPackageId(packageId);
-
-    const { status } = subscriptionBox;
-
-    if (status === "fail") return;
+    try {
+        await findSubscriptionBoxByPackageId(packageId);
+    } catch (err) {
+        return;
+    }
 
     throw new Error('db access for package object failed: packageId must be unique');
 }
@@ -70,7 +70,7 @@ const updateSubscriptionBox = async (id, payload) => {
     let updatedPayload;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "subscriptionBox not found"
         });
@@ -153,7 +153,7 @@ const deleteSubscriptionBoxByPackageId = async (packageId) => {
     const { status } = subscriptionBox;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "package not found"
         });

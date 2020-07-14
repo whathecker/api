@@ -11,7 +11,7 @@ const findUserByEmail = (email) => {
     });
 
     if (!user) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "user not found"
         });
@@ -26,7 +26,7 @@ const findUserByUserId = (userId) => {
     });
 
     if (!user) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "user not found"
         });
@@ -71,21 +71,21 @@ const addUser = async (payload) => {
 };
 
 async function _isEmailUnique (email) {
-    const user = await findUserByEmail(email);
-
-    const { status } = user;
-
-    if (status === "fail") return;
+    try {
+        await findUserByEmail(email);
+    } catch (err) {
+        return;
+    }
 
     throw new Error('db access for user object failed: email must be unique');
 };
 
 async function _isUserIdUnique (userId) {
-    const user = await findUserByUserId(userId);
-
-    const { status } = user;
-
-    if (status === "fail") return;
+    try {
+        await findUserByUserId(userId);
+    } catch (err) {
+        return;
+    }
 
     throw new Error('db access for user object failed: userId must be unique');
 };
@@ -96,7 +96,7 @@ const deleteUserByEmail = async (email) => {
     const { status } = user;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "user not found"
         });
