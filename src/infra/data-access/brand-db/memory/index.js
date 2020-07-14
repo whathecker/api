@@ -11,7 +11,7 @@ const findBrandByName = (brandName) => {
     });
 
     if (!brand) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "brand not found"
         });
@@ -57,12 +57,12 @@ const addBrand = async (payload) => {
 };
 
 async function _isBrandNameUnique (brandName) {
-    const brand = await findBrandByName(brandName);
+    try {
+        await findBrandByName(brandName);
+    } catch (err) {
+        return;
+    }
 
-    const { status } = brand;
-
-    if (status === "fail") return;
-    
     throw new Error('db access for brand object failed: brandName must be unique');
 }
 
@@ -84,7 +84,7 @@ const deleteBrandByName = async (brandName) => {
     const { status } = brand;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "brand not found"
         });
