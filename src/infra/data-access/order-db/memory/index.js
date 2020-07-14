@@ -11,7 +11,7 @@ const findOrderByOrderNumber = (orderNumber) => {
     });
 
     if (!order) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "order not found"
         });
@@ -55,11 +55,11 @@ const addOrder = async (payload) => {
 };
 
 async function _isOrderNumberUnique (orderNumber) {
-    const order = await findOrderByOrderNumber(orderNumber);
-
-    const { status } = order;
-
-    if (status === "fail") return;
+    try {
+        await findOrderByOrderNumber(orderNumber);
+    } catch (err) {
+        return;
+    }
 
     throw new Error('db access for order object failed: orderNumber must be unique');
 }
@@ -70,7 +70,7 @@ const deleteOrderByOrderNumber = async (orderNumber) => {
     const { status } = order;
 
     if (status === "fail") {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "order not found"
         });
