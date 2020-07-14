@@ -11,7 +11,7 @@ const findBillingByBillingId = async (billingId) => {
     const billing = await Billing.findOne({ billingId: billingId });
 
     if (!billing) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "billing not found"
         });
@@ -49,12 +49,11 @@ const addBilling = async (payload) => {
 };
 
 async function _isBillingIdUnique (billingId) {
-    const billing = await findBillingByBillingId(billingId);
-
-    const { status } = billing;
-
-    if (status === "fail") return;
-
+    try {
+        await findBillingByBillingId(billingId);
+    } catch (err) {
+        return;
+    }
     throw new Error('db access for billing object failed: billingId must be unique');
 }
 
@@ -64,7 +63,7 @@ const deleteBillingByBillingId = async (billingId) => {
     });
 
     if (!removedBilling) {
-        return Promise.resolve({
+        return Promise.reject({
             status: "fail",
             reason: "billing not found"
         });
