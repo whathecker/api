@@ -103,15 +103,6 @@ product.updateProduct = async (req, res, next) => {
         const payload = req.body;
 
         const updatedProduct = await productDB.updateProduct(productId, payload);
-        const { status, reason } = updatedProduct;
-
-        if (status === "fail") {
-            logger.warn(`updateProduct request has rejected: ${reason} | requested productId: ${productId}`);
-            return res.status(422).json({
-                status: "failed",
-                message: reason
-            });
-        }
 
         logger.info(`updateProduct request has updated the product | name: ${updatedProduct.name} productId: ${updatedProduct.productId}`);
         return res.status(200).json({
@@ -120,15 +111,25 @@ product.updateProduct = async (req, res, next) => {
         });
         
     } catch (exception) {
+
+        if (exception.status === "fail" && exception.reason !== "error") {
+            logger.warn(`updateProduct request has rejected: ${exception.reason}`);
+            return res.status(422).json({
+                status: "failed",
+                message: exception.reason
+            });
+        }
+
         if (exception.status === "fail") {
             logger.error(`updateProduct request has failed | error: ${exception.error.message}`);
             return res.status(422).json({
-                status: "fail",
+                status: "failed",
                 message: exception.error.message
             });
-        } else {
-            next(exception);
-        }
+        } 
+            
+        next(exception);
+        
     }
 };
 
@@ -136,21 +137,19 @@ product.deleteProductById = async (req, res, next) => {
     const productId = req.params.id;
     try {
         const product = await productDB.deleteProductByProductId(productId);
-
-        if (product.status === "fail") {
-            logger.warn('deleteProduct request has rejected as product is unknown');
-            return res.status(422).json({
-                status: "fail",
-                message: product.reason
-            });
-        }
-
         logger.info(`deleteProduct request has processed: following product has removed: ${product.productId}`);
         return res.status(200).json({
             status: "success",
             message: "product has removed"
         });
     } catch (exception) {
+        if (exception.status === "fail") {
+            logger.warn(`deleteProduct request has rejected as ${exception.reason}`);
+            return res.status(422).json({
+                status: "fail",
+                message: exception.reason
+            });
+        }
         next(exception);
     }
 };

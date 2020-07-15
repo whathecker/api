@@ -66,8 +66,7 @@ async function _isProductIdUnique (productId) {
 
 const updateProduct = async (id, payload) => {
     const product = await findProductByProductId(id);
-    const { status, _id, productId, ...rest } = product;
-    let updatedPayload;
+    const { status, _id, productId, ...rest} = product;
 
     if (status === "fail") {
         return Promise.reject({
@@ -75,6 +74,8 @@ const updateProduct = async (id, payload) => {
             reason: "product not found"
         });
     }
+   
+    let updatedPayload;
 
     try  {
         updatedPayload = _buildUpdatedPayload(payload, product);
@@ -174,7 +175,6 @@ function _isInventoryUpdated (inventory_in_payload, inventory_in_product) {
 
 const deleteProductByProductId = async (productId) => {
     const product = await findProductByProductId(productId);
-
     const { status } = product;
 
     if (status === "fail") {
