@@ -21,18 +21,16 @@ order.getOrderByOrdernumber = async (req, res, next) => {
 
     try {
         const order = await orderDB.findOrderByOrderNumber(orderNumber);
-
-        if (order.status === "fail") {
+        logger.info(`getOrderByorderNumber request is processed | ${order.orderNumber}`);
+        return res.status(200).json(order);
+    } catch (exception) {
+        if (exception.status === "fail") {
             logger.warn(`getOrderByOrderNumber request is failed | unknown orderNumber`);
             return res.status(422).json({
                 status: "fail",
                 message: order.reason
             });
         }
-
-        logger.info(`getOrderByorderNumber request is processed | ${order.orderNumber}`);
-        return res.status(200).json(order);
-    } catch (exception) {
         next(exception);
     }
 };

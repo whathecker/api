@@ -20,18 +20,16 @@ product.getProductById = async (req, res, next) => {
     const productId = req.params.id;
     try {
         const product = await productDB.findProductByProductId(productId);
-        
-        if (product.status === "fail") {
+        logger.info(`getProductById request is processed | ${product.productId}`);
+        return res.status(200).json(product);
+    } catch (exception) {
+        if (exception.status === "fail") {
             logger.warn(`getProductById request is failed | unknown productId`);
             return res.status(422).json({
                 status: "fail",
                 message: product.reason
             });
         }
-
-        logger.info(`getProductById request is processed | ${product.productId}`);
-        return res.status(200).json(product);
-    } catch (exception) {
         next(exception);
     }
 };
