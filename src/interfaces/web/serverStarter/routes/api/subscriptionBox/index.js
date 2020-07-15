@@ -21,17 +21,16 @@ subscriptionBox.getSubscriptionBoxById = async (req, res, next) => {
     try {
         const subscriptionBox = await packageDB.findSubscriptionBoxByPackageId(packageId);
 
-        if (subscriptionBox.status === "fail") {
-            logger.warn(`getSubscriptionBoxById request is failed | unknown packageId`);
-            return res.status(422).json({
-                status: "fail",
-                message: subscriptionBox.reason
-            });
-        }
-
         logger.info(`getSubscriptionBoxById request is processed | ${subscriptionBox.packageId}`);
         return res.status(200).json(subscriptionBox);
     } catch (exception) {
+        if (exception.status === "fail") {
+            logger.warn(`getSubscriptionBoxById request is failed | unknown packageId`);
+            return res.status(422).json({
+                status: "fail",
+                message: exception.reason
+            });
+        }
         next(exception);
     }
 };
@@ -95,16 +94,7 @@ subscriptionBox.updateSubscriptionBox = async (req, res, next) => {
         const payload = req.body;
 
         const updatedSubscriptionBox = await packageDB.updateSubscriptionBox(packageId, payload);
-        const { status, reason } = updatedSubscriptionBox;
-
-        if (status === "fail") {
-            logger.warn(`updateSubscriptionBox request has rejected: ${reason} | requested packageId: ${packageId}`);
-            return res.status(422).json({
-                status: "failed",
-                message: reason
-            });
-        }
-
+        
         logger.info(`updateSubscriptionBox request has updated the subscriptionBox | name: ${updatedSubscriptionBox.name} productId: ${updatedSubscriptionBox.packageId}`);
         return res.status(200).json({
             status: 'success',
@@ -112,15 +102,24 @@ subscriptionBox.updateSubscriptionBox = async (req, res, next) => {
         });
         
     } catch (exception) {
+
+        if (exception.status === "fail" && exception.reason !== "error") {
+            logger.warn(`updateSubscriptionBox request has rejected: ${exception.reason}`);
+            return res.status(422).json({
+                status: "failed",
+                message: exception.reason
+            });
+        }
+
         if (exception.status === "fail") {
             logger.error(`updateSubscriptionBox request has failed | error: ${exception.error.message}`);
             return res.status(422).json({
                 status: "fail",
                 message: exception.error.message
             });
-        } else {
-            next(exception);
-        }
+        } 
+
+        next(exception);
     }
 };
 
@@ -129,14 +128,6 @@ subscriptionBox.deleteSubscriptionBoxById = async (req, res, next) => {
     try {
         const subscriptionBox = await packageDB.deleteSubscriptionBoxByPackageId(packageId);
 
-        if (subscriptionBox.status === "fail") {
-            logger.warn('deleteSubscriptionBoxById request has rejected as packageId is unknown');
-            return res.status(422).json({
-                status: "fail",
-                message: subscriptionBox.reason
-            });
-        }
-
         logger.info(`deleteSubscriptionBoxById request has processed: following subscriptionBox has removed: ${subscriptionBox.packageId}`);
         return res.status(200).json({
             status: "success",
@@ -144,6 +135,14 @@ subscriptionBox.deleteSubscriptionBoxById = async (req, res, next) => {
         });
 
     } catch (exception) {
+        if (exception.status === "fail") {
+            logger.warn('deleteSubscriptionBoxById request has rejected as packageId is unknown');
+            return res.status(422).json({
+                status: "fail",
+                message: exception.reason
+            });
+        }
+
         next(exception);
     }
 };
