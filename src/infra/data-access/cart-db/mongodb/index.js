@@ -284,7 +284,44 @@ const updateCartShippingInfo = async (id, payload) => {
 };
 
 const updateCartPaymentInfo = async (id, payload) => {
+    const cart = await findCartById(id);
+    const { status, _id, ...rest } = cart;
 
+    if (status === "fail") {
+        return Promise.reject({
+            status: "fail",
+            reason: "cart not found"
+        });
+    }
+
+    try {
+        _verifyCartState(cart.cartState);
+    } catch (err) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: err
+        });
+    };
+
+    const newPaymentInfo = payload;
+    let updatedPayload = rest;
+    updatedPayload.paymentInfo = newPaymentInfo;
+    updatedPayload = _removeNullFields(updatedPayload);
+
+    const cartObj = createCartObj(updatedPayload);
+
+    if (cartObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: cartObj
+        });
+    }
+
+    const updatedCart = await Cart.findByIdAndUpdate(_id, cartObj, { new: true });
+
+    return Promise.resolve(serializer(updatedCart));
 };
 
 const deleteCartById = async (id) => {
@@ -323,6 +360,7 @@ module.exports = {
     updateCartState,
     updateCartOwnership,
     updateCartShippingInfo,
+    updateCartPaymentInfo,
     deleteCartById,
     dropAll
 };

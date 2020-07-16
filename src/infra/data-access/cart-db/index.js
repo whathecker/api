@@ -7,6 +7,7 @@ let {
     updateCartState,
     updateCartOwnership,
     updateCartShippingInfo,
+    updateCartPaymentInfo,
     deleteCartById,
     dropAll
 } = require(`./${dbChoice}`);
@@ -19,6 +20,7 @@ module.exports = {
     updateCartState,
     updateCartOwnership,
     updateCartShippingInfo,
+    updateCartPaymentInfo,
     deleteCartById,
     dropAll
 };

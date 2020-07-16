@@ -272,6 +272,19 @@ describe('Test database access layer of cart object', () => {
         expect(shippingInfo).toMatchObject(newShippingInfo);
     });
 
+    test('updatePaymentInfo success', async () => {
+        const cart_id = _cart_id_holder[0];
+        const newPaymentInfo = {
+            paymentMethodType: "master",
+            paymentId: "id_2"
+        };
+
+        const updatedCart = await cartDB.updateCartPaymentInfo(cart_id, newPaymentInfo);
+
+        const { paymentInfo } = updatedCart;
+        expect(paymentInfo).toMatchObject(newPaymentInfo);
+    });
+
     test('delete a cart by id', async () => {
         const cart_id = _cart_id_holder[1];
 
