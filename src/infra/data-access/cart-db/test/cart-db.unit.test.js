@@ -256,6 +256,22 @@ describe('Test database access layer of cart object', () => {
         });
     });
 
+    test('updateShippingInfo success', async () => {
+        const cart_id = _cart_id_holder[0];
+        const newShippingInfo = {
+            shippingMethod: "standard",
+            price: {
+                currency: "euro",
+                amount: "3.95"
+            }
+        };
+
+        const updatedCart = await cartDB.updateCartShippingInfo(cart_id, newShippingInfo);
+
+        const { shippingInfo } = updatedCart;
+        expect(shippingInfo).toMatchObject(newShippingInfo);
+    });
+
     test('delete a cart by id', async () => {
         const cart_id = _cart_id_holder[1];
 

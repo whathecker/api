@@ -245,14 +245,53 @@ function _verifyCartOwnership (user_id) {
 }
 
 const updateCartShippingInfo = async (id, payload) => {
+    const cart = await findCartById(id);
+    const { status, _id, ...rest } = cart;
 
+    if (status === "fail") {
+        return Promise.reject({
+            status: "fail",
+            reason: "cart not found"
+        });
+    }
+
+    try {
+        _verifyCartState(cart.cartState);
+    } catch (err) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: err
+        });
+    };
+
+    const newShippingInfo = payload;
+    let updatedPayload = rest;
+    updatedPayload.shippingInfo = newShippingInfo;
+
+    const cartObj = createCartObj(updatedPayload);
+
+    if (cartObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: cartObj
+        });
+    }
+
+    const updatedCart = {
+        _id: _id,
+        ...cartObj
+    };
+    const index_in_db_array = parseInt(_id) - 1;
+    CARTS[index_in_db_array] = updatedCart;
+    
+    return Promise.resolve(CARTS[index_in_db_array]);
 };
 
 const updateCartPaymentInfo = async (id, payload) => {
 
 };
-
-
 
 const deleteCartById = async (id) => {
     const cart = await findCartById(id);
@@ -293,10 +332,11 @@ const dropAll = () => {
 module.exports = {
     listCarts,
     findCartById,
+    addCart,
     updateCartLineItems,
     updateCartState,
     updateCartOwnership,
-    addCart,
+    updateCartShippingInfo,
     deleteCartById,
     dropAll
 };
