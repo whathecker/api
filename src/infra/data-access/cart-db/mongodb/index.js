@@ -151,7 +151,8 @@ const updateCartState = async (id, payload) => {
     const newCartState = payload;
 
     try {
-        _verifyCartState(newCartState, cart.cartState);
+        _isCartMerging(newCartState, cart.cartState);
+        _verifyCartState(cart.cartState);
     } catch (err) {
         return Promise.reject({
             status: "fail",
@@ -179,20 +180,67 @@ const updateCartState = async (id, payload) => {
     return Promise.resolve(serializer(updatedCart));
 };
 
-function _verifyCartState(newState, state) {
-    if (state === "ORDERED" || state === "MERGED") {
-        throw new Error('db access for updating cart object failed: cannot update cartState for ORDERED or MERGED cart');
-    } 
+function _isCartMerging (newState, state) {
     if (newState === "MERGED" && state === "ACTIVE") {
         throw new Error('db access for updating cart object failed: cannot update cartState from ACTIVE to MERGE, use updateCartOwnership method');
     }
-    return;
+}
+
+function _verifyCartState (state) {
+    if (state === "ORDERED" || state === "MERGED") {
+        throw new Error('db access for updating cart object failed: cannot update cartState for ORDERED or MERGED cart');
+    }
 }
 
 
 const updateCartOwnership = async (id, payload) => {
+    const cart = await findCartById(id);
+    const { status, _id, ...rest } = cart;
 
+    if (status === "fail") {
+        return Promise.reject({
+            status: "fail",
+            reason: "cart not found"
+        });
+    }
+
+    const newCartState = payload;
+
+    try {
+        _verifyCartState(cart.cartState);
+        _verifyCartOwnership(cart.user_id);
+    } catch (err) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: err
+        });
+    };
+
+    let updatedPayload = rest;
+    updatedPayload.cartState = newCartState;
+    updatedPayload = _removeNullFields(updatedPayload);
+
+    const cartObj = createCartObj(updatedPayload);
+
+    if (cartObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: cartObj
+        });
+    }
+
+    const updatedCart = await Cart.findByIdAndUpdate(_id, cartObj, { new: true });
+
+    return Promise.resolve(serializer(updatedCart));
 };
+
+function _verifyCartOwnership (user_id) {
+    if (user_id) {
+        throw new Error('db access for updating cart object failed: cannot update cartOwnership for cart already belong to user'); 
+    }
+}
 
 const updateCartShippingInfo = async (id, payload) => {
 
@@ -236,6 +284,7 @@ module.exports = {
     addCart,
     updateCartLineItems,
     updateCartState,
+    updateCartOwnership,
     deleteCartById,
     dropAll
 };

@@ -6,6 +6,7 @@ describe('Test database access layer of cart object', () => {
     const _cart_id_holder = {
         0: null,
         1: null,
+        2: null
     };
 
     beforeEach(async () => {
@@ -13,9 +14,11 @@ describe('Test database access layer of cart object', () => {
 
         const cart = await cartDB.addCart(mockCarts[0]);
         const cart2 = await cartDB.addCart(mockCarts[1]);
+        const cart3 = await cartDB.addCart(mockCarts[2]);
 
         _cart_id_holder[0] = cart._id;
         _cart_id_holder[1] = cart2._id;
+        _cart_id_holder[2] = cart3._id;
     });
 
     afterAll(async () => {
@@ -24,7 +27,7 @@ describe('Test database access layer of cart object', () => {
 
     test('list all carts', async () => {
         const carts = await cartDB.listCarts();
-        expect(carts).toHaveLength(2);
+        expect(carts).toHaveLength(3);
     });
 
     test('find cart by id', async () => {
@@ -34,7 +37,7 @@ describe('Test database access layer of cart object', () => {
 
         const {
             _id,
-            anonymous_id,
+            user_id,
             ...rest
         } = cart;
 
@@ -47,7 +50,7 @@ describe('Test database access layer of cart object', () => {
         const payload = {
             country: "NL",
             cartState: "MERGED",
-            anonymous_id: "2",
+            anonymous_id: "4",
             isSubscription: true,
             lineItems: [
                 {
@@ -171,7 +174,29 @@ describe('Test database access layer of cart object', () => {
         });
     });
 
-    test('update cartState - from ACTIVE to ORDERD', async () => {
+    test('update a cart - remove a line item', async () => {
+        const cart_id = _cart_id_holder[0];
+        let deepCopiedLineItems = JSON.parse(JSON.stringify(mockCarts[0].lineItems));
+        deepCopiedLineItems.pop();
+
+        const updatedCart = await cartDB.updateCartLineItems(cart_id, deepCopiedLineItems);
+
+        const {
+            lineItems,
+            totalPrice
+        } = updatedCart;
+
+        expect(lineItems).toEqual(deepCopiedLineItems);
+        expect(totalPrice).toEqual({
+            currency: "euro",
+            totalAmount: "24.95",
+            totalDiscount: "0.00",
+            totalVat: "4.33",
+            totalNetPrice: "20.62"
+        });
+    });
+
+    test('update cartState success - from ACTIVE to ORDERD', async () => {
         const cart_id = _cart_id_holder[0];
         const newCartState = "ORDERED";
 
@@ -201,25 +226,33 @@ describe('Test database access layer of cart object', () => {
         });
     });
 
-    test('update a cart - remove a line item', async () => {
+    test('updateCartOwnerShip success - ACTIVE to MERGED ', async () => {
         const cart_id = _cart_id_holder[0];
-        let deepCopiedLineItems = JSON.parse(JSON.stringify(mockCarts[0].lineItems));
-        deepCopiedLineItems.pop();
+        const newCartState = "MERGED";
+        
+        const updatedCart = await cartDB.updateCartOwnership(cart_id, newCartState);
 
-        const updatedCart = await cartDB.updateCartLineItems(cart_id, deepCopiedLineItems);
+        const { cartState } = updatedCart;
+        expect(cartState).toBe(newCartState);
+    });
 
-        const {
-            lineItems,
-            totalPrice
-        } = updatedCart;
+    test('updateCartOwnership fail - cannot update terminal state', async () => {
+        const cart_id = _cart_id_holder[1];
+        const newCartState = "MERGED";
 
-        expect(lineItems).toEqual(deepCopiedLineItems);
-        expect(totalPrice).toEqual({
-            currency: "euro",
-            totalAmount: "24.95",
-            totalDiscount: "0.00",
-            totalVat: "4.33",
-            totalNetPrice: "20.62"
+        await expect(cartDB.updateCartOwnership(cart_id, newCartState)).rejects.toMatchObject({
+            status: "fail",
+            reason: "error"
+        });
+    });
+
+    test('updateCartOwnership fail - cannot update ownership of cart belong to user', async () => {
+        const cart_id = _cart_id_holder[2];
+        const newCartState = "MERGED";
+
+        await expect(cartDB.updateCartOwnership(cart_id, newCartState)).rejects.toMatchObject({
+            status: "fail",
+            reason: "error"
         });
     });
 
@@ -231,7 +264,7 @@ describe('Test database access layer of cart object', () => {
 
         expect(result.status).toBe('success');
         expect(result.id).toEqual(cart_id);
-        expect(carts).toHaveLength(1);
+        expect(carts).toHaveLength(2);
     });
 
     test('drop all carts in db', async () => {
