@@ -13,7 +13,7 @@ const findCartById = (id) => {
     if (!cart) {
         return Promise.reject({
             status: "fail",
-            reason: "order not found"
+            reason: "cart not found"
         });
     }
 

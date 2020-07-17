@@ -42,7 +42,7 @@ cart.createCart = async (req, res, next) => {
     if (!country) {
         logger.warn(`createCart request has rejected as param is missing`);
         return res.status(400).json({
-            status: "failed",
+            status: "fail",
             message: "bad request"
         });
     }
@@ -67,6 +67,56 @@ cart.createCart = async (req, res, next) => {
             next(exception);
         }
     }
+};
+
+cart.updateCartState = async (req, res, next) => {
+    const id = req.params.id;
+    const newCartState = req.body.cartState;
+
+    if (!newCartState) {
+        logger.warn(`updateCartState request has rejected as param is missing`);
+        return res.status(400).json({
+            status: "fail",
+            message: "bad request"
+        });
+    }
+
+    try {
+        const updatedCart = await cartDB.updateCartState(id, newCartState);
+        logger.info(`updateCartState request has updated state of the cart | cart_id: ${updatedCart._id} | updated state: ${updatedCart.cartState}`);
+        return res.status(200).json({
+            status: 'success',
+            message: 'cart state has updated'
+        });
+
+    } catch (exception) {
+        if (exception.status === "fail") {
+            logger.error(`updateCartState request has failed | reason: ${exception.reason}`);
+            (exception.error)? logger.error(`error: ${exception.error.message}`) : null;
+            return res.status(422).json({
+                status: "fail",
+                message: (exception.error)? exception.error.message : exception.reason
+            });
+        } else {
+            next(exception);
+        }
+    }
+};
+
+cart.updateCartLineItems = async (req, res, next) => {
+
+};
+
+cart.updateCartOwnership = async (req, res, next) => {
+
+};
+
+cart.updateShippingInfo = async (req, res, next) => {
+
+};
+
+cart.updatePaymentInfo = async (req, res, next) => {
+
 };
 
 cart.deleteCartById = async (req, res, next) => {

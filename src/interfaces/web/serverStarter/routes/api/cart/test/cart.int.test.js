@@ -174,6 +174,52 @@ describe('Test carts endpoints', () => {
         });
     });
 
+    test('updateCartState fail - bad request', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/state`).send({})
+        .then(response => {
+            expect(response.status).toBe(400);
+        });
+    });
+
+    test('updateCartState success', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/state`).send({
+            cartState: "ORDERED"
+        }).then(response => {
+            expect(response.status).toBe(200);
+        }); 
+    });
+
+    test('updateCartState fail - cannot update state from termianl state', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.cartState = "ORDERED";
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/state`).send({
+            cartState: "MERGED"
+        }).then(response => {
+            expect(response.status).toBe(422);
+        }); 
+    });
+
+    test('updateCartState fail - cannot update to MERGED state for anoynmous cart, use updateCartOwnership instead', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        delete deepCopiedPayload.user_id;
+        deepCopiedPayload.anonymous_id = "100";
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/state`).send({
+            cartState: "MERGED"
+        }).then(response => {
+            expect(response.status).toBe(422);
+        }); 
+    });
+
     test('deleteCartById fail - unknown id', () => {
         return testSession.delete('/carts/cart/oddid')
         .then(response => {
