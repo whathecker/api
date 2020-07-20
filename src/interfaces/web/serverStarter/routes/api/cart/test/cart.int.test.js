@@ -404,6 +404,56 @@ describe('Test carts endpoints', () => {
         });
     });
 
+    test('updateCartOwnership fail - bad request', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/ownership`).send({
+        })
+        .then(response => {
+            expect(response.status).toBe(400);
+        });
+    });
+
+    test('updateCartOwnership success', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        delete deepCopiedPayload.user_id;
+        deepCopiedPayload.anonymous_id = "1";
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/ownership`).send({
+            cartState: "MERGED"
+        })
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
+
+    test('updateCartOwnership failed - cannot update ownership of cart already belong to user', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/ownership`).send({
+            cartState: "MERGED"
+        })
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('updateCartOwnership failed - cannot update cart with terminal state', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.cartState = "ORDERED";
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/ownership`).send({
+            cartState: "MERGED"
+        })
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
     test('deleteCartById success', async () => {
         const response = await testSession.post('/carts/cart').send(payload);
         const cart_id = response.body.cart._id;

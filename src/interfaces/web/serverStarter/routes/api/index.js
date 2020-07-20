@@ -68,6 +68,7 @@ apiRoutesLoader.mountCartRoutes = (router) => {
     .put('/carts/cart/:id/items', cart.updateCartLineItems)
     .put('/carts/cart/:id/shipping', cart.updateShippingInfo)
     .put('/carts/cart/:id/payment', cart.updatePaymentInfo)
+    .put('/carts/cart/:id/ownership', cart.updateCartOwnership)
     .delete('/carts/cart/:id', cart.deleteCartById)
     return route;
 }
