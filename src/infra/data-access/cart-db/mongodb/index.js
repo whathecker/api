@@ -76,6 +76,16 @@ const updateCartLineItems = async (id, payload) => {
         });
     }
 
+    try {
+        _verifyCartState(cart.cartState);
+    } catch (err) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: err
+        });
+    }
+
     const newLineItems = payload;
     const newTotalPrice = _recalculateTotalPrice(newLineItems);
 

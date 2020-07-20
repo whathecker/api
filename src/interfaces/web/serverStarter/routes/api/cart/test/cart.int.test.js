@@ -295,7 +295,7 @@ describe('Test carts endpoints', () => {
             sumOfDiscount: "0.00"
         });
         const newLineItems = cart.lineItems;
-        return testSession.put(`/carts/cart/${cart._id}/payment`).send({
+        return testSession.put(`/carts/cart/${cart._id}/items`).send({
             lineItems: newLineItems
         })
         .then(response => {
