@@ -136,7 +136,7 @@ describe('Test database access layer of cart object', () => {
         expect(rest).toEqual(payload);
     });
 
-    test('update a cart - add a line item', async () => {
+    test('updateCartLineItems SUCCESS - add a line item', async () => {
         const cart_id = _cart_id_holder[0];
         let deepCopiedLineItems = JSON.parse(JSON.stringify(mockCarts[0].lineItems));
         const newItem = {
@@ -174,7 +174,7 @@ describe('Test database access layer of cart object', () => {
         });
     });
 
-    test('update a cart - remove a line item', async () => {
+    test('updateCartLineItems SUCCESS - remove a line item', async () => {
         const cart_id = _cart_id_holder[0];
         let deepCopiedLineItems = JSON.parse(JSON.stringify(mockCarts[0].lineItems));
         deepCopiedLineItems.pop();
@@ -193,6 +193,17 @@ describe('Test database access layer of cart object', () => {
             totalDiscount: "0.00",
             totalVat: "4.33",
             totalNetPrice: "20.62"
+        });
+    });
+
+    test('updateCartLineItems fail - cannot update terminal state', async () => {
+        const cart_id = _cart_id_holder[1];
+        let deepCopiedLineItems = JSON.parse(JSON.stringify(mockCarts[0].lineItems));
+        deepCopiedLineItems.pop();
+
+        await expect(cartDB.updateCartLineItems(cart_id, deepCopiedLineItems)).rejects.toMatchObject({
+            status: "fail",
+            reason: "error"
         });
     });
 
@@ -272,6 +283,22 @@ describe('Test database access layer of cart object', () => {
         expect(shippingInfo).toMatchObject(newShippingInfo);
     });
 
+    test('updateShippingInfo fail - cannot update ownership of cart belong to user', async () => {
+        const cart_id = _cart_id_holder[1];
+        const newShippingInfo = {
+            shippingMethod: "standard",
+            price: {
+                currency: "euro",
+                amount: "3.95"
+            }
+        };
+
+        await expect(cartDB.updateCartShippingInfo(cart_id, newShippingInfo)).rejects.toMatchObject({
+            status: "fail",
+            reason: "error"
+        });
+    });
+
     test('updatePaymentInfo success', async () => {
         const cart_id = _cart_id_holder[0];
         const newPaymentInfo = {
@@ -283,6 +310,19 @@ describe('Test database access layer of cart object', () => {
 
         const { paymentInfo } = updatedCart;
         expect(paymentInfo).toMatchObject(newPaymentInfo);
+    });
+
+    test('updatePaymentInfo fail - cannot update ownership of cart belong to user', async () => {
+        const cart_id = _cart_id_holder[1];
+        const newPaymentInfo = {
+            paymentMethodType: "master",
+            paymentId: "id_2"
+        };
+
+        await expect(cartDB.updateCartPaymentInfo(cart_id, newPaymentInfo)).rejects.toMatchObject({
+            status: "fail",
+            reason: "error"
+        });
     });
 
     test('delete a cart by id', async () => {

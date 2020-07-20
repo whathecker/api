@@ -275,7 +275,32 @@ describe('Test carts endpoints', () => {
     });
 
     test('updateCartLineItem fail - cannot update cart with terminal state', async () => {
-        expect(1).toBe(2);
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.cartState = "ORDERED";
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        cart.lineItems.push({
+            itemId: "PKOL90589",
+            name: "chokchok 'dry' skin type package",
+            currency: "euro",
+            quantity: 1,
+            originalPrice: "24.95",
+            discount: "0.00",
+            vat: "4.33",
+            grossPrice: "24.95",
+            netPrice: "20.62",
+            sumOfGrossPrice: "24.95",
+            sumOfNetPrice: "20.62",
+            sumOfVat: "4.33",
+            sumOfDiscount: "0.00"
+        });
+        const newLineItems = cart.lineItems;
+        return testSession.put(`/carts/cart/${cart._id}/payment`).send({
+            lineItems: newLineItems
+        })
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
     });
 
     test('updateShippingInfo fail - bad request', async () => {
