@@ -274,6 +274,60 @@ describe('Test carts endpoints', () => {
         });
     });
 
+    test('updateCartLineItem fail - cannot update cart with terminal state', async () => {
+        expect(1).toBe(2);
+    });
+
+    test('updateCartShippingInfo fail - bad request', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/shipping`).send({
+        })
+        .then(response => {
+            expect(response.status).toBe(400);
+        });
+    });
+
+    test('updateCartShippingInfo success', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        const newShippingInfo = {
+            shippingMethod: "standard",
+            price: {
+                currency: "euro",
+                amount: "3.95"
+            }
+        };
+        return testSession.put(`/carts/cart/${cart._id}/shippingcl`).send({
+            shippingInfo: newShippingInfo
+        })
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
+
+    test('updateCartShippingInfo fail - cannot update cart with terminal state', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.cartState = "ORDERED";
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        const newShippingInfo = {
+            shippingMethod: "standard",
+            price: {
+                currency: "euro",
+                amount: "3.95"
+            }
+        };
+        return testSession.put(`/carts/cart/${cart._id}/shipping`).send({
+            shippingInfo: newShippingInfo
+        })
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
     test('deleteCartById fail - unknown id', () => {
         return testSession.delete('/carts/cart/oddid')
         .then(response => {
@@ -289,6 +343,4 @@ describe('Test carts endpoints', () => {
             expect(response.status).toBe(200);
         });
     });
-
-
 });
