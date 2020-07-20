@@ -278,7 +278,7 @@ describe('Test carts endpoints', () => {
         expect(1).toBe(2);
     });
 
-    test('updateCartShippingInfo fail - bad request', async () => {
+    test('updateShippingInfo fail - bad request', async () => {
         let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
         const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
         const cart = res.body.cart;
@@ -289,7 +289,7 @@ describe('Test carts endpoints', () => {
         });
     });
 
-    test('updateCartShippingInfo success', async () => {
+    test('updateShippingInfo success', async () => {
         let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
         const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
         const cart = res.body.cart;
@@ -300,7 +300,7 @@ describe('Test carts endpoints', () => {
                 amount: "3.95"
             }
         };
-        return testSession.put(`/carts/cart/${cart._id}/shippingcl`).send({
+        return testSession.put(`/carts/cart/${cart._id}/shipping`).send({
             shippingInfo: newShippingInfo
         })
         .then(response => {
@@ -308,7 +308,7 @@ describe('Test carts endpoints', () => {
         });
     });
 
-    test('updateCartShippingInfo fail - cannot update cart with terminal state', async () => {
+    test('updateShippingInfo fail - cannot update cart with terminal state', async () => {
         let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
         deepCopiedPayload.cartState = "ORDERED";
         const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
@@ -322,6 +322,50 @@ describe('Test carts endpoints', () => {
         };
         return testSession.put(`/carts/cart/${cart._id}/shipping`).send({
             shippingInfo: newShippingInfo
+        })
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('updatePaymentInfo fail - bad request', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/payment`).send({
+        })
+        .then(response => {
+            expect(response.status).toBe(400);
+        });
+    });
+
+    test('updatePaymentInfo success', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        const newPaymentInfo = {
+            paymentMethodType: "visa",
+            paymentId: "id"
+        };
+        return testSession.put(`/carts/cart/${cart._id}/payment`).send({
+            paymentInfo: newPaymentInfo
+        })
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
+
+    test('updatePaymentInfo fail - cannot update cart with terminal state', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.cartState = "ORDERED";
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        const newPaymentInfo = {
+            paymentMethodType: "visa",
+            paymentId: "id"
+        };
+        return testSession.put(`/carts/cart/${cart._id}/payment`).send({
+            paymentInfo: newPaymentInfo
         })
         .then(response => {
             expect(response.status).toBe(422);

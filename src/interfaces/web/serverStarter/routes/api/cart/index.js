@@ -174,7 +174,36 @@ cart.updateShippingInfo = async (req, res, next) => {
 };
 
 cart.updatePaymentInfo = async (req, res, next) => {
+    const id = req.params.id;
+    const newPaymentInfo = req.body.paymentInfo;
 
+    if (!newPaymentInfo) {
+        logger.warn(`updatePaymentInfo request has rejected as param is missing`);
+        return res.status(400).json({
+            status: "fail",
+            message: "bad request"
+        });
+    }
+
+    try {
+        const updatedCart = await cartDB.updateCartPaymentInfo(id, newPaymentInfo);
+        logger.info(`updatePaymentInfo request has updated paymentInfo of the cart | cart_id: ${updatedCart._id}`);
+        return res.status(200).json({
+            status: 'success',
+            message: 'cart paymentInfo has updated'
+        });
+    } catch (exception) {
+        if (exception.status === "fail") {
+            logger.error(`updatePaymentInfo request has failed | reason: ${exception.reason}`);
+            (exception.error)? logger.error(`error: ${exception.error.message}`) : null;
+            return res.status(422).json({
+                status: "fail",
+                message: (exception.error)? exception.error.message : exception.reason
+            });
+        } else {
+            next(exception);
+        }
+    }
 };
 
 cart.deleteCartById = async (req, res, next) => {
