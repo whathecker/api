@@ -195,7 +195,7 @@ describe('Test carts endpoints', () => {
         }); 
     });
 
-    test('updateCartState fail - cannot update state from termianl state', async () => {
+    test('updateCartState fail - cannot update state from terminal state', async () => {
         let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
         deepCopiedPayload.cartState = "ORDERED";
         const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
@@ -218,6 +218,60 @@ describe('Test carts endpoints', () => {
         }).then(response => {
             expect(response.status).toBe(422);
         }); 
+    });
+
+    test('updateCartLineItems fail - bad request', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/items`).send({
+            lineItems: 'new item'
+        })
+        .then(response => {
+            expect(response.status).toBe(400);
+        });
+    });
+
+    test('updateCartLineItems success - remove an item', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        cart.lineItems.pop();
+        const newLineItems = cart.lineItems;
+        return testSession.put(`/carts/cart/${cart._id}/items`).send({
+            lineItems: newLineItems
+        })
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
+
+    test('updateCartLineItems success - add an item', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        cart.lineItems.push({
+            itemId: "PKOL90589",
+            name: "chokchok 'dry' skin type package",
+            currency: "euro",
+            quantity: 1,
+            originalPrice: "24.95",
+            discount: "0.00",
+            vat: "4.33",
+            grossPrice: "24.95",
+            netPrice: "20.62",
+            sumOfGrossPrice: "24.95",
+            sumOfNetPrice: "20.62",
+            sumOfVat: "4.33",
+            sumOfDiscount: "0.00"
+        });
+        const newLineItems = cart.lineItems;
+        return testSession.put(`/carts/cart/${cart._id}/items`).send({
+            lineItems: newLineItems
+        })
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
     });
 
     test('deleteCartById fail - unknown id', () => {
