@@ -177,24 +177,24 @@ const mockCarts = [
                 itemId: "PKOL90585",
                 name: "chokchok 'normal' skin type package",
                 currency: "euro",
-                quantity: 1,
+                quantity: 3,
                 originalPrice: "24.95",
                 discount: "0.00",
                 vat: "4.33",
                 grossPrice: "24.95",
                 netPrice: "20.62",
-                sumOfGrossPrice: "24.95",
-                sumOfNetPrice: "20.62",
-                sumOfVat: "4.33",
+                sumOfGrossPrice: "74.85",
+                sumOfNetPrice: "61.86",
+                sumOfVat: "12.99",
                 sumOfDiscount: "0.00"
             }
         ],
         totalPrice: {
             currency: "euro",
-            totalAmount: "49.90",
+            totalAmount: "99.80",
             totalDiscount: "0.00",
-            totalVat: "8.66",
-            totalNetPrice: "41.24"
+            totalVat: "17.32",
+            totalNetPrice: "82.48"
         },
         billingAddress: {
             firstName: "Yunjae",

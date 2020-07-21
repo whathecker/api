@@ -109,6 +109,10 @@ const updateCartLineItems = async (id, payload) => {
     return Promise.resolve(serializer(updatedCart));
 };
 
+const updateCartLineItemQty = () => {
+
+};
+
 function _removeNullFields (input) {
     let output = input;
     for (let prop of Object.keys(output)) {
@@ -367,6 +371,7 @@ module.exports = {
     findCartById,
     addCart,
     updateCartLineItems,
+    updateCartLineItemQty,
     updateCartState,
     updateCartOwnership,
     updateCartShippingInfo,

@@ -114,6 +114,10 @@ const updateCartLineItems = async (id, payload = []) => {
     return Promise.resolve(CARTS[index_in_db_array]);
 };
 
+const updateCartLineItemQty = () => {
+
+};
+
 function _recalculateTotalPrice (lineItems) {
     let discounts = [];
     let vats = [];
@@ -385,6 +389,7 @@ module.exports = {
     findCartById,
     addCart,
     updateCartLineItems,
+    updateCartLineItemQty,
     updateCartState,
     updateCartOwnership,
     updateCartShippingInfo,

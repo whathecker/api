@@ -207,6 +207,120 @@ describe('Test database access layer of cart object', () => {
         });
     });
 
+    test('updateCartLineItemQty success - increase qty', async () => {
+        const cart_id = _cart_id_holder[0];
+        let deepCopiedLineItems = JSON.parse(JSON.stringify(mockCarts[0].lineItems));
+        const updatedItem = {
+            itemId: deepCopiedLineItems[0].itemId,
+            quantity: 2,
+        };
+        const updatedCart = await cartDB.updateCartLineItemQty(cart_id, updatedItem);
+        
+        const {
+            lineItems,
+            totalPrice
+        } = updatedCart;
+
+        expect(lineItems[0]).toEqual({
+            itemId: deepCopiedLineItems[0].itemId,
+            name: deepCopiedLineItems[0].name,
+            currency: deepCopiedLineItems[0].currency,
+            quantity: 2,
+            originalPrice: deepCopiedLineItems[0].originalPrice,
+            discount: deepCopiedLineItems[0].discount,
+            vat: deepCopiedLineItems[0].vat,
+            grossPrice: deepCopiedLineItems[0].grossPrice,
+            netPrice: deepCopiedLineItems[0].netPrice,
+            sumOfGrossPrice: "49.90",
+            sumOfNetPrice: "41.24",
+            sumOfVat: "8.66",
+            sumOfDiscount: "0.00"
+        });
+        expect(totalPrice).toEqual({
+            currency: "euro",
+            totalAmount: "74.85",
+            totalDiscount: "0.00",
+            totalVat: "12.99",
+            totalNetPrice: "61.86"
+        });
+    });
+
+    test('updateCartLineItemQty success - decrease qty', async () => {
+        const cart_id = _cart_id_holder[2];
+        let deepCopiedLineItems = JSON.parse(JSON.stringify(mockCarts[2].lineItems));
+        const updatedItem = {
+            itemId: deepCopiedLineItems[2].itemId,
+            quantity: 2,
+        };
+        const updatedCart = await cartDB.updateCartLineItemQty(cart_id, updatedItem);
+        
+        const {
+            lineItems,
+            totalPrice
+        } = updatedCart;
+
+        expect(lineItems[0]).toEqual({
+            itemId: deepCopiedLineItems[2].itemId,
+            name: deepCopiedLineItems[2].name,
+            currency: deepCopiedLineItems[2].currency,
+            quantity: 2,
+            originalPrice: deepCopiedLineItems[2].originalPrice,
+            discount: deepCopiedLineItems[2].discount,
+            vat: deepCopiedLineItems[2].vat,
+            grossPrice: deepCopiedLineItems[2].grossPrice,
+            netPrice: deepCopiedLineItems[2].netPrice,
+            sumOfGrossPrice: "49.90",
+            sumOfNetPrice: "41.24",
+            sumOfVat: "8.66",
+            sumOfDiscount: "0.00"
+        });
+        expect(totalPrice).toEqual({
+            currency: "euro",
+            totalAmount: "74.85",
+            totalDiscount: "0.00",
+            totalVat: "12.99",
+            totalNetPrice: "61.86"
+        });
+    });
+
+    test('updateCartLineItemQty success - decrease qty to zero', async () => {
+        const cart_id = _cart_id_holder[0];
+        let deepCopiedLineItems = JSON.parse(JSON.stringify(mockCarts[0].lineItems));
+        const updatedItem = {
+            itemId: deepCopiedLineItems[0].itemId,
+            quantity: 0,
+        };
+        const updatedCart = await cartDB.updateCartLineItemQty(cart_id, updatedItem);
+        
+        const {
+            lineItems,
+            totalPrice
+        } = updatedCart;
+
+        expect(lineItems).toHaveLength(1);
+        expect(lineItems[0].itemId).toBe(deepCopiedLineItems[1].itemId);
+        expect(totalPrice).toEqual({
+            currency: "euro",
+            totalAmount: "24.95",
+            totalDiscount: "0.00",
+            totalVat: "4.33",
+            totalNetPrice: "20.62"
+        });
+    });
+
+    test('updateCartLineItemQty fail - cannot update terminal state', async () => {
+        const cart_id = _cart_id_holder[1];
+        let deepCopiedLineItems = JSON.parse(JSON.stringify(mockCarts[1].lineItems));
+        const updatedItem = {
+            itemId: deepCopiedLineItems[1].itemId,
+            quantity: 2,
+        };
+        await expect(cartDB.updateCartLineItemQty(cart_id, updatedItem)).rejects.toMatchObject({
+            status: "fail",
+            reason: "error"
+        });
+    });
+
     test('update cartState success - from ACTIVE to ORDERD', async () => {
         const cart_id = _cart_id_holder[0];
         const newCartState = "ORDERED";
