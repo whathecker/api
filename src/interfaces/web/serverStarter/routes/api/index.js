@@ -66,6 +66,7 @@ apiRoutesLoader.mountCartRoutes = (router) => {
     .post('/carts/cart', cart.createCart)
     .put('/carts/cart/:id/state', cart.updateCartState)
     .put('/carts/cart/:id/items', cart.updateCartLineItems)
+    .put('/carts/cart/:id/item/qty', cart.updateCartLineItemQty)
     .put('/carts/cart/:id/shipping', cart.updateShippingInfo)
     .put('/carts/cart/:id/payment', cart.updatePaymentInfo)
     .put('/carts/cart/:id/ownership', cart.updateCartOwnership)

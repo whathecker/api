@@ -136,6 +136,44 @@ cart.updateCartLineItems = async (req, res, next) => {
     }
 };
 
+cart.updateCartLineItemQty = async (req, res, next) => {
+    const id = req.params.id;
+    const itemId = req.body.itemId;
+    const quantity = req.body.quantity;
+
+    if (!itemId || !quantity) {
+        logger.warn(`updateCartLineItems request has rejected as param is missing`);
+        return res.status(400).json({
+            status: "fail",
+            message: "bad request"
+        });
+    }
+
+    try {
+        const update = {
+            itemId: itemId,
+            quantity: quantity
+        };
+        const updatedCart = await cartDB.updateCartLineItemQty(id, update);
+        logger.info(`updateCartLineItemQty request has updated lineItems of the cart | cart_id: ${updatedCart._id}`);
+        return res.status(200).json({
+            status: 'success',
+            message: 'cart lineItems (QTY) has updated'
+        });
+    } catch (exception) {
+        if (exception.status === "fail") {
+            logger.error(`updateCartLineItemQty request has failed | reason: ${exception.reason}`);
+            (exception.error)? logger.error(`error: ${exception.error.message}`) : null;
+            return res.status(422).json({
+                status: "fail",
+                message: (exception.error)? exception.error.message : exception.reason
+            });
+        } else {
+            next(exception);
+        }
+    }
+};
+
 cart.updateCartOwnership = async (req, res, next) => {
     const id = req.params.id;
     const newCartState = req.body.cartState;

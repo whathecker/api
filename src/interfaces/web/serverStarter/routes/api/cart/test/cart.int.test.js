@@ -303,6 +303,56 @@ describe('Test carts endpoints', () => {
         });
     });
 
+    test('updateCartLineItemQty fail - bad request', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/item/qty`).send({})
+        .then(response => {
+            expect(response.status).toBe(400);
+        });
+    });
+
+    test('updateCartLineItemQty fail - cannot find item in lineItems', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/item/qty`).send({
+            itemId: "ItemID123",
+            quantity: 2
+        })
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('updateCartLineItemQty fail - cannot update terminal state', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        deepCopiedPayload.cartState = "ORDERED";
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/item/qty`).send({
+            itemId: "ItemID123",
+            quantity: 2
+        })
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('updateCartLineItemQty success', async () => {
+        let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
+        const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
+        const cart = res.body.cart;
+        return testSession.put(`/carts/cart/${cart._id}/item/qty`).send({
+            itemId: deepCopiedPayload.lineItems[0].itemId,
+            quantity: 2
+        })
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
+
     test('updateShippingInfo fail - bad request', async () => {
         let deepCopiedPayload = JSON.parse(JSON.stringify(payload));
         const res = await testSession.post('/carts/cart').send(deepCopiedPayload);
