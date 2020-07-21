@@ -249,7 +249,7 @@ describe('Test database access layer of cart object', () => {
         const cart_id = _cart_id_holder[2];
         let deepCopiedLineItems = JSON.parse(JSON.stringify(mockCarts[2].lineItems));
         const updatedItem = {
-            itemId: deepCopiedLineItems[2].itemId,
+            itemId: deepCopiedLineItems[1].itemId,
             quantity: 2,
         };
         const updatedCart = await cartDB.updateCartLineItemQty(cart_id, updatedItem);
@@ -259,16 +259,16 @@ describe('Test database access layer of cart object', () => {
             totalPrice
         } = updatedCart;
 
-        expect(lineItems[0]).toEqual({
-            itemId: deepCopiedLineItems[2].itemId,
-            name: deepCopiedLineItems[2].name,
-            currency: deepCopiedLineItems[2].currency,
+        expect(lineItems[1]).toEqual({
+            itemId: deepCopiedLineItems[1].itemId,
+            name: deepCopiedLineItems[1].name,
+            currency: deepCopiedLineItems[1].currency,
             quantity: 2,
-            originalPrice: deepCopiedLineItems[2].originalPrice,
-            discount: deepCopiedLineItems[2].discount,
-            vat: deepCopiedLineItems[2].vat,
-            grossPrice: deepCopiedLineItems[2].grossPrice,
-            netPrice: deepCopiedLineItems[2].netPrice,
+            originalPrice: deepCopiedLineItems[1].originalPrice,
+            discount: deepCopiedLineItems[1].discount,
+            vat: deepCopiedLineItems[1].vat,
+            grossPrice: deepCopiedLineItems[1].grossPrice,
+            netPrice: deepCopiedLineItems[1].netPrice,
             sumOfGrossPrice: "49.90",
             sumOfNetPrice: "41.24",
             sumOfVat: "8.66",

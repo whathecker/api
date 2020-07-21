@@ -114,9 +114,92 @@ const updateCartLineItems = async (id, payload = []) => {
     return Promise.resolve(CARTS[index_in_db_array]);
 };
 
-const updateCartLineItemQty = () => {
+const updateCartLineItemQty = async (id, payload) => {
+    const cart = await findCartById(id);
+    const { status, _id, ...rest } = cart;
 
+    if (status === "fail") {
+        return Promise.reject({
+            status: "fail",
+            reason: "cart not found"
+        });
+    }
+
+    let newLineItems;
+    let newTotalPrice;
+
+    try {
+        const itemId = payload.itemId;
+        const quantity =  payload.quantity;
+        _verifyCartState(cart.cartState);
+        newLineItems = _findAndUpdateItemInLineItems(cart.lineItems, itemId, quantity);
+        newTotalPrice = _recalculateTotalPrice(newLineItems);
+    } catch (err) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: err
+        });
+    };
+
+    let updatedPayload = rest;
+    updatedPayload.lineItems = newLineItems;
+    updatedPayload.totalPrice = newTotalPrice;
+
+    const cartObj = createCartObj(updatedPayload);
+
+    if (cartObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: cartObj
+        });
+    }
+
+    const updatedCart = {
+        _id: _id,
+        ...cartObj
+    };
+    const index_in_db_array = parseInt(_id) - 1;
+    CARTS[index_in_db_array] = updatedCart;
+    
+    return Promise.resolve(CARTS[index_in_db_array]);
 };
+
+function _findAndUpdateItemInLineItems(lineItems, itemId, qty) {
+    const index = lineItems.findIndex(item => {
+        return item.itemId === itemId;
+    });
+
+    if (index === -1) {
+        throw new Error("db access for cart object failed: cannot find item in lineItems")
+    }
+
+    if (qty === 0) {
+        lineItems.splice(index, 1);
+        return lineItems;
+    }
+
+    const newSumOfGrossPrice = _multiplyPriceByQty(lineItems[index].grossPrice, qty);
+    const newSumOfNetPrice = _multiplyPriceByQty(lineItems[index].netPrice, qty);
+    const newSumOfVat = _multiplyPriceByQty(lineItems[index].vat, qty);
+    const newSumOfDiscount = _multiplyPriceByQty(lineItems[index].discount, qty);
+
+    lineItems[index].quantity = qty;
+    lineItems[index].sumOfGrossPrice = newSumOfGrossPrice;
+    lineItems[index].sumOfNetPrice = newSumOfNetPrice;
+    lineItems[index].sumOfVat = newSumOfVat;
+    lineItems[index].sumOfDiscount = newSumOfDiscount;
+    return lineItems;
+}
+
+function _multiplyPriceByQty (price, quantity) {
+    price = Number(price);
+
+    let computedPrice = price * quantity;
+
+    return computedPrice.toFixed(2);
+}
 
 function _recalculateTotalPrice (lineItems) {
     let discounts = [];
