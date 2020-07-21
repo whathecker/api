@@ -2,6 +2,16 @@ const Cart = require('../../../db/mongodb/models/cart');
 const createCartObj = require('../../../../domain/cart');
 const serializer = require('./serializer');
 
+function _removeNullFields (input) {
+    let output = input;
+    for (let prop of Object.keys(output)) {
+        if (output[prop] === null) {
+            delete output[prop];
+        }
+    }
+    return output;
+}
+
 const listCarts = async () => {
     const carts = await Cart.find();
     return Promise.resolve(serializer(carts));
@@ -109,18 +119,87 @@ const updateCartLineItems = async (id, payload) => {
     return Promise.resolve(serializer(updatedCart));
 };
 
-const updateCartLineItemQty = () => {
+const updateCartLineItemQty = async (id, payload) => {
+    const cart = await findCartById(id);
+    const { status, _id, ...rest } = cart;
 
+    if (status === "fail") {
+        return Promise.reject({
+            status: "fail",
+            reason: "cart not found"
+        });
+    }
+
+    let newLineItems;
+    let newTotalPrice;
+
+    try {
+        const itemId = payload.itemId;
+        const quantity =  payload.quantity;
+        _verifyCartState(cart.cartState);
+        newLineItems = _findAndUpdateItemInLineItems(cart.lineItems, itemId, quantity);
+        newTotalPrice = _recalculateTotalPrice(newLineItems);
+    } catch (err) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: err
+        });
+    };
+
+    let updatedPayload = rest;
+    updatedPayload.lineItems = newLineItems;
+    updatedPayload.totalPrice = newTotalPrice;
+    updatedPayload = _removeNullFields(updatedPayload);
+
+    const cartObj = createCartObj(updatedPayload);
+
+    if (cartObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: cartObj
+        });
+    }
+
+    const updatedCart = await Cart.findByIdAndUpdate(_id, cartObj, { new: true });
+
+    return Promise.resolve(serializer(updatedCart));
 };
 
-function _removeNullFields (input) {
-    let output = input;
-    for (let prop of Object.keys(output)) {
-        if (output[prop] === null) {
-            delete output[prop];
-        }
+function _findAndUpdateItemInLineItems(lineItems, itemId, qty) {
+    const index = lineItems.findIndex(item => {
+        return item.itemId === itemId;
+    });
+
+    if (index === -1) {
+        throw new Error("db access for cart object failed: cannot find item in lineItems")
     }
-    return output;
+
+    if (qty === 0) {
+        lineItems.splice(index, 1);
+        return lineItems;
+    }
+
+    const newSumOfGrossPrice = _multiplyPriceByQty(lineItems[index].grossPrice, qty);
+    const newSumOfNetPrice = _multiplyPriceByQty(lineItems[index].netPrice, qty);
+    const newSumOfVat = _multiplyPriceByQty(lineItems[index].vat, qty);
+    const newSumOfDiscount = _multiplyPriceByQty(lineItems[index].discount, qty);
+
+    lineItems[index].quantity = qty;
+    lineItems[index].sumOfGrossPrice = newSumOfGrossPrice;
+    lineItems[index].sumOfNetPrice = newSumOfNetPrice;
+    lineItems[index].sumOfVat = newSumOfVat;
+    lineItems[index].sumOfDiscount = newSumOfDiscount;
+    return lineItems;
+}
+
+function _multiplyPriceByQty (price, quantity) {
+    price = Number(price);
+
+    let computedPrice = price * quantity;
+
+    return computedPrice.toFixed(2);
 }
 
 function _recalculateTotalPrice (lineItems) {
@@ -205,7 +284,6 @@ function _verifyCartState (state) {
         throw new Error('db access for updating cart object failed: cannot update cartState for ORDERED or MERGED cart');
     }
 }
-
 
 const updateCartOwnership = async (id, payload) => {
     const cart = await findCartById(id);
