@@ -21,5 +21,6 @@ module.exports = {
     rabbitMQ: {
         username: process.env.RABBITMQ_USERNAME,
         password: process.env.RABBITMQ_PASSWORD
-    }
+    },
+    EMAIL_VALIDATOR: process.env.EMAIL_VALIDATOR
 };
