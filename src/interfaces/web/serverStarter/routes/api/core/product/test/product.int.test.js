@@ -1,5 +1,5 @@
-const productDB = require('../../../../../../../infra/data-access/product-db');
-const serverStarter = require('../../../../../serverStarter');
+const productDB = require('../../../../../../../../infra/data-access/product-db');
+const serverStarter = require('../../../../../../serverStarter');
 const session = require('supertest-session');
 serverStarter.loadMiddlewares();
 let testSession = session(serverStarter.app);

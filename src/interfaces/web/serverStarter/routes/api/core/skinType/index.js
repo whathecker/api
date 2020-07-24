@@ -1,5 +1,5 @@
-const skinTypeDB = require('../../../../../../infra/data-access/skinType-db');
-const logger = require('../../../../../_shared/logger');
+const skinTypeDB = require('../../../../../../../infra/data-access/skinType-db');
+const logger = require('../../../../../../_shared/logger');
 
 let skinType = {};
 

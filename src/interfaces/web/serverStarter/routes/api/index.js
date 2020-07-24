@@ -1,10 +1,10 @@
-const category = require('./category');
-const brand = require('./brand');
-const skinType = require('./skinType');
-const product = require('./product');
-const subscriptionBox = require('./subscriptionBox');
-const order = require('./order');
-const cart = require('./cart');
+const category = require('./core/category');
+const brand = require('./core/brand');
+const skinType = require('./core/skinType');
+const product = require('./core/product');
+const subscriptionBox = require('./core/subscriptionBox');
+const order = require('./core/order');
+const cart = require('./core/cart');
 
 let apiRoutesLoader = {}
 

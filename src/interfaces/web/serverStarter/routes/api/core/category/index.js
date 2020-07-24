@@ -1,5 +1,5 @@
-const categoryDB = require('../../../../../../infra/data-access/category-db');
-const logger = require('../../../../../_shared/logger');
+const categoryDB = require('../../../../../../../infra/data-access/category-db');
+const logger = require('../../../../../../_shared/logger');
 
 let category = {};
 

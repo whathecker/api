@@ -1,5 +1,5 @@
-const brandDB = require('../../../../../../infra/data-access/brand-db');
-const logger = require('../../../../../_shared/logger');
+const brandDB = require('../../../../../../../infra/data-access/brand-db');
+const logger = require('../../../../../../_shared/logger');
 
 let brand = {};
 

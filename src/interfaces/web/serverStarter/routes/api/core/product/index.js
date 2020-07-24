@@ -1,5 +1,5 @@
-const productDB = require('../../../../../../infra/data-access/product-db');
-const logger = require('../../../../../_shared/logger');
+const productDB = require('../../../../../../../infra/data-access/product-db');
+const logger = require('../../../../../../_shared/logger');
 
 let product = {};
 

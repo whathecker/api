@@ -1,5 +1,5 @@
-const orderDB = require('../../../../../../infra/data-access/order-db');
-const logger = require('../../../../../_shared/logger');
+const orderDB = require('../../../../../../../infra/data-access/order-db');
+const logger = require('../../../../../../_shared/logger');
 
 let order = {};
 

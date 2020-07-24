@@ -1,5 +1,5 @@
-const packageDB = require('../../../../../../infra/data-access/subscriptionBox-db');
-const logger = require('../../../../../_shared/logger');
+const packageDB = require('../../../../../../../infra/data-access/subscriptionBox-db');
+const logger = require('../../../../../../_shared/logger');
 
 let subscriptionBox = {};
 

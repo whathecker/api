@@ -1,5 +1,5 @@
-const categoryDB = require('../../../../../../../infra/data-access/category-db');
-const serverStarter = require('../../../../../serverStarter');
+const categoryDB = require('../../../../../../../../infra/data-access/category-db');
+const serverStarter = require('../../../../../../serverStarter');
 const session = require('supertest-session');
 serverStarter.loadMiddlewares();
 let testSession = session(serverStarter.app);

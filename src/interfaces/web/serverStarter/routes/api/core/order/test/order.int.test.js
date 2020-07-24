@@ -1,5 +1,5 @@
-const orderDB = require('../../../../../../../infra/data-access/order-db');
-const serverStarter = require('../../../../../serverStarter');
+const orderDB = require('../../../../../../../../infra/data-access/order-db');
+const serverStarter = require('../../../../../../serverStarter');
 const session = require('supertest-session');
 serverStarter.loadMiddlewares();
 let testSession = session(serverStarter.app);

@@ -1,5 +1,5 @@
-const brandDB = require('../../../../../../../infra/data-access/brand-db');
-const serverStarter = require('../../../../../serverStarter');
+const brandDB = require('../../../../../../../../infra/data-access/brand-db');
+const serverStarter = require('../../../../../../serverStarter');
 const session = require('supertest-session');
 serverStarter.loadMiddlewares();
 let testSession = session(serverStarter.app);
