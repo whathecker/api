@@ -5,6 +5,7 @@ const product = require('./core/product');
 const subscriptionBox = require('./core/subscriptionBox');
 const order = require('./core/order');
 const cart = require('./core/cart');
+const addressLookup = require('./plugins/addressLookup');
 
 let apiRoutesLoader = {}
 
@@ -71,6 +72,12 @@ apiRoutesLoader.mountCartRoutes = (router) => {
     .put('/carts/cart/:id/payment', cart.updatePaymentInfo)
     .put('/carts/cart/:id/ownership', cart.updateCartOwnership)
     .delete('/carts/cart/:id', cart.deleteCartById)
+    return route;
+}
+
+apiRoutesLoader.mountAddressLookup = (router) => {
+    const route = router
+    .post('/lookup/address', addressLookup.getAddressDetail)
     return route;
 }
 
