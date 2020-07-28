@@ -1,6 +1,5 @@
 const open = require('amqplib');
 const mqConnection = require('../connection');
-const queues = require('./queues');
 const logger = require('../../logger');
 
 // this method is too big and does too many things... think of way to break it down..
@@ -97,6 +96,5 @@ const publishMessage = ({
 };
 
 module.exports = {
-    publishMessage,
-    queues
+    publishMessage
 };

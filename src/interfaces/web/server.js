@@ -1,9 +1,8 @@
 const serverStarter = require('./serverStarter');
-const consumers = require('./consumers');
+
+require('./consumerStarter');
 
 const env = process.env.NODE_ENV;
-
-consumers.mountConsumers();
 
 (env === "development" || env === "production")? 
     serverStarter.runAppBehindProxy() : null;
