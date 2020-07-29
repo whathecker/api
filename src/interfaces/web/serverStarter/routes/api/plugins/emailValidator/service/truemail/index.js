@@ -10,7 +10,7 @@ const verifyEmailAddress = async (email) => {
         if (status === "success" && result === "valid") {
             return Promise.resolve({
                 status: "success",
-                result: "valid",
+                validation_result: result,
                 message: "valid email address"
             });
         }
@@ -18,7 +18,7 @@ const verifyEmailAddress = async (email) => {
         if (status === "success" && result === "invalid") {
             return Promise.resolve({
                 status: "success",
-                result: "invalid",
+                validation_result: result,
                 message: "invalid email address"
             });
         }
@@ -26,7 +26,7 @@ const verifyEmailAddress = async (email) => {
         if (status === "general_failure" || status === "temp_unavail") {
             return Promise.reject({
                 status: "fail",
-                result: "no_result",
+                validation_result: "no_result",
                 reason: "service temp unavailable",
                 message: "email validation failed - service is unavailable"
             });
@@ -35,7 +35,7 @@ const verifyEmailAddress = async (email) => {
         if (status === "throttle_triggered") {
             return Promise.reject({
                 status: "fail",
-                result: "no_result",
+                validation_result: "no_result",
                 reason: "rate_exceed",
                 message: "email validation failed - rate exceed"
             });
@@ -45,7 +45,7 @@ const verifyEmailAddress = async (email) => {
         if (err) {
             return Promise.reject({
                 status: "fail",
-                result: "no_result",
+                validation_result: "no_result",
                 reason: "error",
                 message: err.message
             });

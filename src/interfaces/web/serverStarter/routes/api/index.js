@@ -6,6 +6,7 @@ const subscriptionBox = require('./core/subscriptionBox');
 const order = require('./core/order');
 const cart = require('./core/cart');
 const addressLookup = require('./plugins/addressLookup');
+const emailValidator = require('./plugins/emailValidator');
 
 let apiRoutesLoader = {}
 
@@ -78,6 +79,12 @@ apiRoutesLoader.mountCartRoutes = (router) => {
 apiRoutesLoader.mountAddressLookup = (router) => {
     const route = router
     .post('/lookup/address', addressLookup.getAddressDetail)
+    return route;
+}
+
+apiRoutesLoader.mountEmailValidator = (router) => {
+    const route = router
+    .post('/validation/email', emailValidator.validateEmail)
     return route;
 }
 
