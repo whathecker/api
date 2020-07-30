@@ -22,5 +22,10 @@ module.exports = {
         username: process.env.RABBITMQ_USERNAME,
         password: process.env.RABBITMQ_PASSWORD
     },
-    EMAIL_VALIDATOR: process.env.EMAIL_VALIDATOR
+    EMAIL_VALIDATOR: process.env.EMAIL_VALIDATOR,
+    PAYMENT_PROCESSOR: process.env.PAYMENT_PROCESSOR,
+    stripe: {
+        STRIPE_APIKEY_TEST: process.env.STRIPE_APIKEY_TEST,
+        STRIPE_APIKEY_PROD: process.env.STRIPE_APIKEY_PROD
+    }
 };

@@ -8,7 +8,8 @@ const {
     mountOrderRoutes,
     mountCartRoutes,
     mountAddressLookup,
-    mountEmailValidator
+    mountEmailValidator,
+    mountPaymentRoutes
 } = api;
 
 const apiRoutesLoader = (routerObj) => {
@@ -22,6 +23,7 @@ const apiRoutesLoader = (routerObj) => {
     router.use('/carts', mountCartRoutes(router));
     router.use('/lookup/address', mountAddressLookup(router));
     router.use('/validation/email', mountEmailValidator(router));
+    router.use('/payment', mountPaymentRoutes(router));
     return router;
 }
 

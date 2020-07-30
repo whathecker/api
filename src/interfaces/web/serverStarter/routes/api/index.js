@@ -7,6 +7,7 @@ const order = require('./core/order');
 const cart = require('./core/cart');
 const addressLookup = require('./plugins/addressLookup');
 const emailValidator = require('./plugins/emailValidator');
+const payment = require('./plugins/payment');
 
 let apiRoutesLoader = {}
 
@@ -87,5 +88,11 @@ apiRoutesLoader.mountEmailValidator = (router) => {
     .post('/validation/email', emailValidator.validateEmail)
     return route;
 }
+
+apiRoutesLoader.mountPaymentRoutes = (router) => {
+    const route = router
+    .post('/payment/session', payment.createPaymentSession)
+    return route;
+};
 
 module.exports = apiRoutesLoader;
