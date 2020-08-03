@@ -46,7 +46,26 @@ const getPaymentMethods = async () => {
     });
 }; 
 
+const processWebhook = async (rawBody, signature) => {
+    try {
+        const endpointSecret = helpers.getEndpointSecret();
+        const event = await stripe.webhooks.constructEvent(rawBody, signature, endpointSecret);
+        return Promise.resolve({
+            status: "success",
+            message: "webhook message has processed",
+            event: event
+        });
+    } catch (exception) {
+        return Promise.reject({
+            status: "fail",
+            message: "error",
+            error: exception
+        });
+    }
+};
+
 module.exports = {
     createSession,
-    getPaymentMethods
+    getPaymentMethods,
+    processWebhook
 };

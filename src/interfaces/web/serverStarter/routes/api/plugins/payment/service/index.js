@@ -1,10 +1,12 @@
 const serviceChoice = require('./serviceSelector')();
 let {
     createSession,
-    getPaymentMethods
+    getPaymentMethods,
+    processWebhook
 } =  require(`./${serviceChoice}`);
 
 module.exports = {
     createSession,
-    getPaymentMethods
+    getPaymentMethods,
+    processWebhook
 };

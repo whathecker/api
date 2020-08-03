@@ -30,14 +30,16 @@ module.exports = {
         return compareResult;
     },
 
-    getEndpointSecret: (env) => {
+    getEndpointSecret: () => {
         let secret;
+        const env = process.env.NODE_ENV;
+
         if (env === "test" || env === "local" || env === "development") {
-            secret = process.env.STRIPE_ENDPOINT_SECRET_TEST;
+            secret = config.stripe.STRIPE_ENDPOINT_SECRET_TEST;
         }
 
         if (env === "production") {
-            secret = process.env.STRIPE_ENDPOINT_SECRET_PROD
+            secret = config.stripe.STRIPE_ENDPOINT_SECRET_PROD;
         }
         return secret;
     },
@@ -45,9 +47,11 @@ module.exports = {
     retrieveApikey: () => {
         let apikey;
         const env = process.env.NODE_ENV;
+
         if (env === "test" || env=== 'local' || env === 'development') {
             apikey = config.stripe.STRIPE_APIKEY_TEST;
         }
+        
         if (env === 'production') {
             apikey = config.stripe.STRIPE_APIKEY_PROD;
         }

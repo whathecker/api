@@ -93,6 +93,7 @@ apiRoutesLoader.mountPaymentRoutes = (router) => {
     const route = router
     .post('/payment/session', payment.createPaymentSession)
     .post('/payment/methods', payment.getPaymentMethods)
+    .post('/payment/hook', payment.processWebhook)
     return route;
 };
 

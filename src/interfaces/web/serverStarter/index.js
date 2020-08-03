@@ -83,7 +83,7 @@ class ServerStarter {
         this.app.use(this.bodyParser.json({
             verify: (req, res, buf) =>{
                 const url = req.originalUrl;
-                if (url.startsWith('/checkout/payment/hook')) {
+                if (url.startsWith('/payment/hook')) {
                     req.rawBody = buf.toString();
                 }
             }

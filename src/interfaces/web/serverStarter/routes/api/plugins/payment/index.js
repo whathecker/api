@@ -52,4 +52,23 @@ payment.getPaymentMethods = async (req, res, next) => {
     }
 };
 
+payment.processWebhook = async (req, res, next) => {
+    try {
+        const signature = req.headers['stripe-signature'];
+        const rawBody = req.rawBody;
+
+        const result = await paymentService.processWebhook(rawBody, signature);
+        logger.info(`processWebhook request has processed and dispatched message to queue -  event: ${result.event.type}`);
+        
+        return res.status(200).end();
+    } catch (exception) {
+        if (exception.status === "fail") {
+            logger.error(`processWebhook request has failed to process message - error : ${exception.error}`);
+            return res.status(400).json(exception);
+        } else {
+            next(exception);
+        }
+    }
+};
+
 module.exports = payment;
