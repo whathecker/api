@@ -37,4 +37,19 @@ payment.createPaymentSession = async (req, res, next) => {
     }
 };
 
+payment.getPaymentMethods = async (req, res, next) => {
+    try {
+        const result = await paymentService.getPaymentMethods();
+
+        logger.info(`getPaymentMethods request has returned available paymentMethods`);
+        return res.status(200).json({
+            status: result.status,
+            message: result.message,
+            paymentMethods: result.paymentMethods
+        });
+    } catch (exception) {
+        next(exception);
+    }
+};
+
 module.exports = payment;

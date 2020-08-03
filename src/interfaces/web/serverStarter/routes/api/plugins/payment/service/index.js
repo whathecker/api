@@ -1,8 +1,10 @@
 const serviceChoice = require('./serviceSelector')();
 let {
-    createSession
+    createSession,
+    getPaymentMethods
 } =  require(`./${serviceChoice}`);
 
 module.exports = {
-    createSession
+    createSession,
+    getPaymentMethods
 };

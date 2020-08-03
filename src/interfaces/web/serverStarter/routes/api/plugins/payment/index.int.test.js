@@ -12,4 +12,12 @@ describe('Test payment plugin', () => {
             expect(response.status).toBe(400);
         });
     });
+
+    test('getPaymentMethods success', () => {
+        return testSession.post('/payment/methods')
+        .send()
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
 });

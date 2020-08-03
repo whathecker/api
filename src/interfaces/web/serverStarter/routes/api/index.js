@@ -92,6 +92,7 @@ apiRoutesLoader.mountEmailValidator = (router) => {
 apiRoutesLoader.mountPaymentRoutes = (router) => {
     const route = router
     .post('/payment/session', payment.createPaymentSession)
+    .post('/payment/methods', payment.getPaymentMethods)
     return route;
 };
 

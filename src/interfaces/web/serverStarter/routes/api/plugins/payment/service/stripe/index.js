@@ -38,11 +38,15 @@ const createSession = async ({
     }
 };
 
-const getPaymentMethod = async () => {
-
+const getPaymentMethods = async () => {
+    return Promise.resolve({
+        status: "success",
+        message: "available payment methods are returned",
+        paymentMethods: ["cards"]
+    });
 }; 
 
 module.exports = {
     createSession,
-    getPaymentMethod
+    getPaymentMethods
 };
