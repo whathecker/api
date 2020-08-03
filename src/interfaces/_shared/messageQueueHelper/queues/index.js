@@ -11,4 +11,10 @@ module.exports = {
         exchange: 'order',
         retryExchange: 'order-retry'
     },
+    stripe: {
+        queue: 'stripe',
+        retryQueue: 'stripe-retry',
+        exchange: 'stripe',
+        retryExchange: 'stripe-retry'
+    }
 };

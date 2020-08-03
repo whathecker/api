@@ -26,16 +26,15 @@ const publishMessage = ({
                 retryEx,
                 bindQueue,
                 bindRetryQueue
-            ]).then(() => {
+            ]).then(async () => {
     
                 logger.info(`Message publisher has connected to queue: ${queue} & retryQueue: ${retryQueue}`);
     
-                const msg = Buffer.from(JSON.status(message));
-    
-                channel.publish(ex, '', msg, { persistent: true })
-                .then(() => {
+                const msg = Buffer.from(JSON.stringify(message));
 
-                    channel.close().then(() => {
+                try {
+                    await channel.publish(exchange, '', msg, { persistent: true });
+                    await channel.close().then(() => {
                         connection.close();
                     });
 
@@ -44,8 +43,7 @@ const publishMessage = ({
                         status: "success",
                         message: `publisher successfully sent message to queue: ${queue}`
                     }); 
-
-                }).catch(error => {
+                } catch (error) {
                     if (error) {
                         logger.warn(`Message publisher has failed to send message for queue: ${queue}`);
                         logger.error(`Error: ${error}`);
@@ -55,7 +53,7 @@ const publishMessage = ({
                             message: `publisher failed to send message for queue: ${queue}`,
                         });
                     }
-                });
+                }
                 
             }).catch(error => {
                 if (error) {

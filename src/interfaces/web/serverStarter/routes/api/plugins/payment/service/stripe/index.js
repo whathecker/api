@@ -58,8 +58,7 @@ const processWebhook = async (rawBody, signature) => {
     } catch (exception) {
         return Promise.reject({
             status: "fail",
-            message: "error",
-            error: exception
+            message: exception,
         });
     }
 };
