@@ -3,11 +3,13 @@ const brand = require('./core/brand');
 const skinType = require('./core/skinType');
 const product = require('./core/product');
 const subscriptionBox = require('./core/subscriptionBox');
+const subscription = require('./core/subscription');
 const order = require('./core/order');
 const cart = require('./core/cart');
 const addressLookup = require('./plugins/addressLookup');
 const emailValidator = require('./plugins/emailValidator');
 const payment = require('./plugins/payment');
+
 
 let apiRoutesLoader = {}
 
@@ -96,5 +98,11 @@ apiRoutesLoader.mountPaymentRoutes = (router) => {
     .post('/payment/hook', payment.processWebhook)
     return route;
 };
+
+apiRoutesLoader.mountSubscriptionRoutes = (router) => {
+    const route = router
+    .get('/subscriptions', subscription.listSubscriptions)
+    return route;
+}
 
 module.exports = apiRoutesLoader;

@@ -60,8 +60,10 @@ payment.processWebhook = async (req, res, next) => {
         const rawBody = req.rawBody;
 
         const result = await paymentService.processWebhook(rawBody, signature);
+
         const msg = result.event;
         await mqHelper.publisher.publishMessage(queues.stripe, msg);
+        
         logger.info(`processWebhook request has processed and dispatched message to queue -  event: ${result.event.type}`);
         return res.status(200).end();
     } catch (exception) {
