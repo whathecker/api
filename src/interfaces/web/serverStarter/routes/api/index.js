@@ -102,6 +102,7 @@ apiRoutesLoader.mountPaymentRoutes = (router) => {
 apiRoutesLoader.mountSubscriptionRoutes = (router) => {
     const route = router
     .get('/subscriptions', subscription.listSubscriptions)
+    .get('/subscriptions/subscription/:id', subscription.getSubscriptionById)
     return route;
 }
 
