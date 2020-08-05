@@ -81,6 +81,98 @@ describe('Test database access layer of subscription object', () => {
         expect(rest).toEqual(payload);
     });
 
+    test('updateSubscriptionStatus fail - cannot update to same status, from active to active', async () => {
+        const subscriptionId = _subscriptionId_holder[0];
+        const updatedStatusFlag = true;
+        await expect(subscriptionDB.updateSubscriptionStatus(subscriptionId, updatedStatusFlag)).rejects.toMatchObject({
+            status: "fail",
+            reason: "error"
+        });
+    });
+
+    test('updateSubscriptionStatus fail - cannot update to same status, from inactive to inactive', async () => {
+        const payload = {
+            country: "NL",
+            channel: "EU",
+            deliveryFrequency: 28,
+            deliveryDay: 4,
+            isWelcomeEmailSent: true,
+            orders: ["order_num_1", "order_num_2"],
+            isActive: false,
+            deliverySchedules: [{
+                orderNumber: "ECNL8092517100",
+                nextDeliveryDate: new Date('December 17, 1995 03:24:00'),
+                year: 1995,
+                month: 11,
+                date: 17,
+                day: 0,
+            }],
+            subscribedItems: [
+                {
+                    itemId: "PKOL90587",
+                    quantity: 1
+                },
+            ],
+            user_id: "2",
+            paymentMethod_id: "2",
+            creationDate: new Date('December 14, 1995 03:24:00'),
+            lastModified: new Date('December 24, 1995 03:24:00'),
+        };
+
+        const newSubscription = await subscriptionDB.addSubscription(payload);
+        const { subscriptionId } = newSubscription;
+        const updatedStatusFlag = false;
+        await expect(subscriptionDB.updateSubscriptionStatus(subscriptionId, updatedStatusFlag)).rejects.toMatchObject({
+            status: "fail",
+            reason: "error"
+        });
+    });
+
+    test('updateSubscriptionStatus - inactivate subscription', async () => {
+        const subscriptionId = _subscriptionId_holder[0];
+        const updatedStatusFlag = false;
+
+        const updatedSubscription = await subscriptionDB.updateSubscriptionStatus(subscriptionId, updatedStatusFlag);
+
+        const { isActive } = updatedSubscription;
+
+        expect(isActive).toBe(false);
+    });
+
+    test('updateSubscriptionStatus - activate subscription', async () => {
+        const payload = {
+            country: "NL",
+            channel: "EU",
+            deliveryFrequency: 28,
+            deliveryDay: 4,
+            isWelcomeEmailSent: true,
+            orders: [],
+            isActive: false,
+            deliverySchedules: [],
+            subscribedItems: [
+                {
+                    itemId: "PKOL90587",
+                    quantity: 1
+                },
+            ],
+            user_id: "2",
+            paymentMethod_id: "2",
+            creationDate: new Date('December 14, 1995 03:24:00'),
+            lastModified: new Date('December 24, 1995 03:24:00'),
+        };
+
+        const newSubscription = await subscriptionDB.addSubscription(payload);
+        const { subscriptionId } = newSubscription;
+        const updatedStatusFlag = true;
+
+        const updatedSubscription = await subscriptionDB.updateSubscriptionStatus(subscriptionId, updatedStatusFlag);
+
+        const { isActive, deliverySchedules } = updatedSubscription;
+
+        expect(isActive).toBe(true);
+        expect(deliverySchedules).toHaveLength(1);
+    });
+
     test('delete a subscription by subscriptionId', async () => {
         const subscriptionId = _subscriptionId_holder[1];
 

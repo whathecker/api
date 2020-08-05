@@ -4,6 +4,7 @@ let {
     findSubscriptionBySubscriptionId,
     findSubscriptionByUserId,
     addSubscription,
+    updateSubscriptionStatus,
     deleteSubscriptionBySubscriptionId,
     dropAll
 } = require(`./${dbChoice}`);
@@ -13,6 +14,7 @@ module.exports = {
     findSubscriptionBySubscriptionId,
     findSubscriptionByUserId,
     addSubscription,
+    updateSubscriptionStatus,
     deleteSubscriptionBySubscriptionId,
     dropAll
 };

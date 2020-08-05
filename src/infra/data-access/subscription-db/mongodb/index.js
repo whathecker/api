@@ -65,6 +65,10 @@ async function _isSubscriptionIdUnique (subscriptionId) {
     throw new Error('db access for subscription object failed: productId must be unique');
 }
 
+const updateSubscriptionStatus = async (subscriptionId, isActive) => {
+
+};
+
 const deleteSubscriptionBySubscriptionId = async (subscriptionId) => {
     const removedSubscription = await Subscription.findOneAndRemove({
         subscriptionId: subscriptionId
@@ -94,6 +98,7 @@ module.exports = {
     findSubscriptionBySubscriptionId,
     findSubscriptionByUserId,
     addSubscription,
+    updateSubscriptionStatus,
     deleteSubscriptionBySubscriptionId,
     dropAll
 };

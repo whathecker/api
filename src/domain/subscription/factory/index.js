@@ -43,7 +43,7 @@ class SubscriptionFactory extends OrderBaseFactory {
         }
 
 
-        if (deliverySchedules.length !== 0) {
+        if (deliverySchedules && deliverySchedules.length !== 0) {
 
             const result_deliverySchedules = SubscriptionFactory.validateDeliverySchedules(deliverySchedules);
 
