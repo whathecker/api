@@ -137,6 +137,7 @@ describe('Test database access layer of subscription object', () => {
         const { isActive } = updatedSubscription;
 
         expect(isActive).toBe(false);
+        expect(updatedSubscription.subscriptionId).toBe(subscriptionId);
     });
 
     test('updateSubscriptionStatus - activate subscription', async () => {
@@ -171,6 +172,7 @@ describe('Test database access layer of subscription object', () => {
 
         expect(isActive).toBe(true);
         expect(deliverySchedules).toHaveLength(1);
+        expect(updatedSubscription.subscriptionId).toBe(subscriptionId);
     });
 
     test('delete a subscription by subscriptionId', async () => {

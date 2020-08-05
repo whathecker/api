@@ -2,6 +2,16 @@ const Subscription = require('../../../db/mongodb/models/subscription');
 const serializer = require('./serializer');
 const createSubscriptionObj = require('../../../../domain/subscription');
 
+function _removeNullFields (input) {
+    let output = input;
+    for (let prop of Object.keys(output)) {
+        if (output[prop] === null) {
+            delete output[prop];
+        }
+    }
+    return output;
+}
+
 const listSubscriptions = async () => {
     const subscriptions = await Subscription.find();
     return Promise.resolve(serializer(subscriptions));
@@ -66,8 +76,92 @@ async function _isSubscriptionIdUnique (subscriptionId) {
 }
 
 const updateSubscriptionStatus = async (subscriptionId, isActive) => {
+    const subscription = await findSubscriptionBySubscriptionId(subscriptionId);
+    const { status, _id, ...rest } = subscription;
 
+    if (status === "fail") {
+        return Promise.reject({
+            status: "fail",
+            reason: "subscription not found"
+        });
+    }
+
+    const newSubscriptionStatus = isActive;
+
+    try {
+        _compareStatus(newSubscriptionStatus, subscription.isActive);
+    } catch (err) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: err
+        });
+    }
+
+    let updatedPayload = rest;
+    updatedPayload.isActive = newSubscriptionStatus;
+
+    if (updatedPayload.isActive === true) {
+        const newFulfillmentSchedule = _setFirstFulfillmentSchedule(updatedPayload.deliveryDay);
+        updatedPayload.deliverySchedules = [newFulfillmentSchedule];
+    }
+
+    updatedPayload = _removeNullFields(updatedPayload);
+
+    const subscriptionObj = createSubscriptionObj(updatedPayload);
+
+    if (subscriptionObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reaason: "error",
+            error: subscriptionObj
+        });
+    }
+
+    const updatedSubscription = await Subscription.findOneAndUpdate({
+        subscriptionId: subscriptionId
+    }, subscriptionObj, { new: true});
+
+    return Promise.resolve(serializer(updatedSubscription));
 };
+
+function _compareStatus(newStatus, oldStatus) {
+    if (newStatus === oldStatus) {
+        throw new Error(`db access for updating subscription object failed: cannot update status of subscription to same state - old status was already ${oldStatus}`);
+    }
+}
+
+function _setFirstFulfillmentSchedule (fulfillMentDay = 4) {
+    const timestamp = new Date(Date.now());
+    const dayAtTimestamp = timestamp.getDay();
+    
+    let gapTillNextClosestFullfillmentDate;
+
+    if (dayAtTimestamp < fulfillMentDay) {
+        gapTillNextClosestFullfillmentDate = fulfillMentDay - dayAtTimestamp;
+    }
+
+    if (dayAtTimestamp > fulfillMentDay) {
+        gapTillNextClosestFullfillmentDate = 7 - (dayAtTimestamp - fulfillMentDay);
+    }
+    
+    if (dayAtTimestamp === fulfillMentDay) {
+        gapTillNextClosestFullfillmentDate = 1;
+    }
+
+    const deliveryDateinMSeconds = timestamp + (gapTillNextClosestFullfillmentDate * 24 * 60 * 60 * 1000);
+    const deliveryDateInObj = new Date(deliveryDateinMSeconds);
+    const deliverySchedule = {
+        orderNumber: ' ',
+        nextDeliveryDate: deliveryDateInObj,
+        year: deliveryDateInObj.getFullYear(),
+        month: deliveryDateInObj.getMonth(),
+        date: deliveryDateInObj.getDate(),
+        day: deliveryDateInObj.getDay()
+    };
+
+    return deliverySchedule;
+}
 
 const deleteSubscriptionBySubscriptionId = async (subscriptionId) => {
     const removedSubscription = await Subscription.findOneAndRemove({
