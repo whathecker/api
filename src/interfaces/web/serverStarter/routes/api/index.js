@@ -103,6 +103,7 @@ apiRoutesLoader.mountSubscriptionRoutes = (router) => {
     const route = router
     .get('/subscriptions', subscription.listSubscriptions)
     .get('/subscriptions/subscription/:id', subscription.getSubscriptionById)
+    .put('/subscriptions/subscription/:id/status', subscription.updateSubscriptionStatus)
     return route;
 }
 

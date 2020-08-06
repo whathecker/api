@@ -64,4 +64,49 @@ describe('Test subscription endpoint', () => {
             expect(response.status).toBe(200);
         });
     });
+
+    test('updateSubscriptionStatus fail - invalid payload', async () => {
+        const subscription = await subscriptionDB.addSubscription(payload);
+        const id = subscription.subscriptionId;
+        return testSession.put(`/subscriptions/subscription/${id}/status`)
+        .send({})
+        .then(response => {
+            expect(response.status).toBe(400);
+        });
+    });
+
+    test('updateSubscriptionStatus fail - cannot find subscription', async () => {
+        const id = 'oddid'
+        return testSession.put(`/subscriptions/subscription/${id}/status`)
+        .send({ 
+            isActive: true 
+        })
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('updateSubscriptionStatus fail - cannot update to the same status', async () => {
+        const subscription = await subscriptionDB.addSubscription(payload);
+        const id = subscription.subscriptionId;
+        return testSession.put(`/subscriptions/subscription/${id}/status`)
+        .send({
+            isActive: true
+        })
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('updateSubscriptionStatus success', async () => {
+        const subscription = await subscriptionDB.addSubscription(payload);
+        const id = subscription.subscriptionId;
+        return testSession.put(`/subscriptions/subscription/${id}/status`)
+        .send({
+            isActive: false
+        })
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
 });
