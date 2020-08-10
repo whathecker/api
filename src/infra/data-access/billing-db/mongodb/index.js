@@ -20,8 +20,10 @@ const findBillingByBillingId = async (billingId) => {
     return Promise.resolve(serializer(billing));
 };
 
-const findBillingsByUserId = () => {
+const findBillingsByUserId = async (userId) => {
+    const billings = await Billing.find({ user_id: userId });
 
+    return Promise.resolve(serializer(billings));
 };
 
 const addBilling = async (payload) => {
