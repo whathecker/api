@@ -6,6 +6,8 @@ const subscriptionBox = require('./core/subscriptionBox');
 const subscription = require('./core/subscription');
 const order = require('./core/order');
 const cart = require('./core/cart');
+const user = require('./core/user');
+
 const addressLookup = require('./plugins/addressLookup');
 const emailValidator = require('./plugins/emailValidator');
 const payment = require('./plugins/payment');
@@ -104,6 +106,12 @@ apiRoutesLoader.mountSubscriptionRoutes = (router) => {
     .get('/subscriptions', subscription.listSubscriptions)
     .get('/subscriptions/subscription/:id', subscription.getSubscriptionById)
     .put('/subscriptions/subscription/:id/status', subscription.updateSubscriptionStatus)
+    return route;
+};
+
+apiRoutesLoader.mountUserRoutes = (router) => {
+    const route = router
+    .get('/users/user/:id', user.getUserDetail)
     return route;
 }
 

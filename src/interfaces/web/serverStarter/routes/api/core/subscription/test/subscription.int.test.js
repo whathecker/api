@@ -1,7 +1,6 @@
 const subscriptionDB = require('../../../../../../../../infra/data-access/subscription-db');
 const serverStarter = require('../../../../../../serverStarter');
 const session = require('supertest-session');
-const { sub } = require('../../../../../../../_shared/messageQueueHelper/connection');
 serverStarter.loadMiddlewares();
 let testSession = session(serverStarter.app);
 
