@@ -39,16 +39,6 @@ describe('Test database access layer of billing object', () => {
         expect(rest).toEqual(mockBillings[0]);
     });
 
-    /*
-    test('find billing options by userId fail - not found', async () => {
-        const user_id = "odd_id";
-
-        await expect(billingDB.findBillingsByUserId(user_id)).rejects.toMatchObject({
-            status: "fail",
-            reason: "billing not found"
-        });
-    }); */
-
     test('find billing options by userId', async () => {
         const user_id = "1";
 

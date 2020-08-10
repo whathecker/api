@@ -6,7 +6,6 @@ const packageDB = require('../../../../../../../../infra/data-access/subscriptio
 
 const serverStarter = require('../../../../../../serverStarter');
 const session = require('supertest-session');
-const { response } = require('express');
 serverStarter.loadMiddlewares();
 let testSession = session(serverStarter.app);
 
@@ -181,7 +180,37 @@ describe('Test user endpoints', () => {
         const userId = payload_user.userId;
         return testSession.get(`/users/user/${userId}`)
         .then(response => {
+            const userData = response.body;
+
             expect(response.status).toBe(200);
+
+            expect(userData.email).toBe(payload_user.email);
+            expect(userData.firstName).toBe(payload_user.firstName);
+            expect(userData.lastName).toBe(payload_user.lastName);
+            expect(userData.mobileNumber).toBe(payload_user.mobileNumber);
+
+            expect(userData.address.streetName).toBe(payload_addresses[0].streetName);
+            expect(userData.address.houseNumber).toBe(payload_addresses[0].houseNumber);
+            expect(userData.address.houseNumberAdd).toBe(payload_addresses[0].houseNumberAdd);
+            expect(userData.address.city).toBe(payload_addresses[0].city);
+            expect(userData.address.province).toBe(payload_addresses[0].province);
+            expect(userData.address.country).toBe(payload_addresses[0].country);
+
+            expect(userData.subscription.id).toBe(payload_subscription.subscriptionId);
+            expect(userData.subscription.deliveryFrequency).toBe(payload_subscription.deliveryFrequency);
+            expect(userData.subscription.deliveryDay).toBe(payload_subscription.deliveryDay);
+            expect(userData.subscription.nextDelivery).toMatchObject({
+                orderNumber: "ECNL8092517700",
+                year: 1995,
+                month: 11,
+                date: 17,
+                day: 0,
+            });
+
+            expect(userData.billingOptions).toHaveLength(2);
+
+            expect(userData.subscribedItems).toHaveLength(1);
+            expect(userData.subscribedItems[0].packageId).toBe(payload_package.packageId);
         });
     });
 });

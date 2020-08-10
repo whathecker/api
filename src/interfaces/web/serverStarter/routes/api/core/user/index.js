@@ -17,7 +17,8 @@ user.getUserDetail = async (req, res, next) => {
         const subscriptionId = user.subscriptions[0];
 
         const subscription = await subscriptionDB.findSubscriptionBySubscriptionId(subscriptionId);
-        
+        console.log(subscription);
+
         const deliverySchedules = subscription.deliverySchedules.sort(_sortDeliverySchedule);
 
         const nextDeliverySchedule = deliverySchedules[0];
@@ -55,17 +56,41 @@ user.getUserDetail = async (req, res, next) => {
                 next(exception);
             });
             
-        }, function (exception) {
+        }, async function (exception) {
 
             (exception)? logger.error(exception) : null;
-            
-            // fetch billingOptions and create an array out of it
-            // TODO: write findBillingByUserId method
 
-            // fetch defaultShippingAddress 
+            const billings = await billingDB.findBillingsByUserId(user.userId);
+
+            const address_id = user.defaultShippingAddress;
+            const defaultShippingAddress = await addressDB.findAddressById(address_id);
+
+            const userData = {
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                mobileNumber: user.mobileNumber,
+                address: {
+                    streetName: defaultShippingAddress.streetName,
+                    houseNumber: defaultShippingAddress.houseNumber,
+                    houseNumberAdd: defaultShippingAddress.houseNumberAdd,
+                    city: defaultShippingAddress.city,
+                    province: defaultShippingAddress.province,
+                    country: defaultShippingAddress.country
+                },
+                subscription: {
+                    id: subscription.subscriptionId,
+                    creationDate: subscription.creationDate,
+                    deliveryFrequency: subscription.deliveryFrequency,
+                    deliveryDay: subscription.deliveryDay,
+                    nextDelivery: nextDeliverySchedule
+                },
+                subscribedItems: enrichedSubscribedItems,
+                billingOptions: billings
+            };
     
-
-            return res.status(200).end();
+            logger.info(`getUserDeail request has returned user ${user.email}`);
+            return res.status(200).json(userData);
         });
 
     } catch (exception) {
