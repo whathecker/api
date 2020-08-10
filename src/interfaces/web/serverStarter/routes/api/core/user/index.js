@@ -17,7 +17,6 @@ user.getUserDetail = async (req, res, next) => {
         const subscriptionId = user.subscriptions[0];
 
         const subscription = await subscriptionDB.findSubscriptionBySubscriptionId(subscriptionId);
-        console.log(subscription);
 
         const deliverySchedules = subscription.deliverySchedules.sort(_sortDeliverySchedule);
 
@@ -126,5 +125,54 @@ function _sortDeliverySchedule (a, b) {
     }
     return 0;
 }
+
+
+user.getUserAddresses = async (req, res, next) => {
+    const userId = req.params.id;
+    try {
+        const user = await userDB.findUserByUserId(userId);
+
+        const addresses = await addressDB.listAddressesByUserId(user.userId);
+
+        let defaultShippingAddress = null;
+        let defaultBillingAddress = null;
+
+        if (user.defaultShippingAddress) {
+            defaultShippingAddress = await addressDB.findAddressById(user.defaultShippingAddress);
+        }
+
+        if (user.defaultBillingAddress) {
+            defaultBillingAddress = await addressDB.findAddressById(user.defaultBillingAddress);
+        }
+        
+        const addressData = {
+            addresses: addresses,
+            shippingAddress: defaultShippingAddress,
+            billingAddress: defaultBillingAddress
+        }
+        logger.info(`getUserAddresses request has returned data ${user.email}`);
+        return res.status(200).json(addressData);
+    } catch (exception) {
+        if (exception.status === "fail") {
+            
+            if (exception.reason === "user not found") {
+                logger.info(`getUserAddresses request has not returned data - no user`);
+                return res.status(204).json({
+                    status: "fail",
+                    message: "no user found"
+                });
+            }
+
+            logger.error(`getUserAddresses request has failed | reason: ${exception.reason}`);
+            (exception.error)? logger.error(`error: ${exception.error.message}`) : null;
+            return res.status(422).json({
+                status: "fail",
+                message: (exception.error)? exception.error.message : exception.reason
+            });
+        } 
+       
+        next(exception);
+    };
+};
 
 module.exports = user;

@@ -213,4 +213,26 @@ describe('Test user endpoints', () => {
             expect(userData.subscribedItems[0].packageId).toBe(payload_package.packageId);
         });
     });
+
+    test('getUserAddresses return no data - user not found', () => {
+        return testSession.get('/users/user/odd_id/addresses')
+        .then(response => {
+            expect(response.status).toBe(204);
+        });
+    });
+
+    test('getUserAddresses success', () => {
+        const userId = payload_user.userId;
+        return testSession.get(`/users/user/${userId}/addresses`)
+        .then(response => {
+            const addressData = response.body;
+
+            expect(response.status).toBe(200);
+
+            expect(addressData.addresses).toHaveLength(2);
+
+            expect(addressData.shippingAddress).toMatchObject(payload_addresses[0]);
+            expect(addressData.billingAddress).toMatchObject(payload_addresses[1]);
+        });
+    });
 });
