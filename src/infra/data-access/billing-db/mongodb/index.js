@@ -20,6 +20,10 @@ const findBillingByBillingId = async (billingId) => {
     return Promise.resolve(serializer(billing));
 };
 
+const findBillingsByUserId = () => {
+
+};
+
 const addBilling = async (payload) => {
 
     const billingObj = createBillingObj(payload);
@@ -84,6 +88,7 @@ const dropAll = async () => {
 module.exports = {
     listBillings,
     findBillingByBillingId,
+    findBillingsByUserId,
     addBilling,
     deleteBillingByBillingId,
     dropAll

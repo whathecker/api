@@ -20,6 +20,14 @@ const findBillingByBillingId = (billingId) => {
     return Promise.resolve(billing);
 };
 
+const findBillingsByUserId = (userId) => {
+    const billings = BILLINGS.filter(billing => {
+        return billing.user_id === userId;
+    });
+
+    return Promise.resolve(billings);
+};
+
 const addBilling = async (payload) => {
 
     const billingObj = createBillingObj(payload);
@@ -102,6 +110,7 @@ const dropAll = () => {
 module.exports = {
     listBillings,
     findBillingByBillingId,
+    findBillingsByUserId,
     addBilling,
     deleteBillingByBillingId,
     dropAll

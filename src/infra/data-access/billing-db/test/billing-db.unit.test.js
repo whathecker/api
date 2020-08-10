@@ -39,6 +39,32 @@ describe('Test database access layer of billing object', () => {
         expect(rest).toEqual(mockBillings[0]);
     });
 
+    /*
+    test('find billing options by userId fail - not found', async () => {
+        const user_id = "odd_id";
+
+        await expect(billingDB.findBillingsByUserId(user_id)).rejects.toMatchObject({
+            status: "fail",
+            reason: "billing not found"
+        });
+    }); */
+
+    test('find billing options by userId', async () => {
+        const user_id = "1";
+
+        const billings = await billingDB.findBillingsByUserId(user_id);
+
+        expect(billings).toHaveLength(2);
+    });
+
+    test('find billing options by userId - no result', async () => {
+        const user_id = "100";
+
+        const billings = await billingDB.findBillingsByUserId(user_id);
+
+        expect(billings).toHaveLength(0);
+    });
+
     test('add a new billing option', async () => {
         const payload = {
             user_id: "2",

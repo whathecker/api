@@ -2,6 +2,7 @@ const dbChoice = require('../_shared/dbAccessModuleSelector')();
 let {
     listBillings,
     findBillingByBillingId,
+    findBillingsByUserId,
     addBilling,
     deleteBillingByBillingId,
     dropAll
@@ -10,6 +11,7 @@ let {
 module.exports = {
     listBillings,
     findBillingByBillingId,
+    findBillingsByUserId,
     addBilling,
     deleteBillingByBillingId,
     dropAll

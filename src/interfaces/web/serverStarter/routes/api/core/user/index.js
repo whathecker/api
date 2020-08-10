@@ -61,6 +61,8 @@ user.getUserDetail = async (req, res, next) => {
             
             // fetch billingOptions and create an array out of it
             // TODO: write findBillingByUserId method
+
+            // fetch defaultShippingAddress 
     
 
             return res.status(200).end();
