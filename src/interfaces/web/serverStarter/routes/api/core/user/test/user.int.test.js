@@ -169,10 +169,10 @@ describe('Test user endpoints', () => {
         await packageDB.dropAll();
     });
 
-    test('getUserDetail return no user', () => {
+    test('getUserDetail fail - no user found', () => {
         return testSession.get('/users/user/odd_id')
         .then(response => {
-            expect(response.status).toBe(204);
+            expect(response.status).toBe(404);
         });
     });
 
@@ -214,10 +214,10 @@ describe('Test user endpoints', () => {
         });
     });
 
-    test('getUserAddresses return no data - user not found', () => {
+    test('getUserAddresses fail - invalid userId', () => {
         return testSession.get('/users/user/odd_id/addresses')
         .then(response => {
-            expect(response.status).toBe(204);
+            expect(response.status).toBe(422);
         });
     });
 
@@ -233,6 +233,99 @@ describe('Test user endpoints', () => {
 
             expect(addressData.shippingAddress).toMatchObject(payload_addresses[0]);
             expect(addressData.billingAddress).toMatchObject(payload_addresses[1]);
+        });
+    });
+
+    test('upsertAddress fail - bad request', () => {
+        const userId = payload_user.userId;
+        return testSession.put(`/users/user/${userId}/addresses/address`)
+        .send({})
+        .then(response => {
+            expect(response.status).toBe(400);
+        });
+    });
+
+    test('upsertAddress fail - user not found', () => {
+        const userId = "oddID";
+        return testSession.put(`/users/user/${userId}/addresses/address`)
+        .send({
+            firstName: "Yunjae",
+            lastName: "Oh",
+            mobileNumber: "0615151515",
+            postalCode: "1034AA",
+            houseNumber: "10",
+            houseNumberAdd: "A",
+            streetName: "Randomstraat",
+            city: "Amsterdam",
+            province: "Noord-Holland",
+            country: "Netherlands"
+        })
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('upsertAddress success - new address is created', async () => {
+        const userId = payload_user.userId;
+        const res1 = await testSession.put(`/users/user/${userId}/addresses/address`)
+        .send({
+            firstName: "Tais",
+            lastName: "Elize",
+            mobileNumber: "0615151515",
+            postalCode: "1034WK",
+            houseNumber: "10",
+            houseNumberAdd: " ",
+            streetName: "Jimthorpepad",
+            city: "Amsterdam",
+            province: "Noord-Holland",
+            country: "Netherlands"
+        });
+
+        const res2 = await testSession.get(`/users/user/${userId}/addresses`);
+
+        expect(res1.status).toBe(201);
+        expect(res2.body.addresses).toHaveLength(3);
+    }); 
+
+    test('upsertAddress fail - cannot update address, as it is unknown address', () => {
+        const userId = payload_user.userId;
+        return testSession.put(`/users/user/${userId}/addresses/address`)
+        .send({
+            id: "500",
+            firstName: "Tais",
+            lastName: "Elize",
+            mobileNumber: "0615151515",
+            postalCode: "1034WK",
+            houseNumber: "10",
+            houseNumberAdd: " ",
+            streetName: "Jimthorpepad",
+            city: "Amsterdam",
+            province: "Noord-Holland",
+            country: "Netherlands"
+        })
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('upsertAddress success - address is updated', () => {
+        const userId = payload_user.userId;
+        return testSession.put(`/users/user/${userId}/addresses/address`)
+        .send({
+            id: _address_id_holder[0],
+            firstName: "Tais",
+            lastName: "Elize",
+            mobileNumber: "0615151515",
+            postalCode: "1034WK",
+            houseNumber: "10",
+            houseNumberAdd: " ",
+            streetName: "Jimthorpepad",
+            city: "Amsterdam",
+            province: "Noord-Holland",
+            country: "Netherlands"
+        })
+        .then(response => {
+            expect(response.status).toBe(200);
         });
     });
 });

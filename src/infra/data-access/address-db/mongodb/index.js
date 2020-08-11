@@ -38,21 +38,25 @@ const addAddress = async (payload) => {
 
 const updateAddress = async (address_id, payload) => {
 
-    const update = createAddressObj(payload);
+    return findAddressById(address_id).then(async address => {
+        const update = createAddressObj(payload);
 
-    if (update instanceof Error) {
-        return Promise.reject({
-            status: "fail",
-            reason: "error",
-            error: update
+        if (update instanceof Error) {
+            return Promise.reject({
+                status: "fail",
+                reason: "error",
+                error: update
+            });
+        }
+    
+        const updatedAddress = await Address.findByIdAndUpdate(address_id, update, {
+            new: true
         });
-    }
-
-    const updatedAddress = await Address.findByIdAndUpdate(address_id, update, {
-        new: true
+    
+        return Promise.resolve(serializer(updatedAddress));
+    }).catch(err => {
+        return Promise.reject(err);
     });
-
-    return Promise.resolve(serializer(updatedAddress));
 };
 
 const deleteAddressById = async (address_id) => {

@@ -98,7 +98,7 @@ user.getUserDetail = async (req, res, next) => {
             
             if (exception.reason === "user not found") {
                 logger.info(`getUserDeail request has not returned user`);
-                return res.status(204).json({
+                return res.status(404).json({
                     status: "fail",
                     message: "no user found"
                 });
@@ -154,15 +154,6 @@ user.getUserAddresses = async (req, res, next) => {
         return res.status(200).json(addressData);
     } catch (exception) {
         if (exception.status === "fail") {
-            
-            if (exception.reason === "user not found") {
-                logger.info(`getUserAddresses request has not returned data - no user`);
-                return res.status(204).json({
-                    status: "fail",
-                    message: "no user found"
-                });
-            }
-
             logger.error(`getUserAddresses request has failed | reason: ${exception.reason}`);
             (exception.error)? logger.error(`error: ${exception.error.message}`) : null;
             return res.status(422).json({
@@ -173,6 +164,74 @@ user.getUserAddresses = async (req, res, next) => {
        
         next(exception);
     };
+};
+
+user.upsertAddress = async (req, res, next) => {
+    const userId = req.params.id;
+    
+    const address_id = req.body.id;
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
+    const postalCode = req.body.postalCode;
+    const houseNumber = req.body.houseNumber;
+    const streetName = req.body.streetName;
+    const city = req.body.city;
+    const country = req.body.country;
+
+    if (!firstName || !lastName || !postalCode || !houseNumber || !streetName || !city || !country) {
+        logger.warn(`upsertAddress request has failed - bad request: missing parameter`);
+        return res.status(400).json({
+            status: "fail",
+            message: "bad request - missing parameter(s)"
+        });
+    }
+
+    try {
+        const user = await userDB.findUserByUserId(userId);
+
+        let payload = req.body;
+        payload.user_id = user.userId;
+        delete payload.id;
+
+        if (!address_id) {    
+            const address = await addressDB.addAddress(payload);
+            logger.info(`upsertAddress request has created new address: ${address._id}`);
+            return res.status(201).json({
+                status: "success",
+                message: 'new address has created'
+            });
+        }
+
+        if (address_id) {
+            await addressDB.updateAddress(address_id, payload);
+            logger.info(`upsertAddress request has updated existing address ${address_id}`);
+            return res.status(200).json({
+                status: "success",
+                message: "address has updated"
+            });
+        }
+
+    } catch (exception) {
+        
+        if (exception.status === "fail") {
+            logger.error(`upsertAddress request has failed | reason: ${exception.reason}`);
+            (exception.error)? logger.error(`error: ${exception.error.message}`) : null;
+            return res.status(422).json({
+                status: "fail",
+                message: (exception.error)? exception.error.message : exception.reason
+            });
+        } 
+
+        if (exception.name === 'CastError') {
+            logger.error(`upsertAddress request has failed | reason: ${exception.message}`);
+            return res.status(422).json({
+                status: "fail",
+                message: exception.message
+            });
+        }
+
+        next(exception);
+    }
 };
 
 module.exports = user;

@@ -113,6 +113,7 @@ apiRoutesLoader.mountUserRoutes = (router) => {
     const route = router
     .get('/users/user/:id', user.getUserDetail)
     .get('/users/user/:id/addresses', user.getUserAddresses)
+    .put('/users/user/:id/addresses/address', user.upsertAddress)
     return route;
 }
 
