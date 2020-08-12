@@ -68,6 +68,25 @@ describe('Test database access layer of user object', () => {
         expect(rest).toEqual(payload);
     });
 
+    test('updateUserAddresses success', async () => {
+        const userId = mockUsers[1].userId;
+        const addresses = ["1", "2", "3"];
+
+        const updatedUser = await userDB.updateUserAddresses(userId, addresses);
+
+        expect(updatedUser.userId).toBe(userId);
+        expect(updatedUser.addresses).toBe(addresses);
+    });
+
+    test('updateUserAddresses fail - user not found', async () => {
+        const userId = "1020";
+        const addresses = ["1", "2", "3"];
+
+        await expect(userDB.updateUserAddresses(userId, addresses)).rejects.toMatchObject({
+            status: "fail"
+        });
+    });
+
     test('delete a user by email', async () => {
         const email = mockUsers[0].email;
 

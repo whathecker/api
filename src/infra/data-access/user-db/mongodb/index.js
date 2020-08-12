@@ -82,6 +82,10 @@ async function _isUserIdUnique (userId) {
     throw new Error('db access for user object failed: userId must be unique');
 };
 
+const updateUserAddresses = async () => {
+
+};
+
 const deleteUserByEmail = async (email) => {
     const removedUser = await User.findOneAndRemove({
         email: email
@@ -111,6 +115,7 @@ module.exports = {
     findUserByEmail,
     findUserByUserId,
     addUser,
+    updateUserAddresses,
     deleteUserByEmail,
     dropAll
 };

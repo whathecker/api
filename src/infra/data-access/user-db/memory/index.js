@@ -90,6 +90,40 @@ async function _isUserIdUnique (userId) {
     throw new Error('db access for user object failed: userId must be unique');
 };
 
+const updateUserAddresses = async (userId, addresses = []) => {
+    const user = await findUserByUserId(userId);
+    const { status, _id, ...rest } = user;
+
+    if (status === "fail") {
+        return Promise.reject({
+            status: "fail",
+            reason: "user not found"
+        });
+    }
+
+    let updatedPayload = rest;
+    updatedPayload.addresses = addresses;
+
+    const userObj = createUserObj(updatedPayload);
+
+    if (userObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: userObj
+        });
+    }
+
+    const updatedUser = {
+        _id: _id,
+        ...userObj
+    };
+    const index_in_db_array = parseInt(_id) - 1;
+    USERS[index_in_db_array] = updatedUser;
+    
+    return Promise.resolve(USERS[index_in_db_array]);
+};
+
 const deleteUserByEmail = async (email) => {
     const user = await findUserByEmail(email);
 
@@ -131,6 +165,7 @@ module.exports = {
     findUserByEmail,
     findUserByUserId,
     addUser,
+    updateUserAddresses,
     deleteUserByEmail,
     dropAll
 };
