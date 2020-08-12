@@ -73,9 +73,9 @@ describe('Test database access layer of user object', () => {
         const addresses = ["1", "2", "3"];
 
         const updatedUser = await userDB.updateUserAddresses(userId, addresses);
-
+       
         expect(updatedUser.userId).toBe(userId);
-        expect(updatedUser.addresses).toBe(addresses);
+        expect(updatedUser.addresses).toEqual(addresses);
     });
 
     test('updateUserAddresses fail - user not found', async () => {

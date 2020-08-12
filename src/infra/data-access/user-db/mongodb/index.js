@@ -1,6 +1,7 @@
 const User = require('../../../db/mongodb/models/user');
 const createUserObj = require('../../../../domain/user');
 const serializer = require('./serializer');
+const helpers = require('../../_shared/helpers');
 
 const listUsers = async () => {
     const users = await User.find();
@@ -82,8 +83,36 @@ async function _isUserIdUnique (userId) {
     throw new Error('db access for user object failed: userId must be unique');
 };
 
-const updateUserAddresses = async () => {
+const updateUserAddresses = async (userId, addresses = []) => {
+    const user = await findUserByUserId(userId);
+    const { status, _id, ...rest } = user;
 
+    if (status === "fail") {
+        return Promise.reject({
+            status: "fail",
+            reason: "user not found"
+        });
+    }
+
+    let updatedPayload = rest;
+    updatedPayload.addresses = addresses;
+    updatedPayload = helpers.removeNullsFromObject(updatedPayload);
+
+    const userObj = createUserObj(updatedPayload);
+
+    if (userObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: userObj
+        });
+    }
+
+    const updatedUser = await User.findOneAndUpdate({ 
+        userId: updatedPayload.userId 
+    }, userObj, { new: true });
+
+    return Promise.resolve(serializer(updatedUser));
 };
 
 const deleteUserByEmail = async (email) => {
