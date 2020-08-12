@@ -1,16 +1,7 @@
 const Subscription = require('../../../db/mongodb/models/subscription');
-const serializer = require('./serializer');
 const createSubscriptionObj = require('../../../../domain/subscription');
-
-function _removeNullFields (input) {
-    let output = input;
-    for (let prop of Object.keys(output)) {
-        if (output[prop] === null) {
-            delete output[prop];
-        }
-    }
-    return output;
-}
+const serializer = require('./serializer');
+const helpers = require('../../_shared/helpers');
 
 const listSubscriptions = async () => {
     const subscriptions = await Subscription.find();
@@ -106,7 +97,7 @@ const updateSubscriptionStatus = async (subscriptionId, isActive) => {
         updatedPayload.deliverySchedules = [newFulfillmentSchedule];
     }
 
-    updatedPayload = _removeNullFields(updatedPayload);
+    updatedPayload = helpers.removeNullsFromObject(updatedPayload);
 
     const subscriptionObj = createSubscriptionObj(updatedPayload);
 

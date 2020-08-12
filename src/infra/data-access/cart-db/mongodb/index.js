@@ -1,16 +1,7 @@
 const Cart = require('../../../db/mongodb/models/cart');
 const createCartObj = require('../../../../domain/cart');
 const serializer = require('./serializer');
-
-function _removeNullFields (input) {
-    let output = input;
-    for (let prop of Object.keys(output)) {
-        if (output[prop] === null) {
-            delete output[prop];
-        }
-    }
-    return output;
-}
+const helpers = require('../../_shared/helpers');
 
 const listCarts = async () => {
     const carts = await Cart.find();
@@ -102,7 +93,7 @@ const updateCartLineItems = async (id, payload) => {
     let updatedPayload = rest;
     updatedPayload.lineItems = newLineItems;
     updatedPayload.totalPrice = newTotalPrice;
-    updatedPayload = _removeNullFields(updatedPayload);
+    updatedPayload = helpers.removeNullsFromObject(updatedPayload);
 
     const cartObj = createCartObj(updatedPayload);
 
@@ -150,7 +141,7 @@ const updateCartLineItemQty = async (id, payload) => {
     let updatedPayload = rest;
     updatedPayload.lineItems = newLineItems;
     updatedPayload.totalPrice = newTotalPrice;
-    updatedPayload = _removeNullFields(updatedPayload);
+    updatedPayload = helpers.removeNullsFromObject(updatedPayload);
 
     const cartObj = createCartObj(updatedPayload);
 
@@ -256,7 +247,7 @@ const updateCartState = async (id, payload) => {
 
     let updatedPayload = rest;
     updatedPayload.cartState = newCartState;
-    updatedPayload = _removeNullFields(updatedPayload);
+    updatedPayload = helpers.removeNullsFromObject(updatedPayload);
     
     const cartObj = createCartObj(updatedPayload);
 
@@ -311,7 +302,7 @@ const updateCartOwnership = async (id, payload) => {
 
     let updatedPayload = rest;
     updatedPayload.cartState = newCartState;
-    updatedPayload = _removeNullFields(updatedPayload);
+    updatedPayload = helpers.removeNullsFromObject(updatedPayload);
 
     const cartObj = createCartObj(updatedPayload);
 
@@ -358,7 +349,7 @@ const updateCartShippingInfo = async (id, payload) => {
     const newShippingInfo = payload;
     let updatedPayload = rest;
     updatedPayload.shippingInfo = newShippingInfo;
-    updatedPayload = _removeNullFields(updatedPayload);
+    updatedPayload = helpers.removeNullsFromObject(updatedPayload);
 
     const cartObj = createCartObj(updatedPayload);
 
@@ -399,7 +390,7 @@ const updateCartPaymentInfo = async (id, payload) => {
     const newPaymentInfo = payload;
     let updatedPayload = rest;
     updatedPayload.paymentInfo = newPaymentInfo;
-    updatedPayload = _removeNullFields(updatedPayload);
+    updatedPayload = helpers.removeNullsFromObject(updatedPayload);
 
     const cartObj = createCartObj(updatedPayload);
 
