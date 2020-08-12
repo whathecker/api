@@ -5,6 +5,7 @@ const subscriptionDB = require('../../../../../../../infra/data-access/subscript
 const packageDB = require('../../../../../../../infra/data-access/subscriptionBox-db');
 const async = require('async');
 const logger = require('../../../../../../_shared/logger');
+const { updateAddress } = require('../../../../../../../infra/data-access/address-db');
 
 let user = {};
 
@@ -187,14 +188,21 @@ user.upsertAddress = async (req, res, next) => {
     }
 
     try {
-        const user = await userDB.findUserByUserId(userId);
+        let user = await userDB.findUserByUserId(userId);
 
         let payload = req.body;
         payload.user_id = user.userId;
         delete payload.id;
 
         if (!address_id) {    
+            
             const address = await addressDB.addAddress(payload);
+
+            user.addresses.push(address._id.toString());
+            const updatedAddresses = user.addresses;
+            
+            await userDB.updateUserAddresses(user.userId, updatedAddresses);
+            
             logger.info(`upsertAddress request has created new address: ${address._id}`);
             return res.status(201).json({
                 status: "success",
