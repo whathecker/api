@@ -5,7 +5,6 @@ const subscriptionDB = require('../../../../../../../infra/data-access/subscript
 const packageDB = require('../../../../../../../infra/data-access/subscriptionBox-db');
 const async = require('async');
 const logger = require('../../../../../../_shared/logger');
-const { updateAddress } = require('../../../../../../../infra/data-access/address-db');
 
 let user = {};
 
@@ -150,7 +149,7 @@ user.getUserAddresses = async (req, res, next) => {
             addresses: addresses,
             shippingAddress: defaultShippingAddress,
             billingAddress: defaultBillingAddress
-        }
+        };
         logger.info(`getUserAddresses request has returned data ${user.email}`);
         return res.status(200).json(addressData);
     } catch (exception) {
@@ -239,6 +238,66 @@ user.upsertAddress = async (req, res, next) => {
         }
 
         next(exception);
+    }
+};
+
+user.deleteUserAddress = async (req, res, next) => {
+   
+    const userId = req.params.id;
+    const address_id = req.params.address_id;
+
+    try {
+        let user = await userDB.findUserByUserId(userId);
+
+        await _isDefaultAddressesUpdated(address_id, user);
+
+        await addressDB.deleteAddressById(address_id);
+
+        const newAddresses = user.addresses.filter(id => id !== address_id);
+
+        await userDB.updateUserAddresses(user.userId, newAddresses);
+
+        logger.info(`deleteUserAddress request has deleted address - address_id: ${address_id}`);
+        return res.status(200).json({
+            status: "success",
+            message: "address has deleted"
+        });
+
+    } catch (exception) {
+        if (exception.status === "fail") {
+            logger.error(`deleteUserAddress request has failed | reason: ${exception.reason}`);
+            (exception.error)? logger.error(`error: ${exception.error.message}`) : null;
+            return res.status(422).json({
+                status: "fail",
+                message: (exception.error)? exception.error.message : exception.reason
+            });
+        } 
+
+        if (exception.name === 'CastError') {
+            logger.error(`deleteUserAddress request has failed | reason: ${exception.message}`);
+            return res.status(422).json({
+                status: "fail",
+                message: exception.message
+            });
+        }
+
+        next(exception);
+    }
+};
+
+function _isDefaultAddressesUpdated (address_id, userObj) {
+    if (address_id === userObj.defaultShippingAddress) {
+        return Promise.reject({
+            status: "fail",
+            reason: "cannot update default shipping address"
+        });
+    }
+
+    if (address_id === userObj.defaultBillingAddress) {
+        return Promise.reject({
+            status: "fail",
+            reason: "cannot update default billing address"
+        });
     }
 };
 

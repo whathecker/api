@@ -114,6 +114,7 @@ apiRoutesLoader.mountUserRoutes = (router) => {
     .get('/users/user/:id', user.getUserDetail)
     .get('/users/user/:id/addresses', user.getUserAddresses)
     .put('/users/user/:id/addresses/address', user.upsertAddress)
+    .delete('/users/user/:id/addresses/address/:address_id', user.deleteUserAddress)
     return route;
 }
 

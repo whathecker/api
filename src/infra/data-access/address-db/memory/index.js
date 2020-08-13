@@ -104,7 +104,7 @@ const deleteAddressById = async (address_id) => {
         });
     }
 
-    ADDRESSES = ADDRESSES.filter(address => address._id === address_id);
+    ADDRESSES = ADDRESSES.filter(address => address._id !== address_id);
     return Promise.resolve({
         _id: address._id,
         status: "success"

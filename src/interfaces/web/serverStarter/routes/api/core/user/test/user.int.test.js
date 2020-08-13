@@ -267,6 +267,7 @@ describe('Test user endpoints', () => {
 
     test('upsertAddress success - new address is created', async () => {
         const userId = payload_user.userId;
+
         const res1 = await testSession.put(`/users/user/${userId}/addresses/address`)
         .send({
             firstName: "Tais",
@@ -279,7 +280,7 @@ describe('Test user endpoints', () => {
             city: "Amsterdam",
             province: "Noord-Holland",
             country: "Netherlands"
-        });
+        })
 
         const res2 = await testSession.get(`/users/user/${userId}/addresses`);
 
@@ -327,5 +328,60 @@ describe('Test user endpoints', () => {
         .then(response => {
             expect(response.status).toBe(200);
         });
+    });
+
+    test('deleteAddress fail - user not found', () => {
+        const userId = "odd_id";
+        return testSession.delete(`/users/user/${userId}/addresses/address/10`)
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('deleteAddress fail - cannot delete defaultShippingAddress', () => {
+        const userId = payload_user.userId;
+        const defaultShipping_id = _address_id_holder[0];
+        return testSession.delete(`/users/user/${userId}/addresses/address/${defaultShipping_id}`)
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('deleteAddress fail - cannot delete defaultBillingAddress', () => {
+        const userId = payload_user.userId;
+        const defaultBilling_id = _address_id_holder[1];
+        return testSession.delete(`/users/user/${userId}/addresses/address/${defaultBilling_id}`)
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('deleteAddress success', async () => {
+        const userId = payload_user.userId;
+
+        await testSession.put(`/users/user/${userId}/addresses/address`)
+        .send({
+            firstName: "Tais",
+            lastName: "Elize",
+            mobileNumber: "0615151515",
+            postalCode: "1034WK",
+            houseNumber: "10",
+            houseNumberAdd: " ",
+            streetName: "Jimthorpepad",
+            city: "Amsterdam",
+            province: "Noord-Holland",
+            country: "Netherlands"
+        });
+
+        const response = await testSession.get(`/users/user/${userId}/addresses`);
+        const { addresses } = response.body;
+
+        const newAddress = addresses[addresses.length - 1];
+
+        const res1 = await testSession.delete(`/users/user/${userId}/addresses/address/${newAddress._id}`);
+        const res2 = await testSession.get(`/users/user/${userId}/addresses`);
+
+        expect(res1.status).toBe(200);
+        expect(res2.body.addresses).toHaveLength(2);
     });
 });
