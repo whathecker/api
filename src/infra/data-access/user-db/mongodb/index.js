@@ -116,7 +116,44 @@ const updateUserAddresses = async (userId, addresses = []) => {
 };
 
 const updateUserEmail = async (userId, email) => {
+    const userWithNewEmail = await User.findOne({ email: email });
 
+    if (userWithNewEmail) {
+        return Promise.reject({
+            status: "fail",
+            reason: "email address is already in used"
+        });
+    }
+
+    const user = await findUserByUserId(userId);
+    const { status, _id, ...rest } = user;
+
+    if (status === "fail") {
+        return Promise.reject({
+            status: "fail",
+            reason: "user not found"
+        });
+    }
+
+    let updatedPayload = rest;
+    updatedPayload.email = email;
+    updatedPayload = helpers.removeNullsFromObject(updatedPayload);
+
+    const userObj = createUserObj(updatedPayload);
+
+    if (userObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: userObj
+        });
+    }
+
+    const updatedUser = await User.findOneAndUpdate({ 
+        userId: updatedPayload.userId 
+    }, userObj, { new: true });
+
+    return Promise.resolve(serializer(updatedUser));
 };
 
 const deleteUserByEmail = async (email) => {
