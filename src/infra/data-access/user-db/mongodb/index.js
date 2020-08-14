@@ -115,6 +115,10 @@ const updateUserAddresses = async (userId, addresses = []) => {
     return Promise.resolve(serializer(updatedUser));
 };
 
+const updateUserEmail = async (userId, email) => {
+
+};
+
 const deleteUserByEmail = async (email) => {
     const removedUser = await User.findOneAndRemove({
         email: email
@@ -144,6 +148,7 @@ module.exports = {
     findUserByEmail,
     findUserByUserId,
     addUser,
+    updateUserEmail,
     updateUserAddresses,
     deleteUserByEmail,
     dropAll

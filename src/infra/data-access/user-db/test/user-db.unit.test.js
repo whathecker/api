@@ -87,6 +87,36 @@ describe('Test database access layer of user object', () => {
         });
     });
 
+    test('updateUserEmail fail - user not found', async () => {
+        const userId = "1020";
+        const email = "newemail.nl@gmail.com";
+
+        await expect(userDB.updateUserEmail(userId, email)).rejects.toMatchObject({
+            status: "fail",
+            reason: "user not found"
+        });
+    });
+
+    test('updateUserEmail fail - email is already in use', async () => {
+        const userId = mockUsers[1].userId;
+        const email =  mockUsers[1].email;
+
+        await expect(userDB.updateUserEmail(userId, email)).rejects.toMatchObject({
+            status: "fail",
+            reason: "email address is already in used"
+        });
+    });
+
+    test('updateUserEmail success', async () => {
+        const userId = mockUsers[1].userId;
+        const email = "newemail.nl@gmail.com";
+
+        const updatedUser = await userDB.updateUserEmail(userId, email);
+        console.log(updatedUser);
+        expect(updatedUser.userId).toBe(userId);
+        expect(updatedUser.email).toEqual(email);
+    });
+
     test('delete a user by email', async () => {
         const email = mockUsers[0].email;
 

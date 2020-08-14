@@ -5,6 +5,7 @@ let {
     findUserByUserId,
     addUser,
     updateUserAddresses,
+    updateUserEmail,
     deleteUserByEmail,
     dropAll
 } = require(`./${dbChoice}`);
@@ -15,6 +16,7 @@ module.exports = {
     findUserByUserId,
     addUser,
     updateUserAddresses,
+    updateUserEmail,
     deleteUserByEmail,
     dropAll
 };
