@@ -156,6 +156,45 @@ const updateUserEmail = async (userId, email) => {
     return Promise.resolve(serializer(updatedUser));
 };
 
+const updateUserContactInfo = async (userId, {
+    firstName,
+    lastName,
+    mobileNumber
+} = {}) => {
+
+    const user = await findUserByUserId(userId);
+    const { status, _id, ...rest } = user;
+
+    if (status === "fail") {
+        return Promise.reject({
+            status: "fail",
+            reason: "user not found"
+        });
+    }
+
+    let updatedPayload = rest;
+    updatedPayload.firstName = firstName;
+    updatedPayload.lastName = lastName;
+    (mobileNumber)? updatedPayload.mobileNumber = mobileNumber : null;
+    updatedPayload = helpers.removeNullsFromObject(updatedPayload);
+
+    const userObj = createUserObj(updatedPayload);
+
+    if (userObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: userObj
+        });
+    }
+
+    const updatedUser = await User.findOneAndUpdate({ 
+        userId: updatedPayload.userId 
+    }, userObj, { new: true });
+
+    return Promise.resolve(serializer(updatedUser));
+};
+
 const deleteUserByEmail = async (email) => {
     const removedUser = await User.findOneAndRemove({
         email: email
@@ -187,6 +226,7 @@ module.exports = {
     addUser,
     updateUserEmail,
     updateUserAddresses,
+    updateUserContactInfo,
     deleteUserByEmail,
     dropAll
 };

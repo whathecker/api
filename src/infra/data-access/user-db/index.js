@@ -6,6 +6,7 @@ let {
     addUser,
     updateUserAddresses,
     updateUserEmail,
+    updateUserContactInfo,
     deleteUserByEmail,
     dropAll
 } = require(`./${dbChoice}`);
@@ -17,6 +18,7 @@ module.exports = {
     addUser,
     updateUserAddresses,
     updateUserEmail,
+    updateUserContactInfo,
     deleteUserByEmail,
     dropAll
 };

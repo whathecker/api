@@ -169,6 +169,47 @@ const updateUserEmail = async (userId, email) => {
     return Promise.resolve(USERS[index_in_db_array]);
 };
 
+const updateUserContactInfo = async (userId, {
+    firstName,
+    lastName,
+    mobileNumber
+} = {}) => {
+
+    const user = await findUserByUserId(userId);
+    const { status, _id, ...rest } = user;
+
+    if (status === "fail") {
+        return Promise.reject({
+            status: "fail",
+            reason: "user not found"
+        });
+    }
+
+    let updatedPayload = rest;
+    updatedPayload.firstName = firstName;
+    updatedPayload.lastName = lastName;
+    (mobileNumber)? updatedPayload.mobileNumber = mobileNumber : null;
+
+    const userObj = createUserObj(updatedPayload);
+
+    if (userObj instanceof Error) {
+        return Promise.reject({
+            status: "fail",
+            reason: "error",
+            error: userObj
+        });
+    }
+
+    const updatedUser = {
+        _id: _id,
+        ...userObj
+    };
+    const index_in_db_array = parseInt(_id) - 1;
+    USERS[index_in_db_array] = updatedUser;
+    
+    return Promise.resolve(USERS[index_in_db_array]);
+};
+
 const deleteUserByEmail = async (email) => {
     const user = await findUserByEmail(email);
 
@@ -212,6 +253,7 @@ module.exports = {
     addUser,
     updateUserAddresses,
     updateUserEmail,
+    updateUserContactInfo,
     deleteUserByEmail,
     dropAll
 };

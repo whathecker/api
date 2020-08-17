@@ -112,9 +112,51 @@ describe('Test database access layer of user object', () => {
         const email = "newemail.nl@gmail.com";
 
         const updatedUser = await userDB.updateUserEmail(userId, email);
-        console.log(updatedUser);
+        
         expect(updatedUser.userId).toBe(userId);
         expect(updatedUser.email).toEqual(email);
+    });
+
+    test('updateUserCoontactInfo fail - user not found', async () => {
+        const userId = "1020";
+        const updates = {
+            firstName: "Donald",
+            lastName: "Duck"
+        };
+
+        await expect(userDB.updateUserContactInfo(userId, updates)).rejects.toMatchObject({
+            status: "fail",
+            reason: "user not found"
+        });
+    });
+
+    test('updateUserCoontactInfo success - with mobileNumber', async () => {
+        const userId = mockUsers[0].userId;
+        const updates = {
+            firstName: "Donald",
+            lastName: "Duck",
+            mobileNumber: "06141414",
+        };
+
+        const updatedUser = await userDB.updateUserContactInfo(userId, updates);
+        expect(updatedUser.userId).toBe(userId);
+        expect(updatedUser.firstName).toBe(updates.firstName);
+        expect(updatedUser.lastName).toBe(updates.lastName);
+        expect(updatedUser.mobileNumber).toBe(updates.mobileNumber);
+    });
+
+    test('updateUserCoontactInfo success - without mobileNumber', async () => {
+        const userId = mockUsers[0].userId;
+        const updates = {
+            firstName: "Donald",
+            lastName: "Duck"
+        };
+
+        const updatedUser = await userDB.updateUserContactInfo(userId, updates);
+        expect(updatedUser.userId).toBe(userId);
+        expect(updatedUser.firstName).toBe(updates.firstName);
+        expect(updatedUser.lastName).toBe(updates.lastName);
+        expect(updatedUser.mobileNumber).toBe(mockUsers[0].mobileNumber);
     });
 
     test('delete a user by email', async () => {
