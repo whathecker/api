@@ -241,6 +241,10 @@ user.upsertAddress = async (req, res, next) => {
     }
 };
 
+user.updateEmailAddress = async (req, res, next) => {
+    return res.status(400).end();
+};
+
 user.deleteUserAddress = async (req, res, next) => {
    
     const userId = req.params.id;
