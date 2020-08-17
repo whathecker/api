@@ -330,6 +330,52 @@ describe('Test user endpoints', () => {
         });
     });
 
+    test('updateUserContactInfo fail - bad request, missing mandatory parameters', () => {
+        const userId = payload_user.userId;
+        return testSession.put(`/users/user/${userId}/contact`)
+        .send({})
+        .then(response => {
+            expect(response.status).toBe(400);
+        });
+    });
+
+    test('updateUserContactInfo fail - user not found', () => {
+        const userId = "120-42395234";
+        return testSession.put(`/users/user/${userId}/contact`)
+        .send({
+            firstName: "Mickey",
+            lastName: "Mouse"
+        })
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('updateUserContactInfo success - with mobileNumber', () => {
+        const userId = payload_user.userId;
+        return testSession.put(`/users/user/${userId}/contact`)
+        .send({
+            firstName: "Mickey",
+            lastName: "Mouse",
+            mobileNumber: "06181818"
+        })
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
+
+    test('updateUserContactInfo success - without mobileNumber', () => {
+        const userId = payload_user.userId;
+        return testSession.put(`/users/user/${userId}/contact`)
+        .send({
+            firstName: "Mickey",
+            lastName: "Mouse"
+        })
+        .then(response => {
+            expect(response.status).toBe(200);
+        });
+    });
+
     test('deleteAddress fail - user not found', () => {
         const userId = "odd_id";
         return testSession.delete(`/users/user/${userId}/addresses/address/10`)

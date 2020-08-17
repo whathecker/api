@@ -152,7 +152,9 @@ user.getUserAddresses = async (req, res, next) => {
         };
         logger.info(`getUserAddresses request has returned data ${user.email}`);
         return res.status(200).json(addressData);
+
     } catch (exception) {
+
         if (exception.status === "fail") {
             logger.error(`getUserAddresses request has failed | reason: ${exception.reason}`);
             (exception.error)? logger.error(`error: ${exception.error.message}`) : null;
@@ -243,6 +245,54 @@ user.upsertAddress = async (req, res, next) => {
 
 user.updateEmailAddress = async (req, res, next) => {
     return res.status(400).end();
+};
+
+user.updateUserContactInfo = async (req, res, next) => {
+    const userId = req.params.id;
+
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
+    const mobileNumber = req.body.mobileNumber;
+
+    if (!firstName || !lastName) {
+        logger.warn(`updateUserContactInfo request has failed - bad request: missing parameter`);
+        return res.status(400).json({
+            status: "fail",
+            message: "bad request - missing parameter(s)"
+        });
+    }
+
+    try {
+        let payload = req.body;
+
+        await userDB.updateUserContactInfo(userId, payload);
+
+        logger.info(`updateUserContactInfo request has updated existing user ${userId}`);
+        return res.status(200).json({
+            status: "success",
+            message: "user contact info has updated"
+        });
+    } catch (exception) {
+
+        if (exception.status === "fail") {
+            logger.error(`updateUserContactInfo request has failed | reason: ${exception.reason}`);
+            (exception.error)? logger.error(`error: ${exception.error.message}`) : null;
+            return res.status(422).json({
+                status: "fail",
+                message: (exception.error)? exception.error.message : exception.reason
+            });
+        } 
+
+        if (exception.name === 'CastError') {
+            logger.error(`updateUserContactInfo request has failed | reason: ${exception.message}`);
+            return res.status(422).json({
+                status: "fail",
+                message: exception.message
+            });
+        }
+
+        next(exception);
+    }
 };
 
 user.deleteUserAddress = async (req, res, next) => {
