@@ -5,6 +5,11 @@ const listOrders = () => {
     return Promise.resolve(ORDERS);
 };
 
+const listOrdersByUserId = async (userId) => {
+    const orders = await ORDERS.filter(order => order.user_id === userId);
+    return Promise.resolve(orders);
+};
+
 const findOrderByOrderNumber = (orderNumber) => {
     const order = ORDERS.find(order => {
         return order.orderNumber === orderNumber;
@@ -102,6 +107,7 @@ const dropAll = () => {
 
 module.exports = {
     listOrders,
+    listOrdersByUserId,
     findOrderByOrderNumber,
     addOrder,
     deleteOrderByOrderNumber,

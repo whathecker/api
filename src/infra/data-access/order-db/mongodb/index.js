@@ -7,6 +7,11 @@ const listOrders = async () => {
     return Promise.resolve(serializer(orders));
 };
 
+const listOrdersByUserId = async (userId) => {
+    const orders = await Order.find({ user_id: userId });
+    return Promise.resolve(serializer(orders));
+};
+
 const findOrderByOrderNumber = async (orderNumber) => {
     const order = await Order.findOne({ orderNumber: orderNumber });
 
@@ -84,6 +89,7 @@ const dropAll = async () => {
 
 module.exports = {
     listOrders,
+    listOrdersByUserId,
     findOrderByOrderNumber,
     addOrder,
     deleteOrderByOrderNumber,

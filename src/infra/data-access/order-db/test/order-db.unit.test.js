@@ -28,6 +28,18 @@ describe('Test database access layer of order object', () => {
         expect(orders).toHaveLength(2);
     });
 
+    test('list orders by userId - find 2 result', async () => {
+        const userId = mockOrders[0].user_id;
+        const orders = await orderDB.listOrdersByUserId(userId);
+        expect(orders).toHaveLength(2);
+    });
+
+    test('list orders by userId - find 0 result', async () => {
+        const userId = "100";
+        const orders = await orderDB.listOrdersByUserId(userId);
+        expect(orders).toHaveLength(0);
+    });
+
     test('find order by orderNumber', async () => {
         const orderNum = _orderNumber_holder[0];
 
