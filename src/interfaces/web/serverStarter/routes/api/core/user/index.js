@@ -3,6 +3,7 @@ const addressDB = require('../../../../../../../infra/data-access/address-db');
 const billingDB = require('../../../../../../../infra/data-access/billing-db');
 const subscriptionDB = require('../../../../../../../infra/data-access/subscription-db');
 const packageDB = require('../../../../../../../infra/data-access/subscriptionBox-db');
+const orderDB = require('../../../../../../../infra/data-access/order-db');
 const async = require('async');
 const logger = require('../../../../../../_shared/logger');
 
@@ -352,6 +353,42 @@ function _isDefaultAddressesUpdated (address_id, userObj) {
             status: "fail",
             reason: "cannot update default billing address"
         });
+    }
+};
+
+
+user.getUserOrders = async (req, res, next) => {
+
+    const userId = req.params.id;
+    
+    try {
+        const user = await userDB.findUserByUserId(userId);
+        const orders = await orderDB.listOrdersByUserId(user.userId);
+
+        logger.info(`getUserOrders request has returned data ${userId}`);
+        console.log(orders);
+        return res.status(200).json(orders);
+    
+    } catch (exception) {
+
+        if (exception.status === "fail") {
+            logger.error(`getUserOrders request has failed | reason: ${exception.reason}`);
+            (exception.error)? logger.error(`error: ${exception.error.message}`) : null;
+            return res.status(422).json({
+                status: "fail",
+                message: (exception.error)? exception.error.message : exception.reason
+            });
+        } 
+
+        if (exception.name === 'CastError') {
+            logger.error(`getUserOrders request has failed | reason: ${exception.message}`);
+            return res.status(422).json({
+                status: "fail",
+                message: exception.message
+            });
+        }
+
+        next(exception);
     }
 };
 

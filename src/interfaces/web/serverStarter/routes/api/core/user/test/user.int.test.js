@@ -6,6 +6,7 @@ const packageDB = require('../../../../../../../../infra/data-access/subscriptio
 
 const serverStarter = require('../../../../../../serverStarter');
 const session = require('supertest-session');
+const orderDb = require('../../../../../../../../infra/data-access/order-db');
 serverStarter.loadMiddlewares();
 let testSession = session(serverStarter.app);
 
@@ -23,7 +24,7 @@ let payload_user = {
     defaultBillingOption: "pm_12789",
     billingOptions: ["pm_12789", "pm_12860"],
     subscriptions: ["ECSBNL1272839300"],
-    orders: ["ECNL8092518800"],
+    orders: ["ECNL8092519999"],
     creationDate: new Date('December 14, 1995 03:24:00'),
     lastModified: new Date('December 24, 1995 03:24:00'),
     isEmailVerified: false,
@@ -85,7 +86,7 @@ let payload_subscription = {
     deliveryFrequency: 28,
     deliveryDay: 4,
     isWelcomeEmailSent: true,
-    orders: ["ECNL8092518800"],
+    orders: ["ECNL8092519999"],
     isActive: true,
     deliverySchedules: [{
         orderNumber: "ECNL8092517700",
@@ -105,6 +106,105 @@ let payload_subscription = {
     paymentMethod_id: "pm_12789",
     creationDate: new Date('December 14, 1995 03:24:00'),
     lastModified: new Date('December 24, 1995 03:24:00'),
+};
+
+let payload_order = {
+    country: "NL",
+    user_id: "10",
+    orderNumber: "ECNL8092519999",
+    billingAddress: {
+        firstName: "Yunsoo",
+        lastName: "Oh",
+        mobileNumber: "06151515",
+        postalCode: "1093TV",
+        houseNumber: "100",
+        houseNumberAdd: " ",
+        streetName: "Randomstraat",
+        country: "The Netherlands"
+    },
+    shippingAddress: {
+        firstName: "Yunsoo",
+        lastName: "Oh",
+        mobileNumber: "06151515",
+        postalCode: "1093TV",
+        houseNumber: "100",
+        houseNumberAdd: " ",
+        streetName: "Randomstraat",
+        country: "The Netherlands"
+    }, 
+    isSubscription: true,
+    orderStatus: {
+        status: "RECEIVED",
+        timestamp: new Date('December 14, 1995 03:24:00')
+    },
+    orderStatusHistory: [
+        {
+            status: "RECEIVED",
+            timestamp: new Date('December 14, 1995 03:24:00')
+        }
+    ],
+    paymentMethod: {
+        type: "mastercard",
+        recurringDetail: "billing_id"
+    },
+    paymentStatus: {
+        status: "OPEN",
+        timestamp: new Date('December 14, 1995 03:24:00')
+    },
+    paymentHistory: [
+        {
+            status: "OPEN",
+            timestamp: new Date('December 14, 1995 03:24:00')
+        }
+    ],
+    creationDate: new Date('December 14, 1995 03:24:00'),
+    deliverySchedule: new Date('December 24, 1995 03:24:00'),
+    isShipped: false,
+    isConfEmailDelivered: true,
+    lastModified: new Date('December 14, 1995 03:24:00'),
+    orderAmountPerItem: [
+        {
+            itemId: "PKOL91587",
+            name: "Package 1",
+            currency: "euro",
+            quantity: 1,
+            originalPrice: "19.00",
+            discount: "0.00",
+            vat: "3.30",
+            grossPrice: "19.00",
+            netPrice: "15.70",
+            sumOfGrossPrice: "19.00",
+            sumOfNetPrice: "15.70",
+            sumOfVat: "3.30",
+            sumOfDiscount: "0.00"
+
+        }
+    ],
+    orderAmount: {
+        currency: "euro",
+        totalAmount: "19.00",
+        totalDiscount: "0.00",
+        totalVat: "3.30",
+        totalNetPrice: "15.70"
+    },
+    shippedAmountPerItem: [
+        {
+            itemId: "PKOL91587",
+            name: "Package 1",
+            currency: "euro",
+            quantity: 1,
+            originalPrice: "19.00",
+            discount: "0.00",
+            vat: "3.30",
+            grossPrice: "19.00",
+            netPrice: "15.70",
+            sumOfGrossPrice: "19.00",
+            sumOfNetPrice: "15.70",
+            sumOfVat: "3.30",
+            sumOfDiscount: "0.00"
+
+        }
+    ]
 };
 
 let payload_package = {
@@ -146,6 +246,8 @@ describe('Test user endpoints', () => {
         
         await packageDB.addSubscriptionBox(payload_package);
 
+        await orderDb.addOrder(payload_order);
+
         payload_user.addresses = [_address_id_holder[0], _address_id_holder[1]];
         payload_user.defaultShippingAddress = _address_id_holder[0];
         payload_user.defaultBillingAddress = _address_id_holder[1];
@@ -158,6 +260,7 @@ describe('Test user endpoints', () => {
         await addressDB.dropAll();
         await billingDB.dropAll();
         await subscriptionDB.dropAll();
+        await orderDb.dropAll();
         await packageDB.dropAll();
     });
 
@@ -166,6 +269,7 @@ describe('Test user endpoints', () => {
         await addressDB.dropAll();
         await billingDB.dropAll();
         await subscriptionDB.dropAll();
+        await orderDb.dropAll();
         await packageDB.dropAll();
     });
 
@@ -429,5 +533,39 @@ describe('Test user endpoints', () => {
 
         expect(res1.status).toBe(200);
         expect(res2.body.addresses).toHaveLength(2);
+    });
+
+    test('getUserOrders fail - no user found', () => {
+        const userId = "odd_id";
+
+        return testSession.get(`/users/user/${userId}/orders`)
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('getUserOrders success', () => {
+        const userId = payload_user.userId;
+
+        return testSession.get(`/users/user/${userId}/orders`)
+        .then(response => {
+            const orders = response.body;
+            expect(response.status).toBe(200);
+            expect(orders).toHaveLength(1);
+        });
+    });
+
+    test('getUserOrders success - return no orders', async () => {
+        payload_user.userId = "13";
+        payload_user.email = "yunjae.oh.kr@hellochokchok.com"
+        await userDB.addUser(payload_user);
+        const userId = payload_user.userId;
+
+        return testSession.get(`/users/user/${userId}/orders`)
+        .then(response => {
+            const orders = response.body;
+            expect(response.status).toBe(200);
+            expect(orders).toHaveLength(0);
+        });
     });
 });

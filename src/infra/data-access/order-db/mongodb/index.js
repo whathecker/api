@@ -59,7 +59,6 @@ async function _isOrderNumberUnique (orderNumber) {
     } catch (err) {
         return;
     }
-
     throw new Error('db access for order object failed: orderNumber must be unique');
 }
 

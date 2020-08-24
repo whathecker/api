@@ -117,6 +117,7 @@ apiRoutesLoader.mountUserRoutes = (router) => {
     .put('/users/user/email', user.updateEmailAddress)
     .put('/users/user/:id/contact', user.updateUserContactInfo)
     .delete('/users/user/:id/addresses/address/:address_id', user.deleteUserAddress)
+    .get('/users/user/:id/orders', user.getUserOrders)
     return route;
 }
 
