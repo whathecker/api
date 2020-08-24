@@ -556,10 +556,11 @@ describe('Test user endpoints', () => {
     });
 
     test('getUserOrders success - return no orders', async () => {
-        payload_user.userId = "13";
-        payload_user.email = "yunjae.oh.kr@hellochokchok.com"
-        await userDB.addUser(payload_user);
-        const userId = payload_user.userId;
+        const deepCopiedPayload = JSON.parse(JSON.stringify(payload_user));
+        deepCopiedPayload.userId = "13";
+        deepCopiedPayload.email = "yunjae.oh.kr@hellochokchok.com"
+        await userDB.addUser(deepCopiedPayload);
+        const userId = deepCopiedPayload.userId;
 
         return testSession.get(`/users/user/${userId}/orders`)
         .then(response => {
@@ -568,4 +569,25 @@ describe('Test user endpoints', () => {
             expect(orders).toHaveLength(0);
         });
     });
+
+    test('getUserSubscription fail - no user found', () => {
+        const userId = "odd_id";
+
+        return testSession.get(`/users/user/${userId}/subscription`)
+        .then(response => {
+            expect(response.status).toBe(422);
+        });
+    });
+
+    test('getUserSubscription success', () => {
+        const userId = payload_user.userId;
+
+        return testSession.get(`/users/user/${userId}/subscription`)
+        .then(response => {
+            const subscriptions = response.body;
+            expect(response.status).toBe(200);
+            expect(subscriptions).toHaveLength(1);
+        });
+    });
+
 });

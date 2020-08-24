@@ -366,7 +366,6 @@ user.getUserOrders = async (req, res, next) => {
         const orders = await orderDB.listOrdersByUserId(user.userId);
 
         logger.info(`getUserOrders request has returned data ${userId}`);
-        console.log(orders);
         return res.status(200).json(orders);
     
     } catch (exception) {
@@ -390,6 +389,40 @@ user.getUserOrders = async (req, res, next) => {
 
         next(exception);
     }
+};
+
+user.getUserSubscription = async (req, res, next) => {
+    const userId = req.params.id;
+
+    try {
+        const user = await userDB.findUserByUserId(userId);
+        const subscriptions = await subscriptionDB.findSubscriptionByUserId(user.userId);
+        
+        logger.info(`getUserSubscription request has returned data ${userId}`);
+        return res.status(200).json(subscriptions);
+
+    } catch (exception) {
+
+        if (exception.status === "fail") {
+            logger.error(`getUserSubscription request has failed | reason: ${exception.reason}`);
+            (exception.error)? logger.error(`error: ${exception.error.message}`) : null;
+            return res.status(422).json({
+                status: "fail",
+                message: (exception.error)? exception.error.message : exception.reason
+            });
+        } 
+
+        if (exception.name === 'CastError') {
+            logger.error(`getUserSubscription request has failed | reason: ${exception.message}`);
+            return res.status(422).json({
+                status: "fail",
+                message: exception.message
+            });
+        }
+
+        next(exception);
+    }
+    
 };
 
 module.exports = user;
