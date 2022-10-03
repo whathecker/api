@@ -1,6 +1,6 @@
 # API for hellochokchok.com
 
-APIs that powers hellochokchok.com and its backoffice.
+APIs that powers hellochokchok.com and its backoffice. 
 
 
 
@@ -16,7 +16,7 @@ brew install node
 ```
 3. Install eb cli & aws cli
 
-4. Have db configuration file in app/config folder of project (contact author for more detail)
+4. Include db config file in app/config folder of project (contact author for more detail)
 
 5. Have .env file in source code (contact author for more detail)
 
