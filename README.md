@@ -1,6 +1,6 @@
 # API for hellochokchok.com
 
-This application is API that powers hellochokchok.com and its backoffice.
+APIs that powers hellochokchok.com and its backoffice.
 
 
 
