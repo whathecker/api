@@ -1,6 +1,6 @@
-# API for hellochokchok.com
+# API for hellochokchok
 
-APIs that powers hellochokchok.com and its backoffice. 
+APIs that powers hellochokchok and its backoffice. 
 
 
 
