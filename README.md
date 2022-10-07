@@ -1,4 +1,4 @@
-# API for hellochokchok
+# API for hellochokchok. 
 
 APIs that powers hellochokchok and its backoffice. 
 
@@ -34,7 +34,7 @@ npm run localstart
 
 ### Deployment Step:
 
-1. Build docker image
+1. Build Docker image
 ```
 docker build . -t {IMAGE_NAME}
 ```
